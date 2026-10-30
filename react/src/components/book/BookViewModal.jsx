@@ -22,44 +22,47 @@ export default function BookViewModal({ sectionData, isOpen, onClose }) {
   };
 
   return typeof document !== 'undefined' ? createPortal(
-    <div className="fixed inset-0 z-[99998] w-screen h-screen min-h-screen bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-5xl h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-[99998] w-screen h-screen min-h-screen bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto" dir="rtl">
+      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-5xl h-[94vh] sm:h-[92vh] flex flex-col shadow-2xl overflow-hidden">
         
         {/* شريط الإجراءات العلوي للنافذة */}
-        <div className="flex items-center justify-between px-6 py-4 bg-slate-950 border-b border-slate-800 no-print shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
+        <div className="flex flex-wrap items-center justify-between px-3 sm:px-6 py-2.5 sm:py-4 bg-slate-950 border-b border-slate-800 no-print shrink-0 gap-2">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold shrink-0">
               <BookOpen className="w-4 h-4" />
             </div>
-            <div>
-              <h3 className="font-bold text-sm text-white">كتاب أساسيات تطوير الويب والإنفوجرافيك الشامل</h3>
-              <p className="text-[11px] text-slate-400">مرجع القسم الأول من خريطة طريق React.js (35 درساً كاملاً)</p>
+            <div className="min-w-0">
+              <h3 className="font-bold text-xs sm:text-sm text-white truncate max-w-[200px] sm:max-w-none">
+                كتاب أساسيات تطوير الويب والإنفوجرافيك
+              </h3>
+              <p className="text-[10px] sm:text-[11px] text-slate-400 truncate">مرجع القسم الأول من خريطة طريق React.js</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2 rounded-xl transition-all cursor-pointer"
+              className="flex items-center gap-1 sm:gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition-all cursor-pointer"
               title="طباعة أو حفظ كملف PDF عالي الجودة عبر المتصفح"
             >
               <Printer className="w-3.5 h-3.5 text-cyan-400" />
-              <span>طباعة كـ PDF</span>
+              <span>طباعة</span>
             </button>
 
             <button
               onClick={handleDownloadPdf}
               disabled={downloading}
-              className="flex items-center gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg shadow-blue-600/20 transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-1 sm:gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl shadow-lg shadow-blue-600/20 transition-all cursor-pointer disabled:opacity-50"
               title="توليد وتنزيل ملف PDF"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>{downloading ? "جاري التوليد..." : "تحميل الكتاب PDF"}</span>
+              <span>{downloading ? "جاري التوليد..." : "تحميل PDF"}</span>
             </button>
 
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer mr-2"
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer mr-1"
+              title="إغلاق النافذة"
             >
               <X className="w-4 h-4" />
             </button>

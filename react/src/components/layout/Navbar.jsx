@@ -49,48 +49,48 @@ export default function Navbar({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3 no-print" dir="rtl">
-      <div className="max-w-[1750px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+    <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-2.5 sm:px-4 lg:px-8 py-2 sm:py-3 no-print max-w-full overflow-x-hidden" dir="rtl">
+      <div className="max-w-[1750px] mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5 sm:gap-3">
         
         {/* الشعار وعنوان المنصة */}
-        <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20 text-xl font-bold shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto justify-between md:justify-start min-w-0">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20 text-base sm:text-xl font-bold shrink-0">
               ⚛️
             </div>
-            <div>
-              <h1 className="font-extrabold text-base lg:text-lg text-white leading-tight flex items-center gap-2 font-sans">
+            <div className="min-w-0">
+              <h1 className="font-extrabold text-xs sm:text-base lg:text-lg text-white leading-tight flex items-center gap-1.5 font-sans truncate">
                 خريطة طريق React.js الاحترافية
-                <span className="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-normal">
+                <span className="hidden sm:inline-block text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-normal">
                   من الصفر للاحتراف
                 </span>
               </h1>
-              <p className="text-xs text-slate-400 truncate max-w-xs sm:max-w-md font-sans">
+              <p className="text-[11px] sm:text-xs text-slate-400 truncate max-w-[200px] sm:max-w-xs md:max-w-md font-sans">
                 {currentSection?.title || "34 قسماً تعليمياً متكاملاً"} • {completedCount} درس منجز
               </p>
             </div>
           </div>
 
           {/* شريط الإنجاز للموبايل */}
-          <div className="md:hidden flex items-center gap-1.5 text-xs text-cyan-400 font-bold bg-slate-800/80 px-2.5 py-1 rounded-lg">
+          <div className="md:hidden flex items-center gap-1 text-[11px] sm:text-xs text-cyan-400 font-bold bg-slate-800/80 px-2 py-0.5 rounded-lg shrink-0">
             <span>%{progressPercent}</span>
           </div>
         </div>
 
         {/* شريط البحث المباشر */}
-        <div className="w-full md:w-64 lg:w-72 relative">
+        <div className="w-full md:w-56 lg:w-72 relative min-w-0">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="ابحث في دروس الخريطة والمفاهيم..."
-            className="w-full bg-slate-950/80 border border-slate-700/80 text-slate-200 placeholder-slate-500 text-xs rounded-xl py-2 pr-9 pl-4 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-sans"
+            className="w-full bg-slate-950/80 border border-slate-700/80 text-slate-200 placeholder-slate-500 text-xs rounded-xl py-1.5 sm:py-2 pr-8 sm:pr-9 pl-4 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-sans"
           />
-          <Search className="w-4 h-4 text-slate-400 absolute right-3 top-2.5" />
+          <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute right-2.5 sm:right-3 top-2 sm:top-2.5" />
           {searchQuery && (
             <button 
               onClick={() => setSearchQuery("")}
-              className="absolute left-2.5 top-2 text-xs text-slate-400 hover:text-white cursor-pointer"
+              className="absolute left-2.5 top-1.5 sm:top-2 text-xs text-slate-400 hover:text-white cursor-pointer"
             >
               ✕
             </button>
@@ -98,7 +98,7 @@ export default function Navbar({
         </div>
 
         {/* أزرار الإجراءات السريعة (المعلم الذكي + كتاب الـ PDF + إعدادات المفتاح + أنماط العرض) */}
-        <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+        <div className="flex items-center gap-1 sm:gap-2 w-full md:w-auto justify-between md:justify-end flex-wrap">
           
           {/* محول أنماط العرض: افتراضي / عريض / ملء الشاشة */}
           {onChangeLayoutMode && (
@@ -146,14 +146,14 @@ export default function Navbar({
           {onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
-              className={`p-2 rounded-xl border transition-colors cursor-pointer ${
+              className={`p-1.5 sm:p-2 rounded-xl border transition-colors cursor-pointer ${
                 isSidebarOpen 
                   ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700' 
                   : 'bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border-cyan-500/50 font-bold'
               }`}
-              title={isSidebarOpen ? "إخفاء القائمة الجانبية (وضع ملء الشاشة)" : "إظهار القائمة الجانبية"}
+              title={isSidebarOpen ? "إخفاء القائمة الجانبية" : "إظهار القائمة الجانبية"}
             >
-              <Layers className="w-4 h-4 text-cyan-400" />
+              <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400" />
             </button>
           )}
 
@@ -173,49 +173,52 @@ export default function Navbar({
           {/* زر التظليلات والمقتطفات المحفوظة */}
           <button
             onClick={onOpenHighlights}
-            className="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl transition-colors cursor-pointer"
+            className="p-1.5 sm:p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl transition-colors cursor-pointer"
             title="دفتر التظليلات والمقتطفات المحفوظة (IndexedDB)"
           >
-            <Bookmark className="w-4 h-4 text-cyan-400" />
+            <Bookmark className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400" />
           </button>
 
           {/* زر إعدادات المفاتيح المتعددة Gemini API Pool */}
           <button
             onClick={onOpenKeyPool || handleOpenApiKeyModal}
-            className="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl transition-colors cursor-pointer"
+            className="p-1.5 sm:p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl transition-colors cursor-pointer"
             title="إدارة مجمع مفاتيح Gemini AI والفحص المتوازي"
           >
-            <Key className="w-4 h-4 text-amber-400" />
+            <Key className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
           </button>
 
           {/* زر معرض الإنفوجرافيك الشامل لجميع الدروس */}
           <button
             onClick={onOpenInfographicGallery}
-            className="flex-1 md:flex-none flex items-center justify-center gap-1.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-md transition-all cursor-pointer font-sans"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-1 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl shadow-md transition-all cursor-pointer font-sans"
             title="فتح معرض الإنفوجرافيك الشامل لجميع الدروس وتصفحها بصرياً"
           >
             <ImageIcon className="w-3.5 h-3.5" />
-            <span>معرض الإنفوجرافيك</span>
+            <span className="hidden xs:inline">الإنفوجرافيك</span>
+            <span className="xs:hidden">معرض</span>
           </button>
 
           {/* زر تحميل كتاب الـ PDF */}
           <button
             onClick={onOpenBook}
-            className="flex-1 md:flex-none flex items-center justify-center gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-md transition-all cursor-pointer font-sans"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl shadow-md transition-all cursor-pointer font-sans"
             title="عرض وتحميل كتاب الـ PDF الكامل"
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>كتاب الـ PDF</span>
+            <span className="hidden xs:inline">كتاب PDF</span>
+            <span className="xs:hidden">كتاب</span>
           </button>
 
           {/* زر المعلم الذكي (Gemini Tutor) */}
           <button
             onClick={onOpenTutor}
-            className="flex-1 md:flex-none flex items-center justify-center gap-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-md transition-all cursor-pointer font-sans"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl shadow-md transition-all cursor-pointer font-sans"
             title="اسأل المعلم الذكي المدعوم بـ Gemini"
           >
             <Sparkles className="w-3.5 h-3.5 animate-pulse text-amber-300" />
-            <span>المعلم الذكي</span>
+            <span className="hidden xs:inline">المعلم الذكي</span>
+            <span className="xs:hidden">ذكاء</span>
           </button>
         </div>
 

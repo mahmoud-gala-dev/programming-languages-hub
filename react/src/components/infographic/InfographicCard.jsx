@@ -137,31 +137,33 @@ ${info.pitfall}`;
         </div>
 
         {/* أزرار الإجراء: نسخ، تكبير في المعرض، وتحميل PNG */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap sm:flex-nowrap">
           <button
             onClick={handleCopySummary}
-            className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-medium px-3 py-1.5 rounded-xl border border-slate-700/80 transition-all cursor-pointer shadow-sm"
+            className="flex items-center gap-1 sm:gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white text-[11px] sm:text-xs font-medium px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-700/80 transition-all cursor-pointer shadow-sm"
             title="نسخ ملخص بطاقة الإنفوجرافيك كنص منسق"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
-            <span>{copied ? "تم النسخ" : "نسخ الملخص"}</span>
+            <span className="hidden xs:inline">{copied ? "تم النسخ" : "نسخ الملخص"}</span>
+            <span className="xs:hidden">{copied ? "تم" : "نسخ"}</span>
           </button>
 
           {onOpenGallery && (
             <button
               onClick={() => onOpenGallery(subtopic.id)}
-              className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs font-bold px-3 py-1.5 rounded-xl border border-slate-700 transition-all cursor-pointer shadow-sm"
+              className="flex items-center gap-1 sm:gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-700 transition-all cursor-pointer shadow-sm"
               title="عرض وتصفح هذا الدرس في معرض الإنفوجرافيك الشامل"
             >
               <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
-              <span>المعرض الشامل</span>
+              <span className="hidden xs:inline">المعرض الشامل</span>
+              <span className="xs:hidden">معرض</span>
             </button>
           )}
 
           <button
             onClick={handleDownload}
             disabled={downloading}
-            className="flex items-center gap-2 text-white text-xs font-extrabold px-4 py-1.5 rounded-xl shadow-lg transition-all cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-1.5 text-white text-[11px] sm:text-xs font-extrabold px-3 sm:px-4 py-1.5 rounded-xl shadow-lg transition-all cursor-pointer disabled:opacity-50"
             style={{ 
               background: activeTheme.gradientHeader,
               boxShadow: `0 8px 20px -4px ${activeTheme.primary}50`
@@ -169,7 +171,7 @@ ${info.pitfall}`;
             title="تحميل بطاقة الإنفوجرافيك كصورة PNG عالية الدقة"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>{downloading ? "جاري التصدير..." : "تحميل الإنفوجرافيك (PNG)"}</span>
+            <span>{downloading ? "جاري التصدير..." : "تحميل الإنفوجرافيك"}</span>
           </button>
         </div>
       </div>
@@ -177,7 +179,7 @@ ${info.pitfall}`;
       {/* لوحة الإنفوجرافيك الفائقة المصممة بعناية لتكون مرجعاً هندسياً مستقلاً وجذاباً */}
       <div
         ref={cardRef}
-        className="rounded-3xl p-6 sm:p-9 border-2 shadow-2xl relative overflow-hidden text-slate-100 transition-all duration-300"
+        className="rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-9 border-2 shadow-2xl relative overflow-hidden text-slate-100 transition-all duration-300 max-w-full"
         style={{ 
           backgroundColor: activeTheme.bgCard,
           borderColor: `${activeTheme.primary}50`
@@ -185,11 +187,11 @@ ${info.pitfall}`;
       >
         {/* أضواء نيون هيدروليكية وتدرجات خلفية خاصة بكل ثيم */}
         <div 
-          className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl pointer-events-none -mr-28 -mt-28 opacity-80"
+          className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 rounded-full blur-3xl pointer-events-none -mr-16 -mt-16 sm:-mr-28 sm:-mt-28 opacity-70"
           style={{ backgroundColor: activeTheme.glowColor }}
         ></div>
         <div 
-          className="absolute bottom-0 left-0 w-96 h-96 rounded-full blur-3xl pointer-events-none -ml-28 -mb-28 opacity-70"
+          className="absolute bottom-0 left-0 w-64 sm:w-96 h-64 sm:h-96 rounded-full blur-3xl pointer-events-none -ml-16 -mb-16 sm:-ml-28 sm:-mb-28 opacity-60"
           style={{ backgroundColor: `${activeTheme.secondary}20` }}
         ></div>
 

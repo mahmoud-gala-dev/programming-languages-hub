@@ -316,7 +316,7 @@ export default function CodeBlock({
                 <span className="table-cell select-none pr-4 text-slate-600 text-right font-mono text-[11px] w-9">
                   {idx + 1}
                 </span>
-                <span className="table-cell whitespace-pre font-mono">
+                <span className="table-cell whitespace-pre">
                   {highlightCodeLine(line, highlights, onHighlightClick)}
                 </span>
               </div>
@@ -508,7 +508,7 @@ export default function CodeBlock({
                       </span>
 
                       {/* سطر الكود البرمجي مع التمييز اللوني ودعم التظليلات */}
-                      <span className="table-cell font-mono pr-4">
+                      <span className="table-cell pr-4">
                         {highlightCodeLine(line, highlights, onHighlightClick)}
                         
                         {/* شارات الملاحظات المسجلة بجانب السطر */}

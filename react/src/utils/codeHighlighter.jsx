@@ -27,6 +27,9 @@ const COMMON_ATTRIBUTES = new Set([
 
 const LITERALS = new Set(['true', 'false', 'null', 'undefined', 'NaN', 'Infinity']);
 
+// فحص وجود أحرف عربية لضمان سلامة اتصال الحروف وتطبيق خط القاهرة (Cairo) تلقائياً
+const hasArabic = (str) => typeof str === 'string' && /[\u0600-\u06FF]/.test(str);
+
 const HIGHLIGHT_COLOR_STYLES = {
   amber: "bg-amber-400/35 text-amber-100 border-b-2 border-amber-400 hover:bg-amber-400/50 shadow-sm",
   emerald: "bg-emerald-400/35 text-emerald-100 border-b-2 border-emerald-400 hover:bg-emerald-400/50 shadow-sm",
@@ -49,11 +52,18 @@ function tokenizeSnippet(snippet, baseKey = 'tok') {
   while ((match = tokenRegex.exec(snippet)) !== null) {
     const token = match[0];
     const index = match.index;
+    const isAr = hasArabic(token);
 
     if (index > lastIndex) {
+      const gap = snippet.substring(lastIndex, index);
+      const isGapAr = hasArabic(gap);
       elements.push(
-        <span key={`${baseKey}-gap-${index}`} className="text-slate-300">
-          {snippet.substring(lastIndex, index)}
+        <span 
+          key={`${baseKey}-gap-${index}`} 
+          data-arabic={isGapAr ? "true" : undefined}
+          className={`text-slate-300 ${isGapAr ? 'token-arabic' : ''}`}
+        >
+          {gap}
         </span>
       );
     }
@@ -61,13 +71,21 @@ function tokenizeSnippet(snippet, baseKey = 'tok') {
 
     if (token.startsWith('//') || token.startsWith('/*') || token.startsWith('<!--')) {
       elements.push(
-        <span key={`${baseKey}-c-${index}`} className="text-emerald-400 font-medium italic">
+        <span 
+          key={`${baseKey}-c-${index}`} 
+          data-arabic={isAr ? "true" : undefined}
+          className={`text-emerald-400 font-medium ${isAr ? 'token-arabic not-italic' : 'italic'}`}
+        >
           {token}
         </span>
       );
     } else if (token.startsWith('"') || token.startsWith("'") || token.startsWith('`')) {
       elements.push(
-        <span key={`${baseKey}-s-${index}`} className="text-amber-300">
+        <span 
+          key={`${baseKey}-s-${index}`} 
+          data-arabic={isAr ? "true" : undefined}
+          className={`text-amber-300 ${isAr ? 'token-arabic' : ''}`}
+        >
           {token}
         </span>
       );
@@ -109,7 +127,11 @@ function tokenizeSnippet(snippet, baseKey = 'tok') {
       );
     } else {
       elements.push(
-        <span key={`${baseKey}-id-${index}`} className="text-slate-200">
+        <span 
+          key={`${baseKey}-id-${index}`} 
+          data-arabic={isAr ? "true" : undefined}
+          className={`text-slate-200 ${isAr ? 'token-arabic' : ''}`}
+        >
           {token}
         </span>
       );
@@ -117,9 +139,15 @@ function tokenizeSnippet(snippet, baseKey = 'tok') {
   }
 
   if (lastIndex < snippet.length) {
+    const tail = snippet.substring(lastIndex);
+    const isTailAr = hasArabic(tail);
     elements.push(
-      <span key={`${baseKey}-tail-${lastIndex}`} className="text-slate-300">
-        {snippet.substring(lastIndex)}
+      <span 
+        key={`${baseKey}-tail-${lastIndex}`} 
+        data-arabic={isTailAr ? "true" : undefined}
+        className={`text-slate-300 ${isTailAr ? 'token-arabic' : ''}`}
+      >
+        {tail}
       </span>
     );
   }
@@ -140,11 +168,19 @@ export function highlightCodeLine(line, userHighlights = [], onHighlightClick = 
   // 1. إذا كان السطر بالكامل تعليقاً وبدون تظليلات
   const trimmed = line.trim();
   const isFullComment = trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('<!--') || trimmed.startsWith('*');
+  const isFullAr = hasArabic(line);
 
   // 2. فحص ما إذا كان هناك تظليلات للمستخدم تنطبق على هذا السطر
   if (!userHighlights || userHighlights.length === 0) {
     if (isFullComment) {
-      return <span className="text-emerald-400 font-semibold">{line}</span>;
+      return (
+        <span 
+          data-arabic={isFullAr ? "true" : undefined}
+          className={`text-emerald-400 font-semibold ${isFullAr ? 'token-arabic not-italic' : ''}`}
+        >
+          {line}
+        </span>
+      );
     }
     return tokenizeSnippet(line, 'line');
   }
@@ -175,7 +211,14 @@ export function highlightCodeLine(line, userHighlights = [], onHighlightClick = 
 
   if (matches.length === 0) {
     if (isFullComment) {
-      return <span className="text-emerald-400 font-semibold">{line}</span>;
+      return (
+        <span 
+          data-arabic={isFullAr ? "true" : undefined}
+          className={`text-emerald-400 font-semibold ${isFullAr ? 'token-arabic not-italic' : ''}`}
+        >
+          {line}
+        </span>
+      );
     }
     return tokenizeSnippet(line, 'line');
   }
@@ -197,15 +240,24 @@ export function highlightCodeLine(line, userHighlights = [], onHighlightClick = 
   nonOverlapping.forEach((m, i) => {
     if (m.start > cursor) {
       const unmatched = line.substring(cursor, m.start);
+      const isUnmatchedAr = hasArabic(unmatched);
       fragments.push(
         <React.Fragment key={`unm-${cursor}-${i}`}>
-          {isFullComment ? <span className="text-emerald-400 font-semibold">{unmatched}</span> : tokenizeSnippet(unmatched, `unm-${cursor}`)}
+          {isFullComment ? (
+            <span 
+              data-arabic={isUnmatchedAr ? "true" : undefined}
+              className={`text-emerald-400 font-semibold ${isUnmatchedAr ? 'token-arabic not-italic' : ''}`}
+            >
+              {unmatched}
+            </span>
+          ) : tokenizeSnippet(unmatched, `unm-${cursor}`)}
         </React.Fragment>
       );
     }
 
     const matchedStr = line.substring(m.start, m.end);
     const styleClass = HIGHLIGHT_COLOR_STYLES[m.highlight.color] || HIGHLIGHT_COLOR_STYLES.amber;
+    const isMatchedAr = hasArabic(matchedStr);
 
     fragments.push(
       <mark
@@ -214,10 +266,18 @@ export function highlightCodeLine(line, userHighlights = [], onHighlightClick = 
           e.stopPropagation();
           if (onHighlightClick) onHighlightClick(m.highlight);
         }}
-        className={`px-1 py-0.5 rounded cursor-pointer transition-all duration-150 select-text ${styleClass} font-mono`}
+        data-arabic={isMatchedAr ? "true" : undefined}
+        className={`px-1 py-0.5 rounded cursor-pointer transition-all duration-150 select-text ${styleClass} ${isMatchedAr ? 'token-arabic' : 'font-mono'}`}
         title={m.highlight.note ? `الملاحظة: ${m.highlight.note}` : "انقر لإدارة هذا التظليل 🖍️"}
       >
-        {isFullComment ? <span className="text-emerald-400 font-semibold">{matchedStr}</span> : tokenizeSnippet(matchedStr, `hl-${m.start}`)}
+        {isFullComment ? (
+          <span 
+            data-arabic={isMatchedAr ? "true" : undefined}
+            className={`text-emerald-400 font-semibold ${isMatchedAr ? 'token-arabic not-italic' : ''}`}
+          >
+            {matchedStr}
+          </span>
+        ) : tokenizeSnippet(matchedStr, `hl-${m.start}`)}
       </mark>
     );
 
@@ -226,9 +286,17 @@ export function highlightCodeLine(line, userHighlights = [], onHighlightClick = 
 
   if (cursor < line.length) {
     const tail = line.substring(cursor);
+    const isTailAr = hasArabic(tail);
     fragments.push(
       <React.Fragment key={`tail-${cursor}`}>
-        {isFullComment ? <span className="text-emerald-400 font-semibold">{tail}</span> : tokenizeSnippet(tail, `tail-${cursor}`)}
+        {isFullComment ? (
+          <span 
+            data-arabic={isTailAr ? "true" : undefined}
+            className={`text-emerald-400 font-semibold ${isTailAr ? 'token-arabic not-italic' : ''}`}
+          >
+            {tail}
+          </span>
+        ) : tokenizeSnippet(tail, `tail-${cursor}`)}
       </React.Fragment>
     );
   }

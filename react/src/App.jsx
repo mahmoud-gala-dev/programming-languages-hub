@@ -65,6 +65,9 @@ export default function App() {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
     try {
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+        return false; // على الهواتف والأجهزة اللوحية تبدأ القائمة مغلقة ليدخل المستخدم فوراً في الدرس
+      }
       const savedMode = localStorage.getItem("react_roadmap_layout_mode");
       return savedMode !== "focus";
     } catch {
@@ -247,18 +250,34 @@ export default function App() {
               onSelectSection={handleSelectSection}
               currentTopicId={currentTopicId}
               currentSubtopicId={currentSubtopicId}
-              onSelectSubtopic={handleSelectSubtopic}
-              onSelectSpecialView={handleSelectSpecialView}
-              onOpenInfographicGallery={() => handleOpenInfographicGallery()}
+              onSelectSubtopic={(subId) => {
+                handleSelectSubtopic(subId);
+                // على الشاشات الصغيرة (<1024px) إغلاق الدرج تلقائياً لرؤية محتوى الدرس مباشرة
+                if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                  setIsSidebarOpen(false);
+                }
+              }}
+              onSelectSpecialView={(view) => {
+                handleSelectSpecialView(view);
+                if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                  setIsSidebarOpen(false);
+                }
+              }}
+              onOpenInfographicGallery={() => {
+                handleOpenInfographicGallery();
+                if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                  setIsSidebarOpen(false);
+                }
+              }}
               specialView={specialView}
               completedSubtopics={completedSubtopics}
               searchQuery={searchQuery}
-              onCloseSidebar={() => handleSetLayoutMode('focus')}
+              onCloseSidebar={() => setIsSidebarOpen(false)}
             />
           )}
 
           {/* مساحة العرض الرئيسية للدرس أو الإطلالة الخاصة */}
-          <main className="flex-1 p-4 sm:p-6 lg:p-8">
+          <main className="flex-1 p-2.5 sm:p-5 lg:p-8 min-w-0 max-w-full overflow-x-hidden">
             
             {/* عرض السكيلتون المتحرك أثناء التنقل */}
             {isLoadingTransition ? (

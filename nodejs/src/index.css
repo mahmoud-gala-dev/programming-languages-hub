@@ -4,12 +4,12 @@
 @theme {
   --font-sans: 'Cairo', 'Tajawal', 'IBM Plex Sans Arabic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-arabic: 'Cairo', 'Tajawal', 'IBM Plex Sans Arabic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-code: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-code: 'Fira Code', 'Cairo', monospace;
 }
 
 :root {
   --font-arabic: 'Cairo', 'Tajawal', 'IBM Plex Sans Arabic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-code: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-code: 'Fira Code', 'Cairo', monospace;
   scroll-behavior: smooth;
 }
 
@@ -55,6 +55,23 @@ code, pre, kbd, samp,
   direction: ltr !important;
   text-align: left !important;
   letter-spacing: normal !important;
+}
+
+/* حماية النصوص والتعليقات العربية داخل الأكواد البرمجية لضمان اتصال الحروف العربية وعدم تفككها */
+.token-arabic,
+.token-arabic *,
+.highlighted-code-view .token-arabic,
+.highlighted-code-view [data-arabic="true"],
+.highlighted-code-view span[data-arabic="true"],
+.code-container [data-arabic="true"],
+pre [data-arabic="true"],
+code [data-arabic="true"] {
+  font-family: var(--font-arabic) !important;
+  font-style: normal !important;
+  letter-spacing: normal !important;
+  word-spacing: normal !important;
+  direction: rtl !important;
+  unicode-bidi: isolate !important;
 }
 
 /* حماية الشارات والنصوص العربية التي تحتوي على font-mono من تفكك الحروف العربية */

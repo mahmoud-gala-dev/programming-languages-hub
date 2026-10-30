@@ -163,7 +163,15 @@ export default function Sidebar({
   }).filter(Boolean);
 
   return (
-    <aside className={`${currentWidthClass} bg-slate-900/95 border-0 flex flex-col h-[calc(100vh-65px)] sticky top-[65px] overflow-hidden no-print transition-all duration-200 shrink-0 shadow-2xl`}>
+    <>
+      {/* خلفية معتمة للهواتف والأجهزة اللوحية (<1024px) لإغلاق الدرج عند النقر خارجها */}
+      <div 
+        onClick={onCloseSidebar}
+        className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 lg:hidden animate-fadeIn"
+        aria-hidden="true"
+      />
+
+      <aside className={`fixed inset-y-0 right-0 z-50 w-[88vw] max-w-sm sm:max-w-md h-full bg-slate-900 border-l border-slate-800 lg:relative lg:inset-auto lg:z-auto lg:h-[calc(100vh-65px)] lg:sticky lg:top-[65px] lg:border-0 ${currentWidthClass} flex flex-col overflow-hidden no-print transition-all duration-200 shrink-0 shadow-2xl`}>
       
       {/* رأس الشريط الجانبي */}
       <div className="p-4 border-b border-slate-800/40 bg-slate-950/60 shrink-0">
@@ -502,5 +510,6 @@ export default function Sidebar({
       </div>
 
     </aside>
+    </>
   );
 }
