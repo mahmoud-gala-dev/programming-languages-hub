@@ -193,10 +193,11 @@ export default function Navbar({
           {/* زر دليل وموسوعة الاختصارات بالعامية المصرية */}
           <button
             onClick={onOpenShortcuts}
-            className="p-1.5 sm:p-2 text-slate-400 hover:text-sky-300 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl transition-colors cursor-pointer flex items-center gap-1"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-sky-500/20 to-blue-500/20 hover:from-sky-500/30 hover:to-blue-500/30 text-sky-300 border border-sky-500/40 text-[11px] sm:text-xs font-bold transition-all shadow-sm cursor-pointer"
             title="دليل وموسوعة الاختصارات وأوامر الذكاء الاصطناعي (Ctrl + /)"
           >
-            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-400" />
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-400 shrink-0" />
+            <span>⚡ الاختصارات</span>
           </button>
 
           {/* زر إعدادات المفاتيح المتعددة Gemini API Pool */}

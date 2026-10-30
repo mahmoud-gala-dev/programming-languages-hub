@@ -32,6 +32,7 @@ export default function Sidebar({
   onSelectSubtopic,
   onSelectSpecialView,
   onOpenInfographicGallery,
+  onOpenShortcuts,
   specialView,
   completedSubtopics = new Set(),
   searchQuery = "",
@@ -378,6 +379,22 @@ export default function Sidebar({
               </span>
               <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full font-bold shrink-0">
                 استوديو
+              </span>
+            </button>
+          )}
+
+          {onOpenShortcuts && (
+            <button
+              onClick={onOpenShortcuts}
+              className="w-full flex items-center justify-between p-3 rounded-xl transition-all text-right cursor-pointer text-sky-200 bg-sky-950/40 hover:bg-sky-900/60 border border-sky-800/60 shadow-sm"
+              title="موسوعة ودليل الاختصارات وأوامر الذكاء الاصطناعي بالعامية المصرية"
+            >
+              <span className="flex items-center gap-2.5 truncate">
+                <Sparkles className="w-4 h-4 text-sky-400 shrink-0" />
+                <span className={`${currentFont.specialView} truncate font-bold text-sky-200`}>موسوعة ودليل الاختصارات</span>
+              </span>
+              <span className="text-[10px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-full font-bold shrink-0 font-sans">
+                بالعامية ⚡
               </span>
             </button>
           )}

@@ -601,3 +601,4 @@ export default function ShortcutsGuideModal({ isOpen, onClose }) {
     </div>
   );
 }
+

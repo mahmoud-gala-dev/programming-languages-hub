@@ -291,6 +291,12 @@ export default function App() {
                   setIsSidebarOpen(false);
                 }
               }}
+              onOpenShortcuts={() => {
+                setIsShortcutsModalOpen(true);
+                if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                  setIsSidebarOpen(false);
+                }
+              }}
               specialView={specialView}
               completedSubtopics={completedSubtopics}
               searchQuery={searchQuery}
