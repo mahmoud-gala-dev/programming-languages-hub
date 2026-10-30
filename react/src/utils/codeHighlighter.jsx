@@ -1,5 +1,6 @@
 // src/utils/codeHighlighter.jsx
 // محرك تلوين وتمييز الأكواد النحوي (Syntax Highlighting) لـ JavaScript و JSX و HTML و CSS
+// مع دعم تظليلات المستخدم التفاعلية (User Highlights) وحفظها ونقرها لإدارتها
 import React from 'react';
 
 const KEYWORDS = new Set([
@@ -26,115 +27,99 @@ const COMMON_ATTRIBUTES = new Set([
 
 const LITERALS = new Set(['true', 'false', 'null', 'undefined', 'NaN', 'Infinity']);
 
+const HIGHLIGHT_COLOR_STYLES = {
+  amber: "bg-amber-400/35 text-amber-100 border-b-2 border-amber-400 hover:bg-amber-400/50 shadow-sm",
+  emerald: "bg-emerald-400/35 text-emerald-100 border-b-2 border-emerald-400 hover:bg-emerald-400/50 shadow-sm",
+  cyan: "bg-cyan-400/35 text-cyan-100 border-b-2 border-cyan-400 hover:bg-cyan-400/50 shadow-sm",
+  purple: "bg-purple-400/35 text-purple-100 border-b-2 border-purple-400 hover:bg-purple-400/50 shadow-sm"
+};
+
 /**
- * دالة تلوين سطر كود واحد عبر تحليله إلى رموز مميزة (Tokens)
- * @param {string} line سطر الكود
- * @returns {React.ReactNode} عناصر React ملونة
+ * تحليل وتلوين مقطع نصي برمجي وتحويله إلى عناصر ملونة
  */
-export function highlightCodeLine(line) {
-  if (!line) return <span>&nbsp;</span>;
+function tokenizeSnippet(snippet, baseKey = 'tok') {
+  if (!snippet) return null;
 
-  const trimmed = line.trim();
-
-  // 1. فحص التعليقات الكاملة (عربية أو إنجليزية)
-  if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('<!--') || trimmed.startsWith('*')) {
-    return <span className="text-emerald-400 font-semibold">{line}</span>;
-  }
-
-  // 2. تحليل السطر إلى أجزاء (Regex Lexer)
-  // يطابق: التعليقات، السلاسل النصية، وسوم HTML/JSX، الكلمات، والأرقام
   const tokenRegex = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->|`(?:\\.|[^`])*`|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|<\/?[a-zA-Z0-9_\-]+(?:\s|>|\/)|[a-zA-Z_$][a-zA-Z0-9_$]*|\b\d+(?:\.\d+)?\b|[=+\-*/%&|^!<>?:;,.[\]{}()])/g;
 
   let lastIndex = 0;
   const elements = [];
   let match;
 
-  while ((match = tokenRegex.exec(line)) !== null) {
+  while ((match = tokenRegex.exec(snippet)) !== null) {
     const token = match[0];
     const index = match.index;
 
-    // إضافة المسافات أو المحارف البينية التي لم تطابق
     if (index > lastIndex) {
       elements.push(
-        <span key={`gap-${index}`} className="text-slate-300">
-          {line.substring(lastIndex, index)}
+        <span key={`${baseKey}-gap-${index}`} className="text-slate-300">
+          {snippet.substring(lastIndex, index)}
         </span>
       );
     }
     lastIndex = index + token.length;
 
-    // تصنيف الرمز وتلوينه
     if (token.startsWith('//') || token.startsWith('/*') || token.startsWith('<!--')) {
-      // تعليق في نهاية السطر
       elements.push(
-        <span key={`tok-${index}`} className="text-emerald-400 font-medium italic">
+        <span key={`${baseKey}-c-${index}`} className="text-emerald-400 font-medium italic">
           {token}
         </span>
       );
     } else if (token.startsWith('"') || token.startsWith("'") || token.startsWith('`')) {
-      // نصوص
       elements.push(
-        <span key={`tok-${index}`} className="text-amber-300">
+        <span key={`${baseKey}-s-${index}`} className="text-amber-300">
           {token}
         </span>
       );
     } else if (token.startsWith('<')) {
-      // وسم JSX أو HTML
       elements.push(
-        <span key={`tok-${index}`} className="text-cyan-400 font-semibold">
+        <span key={`${baseKey}-tag-${index}`} className="text-cyan-400 font-semibold">
           {token}
         </span>
       );
     } else if (KEYWORDS.has(token)) {
-      // كلمات محجوزة
       elements.push(
-        <span key={`tok-${index}`} className="text-purple-400 font-bold">
+        <span key={`${baseKey}-kw-${index}`} className="text-purple-400 font-bold">
           {token}
         </span>
       );
     } else if (BUILTINS_AND_HOOKS.has(token)) {
-      // خطافات React ودوال أساسية
       elements.push(
-        <span key={`tok-${index}`} className="text-indigo-300 font-semibold">
+        <span key={`${baseKey}-bi-${index}`} className="text-indigo-300 font-semibold">
           {token}
         </span>
       );
     } else if (LITERALS.has(token)) {
-      // قيم ثابتة (true, false, null...)
       elements.push(
-        <span key={`tok-${index}`} className="text-rose-400 font-semibold">
+        <span key={`${baseKey}-lit-${index}`} className="text-rose-400 font-semibold">
           {token}
         </span>
       );
     } else if (/^\d+(?:\.\d+)?$/.test(token)) {
-      // أرقام
       elements.push(
-        <span key={`tok-${index}`} className="text-orange-400">
+        <span key={`${baseKey}-num-${index}`} className="text-orange-400">
           {token}
         </span>
       );
     } else if (COMMON_ATTRIBUTES.has(token.toLowerCase()) || token.startsWith('data-') || token.startsWith('aria-')) {
-      // خصائص HTML و JSX الشهيرة
       elements.push(
-        <span key={`tok-${index}`} className="text-teal-300 font-medium">
+        <span key={`${baseKey}-attr-${index}`} className="text-teal-300 font-medium">
           {token}
         </span>
       );
     } else {
-      // أسماء متغيرات ومعاملات
       elements.push(
-        <span key={`tok-${index}`} className="text-slate-200">
+        <span key={`${baseKey}-id-${index}`} className="text-slate-200">
           {token}
         </span>
       );
     }
   }
 
-  // إضافة الجزء المتبقي من السطر بعد آخر تطابق
-  if (lastIndex < line.length) {
+  if (lastIndex < snippet.length) {
     elements.push(
-      <span key={`tail-${lastIndex}`} className="text-slate-300">
-        {line.substring(lastIndex)}
+      <span key={`${baseKey}-tail-${lastIndex}`} className="text-slate-300">
+        {snippet.substring(lastIndex)}
       </span>
     );
   }
@@ -143,18 +128,135 @@ export function highlightCodeLine(line) {
 }
 
 /**
- * دالة مساعدة لتلوين مقطع كود كامل مع ترقيم الأسطر والتفاف منسق
- * @param {string} code شفرة الكود الكاملة
+ * دالة تلوين سطر كود واحد مع دعم تظليلات المستخدم التفاعلية
+ * @param {string} line سطر الكود
+ * @param {Array} userHighlights مصفوفة التظليلات المسجلة للمستخدم
+ * @param {Function} onHighlightClick دالة إدارة التظليل
  * @returns {React.ReactNode}
  */
-export function HighlightedCodeView({ code = "", maxLines = null }) {
+export function highlightCodeLine(line, userHighlights = [], onHighlightClick = null) {
+  if (!line) return <span>&nbsp;</span>;
+
+  // 1. إذا كان السطر بالكامل تعليقاً وبدون تظليلات
+  const trimmed = line.trim();
+  const isFullComment = trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('<!--') || trimmed.startsWith('*');
+
+  // 2. فحص ما إذا كان هناك تظليلات للمستخدم تنطبق على هذا السطر
+  if (!userHighlights || userHighlights.length === 0) {
+    if (isFullComment) {
+      return <span className="text-emerald-400 font-semibold">{line}</span>;
+    }
+    return tokenizeSnippet(line, 'line');
+  }
+
+  // جمع كافة التطابقات للتظليلات في السطر
+  const matches = [];
+  userHighlights.forEach(hl => {
+    const rawText = hl.text?.trim();
+    if (!rawText || rawText.length < 2) return;
+
+    // دعم التظليلات متعددة الأسطر أو أجزاء من الأسطر
+    const searchTargets = rawText.includes('\n')
+      ? rawText.split('\n').map(s => s.trim()).filter(s => s.length >= 2)
+      : [rawText];
+
+    searchTargets.forEach(target => {
+      let idx = 0;
+      while ((idx = line.indexOf(target, idx)) !== -1) {
+        matches.push({
+          start: idx,
+          end: idx + target.length,
+          highlight: hl
+        });
+        idx += target.length;
+      }
+    });
+  });
+
+  if (matches.length === 0) {
+    if (isFullComment) {
+      return <span className="text-emerald-400 font-semibold">{line}</span>;
+    }
+    return tokenizeSnippet(line, 'line');
+  }
+
+  // ترتيب التطابقات وإزالة التداخل
+  matches.sort((a, b) => a.start - b.start);
+  const nonOverlapping = [];
+  let lastEnd = 0;
+  matches.forEach(m => {
+    if (m.start >= lastEnd) {
+      nonOverlapping.push(m);
+      lastEnd = m.end;
+    }
+  });
+
+  const fragments = [];
+  let cursor = 0;
+
+  nonOverlapping.forEach((m, i) => {
+    if (m.start > cursor) {
+      const unmatched = line.substring(cursor, m.start);
+      fragments.push(
+        <React.Fragment key={`unm-${cursor}-${i}`}>
+          {isFullComment ? <span className="text-emerald-400 font-semibold">{unmatched}</span> : tokenizeSnippet(unmatched, `unm-${cursor}`)}
+        </React.Fragment>
+      );
+    }
+
+    const matchedStr = line.substring(m.start, m.end);
+    const styleClass = HIGHLIGHT_COLOR_STYLES[m.highlight.color] || HIGHLIGHT_COLOR_STYLES.amber;
+
+    fragments.push(
+      <mark
+        key={`code-hl-${m.highlight.id}-${m.start}-${i}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (onHighlightClick) onHighlightClick(m.highlight);
+        }}
+        className={`px-1 py-0.5 rounded cursor-pointer transition-all duration-150 select-text ${styleClass} font-mono`}
+        title={m.highlight.note ? `الملاحظة: ${m.highlight.note}` : "انقر لإدارة هذا التظليل 🖍️"}
+      >
+        {isFullComment ? <span className="text-emerald-400 font-semibold">{matchedStr}</span> : tokenizeSnippet(matchedStr, `hl-${m.start}`)}
+      </mark>
+    );
+
+    cursor = m.end;
+  });
+
+  if (cursor < line.length) {
+    const tail = line.substring(cursor);
+    fragments.push(
+      <React.Fragment key={`tail-${cursor}`}>
+        {isFullComment ? <span className="text-emerald-400 font-semibold">{tail}</span> : tokenizeSnippet(tail, `tail-${cursor}`)}
+      </React.Fragment>
+    );
+  }
+
+  return <>{fragments}</>;
+}
+
+/**
+ * دالة مساعدة لتلوين مقطع كود كامل مع ترقيم الأسطر والتفاف منسق ودعم التظليلات
+ */
+export function HighlightedCodeView({ 
+  code = "", 
+  maxLines = null, 
+  highlights = [], 
+  onHighlightClick = null 
+}) {
   if (!code || typeof code !== 'string') return null;
 
   const lines = code.trim().split('\n');
   const displayLines = maxLines ? lines.slice(0, maxLines) : lines;
 
   return (
-    <div className="font-mono text-xs leading-relaxed overflow-x-auto select-text text-left" dir="ltr">
+    <div 
+      data-code-block="true" 
+      data-lesson-script="true" 
+      className="font-mono text-xs leading-relaxed overflow-x-auto select-text text-left" 
+      dir="ltr"
+    >
       {displayLines.map((line, idx) => (
         <div 
           key={idx} 
@@ -164,11 +266,10 @@ export function HighlightedCodeView({ code = "", maxLines = null }) {
             {idx + 1}
           </span>
           <span className="text-left whitespace-pre break-normal flex-1">
-            {highlightCodeLine(line)}
+            {highlightCodeLine(line, highlights, onHighlightClick)}
           </span>
         </div>
       ))}
     </div>
   );
 }
-

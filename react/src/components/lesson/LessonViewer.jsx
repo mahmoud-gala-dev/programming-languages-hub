@@ -115,17 +115,17 @@ export default function LessonViewer({
     }
   };
 
-  // دالة تحويل النصوص الخام إلى نصوص مظللة مرئياً وتفاعلياً (خاصة بنصوص الشرح فقط)
+  // دالة تحويل النصوص الخام إلى نصوص مظللة مرئياً وتفاعلياً (تدعم الشرح والأكواد والصيغ)
   const renderHighlightedContent = (rawText) => {
     if (!rawText || typeof rawText !== 'string') return rawText;
     if (!lessonHighlights || lessonHighlights.length === 0) return rawText;
 
-    // تصفية التظليلات الخاصة بالشرح فقط وتجاهل تظليلات الأكواد لمنع تظليل كلمات عشوائية
-    const explanationHighlights = lessonHighlights.filter(hl => hl.type !== 'code');
-    if (explanationHighlights.length === 0) return rawText;
+    // تطبيق كافة التظليلات المسجلة للمستخدم (الشرح والأكواد)
+    const activeHighlights = lessonHighlights;
+    if (activeHighlights.length === 0) return rawText;
 
     const matches = [];
-    explanationHighlights.forEach(hl => {
+    activeHighlights.forEach(hl => {
       const target = hl.text?.trim();
       if (!target || target.length < 2) return;
 
@@ -627,18 +627,23 @@ export default function LessonViewer({
         </div>
       )}
 
-      {/* 5. الصيغة العامة (Syntax) */}
+      {/* 5. الصيغة العامة (Syntax) مع دعم التظليل المباشر */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
         <h4 className="text-xs font-bold text-emerald-400 mb-3 flex items-center gap-2">
           <FileCode className="w-4 h-4" />
           5. الصيغة العامة والهيكل القياسي (General Syntax):
         </h4>
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-emerald-300 whitespace-pre-wrap leading-relaxed overflow-x-auto" dir="ltr">
-          {subtopic.syntax}
+        <div 
+          data-code-block="true" 
+          data-lesson-script="true" 
+          className="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-emerald-300 whitespace-pre-wrap leading-relaxed overflow-x-auto select-text" 
+          dir="ltr"
+        >
+          {renderHighlightedContent(subtopic.syntax)}
         </div>
       </div>
 
-      {/* 6. المثال العملي البسيط مع تعليق على كل سطر وملاحظات IndexedDB */}
+      {/* 6. المثال العملي البسيط مع تعليق على كل سطر وملاحظات وتظليلات تفاعلية */}
       <div className="space-y-2">
         <h4 className="text-xs font-bold text-slate-200 flex items-center gap-2">
           <Terminal className="w-4 h-4 text-cyan-400" />
@@ -649,10 +654,12 @@ export default function LessonViewer({
           title={`كود مبسط: ${subtopic.title}`} 
           language="javascript" 
           subtopicId={subtopic.id}
+          highlights={lessonHighlights}
+          onHighlightClick={handleHighlightClick}
         />
       </div>
 
-      {/* 7. المثال العملي المتقدم والتطبيقي */}
+      {/* 7. المثال العملي المتقدم والتطبيقي مع دعم التظليل والملاحظات */}
       <div className="space-y-2">
         <h4 className="text-xs font-bold text-slate-200 flex items-center gap-2">
           <Terminal className="w-4 h-4 text-indigo-400" />
@@ -663,6 +670,8 @@ export default function LessonViewer({
           title={`تطبيق عملي متقدم: ${subtopic.title}`} 
           language="javascript" 
           subtopicId={subtopic.id}
+          highlights={lessonHighlights}
+          onHighlightClick={handleHighlightClick}
         />
       </div>
 
@@ -733,8 +742,13 @@ export default function LessonViewer({
         </div>
       )}
 
-      {/* 11. بطاقة الإنفوجرافيك التفاعلية الشاملة القابلة للتنزيل والمعاينة */}
-      <InfographicCard subtopic={subtopic} onOpenGallery={onOpenInfographicGallery} />
+      {/* 11. بطاقة الإنفوجرافيك التفاعلية الشاملة القابلة للتنزيل والمعاينة مع دعم التظليلات */}
+      <InfographicCard 
+        subtopic={subtopic} 
+        onOpenGallery={onOpenInfographicGallery} 
+        highlights={lessonHighlights}
+        onHighlightClick={handleHighlightClick}
+      />
 
       {/* بطاقة الاحتفال بإتمام قراءة محتوى الدرس عند التمرير لنهايته */}
       {scrollProgress >= 95 && (

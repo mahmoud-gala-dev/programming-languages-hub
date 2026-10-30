@@ -43,7 +43,9 @@ export default function CodeBlock({
   code = "", 
   title = "شفرة برمجية توضيحية", 
   language = "javascript",
-  subtopicId = "general"
+  subtopicId = "general",
+  highlights = [],
+  onHighlightClick = null
 }) {
   const showToast = useToast();
   const [copied, setCopied] = useState(false);
@@ -308,14 +310,14 @@ export default function CodeBlock({
           dir="ltr"
           style={{ fontSize: `${fontSize}px` }}
         >
-          <pre className="m-0 p-0 text-left font-mono">
+          <pre className="m-0 p-0 text-left font-mono select-text">
             {lines.map((line, idx) => (
               <div key={idx} className="table-row hover:bg-slate-800/40 transition-colors">
                 <span className="table-cell select-none pr-4 text-slate-600 text-right font-mono text-[11px] w-9">
                   {idx + 1}
                 </span>
                 <span className="table-cell whitespace-pre font-mono">
-                  {highlightCodeLine(line)}
+                  {highlightCodeLine(line, highlights, onHighlightClick)}
                 </span>
               </div>
             ))}
@@ -505,9 +507,9 @@ export default function CodeBlock({
                         <span className="hidden group-hover:inline text-cyan-300 font-bold">+{lineNum}</span>
                       </span>
 
-                      {/* سطر الكود البرمجي مع التمييز اللوني */}
+                      {/* سطر الكود البرمجي مع التمييز اللوني ودعم التظليلات */}
                       <span className="table-cell font-mono pr-4">
-                        {highlightCodeLine(line)}
+                        {highlightCodeLine(line, highlights, onHighlightClick)}
                         
                         {/* شارات الملاحظات المسجلة بجانب السطر */}
                         {lineNotes.length > 0 && (

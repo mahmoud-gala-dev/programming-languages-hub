@@ -30,7 +30,9 @@ export default function InfographicCard({
   subtopic, 
   sectionData = null, 
   onOpenGallery = null,
-  overrideTheme = null 
+  overrideTheme = null,
+  highlights = [],
+  onHighlightClick = null
 }) {
   const cardRef = useRef(null);
   const [downloading, setDownloading] = useState(false);
@@ -366,7 +368,11 @@ ${info.pitfall}`;
               <span className="font-mono text-[10px] text-slate-500">JavaScript / React JSX</span>
             </div>
             <div className="bg-[#060a12] rounded-2xl border border-slate-850/90 p-3 sm:p-4 overflow-x-auto shadow-inner">
-              <HighlightedCodeView code={info.codeSnippet} />
+              <HighlightedCodeView 
+                code={info.codeSnippet} 
+                highlights={highlights}
+                onHighlightClick={onHighlightClick}
+              />
             </div>
           </div>
         )}
