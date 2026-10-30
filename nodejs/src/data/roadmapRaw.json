@@ -1,0 +1,1778 @@
+{
+  "title": "خريطة الطريق الشاملة لتعلم Node.js من الصفر إلى الاحتراف",
+  "description": "منهج تعليمي متكامل لتعلم Node.js وتطوير تطبيقات Backend وREST APIs وقواعد البيانات والمصادقة والأمان والاختبارات والنشر والأنظمة المتقدمة. يبدأ بالمفاهيم الأساسية ولغة JavaScript، ثم ينتقل تدريجياً إلى بناء تطبيقات حقيقية قابلة للنشر والتوسع، مع مشروعات عملية في كل مرحلة.",
+  "sections": [
+    {
+      "id": 1,
+      "title": "القسم الأول: أساسيات البرمجة وتطوير الويب",
+      "englishTitle": "Web Development Fundamentals",
+      "mainIndices": [
+        {
+          "title": "مقدمة في تطوير الويب",
+          "subIndices": [
+            { "title": "ما هو تطوير الويب؟" },
+            { "title": "الفرق بين Frontend وBackend" },
+            { "title": "كيف يعمل المتصفح والخادم؟" },
+            { "title": "مفهوم Client وServer" },
+            { "title": "مفهوم Request وResponse" },
+            { "title": "كيف تنتقل البيانات عبر الإنترنت؟" }
+          ]
+        },
+        {
+          "title": "أساسيات الإنترنت والشبكات",
+          "subIndices": [
+            { "title": "ما هو عنوان IP؟" },
+            { "title": "ما هو DNS وكيف يعمل؟" },
+            { "title": "مفهوم Domain وHosting" },
+            { "title": "الفرق بين HTTP وHTTPS" },
+            { "title": "مفهوم TCP وUDP" },
+            { "title": "ما هي المنافذ Ports؟" },
+            { "title": "ما هي بروتوكولات الاتصال؟" }
+          ]
+        },
+        {
+          "title": "أساسيات واجهات البرمجة",
+          "subIndices": [
+            { "title": "ما هي API؟" },
+            { "title": "الفرق بين API وREST API" },
+            { "title": "ما هو JSON؟" },
+            { "title": "مفهوم Endpoint" },
+            { "title": "مفهوم CRUD" },
+            { "title": "دورة حياة طلب HTTP" }
+          ]
+        },
+        {
+          "title": "أساسيات سطر الأوامر",
+          "subIndices": [
+            { "title": "ما هو Terminal؟" },
+            { "title": "الفرق بين CMD وPowerShell وBash" },
+            { "title": "التنقل بين المجلدات" },
+            { "title": "إنشاء الملفات والمجلدات وحذفها" },
+            { "title": "التعامل مع المسارات" },
+            { "title": "تشغيل البرامج من سطر الأوامر" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "القسم الثاني: التعرف على Node.js وإعداد بيئة العمل",
+      "englishTitle": "Introduction to Node.js & Setup",
+      "mainIndices": [
+        {
+          "title": "مقدمة في Node.js",
+          "subIndices": [
+            { "title": "ما هو Node.js؟" },
+            { "title": "لماذا نستخدم Node.js؟" },
+            { "title": "الفرق بين Node.js وJavaScript" },
+            { "title": "الفرق بين Node.js والمتصفح" },
+            { "title": "محرك V8 ودوره في تشغيل JavaScript" },
+            { "title": "المفهوم الأساسي للبرمجة غير المتزامنة" },
+            { "title": "استخدامات Node.js ومتى لا يُفضّل استخدامه" }
+          ]
+        },
+        {
+          "title": "تثبيت Node.js",
+          "subIndices": [
+            { "title": "تحميل Node.js من الموقع الرسمي" },
+            { "title": "الفرق بين إصدارات LTS وCurrent" },
+            { "title": "تثبيت Node.js على Windows" },
+            { "title": "تثبيت Node.js على Linux وmacOS" },
+            { "title": "التحقق من تثبيت Node.js وnpm" },
+            { "title": "إدارة إصدارات Node.js باستخدام nvm" }
+          ]
+        },
+        {
+          "title": "إعداد محرر الأكواد",
+          "subIndices": [
+            { "title": "تثبيت Visual Studio Code" },
+            { "title": "الإضافات المفيدة لتطوير Node.js" },
+            { "title": "استخدام Terminal داخل VS Code" },
+            { "title": "تشغيل أول برنامج JavaScript" },
+            { "title": "استخدام console.log" },
+            { "title": "التعرف على رسائل الأخطاء" }
+          ]
+        },
+        {
+          "title": "تشغيل أول مشروع Node.js",
+          "subIndices": [
+            { "title": "إنشاء مجلد المشروع" },
+            { "title": "إنشاء ملف index.js" },
+            { "title": "تشغيل الملف باستخدام node" },
+            { "title": "التعامل مع REPL" },
+            { "title": "إنشاء برنامج ترحيب تفاعلي" },
+            { "title": "تنظيم ملفات المشروع الأول" }
+          ]
+        },
+        {
+          "title": "مقدمة في Git وGitHub",
+          "subIndices": [
+            { "title": "ما هو Git ولماذا نستخدمه؟" },
+            { "title": "إنشاء مستودع Git" },
+            { "title": "أوامر add وcommit وstatus" },
+            { "title": "التعامل مع Branches" },
+            { "title": "رفع مشروع Node.js إلى GitHub" },
+            { "title": "إنشاء ملف .gitignore" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "القسم الثالث: أساسيات JavaScript اللازمة لتعلم Node.js",
+      "englishTitle": "JavaScript Fundamentals for Node.js",
+      "mainIndices": [
+        {
+          "title": "المتغيرات وأنواع البيانات",
+          "subIndices": [
+            { "title": "تعريف المتغيرات باستخدام let وconst" },
+            { "title": "الفرق بين var وlet وconst" },
+            { "title": "أنواع البيانات الأساسية" },
+            { "title": "String وNumber وBoolean" },
+            { "title": "null وundefined" },
+            { "title": "التحويل بين أنواع البيانات" },
+            { "title": "استخدام typeof" }
+          ]
+        },
+        {
+          "title": "العمليات والشروط",
+          "subIndices": [
+            { "title": "العمليات الحسابية" },
+            { "title": "عمليات المقارنة" },
+            { "title": "الفرق بين == و===" },
+            { "title": "العمليات المنطقية" },
+            { "title": "استخدام if وelse" },
+            { "title": "استخدام switch" },
+            { "title": "استخدام Ternary Operator" },
+            { "title": "التعامل مع القيم Truthy وFalsy" }
+          ]
+        },
+        {
+          "title": "الحلقات التكرارية",
+          "subIndices": [
+            { "title": "استخدام for" },
+            { "title": "استخدام while" },
+            { "title": "استخدام do while" },
+            { "title": "استخدام for...of" },
+            { "title": "استخدام for...in" },
+            { "title": "استخدام break وcontinue" },
+            { "title": "تطبيق عملي على معالجة قائمة بيانات" }
+          ]
+        },
+        {
+          "title": "الدوال Functions",
+          "subIndices": [
+            { "title": "ما هي الدوال؟" },
+            { "title": "تعريف Function Declaration" },
+            { "title": "استخدام Function Expression" },
+            { "title": "استخدام Arrow Functions" },
+            { "title": "المعاملات Parameters والوسائط Arguments" },
+            { "title": "القيم الافتراضية للمعاملات" },
+            { "title": "استخدام return" },
+            { "title": "مفهوم Scope وClosures" }
+          ]
+        },
+        {
+          "title": "المصفوفات Arrays",
+          "subIndices": [
+            { "title": "إنشاء المصفوفات والوصول للعناصر" },
+            { "title": "استخدام push وpop وshift وunshift" },
+            { "title": "استخدام map" },
+            { "title": "استخدام filter" },
+            { "title": "استخدام find وfindIndex" },
+            { "title": "استخدام reduce" },
+            { "title": "استخدام forEach وsome وevery" },
+            { "title": "فرز البيانات باستخدام sort" }
+          ]
+        },
+        {
+          "title": "الكائنات Objects",
+          "subIndices": [
+            { "title": "إنشاء الكائنات" },
+            { "title": "قراءة خصائص الكائن وتعديلها" },
+            { "title": "الفرق بين Dot وBracket Notation" },
+            { "title": "استخدام Object.keys وObject.values" },
+            { "title": "استخدام Destructuring" },
+            { "title": "استخدام Spread وRest Operators" },
+            { "title": "استخدام Optional Chaining" },
+            { "title": "تحويل الكائنات إلى JSON والعكس" }
+          ]
+        },
+        {
+          "title": "مفاهيم JavaScript المتوسطة",
+          "subIndices": [
+            { "title": "مفهوم Hoisting" },
+            { "title": "مفهوم Lexical Scope" },
+            { "title": "فهم this" },
+            { "title": "استخدام call وapply وbind" },
+            { "title": "مفهوم Prototype" },
+            { "title": "إنشاء Classes" },
+            { "title": "مفهوم Inheritance" },
+            { "title": "التعامل مع Map وSet" },
+            { "title": "مفهوم Immutability" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "القسم الرابع: JavaScript غير المتزامنة وEvent Loop",
+      "englishTitle": "Asynchronous JavaScript & Event Loop",
+      "mainIndices": [
+        {
+          "title": "مقدمة في Asynchronous Programming",
+          "subIndices": [
+            { "title": "الفرق بين Synchronous وAsynchronous" },
+            { "title": "مفهوم Blocking وNon-Blocking" },
+            { "title": "لماذا تحتاج Node.js إلى العمليات غير المتزامنة؟" },
+            { "title": "مثال واقعي على انتظار قاعدة البيانات" },
+            { "title": "فهم Concurrency وParallelism" }
+          ]
+        },
+        {
+          "title": "Callbacks",
+          "subIndices": [
+            { "title": "ما هي Callback Function؟" },
+            { "title": "تمرير دالة إلى دالة أخرى" },
+            { "title": "استخدام Callbacks في Node.js" },
+            { "title": "مفهوم Error-First Callback" },
+            { "title": "مشكلة Callback Hell" },
+            { "title": "طرق تنظيم Callbacks" }
+          ]
+        },
+        {
+          "title": "Promises",
+          "subIndices": [
+            { "title": "ما هي Promise؟" },
+            { "title": "حالات Promise الثلاث" },
+            { "title": "استخدام then وcatch وfinally" },
+            { "title": "إنشاء Promise يدوياً" },
+            { "title": "استخدام Promise.all" },
+            { "title": "استخدام Promise.allSettled" },
+            { "title": "استخدام Promise.race وPromise.any" },
+            { "title": "معالجة رفض الوعود" }
+          ]
+        },
+        {
+          "title": "Async وAwait",
+          "subIndices": [
+            { "title": "تعريف async function" },
+            { "title": "استخدام await" },
+            { "title": "التعامل مع try وcatch" },
+            { "title": "تنفيذ العمليات بالتتابع" },
+            { "title": "تنفيذ العمليات بالتوازي" },
+            { "title": "إدارة الأخطاء غير المتزامنة" },
+            { "title": "إلغاء العمليات باستخدام AbortController" }
+          ]
+        },
+        {
+          "title": "فهم Event Loop",
+          "subIndices": [
+            { "title": "ما هو Event Loop؟" },
+            { "title": "مفهوم Call Stack" },
+            { "title": "مفهوم Task Queues" },
+            { "title": "Microtasks وPromises" },
+            { "title": "مراحل Event Loop في Node.js" },
+            { "title": "الفرق بين setTimeout وsetImmediate" },
+            { "title": "استخدام process.nextTick" },
+            { "title": "أسباب تعطيل Event Loop" },
+            { "title": "تطبيق عملي لفهم ترتيب التنفيذ" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "القسم الخامس: إدارة المشاريع والحزم والوحدات",
+      "englishTitle": "Packages, Modules & Project Management",
+      "mainIndices": [
+        {
+          "title": "مدير الحزم npm",
+          "subIndices": [
+            { "title": "ما هو npm؟" },
+            { "title": "إنشاء مشروع باستخدام npm init" },
+            { "title": "فهم ملف package.json" },
+            { "title": "فهم package-lock.json" },
+            { "title": "تثبيت الحزم باستخدام npm install" },
+            { "title": "إزالة الحزم وتحديثها" },
+            { "title": "فهم dependencies وdevDependencies" },
+            { "title": "استخدام npm scripts" }
+          ]
+        },
+        {
+          "title": "إدارة الإصدارات والاعتماديات",
+          "subIndices": [
+            { "title": "فهم Semantic Versioning" },
+            { "title": "معنى ^ و~ في الإصدارات" },
+            { "title": "استخدام npm ci" },
+            { "title": "فحص الاعتماديات باستخدام npm audit" },
+            { "title": "فهم الاعتماديات المباشرة وغير المباشرة" },
+            { "title": "تجنب مشاكل Dependency Conflicts" },
+            { "title": "مقارنة npm وpnpm وYarn" }
+          ]
+        },
+        {
+          "title": "نظام الوحدات Modules",
+          "subIndices": [
+            { "title": "ما هي Modules؟" },
+            { "title": "مفهوم CommonJS" },
+            { "title": "استخدام require وmodule.exports" },
+            { "title": "مفهوم ES Modules" },
+            { "title": "استخدام import وexport" },
+            { "title": "الفرق بين CommonJS وESM" },
+            { "title": "استخدام ملفات .mjs و.cjs" },
+            { "title": "تنظيم المشروع باستخدام Modules" },
+            { "title": "حل مسارات استيراد الحزم" }
+          ]
+        },
+        {
+          "title": "أدوات تحسين بيئة التطوير",
+          "subIndices": [
+            { "title": "إعادة التشغيل التلقائي باستخدام node --watch" },
+            { "title": "استخدام Nodemon عند الحاجة" },
+            { "title": "إدارة المتغيرات البيئية باستخدام ملفات .env" },
+            { "title": "استخدام دعم Node.js المدمج لملفات البيئة" },
+            { "title": "تنسيق الأكواد باستخدام Prettier" },
+            { "title": "فحص الأكواد باستخدام ESLint" },
+            { "title": "إعداد Git Hooks" }
+          ]
+        },
+        {
+          "title": "إنشاء حزم Node.js",
+          "subIndices": [
+            { "title": "إنشاء مكتبة JavaScript قابلة لإعادة الاستخدام" },
+            { "title": "إعداد exports في package.json" },
+            { "title": "إنشاء Command Line Package" },
+            { "title": "كتابة README وتوثيق الحزمة" },
+            { "title": "نشر حزمة على npm" },
+            { "title": "تحديث الحزمة وإدارة إصداراتها" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "القسم السادس: الوحدات الأساسية في Node.js",
+      "englishTitle": "Node.js Core Modules",
+      "mainIndices": [
+        {
+          "title": "التعامل مع نظام التشغيل",
+          "subIndices": [
+            { "title": "مقدمة في Core Modules" },
+            { "title": "استخدام node:os" },
+            { "title": "الحصول على معلومات النظام" },
+            { "title": "استخدام node:process" },
+            { "title": "قراءة process.argv" },
+            { "title": "قراءة process.env" },
+            { "title": "فهم إشارات التشغيل وإيقاف العملية" }
+          ]
+        },
+        {
+          "title": "التعامل مع المسارات والروابط",
+          "subIndices": [
+            { "title": "استخدام node:path" },
+            { "title": "استخدام path.join" },
+            { "title": "استخدام path.resolve" },
+            { "title": "استخدام basename وdirname وextname" },
+            { "title": "التعامل مع المسارات النسبية والمطلقة" },
+            { "title": "استخدام node:url" },
+            { "title": "قراءة وتحليل URL" }
+          ]
+        },
+        {
+          "title": "التعامل مع الملفات File System",
+          "subIndices": [
+            { "title": "مقدمة في node:fs" },
+            { "title": "قراءة الملفات باستخدام readFile" },
+            { "title": "كتابة الملفات باستخدام writeFile" },
+            { "title": "إضافة محتوى باستخدام appendFile" },
+            { "title": "إنشاء المجلدات وحذفها" },
+            { "title": "إعادة تسمية الملفات ونقلها" },
+            { "title": "استخدام node:fs/promises" },
+            { "title": "مراقبة تغير الملفات" },
+            { "title": "التعامل الآمن مع أخطاء الملفات" }
+          ]
+        },
+        {
+          "title": "الأحداث EventEmitter",
+          "subIndices": [
+            { "title": "مفهوم Event-Driven Architecture" },
+            { "title": "استخدام node:events" },
+            { "title": "إنشاء EventEmitter" },
+            { "title": "تسجيل الأحداث باستخدام on" },
+            { "title": "إطلاق الأحداث باستخدام emit" },
+            { "title": "استخدام once" },
+            { "title": "إلغاء الاشتراك باستخدام off" },
+            { "title": "التعامل مع أحداث الأخطاء" }
+          ]
+        },
+        {
+          "title": "التعامل مع البيانات الثنائية",
+          "subIndices": [
+            { "title": "ما هو Buffer؟" },
+            { "title": "إنشاء Buffer" },
+            { "title": "التحويل بين النصوص وBuffer" },
+            { "title": "فهم UTF-8 وBase64" },
+            { "title": "مقدمة في Streams" },
+            { "title": "الفرق بين Buffer وStream" },
+            { "title": "مفهوم Backpressure" }
+          ]
+        },
+        {
+          "title": "أدوات Node.js الإضافية",
+          "subIndices": [
+            { "title": "استخدام node:util" },
+            { "title": "استخدام node:timers/promises" },
+            { "title": "قراءة مدخلات المستخدم باستخدام readline" },
+            { "title": "التعامل مع الضغط باستخدام node:zlib" },
+            { "title": "استخدام node:crypto" },
+            { "title": "مقدمة في Child Processes" },
+            { "title": "الفرق بين exec وspawn" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "القسم السابع: بناء خوادم HTTP باستخدام Node.js",
+      "englishTitle": "Building HTTP Servers with Node.js",
+      "mainIndices": [
+        {
+          "title": "مقدمة في HTTP Server",
+          "subIndices": [
+            { "title": "كيف يعمل خادم الويب؟" },
+            { "title": "استخدام node:http" },
+            { "title": "إنشاء أول HTTP Server" },
+            { "title": "استخدام createServer" },
+            { "title": "التعامل مع req وres" },
+            { "title": "تشغيل الخادم باستخدام listen" }
+          ]
+        },
+        {
+          "title": "فهم HTTP Requests",
+          "subIndices": [
+            { "title": "مفهوم HTTP Methods" },
+            { "title": "الفرق بين GET وPOST" },
+            { "title": "استخدام PUT وPATCH وDELETE" },
+            { "title": "قراءة Request Headers" },
+            { "title": "قراءة Query Parameters" },
+            { "title": "قراءة Route Parameters" },
+            { "title": "قراءة Request Body" }
+          ]
+        },
+        {
+          "title": "فهم HTTP Responses",
+          "subIndices": [
+            { "title": "مفهوم HTTP Status Codes" },
+            { "title": "أكواد النجاح 2xx" },
+            { "title": "أكواد التوجيه 3xx" },
+            { "title": "أكواد أخطاء العميل 4xx" },
+            { "title": "أكواد أخطاء الخادم 5xx" },
+            { "title": "تحديد Response Headers" },
+            { "title": "إرسال JSON Response" },
+            { "title": "إرسال HTML Response" }
+          ]
+        },
+        {
+          "title": "إدارة المسارات Routing",
+          "subIndices": [
+            { "title": "ما هو Routing؟" },
+            { "title": "إنشاء مسارات متعددة" },
+            { "title": "التوجيه حسب HTTP Method" },
+            { "title": "استخراج المعاملات من URL" },
+            { "title": "معالجة المسارات غير الموجودة" },
+            { "title": "تنظيم المسارات داخل ملفات مستقلة" }
+          ]
+        },
+        {
+          "title": "مشروع عملي: خادم منتجات",
+          "subIndices": [
+            { "title": "إنشاء بيانات منتجات تجريبية" },
+            { "title": "إنشاء API لعرض المنتجات" },
+            { "title": "البحث عن منتج باستخدام ID" },
+            { "title": "إضافة منتج باستخدام POST" },
+            { "title": "تعديل منتج باستخدام PUT" },
+            { "title": "حذف منتج باستخدام DELETE" },
+            { "title": "اختبار الخادم باستخدام Postman" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "القسم الثامن: احتراف Express.js وبناء REST APIs",
+      "englishTitle": "Mastering Express.js & RESTful APIs",
+      "mainIndices": [
+        {
+          "title": "مقدمة في Express.js",
+          "subIndices": [
+            { "title": "ما هو Express.js؟" },
+            { "title": "الفرق بين Express وNode.js" },
+            { "title": "تثبيت Express" },
+            { "title": "إنشاء أول Express Server" },
+            { "title": "استخدام app.get وapp.post" },
+            { "title": "إعداد ملفات المشروع" }
+          ]
+        },
+        {
+          "title": "Routing باستخدام Express",
+          "subIndices": [
+            { "title": "إنشاء Routes" },
+            { "title": "استخدام req.params" },
+            { "title": "استخدام req.query" },
+            { "title": "استخدام req.body" },
+            { "title": "إنشاء Router مستقل" },
+            { "title": "تقسيم المسارات حسب الموارد" },
+            { "title": "معالجة مسارات 404" }
+          ]
+        },
+        {
+          "title": "Middleware",
+          "subIndices": [
+            { "title": "ما هي Middleware؟" },
+            { "title": "فهم ترتيب تنفيذ Middleware" },
+            { "title": "استخدام app.use" },
+            { "title": "استخدام next" },
+            { "title": "Middleware لتسجيل الطلبات" },
+            { "title": "Middleware للتحقق من البيانات" },
+            { "title": "Middleware للمصادقة" },
+            { "title": "Middleware لمعالجة الأخطاء" },
+            { "title": "إنشاء Middleware مخصصة" }
+          ]
+        },
+        {
+          "title": "تصميم RESTful APIs",
+          "subIndices": [
+            { "title": "مبادئ REST" },
+            { "title": "اختيار أسماء Endpoints" },
+            { "title": "تنفيذ عمليات CRUD" },
+            { "title": "استخدام Status Codes الصحيحة" },
+            { "title": "تنظيم صيغة استجابات API" },
+            { "title": "تنفيذ Pagination" },
+            { "title": "تنفيذ Filtering وSorting" },
+            { "title": "تنفيذ Search" },
+            { "title": "إدارة إصدارات API" }
+          ]
+        },
+        {
+          "title": "التحقق من البيانات ومعالجة الأخطاء",
+          "subIndices": [
+            { "title": "مفهوم Input Validation" },
+            { "title": "استخدام Zod" },
+            { "title": "استخدام Joi كبديل" },
+            { "title": "الفرق بين Validation وSanitization" },
+            { "title": "إنشاء Custom Error Classes" },
+            { "title": "إنشاء Global Error Handler" },
+            { "title": "توحيد رسائل الأخطاء" },
+            { "title": "منع تسريب التفاصيل الحساسة" }
+          ]
+        },
+        {
+          "title": "توثيق واختبار API",
+          "subIndices": [
+            { "title": "استخدام Postman" },
+            { "title": "استخدام Thunder Client" },
+            { "title": "إنشاء Postman Collections" },
+            { "title": "فهم OpenAPI Specification" },
+            { "title": "توثيق API باستخدام Swagger UI" },
+            { "title": "إضافة أمثلة للطلبات والاستجابات" },
+            { "title": "توثيق أخطاء API" }
+          ]
+        },
+        {
+          "title": "التعرف على أطر عمل أخرى",
+          "subIndices": [
+            { "title": "مقدمة في Fastify" },
+            { "title": "الفرق بين Express وFastify" },
+            { "title": "مقدمة في NestJS" },
+            { "title": "Controllers وProviders في NestJS" },
+            { "title": "مفهوم Dependency Injection" },
+            { "title": "معايير اختيار إطار العمل المناسب" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "القسم التاسع: استخدام TypeScript مع Node.js",
+      "englishTitle": "TypeScript with Node.js",
+      "mainIndices": [
+        {
+          "title": "أساسيات TypeScript",
+          "subIndices": [
+            { "title": "ما هي TypeScript؟" },
+            { "title": "الفرق بين JavaScript وTypeScript" },
+            { "title": "أنواع البيانات في TypeScript" },
+            { "title": "استخدام Type Annotations" },
+            { "title": "استخدام Union Types" },
+            { "title": "استخدام Literal Types" },
+            { "title": "الفرق بين any وunknown" }
+          ]
+        },
+        {
+          "title": "الكائنات والأنواع المتقدمة",
+          "subIndices": [
+            { "title": "تعريف Interfaces" },
+            { "title": "استخدام Type Aliases" },
+            { "title": "الفرق بين Interface وType" },
+            { "title": "استخدام Generics" },
+            { "title": "استخدام Utility Types" },
+            { "title": "استخدام Enums" },
+            { "title": "استخدام Type Guards" },
+            { "title": "مفهوم Narrowing" }
+          ]
+        },
+        {
+          "title": "إعداد TypeScript في Node.js",
+          "subIndices": [
+            { "title": "إنشاء مشروع Node.js باستخدام TypeScript" },
+            { "title": "تثبيت وإعداد TypeScript Compiler" },
+            { "title": "فهم ملف tsconfig.json" },
+            { "title": "تشغيل TypeScript باستخدام الأدوات المناسبة" },
+            { "title": "فهم دعم Node.js المدمج لأنواع TypeScript" },
+            { "title": "الفرق بين Type Stripping والتحويل البرمجي" },
+            { "title": "إعداد Build Scripts" },
+            { "title": "استخدام Type Definitions" }
+          ]
+        },
+        {
+          "title": "TypeScript مع Express",
+          "subIndices": [
+            { "title": "إضافة أنواع Request وResponse" },
+            { "title": "كتابة Typed Controllers" },
+            { "title": "إنشاء Interfaces للبيانات" },
+            { "title": "إنشاء DTOs" },
+            { "title": "التحقق من البيانات أثناء التشغيل" },
+            { "title": "إدارة أخطاء الأنواع" },
+            { "title": "تنظيم مشروع TypeScript احترافي" }
+          ]
+        },
+        {
+          "title": "مشروع عملي باستخدام TypeScript",
+          "subIndices": [
+            { "title": "إنشاء API لإدارة المهام" },
+            { "title": "تعريف أنواع المستخدمين والمهام" },
+            { "title": "إنشاء Typed Services" },
+            { "title": "تنفيذ Validation" },
+            { "title": "كتابة اختبارات TypeScript" },
+            { "title": "بناء المشروع وتشغيله" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "القسم العاشر: قواعد البيانات العلائقية SQL",
+      "englishTitle": "Relational Databases & SQL",
+      "mainIndices": [
+        {
+          "title": "مقدمة في قواعد البيانات",
+          "subIndices": [
+            { "title": "ما هي قاعدة البيانات؟" },
+            { "title": "الفرق بين SQL وNoSQL" },
+            { "title": "مفهوم Tables وRows وColumns" },
+            { "title": "مفهوم Primary Key" },
+            { "title": "مفهوم Foreign Key" },
+            { "title": "العلاقات بين الجداول" },
+            { "title": "مفهوم Data Integrity" }
+          ]
+        },
+        {
+          "title": "تعلم SQL",
+          "subIndices": [
+            { "title": "إنشاء قواعد البيانات والجداول" },
+            { "title": "استخدام SELECT" },
+            { "title": "استخدام INSERT" },
+            { "title": "استخدام UPDATE" },
+            { "title": "استخدام DELETE" },
+            { "title": "استخدام WHERE وORDER BY" },
+            { "title": "استخدام GROUP BY وHAVING" },
+            { "title": "استخدام JOIN بأنواعه" },
+            { "title": "استخدام Subqueries" },
+            { "title": "مفهوم Indexes" }
+          ]
+        },
+        {
+          "title": "PostgreSQL مع Node.js",
+          "subIndices": [
+            { "title": "تثبيت PostgreSQL" },
+            { "title": "إنشاء قاعدة بيانات" },
+            { "title": "استخدام pg" },
+            { "title": "إنشاء Connection Pool" },
+            { "title": "تنفيذ SQL Queries" },
+            { "title": "استخدام Parameterized Queries" },
+            { "title": "منع SQL Injection" },
+            { "title": "إدارة أخطاء الاتصال" }
+          ]
+        },
+        {
+          "title": "تصميم قواعد البيانات",
+          "subIndices": [
+            { "title": "مفهوم Database Schema" },
+            { "title": "العلاقات One-to-One" },
+            { "title": "العلاقات One-to-Many" },
+            { "title": "العلاقات Many-to-Many" },
+            { "title": "مفهوم Database Normalization" },
+            { "title": "تصميم ERD" },
+            { "title": "اختيار أنواع البيانات المناسبة" },
+            { "title": "تطبيق القيود Constraints" }
+          ]
+        },
+        {
+          "title": "استخدام ORM",
+          "subIndices": [
+            { "title": "ما هو ORM؟" },
+            { "title": "الفرق بين ORM وRaw SQL" },
+            { "title": "مقدمة في Prisma" },
+            { "title": "تعريف Prisma Schema" },
+            { "title": "تنفيذ CRUD باستخدام Prisma" },
+            { "title": "إنشاء العلاقات بين Models" },
+            { "title": "استخدام Migrations" },
+            { "title": "التعرف على Drizzle ORM" },
+            { "title": "اختيار ORM المناسب" }
+          ]
+        },
+        {
+          "title": "المعاملات وتحسين الاستعلامات",
+          "subIndices": [
+            { "title": "مفهوم Database Transactions" },
+            { "title": "خصائص ACID" },
+            { "title": "استخدام COMMIT وROLLBACK" },
+            { "title": "فهم Isolation Levels" },
+            { "title": "مشكلة N+1 Queries" },
+            { "title": "تحليل الاستعلامات باستخدام EXPLAIN" },
+            { "title": "تحسين Indexes" },
+            { "title": "إدارة Connection Pool بكفاءة" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "القسم الحادي عشر: قواعد بيانات NoSQL والتخزين المؤقت",
+      "englishTitle": "NoSQL Databases & Redis Caching",
+      "mainIndices": [
+        {
+          "title": "مقدمة في NoSQL",
+          "subIndices": [
+            { "title": "ما هي NoSQL؟" },
+            { "title": "متى نستخدم NoSQL؟" },
+            { "title": "الفرق بين Document وRelational Databases" },
+            { "title": "مفهوم Collections وDocuments" },
+            { "title": "مقارنة MongoDB وPostgreSQL" }
+          ]
+        },
+        {
+          "title": "MongoDB",
+          "subIndices": [
+            { "title": "تثبيت MongoDB أو استخدام Atlas" },
+            { "title": "إنشاء Database وCollection" },
+            { "title": "إضافة Documents" },
+            { "title": "قراءة البيانات باستخدام find" },
+            { "title": "تحديث البيانات باستخدام updateOne" },
+            { "title": "حذف البيانات باستخدام deleteOne" },
+            { "title": "استخدام Aggregation Pipeline" },
+            { "title": "إنشاء Indexes" }
+          ]
+        },
+        {
+          "title": "Mongoose مع Node.js",
+          "subIndices": [
+            { "title": "تثبيت Mongoose" },
+            { "title": "إنشاء اتصال MongoDB" },
+            { "title": "تعريف Schema" },
+            { "title": "إنشاء Models" },
+            { "title": "تنفيذ CRUD باستخدام Mongoose" },
+            { "title": "استخدام Validation" },
+            { "title": "إنشاء العلاقات باستخدام populate" },
+            { "title": "استخدام Middleware وHooks" }
+          ]
+        },
+        {
+          "title": "Redis والتخزين المؤقت",
+          "subIndices": [
+            { "title": "ما هو Redis؟" },
+            { "title": "الفرق بين Cache وDatabase" },
+            { "title": "الاتصال بـ Redis من Node.js" },
+            { "title": "استخدام SET وGET" },
+            { "title": "إدارة TTL" },
+            { "title": "تطبيق Cache-Aside Pattern" },
+            { "title": "إبطال البيانات المخزنة Cache Invalidation" },
+            { "title": "استخدام Redis في Rate Limiting" }
+          ]
+        },
+        {
+          "title": "تطبيقات قواعد البيانات",
+          "subIndices": [
+            { "title": "إنشاء API للمستخدمين باستخدام PostgreSQL" },
+            { "title": "إنشاء API للمقالات باستخدام MongoDB" },
+            { "title": "إضافة Pagination من قاعدة البيانات" },
+            { "title": "إضافة البحث والفلترة" },
+            { "title": "تخزين نتائج الاستعلامات في Redis" },
+            { "title": "مقارنة أداء قواعد البيانات" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "القسم الثاني عشر: المصادقة والتفويض وأمان التطبيقات",
+      "englishTitle": "Authentication, Authorization & Security",
+      "mainIndices": [
+        {
+          "title": "مفاهيم المصادقة والتفويض",
+          "subIndices": [
+            { "title": "الفرق بين Authentication وAuthorization" },
+            { "title": "بناء نظام Registration" },
+            { "title": "بناء نظام Login" },
+            { "title": "مفهوم Sessions" },
+            { "title": "مفهوم Cookies" },
+            { "title": "مفهوم Access Token وRefresh Token" }
+          ]
+        },
+        {
+          "title": "تشفير كلمات المرور",
+          "subIndices": [
+            { "title": "الفرق بين Hashing وEncryption" },
+            { "title": "مفهوم Salt" },
+            { "title": "استخدام bcrypt أو Argon2" },
+            { "title": "التحقق من كلمات المرور" },
+            { "title": "سياسات كلمات المرور الآمنة" },
+            { "title": "إعادة تعيين كلمة المرور" },
+            { "title": "منع هجمات Brute Force" }
+          ]
+        },
+        {
+          "title": "JWT Authentication",
+          "subIndices": [
+            { "title": "ما هو JWT؟" },
+            { "title": "فهم Header وPayload وSignature" },
+            { "title": "إنشاء Access Token" },
+            { "title": "التحقق من JWT" },
+            { "title": "إنشاء Authentication Middleware" },
+            { "title": "إدارة Refresh Tokens" },
+            { "title": "تسجيل الخروج وإبطال الجلسات" },
+            { "title": "التعامل الآمن مع مفاتيح التوقيع" }
+          ]
+        },
+        {
+          "title": "التحكم في الصلاحيات",
+          "subIndices": [
+            { "title": "مفهوم Roles وPermissions" },
+            { "title": "تطبيق Role-Based Access Control" },
+            { "title": "تطبيق Permission-Based Access Control" },
+            { "title": "منع الوصول إلى موارد مستخدم آخر" },
+            { "title": "إدارة صلاحيات Admin وUser" },
+            { "title": "تسجيل العمليات الحساسة Audit Logs" }
+          ]
+        },
+        {
+          "title": "OAuth 2.0 وOpenID Connect",
+          "subIndices": [
+            { "title": "مفهوم OAuth 2.0" },
+            { "title": "الفرق بين OAuth وOpenID Connect" },
+            { "title": "فهم Authorization Code Flow" },
+            { "title": "استخدام PKCE" },
+            { "title": "تسجيل الدخول بحساب Google" },
+            { "title": "ربط الحسابات الاجتماعية" },
+            { "title": "مقدمة في Multi-Factor Authentication" }
+          ]
+        },
+        {
+          "title": "حماية Node.js APIs",
+          "subIndices": [
+            { "title": "مخاطر OWASP API Security" },
+            { "title": "حماية التطبيق من SQL Injection" },
+            { "title": "حماية التطبيق من NoSQL Injection" },
+            { "title": "منع XSS" },
+            { "title": "الحماية من CSRF عند استخدام Cookies" },
+            { "title": "ضبط CORS" },
+            { "title": "استخدام Helmet" },
+            { "title": "تطبيق Rate Limiting" },
+            { "title": "الحماية من SSRF" },
+            { "title": "حماية الأسرار والبيانات الحساسة" },
+            { "title": "استخدام HTTPS وSecure Cookies" },
+            { "title": "فحص الاعتماديات والثغرات الأمنية" },
+            { "title": "التعرف على Permission Model في Node.js" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "title": "القسم الثالث عشر: رفع الملفات والتعامل مع Streams",
+      "englishTitle": "File Uploads, Streams & Cloud Storage",
+      "mainIndices": [
+        {
+          "title": "رفع الملفات File Upload",
+          "subIndices": [
+            { "title": "مفهوم Multipart Form Data" },
+            { "title": "استخدام Multer مع Express" },
+            { "title": "رفع ملف واحد" },
+            { "title": "رفع ملفات متعددة" },
+            { "title": "التحقق من نوع الملف وحجمه" },
+            { "title": "منع أسماء الملفات والمسارات غير الآمنة" },
+            { "title": "إنشاء API لتنزيل الملفات" }
+          ]
+        },
+        {
+          "title": "التعامل المتقدم مع Streams",
+          "subIndices": [
+            { "title": "أنواع Streams الأربعة" },
+            { "title": "Readable Streams" },
+            { "title": "Writable Streams" },
+            { "title": "Duplex Streams" },
+            { "title": "Transform Streams" },
+            { "title": "استخدام pipe وpipeline" },
+            { "title": "معالجة Backpressure" },
+            { "title": "معالجة الأخطاء وإلغاء Streams" }
+          ]
+        },
+        {
+          "title": "معالجة الملفات والبيانات",
+          "subIndices": [
+            { "title": "قراءة ملفات JSON الكبيرة" },
+            { "title": "قراءة ملفات CSV" },
+            { "title": "تصدير البيانات إلى CSV" },
+            { "title": "إنشاء ملفات PDF من بيانات التطبيق" },
+            { "title": "معالجة الصور باستخدام Sharp" },
+            { "title": "ضغط الملفات وفك الضغط" },
+            { "title": "بناء نظام استيراد بيانات" }
+          ]
+        },
+        {
+          "title": "التخزين السحابي",
+          "subIndices": [
+            { "title": "الفرق بين Local Storage وObject Storage" },
+            { "title": "مقدمة في Amazon S3" },
+            { "title": "رفع الملفات إلى S3" },
+            { "title": "استخدام Presigned URLs" },
+            { "title": "تنظيم صلاحيات الملفات" },
+            { "title": "حذف الملفات من التخزين السحابي" },
+            { "title": "تصميم نظام ملفات آمن" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "title": "القسم الرابع عشر: هندسة تطبيقات Backend",
+      "englishTitle": "Backend Architecture & Clean Code",
+      "mainIndices": [
+        {
+          "title": "تنظيم بنية المشروع",
+          "subIndices": [
+            { "title": "الفرق بين المشروع البسيط والمشروع الاحترافي" },
+            { "title": "فصل Routes عن Controllers" },
+            { "title": "إنشاء Service Layer" },
+            { "title": "إنشاء Repository Layer" },
+            { "title": "إنشاء ملفات Configuration" },
+            { "title": "تنظيم Middleware وUtilities" },
+            { "title": "تنظيم ملفات Validation" },
+            { "title": "تطبيق Separation of Concerns" }
+          ]
+        },
+        {
+          "title": "مبادئ البرمجة النظيفة",
+          "subIndices": [
+            { "title": "مفهوم Clean Code" },
+            { "title": "اختيار أسماء واضحة للمتغيرات والدوال" },
+            { "title": "مبدأ Single Responsibility" },
+            { "title": "مبدأ DRY" },
+            { "title": "مبدأ KISS" },
+            { "title": "مبدأ YAGNI" },
+            { "title": "مقدمة في SOLID" },
+            { "title": "إعادة هيكلة الأكواد Refactoring" }
+          ]
+        },
+        {
+          "title": "أنماط التصميم Design Patterns",
+          "subIndices": [
+            { "title": "ما هي Design Patterns؟" },
+            { "title": "Repository Pattern" },
+            { "title": "Factory Pattern" },
+            { "title": "Strategy Pattern" },
+            { "title": "Adapter Pattern" },
+            { "title": "Observer Pattern" },
+            { "title": "Dependency Injection Pattern" },
+            { "title": "متى نستخدم كل نمط؟" }
+          ]
+        },
+        {
+          "title": "Clean Architecture",
+          "subIndices": [
+            { "title": "مقدمة في Clean Architecture" },
+            { "title": "مفهوم Entities" },
+            { "title": "مفهوم Use Cases" },
+            { "title": "مفهوم Interfaces وAdapters" },
+            { "title": "فصل Domain Logic" },
+            { "title": "عزل قواعد البيانات عن منطق الأعمال" },
+            { "title": "إدارة Dependencies" },
+            { "title": "بناء API باستخدام Clean Architecture" }
+          ]
+        },
+        {
+          "title": "المعاملات وأخطاء منطق الأعمال",
+          "subIndices": [
+            { "title": "الفرق بين Technical Errors وBusiness Errors" },
+            { "title": "تصميم Error Handling موحد" },
+            { "title": "مفهوم Idempotency" },
+            { "title": "منع تكرار الطلبات الحساسة" },
+            { "title": "إدارة Transactions بين الخدمات" },
+            { "title": "التحقق من قواعد الأعمال" }
+          ]
+        },
+        {
+          "title": "مقدمة في الأنظمة الموزعة",
+          "subIndices": [
+            { "title": "الفرق بين Monolith وMicroservices" },
+            { "title": "مفهوم Modular Monolith" },
+            { "title": "مزايا Microservices وتحدياتها" },
+            { "title": "مفهوم API Gateway" },
+            { "title": "مفهوم Service Discovery" },
+            { "title": "مفهوم Eventual Consistency" },
+            { "title": "اختيار البنية المناسبة لحجم المشروع" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "title": "القسم الخامس عشر: الاختبارات وتصحيح الأخطاء وجودة الكود",
+      "englishTitle": "Testing, Debugging & Code Quality",
+      "mainIndices": [
+        {
+          "title": "أساسيات Software Testing",
+          "subIndices": [
+            { "title": "ما هو Software Testing؟" },
+            { "title": "الفرق بين Unit وIntegration وE2E Tests" },
+            { "title": "مفهوم Test Cases" },
+            { "title": "مفهوم Assertions" },
+            { "title": "مفهوم Arrange Act Assert" },
+            { "title": "مبدأ Test Isolation" }
+          ]
+        },
+        {
+          "title": "اختبارات Node.js",
+          "subIndices": [
+            { "title": "استخدام node:test" },
+            { "title": "استخدام node:assert" },
+            { "title": "كتابة أول Unit Test" },
+            { "title": "اختبار الدوال غير المتزامنة" },
+            { "title": "استخدام Test Hooks" },
+            { "title": "إنشاء Mocks وStubs" },
+            { "title": "قياس Code Coverage" },
+            { "title": "التعرف على Jest وVitest كبدائل" }
+          ]
+        },
+        {
+          "title": "اختبار REST APIs",
+          "subIndices": [
+            { "title": "اختبار Routes" },
+            { "title": "اختبار Controllers" },
+            { "title": "اختبار Authentication" },
+            { "title": "اختبار Authorization" },
+            { "title": "اختبار Validation Errors" },
+            { "title": "استخدام Supertest" },
+            { "title": "اختبار قواعد البيانات باستخدام قاعدة منفصلة" },
+            { "title": "تنظيف بيانات الاختبارات" }
+          ]
+        },
+        {
+          "title": "تصحيح الأخطاء Debugging",
+          "subIndices": [
+            { "title": "فهم Stack Trace" },
+            { "title": "استخدام Breakpoints في VS Code" },
+            { "title": "فحص المتغيرات أثناء التشغيل" },
+            { "title": "استخدام Node.js Inspector" },
+            { "title": "التعامل مع Unhandled Rejections" },
+            { "title": "التعامل مع Uncaught Exceptions" },
+            { "title": "تحليل أخطاء الذاكرة" },
+            { "title": "الفرق بين Debugging وLogging" }
+          ]
+        },
+        {
+          "title": "جودة الأكواد",
+          "subIndices": [
+            { "title": "إعداد ESLint" },
+            { "title": "إعداد Prettier" },
+            { "title": "إعداد Type Checking" },
+            { "title": "تطبيق Code Review" },
+            { "title": "كتابة اختبارات Regression" },
+            { "title": "استخدام Static Analysis" },
+            { "title": "دمج اختبارات الجودة مع GitHub Actions" }
+          ]
+        },
+        {
+          "title": "ممارسات الاختبار المتقدمة",
+          "subIndices": [
+            { "title": "مفهوم Test-Driven Development" },
+            { "title": "تنفيذ Integration Tests حقيقية" },
+            { "title": "استخدام Testcontainers" },
+            { "title": "اختبار حالات الفشل" },
+            { "title": "اختبار Timeout وRetries" },
+            { "title": "مقدمة في Contract Testing" },
+            { "title": "اختبار ثغرات API الأساسية" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "title": "القسم السادس عشر: تطبيقات الوقت الحقيقي والمهام الخلفية",
+      "englishTitle": "Real-Time WebSockets & Background Queues",
+      "mainIndices": [
+        {
+          "title": "مقدمة في Real-Time Applications",
+          "subIndices": [
+            { "title": "ما هي Real-Time Applications؟" },
+            { "title": "الفرق بين Polling وLong Polling" },
+            { "title": "مفهوم Server-Sent Events" },
+            { "title": "مفهوم WebSockets" },
+            { "title": "مقارنة SSE وWebSocket وHTTP" }
+          ]
+        },
+        {
+          "title": "WebSocket وSocket.IO",
+          "subIndices": [
+            { "title": "إنشاء WebSocket Server" },
+            { "title": "استخدام مكتبة ws" },
+            { "title": "تثبيت Socket.IO" },
+            { "title": "إرسال واستقبال Events" },
+            { "title": "استخدام Rooms" },
+            { "title": "إدارة اتصال المستخدمين" },
+            { "title": "تنفيذ Authentication للاتصالات" },
+            { "title": "معالجة انقطاع الاتصال وإعادة الاتصال" }
+          ]
+        },
+        {
+          "title": "أنظمة الرسائل والطوابير",
+          "subIndices": [
+            { "title": "ما هو Message Queue؟" },
+            { "title": "الفرق بين Queue وPub/Sub" },
+            { "title": "مقدمة في RabbitMQ" },
+            { "title": "مقدمة في Redis Streams" },
+            { "title": "مقدمة في BullMQ" },
+            { "title": "إنشاء Background Job" },
+            { "title": "إعداد Retries وBackoff" },
+            { "title": "إدارة Failed Jobs" },
+            { "title": "منع تكرار تنفيذ المهام" }
+          ]
+        },
+        {
+          "title": "المهام المجدولة",
+          "subIndices": [
+            { "title": "ما هي Cron Jobs؟" },
+            { "title": "استخدام جدولة المهام في Node.js" },
+            { "title": "تنفيذ مهمة يومية" },
+            { "title": "إرسال رسائل بريد مجدولة" },
+            { "title": "إنشاء تقارير تلقائية" },
+            { "title": "إدارة المناطق الزمنية" },
+            { "title": "منع تنفيذ المهمة أكثر من مرة" }
+          ]
+        },
+        {
+          "title": "مشروع عملي: نظام إشعارات",
+          "subIndices": [
+            { "title": "تصميم قاعدة بيانات الإشعارات" },
+            { "title": "إنشاء API للإشعارات" },
+            { "title": "إرسال إشعارات باستخدام Socket.IO" },
+            { "title": "حفظ الإشعارات غير المقروءة" },
+            { "title": "إرسال رسائل البريد في الخلفية" },
+            { "title": "إضافة Retry للرسائل الفاشلة" },
+            { "title": "اختبار نظام الإشعارات" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "title": "القسم السابع عشر: تحسين الأداء والتوسع",
+      "englishTitle": "Performance Optimization & Scaling",
+      "mainIndices": [
+        {
+          "title": "فهم أداء Node.js",
+          "subIndices": [
+            { "title": "مفهوم Performance" },
+            { "title": "مفهوم Latency وThroughput" },
+            { "title": "فهم استهلاك CPU والذاكرة" },
+            { "title": "التعرف على libuv" },
+            { "title": "فهم Thread Pool" },
+            { "title": "اكتشاف Blocking Operations" },
+            { "title": "قياس زمن الاستجابة" }
+          ]
+        },
+        {
+          "title": "Worker Threads وChild Processes",
+          "subIndices": [
+            { "title": "متى نستخدم Worker Threads؟" },
+            { "title": "إنشاء Worker Thread" },
+            { "title": "التواصل بين Main Thread وWorker" },
+            { "title": "استخدام Worker Pools" },
+            { "title": "استخدام Child Processes" },
+            { "title": "الفرق بين Worker Threads وChild Processes" },
+            { "title": "تنفيذ عمليات CPU Intensive" }
+          ]
+        },
+        {
+          "title": "تحسين الذاكرة",
+          "subIndices": [
+            { "title": "فهم Memory Management" },
+            { "title": "مفهوم Garbage Collection" },
+            { "title": "اكتشاف Memory Leaks" },
+            { "title": "تحليل Heap Snapshots" },
+            { "title": "تقليل استهلاك الذاكرة باستخدام Streams" },
+            { "title": "تجنب الاحتفاظ بالمراجع غير الضرورية" },
+            { "title": "مراقبة ذاكرة التطبيق" }
+          ]
+        },
+        {
+          "title": "تحسين أداء APIs",
+          "subIndices": [
+            { "title": "تحسين استعلامات قواعد البيانات" },
+            { "title": "استخدام Redis Cache" },
+            { "title": "إعداد HTTP Caching" },
+            { "title": "تفعيل الضغط عند الحاجة" },
+            { "title": "تنفيذ Pagination الفعالة" },
+            { "title": "تجنب N+1 Queries" },
+            { "title": "تقليل حجم Response" },
+            { "title": "قياس الأداء باستخدام Autocannon" }
+          ]
+        },
+        {
+          "title": "التوسع Scalability",
+          "subIndices": [
+            { "title": "الفرق بين Vertical وHorizontal Scaling" },
+            { "title": "مقدمة في Load Balancing" },
+            { "title": "استخدام Cluster" },
+            { "title": "إدارة عدة عمليات Node.js" },
+            { "title": "تصميم Stateless APIs" },
+            { "title": "استخدام Shared Session Storage" },
+            { "title": "التعامل مع Graceful Shutdown" },
+            { "title": "تجنب مشاكل التزامن Race Conditions" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "title": "القسم الثامن عشر: التكامل مع الخدمات الخارجية وواجهات API المتقدمة",
+      "englishTitle": "External Integrations, Webhooks & AI APIs",
+      "mainIndices": [
+        {
+          "title": "التعامل مع APIs الخارجية",
+          "subIndices": [
+            { "title": "استخدام Fetch API في Node.js" },
+            { "title": "استخدام Axios عند الحاجة" },
+            { "title": "إرسال GET وPOST Requests" },
+            { "title": "تمرير Headers وTokens" },
+            { "title": "معالجة Timeout" },
+            { "title": "إعادة المحاولة باستخدام Retry" },
+            { "title": "التعامل مع Rate Limits" },
+            { "title": "التحقق من بيانات الاستجابة" }
+          ]
+        },
+        {
+          "title": "Webhooks",
+          "subIndices": [
+            { "title": "ما هو Webhook؟" },
+            { "title": "الفرق بين Webhook وREST API" },
+            { "title": "إنشاء Webhook Endpoint" },
+            { "title": "التحقق من Webhook Signature" },
+            { "title": "معالجة الأحداث الواردة" },
+            { "title": "منع تكرار معالجة الحدث" },
+            { "title": "إعادة محاولة إرسال الأحداث" },
+            { "title": "تسجيل أحداث Webhooks" }
+          ]
+        },
+        {
+          "title": "إرسال البريد الإلكتروني والإشعارات",
+          "subIndices": [
+            { "title": "مفهوم SMTP" },
+            { "title": "استخدام Nodemailer" },
+            { "title": "إرسال بريد HTML" },
+            { "title": "إرسال رسائل تأكيد البريد الإلكتروني" },
+            { "title": "إرسال روابط استعادة كلمة المرور" },
+            { "title": "استخدام قوالب البريد" },
+            { "title": "ربط خدمات البريد الخارجية" },
+            { "title": "تتبع فشل إرسال الرسائل" }
+          ]
+        },
+        {
+          "title": "GraphQL وgRPC",
+          "subIndices": [
+            { "title": "مقدمة في GraphQL" },
+            { "title": "الفرق بين REST وGraphQL" },
+            { "title": "مفهوم Schema وResolvers" },
+            { "title": "إنشاء GraphQL API" },
+            { "title": "معالجة مشكلة N+1 باستخدام DataLoader" },
+            { "title": "مقدمة في gRPC" },
+            { "title": "مفهوم Protocol Buffers" },
+            { "title": "مقارنة REST وGraphQL وgRPC" }
+          ]
+        },
+        {
+          "title": "دمج خدمات الذكاء الاصطناعي",
+          "subIndices": [
+            { "title": "مفهوم AI APIs" },
+            { "title": "استدعاء نموذج لغوي من Node.js" },
+            { "title": "إدارة API Keys" },
+            { "title": "التعامل مع Streaming Responses" },
+            { "title": "بناء خدمة محادثة باستخدام API خارجي" },
+            { "title": "مقدمة في Embeddings" },
+            { "title": "مفهوم Retrieval-Augmented Generation" },
+            { "title": "استخدام Vector Databases" },
+            { "title": "التحكم في التكلفة والمهلات والحدود" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "title": "القسم التاسع عشر: Docker والنشر وDevOps",
+      "englishTitle": "Docker, Deployment & CI/CD",
+      "mainIndices": [
+        {
+          "title": "أساسيات النشر",
+          "subIndices": [
+            { "title": "الفرق بين Development وProduction" },
+            { "title": "مفهوم Deployment" },
+            { "title": "فهم Build وStart Commands" },
+            { "title": "إعداد Environment Variables" },
+            { "title": "إدارة Production Secrets" },
+            { "title": "إعداد Production Database" },
+            { "title": "تنفيذ Database Migrations" }
+          ]
+        },
+        {
+          "title": "أساسيات Linux للخوادم",
+          "subIndices": [
+            { "title": "مقدمة في Linux Server" },
+            { "title": "الاتصال بالخادم باستخدام SSH" },
+            { "title": "إدارة الملفات والصلاحيات" },
+            { "title": "إدارة العمليات باستخدام systemd" },
+            { "title": "فحص المنافذ والخدمات" },
+            { "title": "قراءة سجلات الخادم" },
+            { "title": "إعداد Firewall" }
+          ]
+        },
+        {
+          "title": "Docker مع Node.js",
+          "subIndices": [
+            { "title": "ما هو Docker؟" },
+            { "title": "الفرق بين Image وContainer" },
+            { "title": "إنشاء Dockerfile" },
+            { "title": "بناء Docker Image" },
+            { "title": "تشغيل Node.js داخل Container" },
+            { "title": "استخدام .dockerignore" },
+            { "title": "استخدام Multi-Stage Builds" },
+            { "title": "تشغيل التطبيق بمستخدم غير Root" },
+            { "title": "إدارة Docker Volumes" }
+          ]
+        },
+        {
+          "title": "Docker Compose",
+          "subIndices": [
+            { "title": "ما هو Docker Compose؟" },
+            { "title": "إنشاء compose.yaml" },
+            { "title": "ربط Node.js مع PostgreSQL" },
+            { "title": "ربط التطبيق مع Redis" },
+            { "title": "إدارة Networks" },
+            { "title": "إعداد Healthchecks" },
+            { "title": "تشغيل بيئة تطوير متكاملة" }
+          ]
+        },
+        {
+          "title": "النشر على الخوادم والمنصات السحابية",
+          "subIndices": [
+            { "title": "نشر Node.js على VPS" },
+            { "title": "إعداد Nginx كـ Reverse Proxy" },
+            { "title": "إعداد HTTPS Certificates" },
+            { "title": "ربط Domain بالتطبيق" },
+            { "title": "التعرف على Render وRailway" },
+            { "title": "مقدمة في AWS" },
+            { "title": "مقدمة في Serverless Functions" },
+            { "title": "الفروق بين VPS وPaaS وServerless" },
+            { "title": "مراجعة تكاليف الاستضافة" }
+          ]
+        },
+        {
+          "title": "CI/CD",
+          "subIndices": [
+            { "title": "ما هو CI/CD؟" },
+            { "title": "مقدمة في GitHub Actions" },
+            { "title": "تشغيل ESLint تلقائياً" },
+            { "title": "تشغيل الاختبارات تلقائياً" },
+            { "title": "تنفيذ Type Checking" },
+            { "title": "بناء Docker Image تلقائياً" },
+            { "title": "النشر بعد نجاح الاختبارات" },
+            { "title": "استخدام Staging Environment" },
+            { "title": "التراجع عن نشر فاشل Rollback" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "title": "القسم العشرون: مراقبة تطبيقات الإنتاج والموثوقية",
+      "englishTitle": "Production Monitoring & Reliability",
+      "mainIndices": [
+        {
+          "title": "Logging",
+          "subIndices": [
+            { "title": "مفهوم Application Logging" },
+            { "title": "مستويات Logs" },
+            { "title": "استخدام Pino" },
+            { "title": "استخدام Structured JSON Logs" },
+            { "title": "إنشاء Request ID" },
+            { "title": "إخفاء البيانات الحساسة من السجلات" },
+            { "title": "إدارة الاحتفاظ بالسجلات" }
+          ]
+        },
+        {
+          "title": "Monitoring وObservability",
+          "subIndices": [
+            { "title": "الفرق بين Monitoring وObservability" },
+            { "title": "مفهوم Metrics" },
+            { "title": "مفهوم Traces" },
+            { "title": "استخدام OpenTelemetry" },
+            { "title": "مقدمة في Prometheus" },
+            { "title": "مقدمة في Grafana" },
+            { "title": "مراقبة Response Time وError Rate" },
+            { "title": "إنشاء لوحات متابعة الأداء" }
+          ]
+        },
+        {
+          "title": "الموثوقية وإدارة الأعطال",
+          "subIndices": [
+            { "title": "مفهوم High Availability" },
+            { "title": "مفهوم Fault Tolerance" },
+            { "title": "مفهوم Retry مع Exponential Backoff" },
+            { "title": "مفهوم Circuit Breaker" },
+            { "title": "مفهوم Bulkhead Pattern" },
+            { "title": "استخدام Timeouts" },
+            { "title": "إنشاء Health Check Endpoints" },
+            { "title": "تنفيذ Graceful Shutdown" }
+          ]
+        },
+        {
+          "title": "حماية البيانات والنسخ الاحتياطي",
+          "subIndices": [
+            { "title": "إنشاء خطة Backup" },
+            { "title": "تنفيذ Database Backups" },
+            { "title": "اختبار Restore" },
+            { "title": "إدارة أسرار الإنتاج" },
+            { "title": "تدوير كلمات المرور والمفاتيح" },
+            { "title": "مفهوم Disaster Recovery" },
+            { "title": "تطبيق مبدأ Least Privilege" }
+          ]
+        },
+        {
+          "title": "إدارة التطبيق بعد النشر",
+          "subIndices": [
+            { "title": "مراقبة أخطاء Production" },
+            { "title": "استخدام Error Tracking Services" },
+            { "title": "تحليل مشاكل الأداء" },
+            { "title": "إعداد Alerts" },
+            { "title": "إدارة Incident Response" },
+            { "title": "إعداد تقارير التشغيل" },
+            { "title": "تحديث الاعتماديات بأمان" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "title": "القسم الحادي والعشرون: الموضوعات المتقدمة في Node.js",
+      "englishTitle": "Advanced Node.js Internals & Systems",
+      "mainIndices": [
+        {
+          "title": "فهم آلية عمل Node.js داخلياً",
+          "subIndices": [
+            { "title": "البنية الداخلية لـ Node.js" },
+            { "title": "دور محرك V8" },
+            { "title": "دور libuv" },
+            { "title": "دور Event Loop" },
+            { "title": "دور Worker Pool" },
+            { "title": "مفهوم Native Bindings" },
+            { "title": "تحليل أداء Runtime" }
+          ]
+        },
+        {
+          "title": "الشبكات المتقدمة",
+          "subIndices": [
+            { "title": "استخدام node:net" },
+            { "title": "إنشاء TCP Server" },
+            { "title": "استخدام node:dgram" },
+            { "title": "إنشاء UDP Server" },
+            { "title": "التعرف على TLS" },
+            { "title": "مقدمة في HTTP/2" },
+            { "title": "إدارة اتصالات الشبكة طويلة العمر" }
+          ]
+        },
+        {
+          "title": "Node.js Diagnostics",
+          "subIndices": [
+            { "title": "استخدام node:perf_hooks" },
+            { "title": "إنشاء Performance Measurements" },
+            { "title": "تحليل CPU Profiles" },
+            { "title": "تحليل Heap Profiles" },
+            { "title": "استخدام Diagnostic Reports" },
+            { "title": "مقدمة في node:diagnostics_channel" },
+            { "title": "مفهوم AsyncLocalStorage" },
+            { "title": "تتبع الطلبات عبر العمليات غير المتزامنة" }
+          ]
+        },
+        {
+          "title": "إمكانات Node.js الحديثة",
+          "subIndices": [
+            { "title": "استخدام Test Runner المدمج" },
+            { "title": "استخدام Fetch API المدمج" },
+            { "title": "استخدام Web Streams API" },
+            { "title": "فهم دعم TypeScript المدمج وحدوده" },
+            { "title": "التعرف على SQLite المدمج حسب إصدار Node.js" },
+            { "title": "مفهوم Single Executable Applications" },
+            { "title": "مقدمة في WebAssembly وWASI" },
+            { "title": "التعرف على Node-API للإضافات الأصلية" },
+            { "title": "التمييز بين الميزات المستقرة والتجريبية" }
+          ]
+        },
+        {
+          "title": "هندسة الأنظمة واسعة النطاق",
+          "subIndices": [
+            { "title": "تصميم خدمات مستقلة قابلة للتوسع" },
+            { "title": "التواصل بين Microservices" },
+            { "title": "مفهوم Event-Driven Microservices" },
+            { "title": "مقدمة في Apache Kafka" },
+            { "title": "مفهوم CQRS" },
+            { "title": "مفهوم Event Sourcing" },
+            { "title": "مفهوم Saga Pattern" },
+            { "title": "مفهوم Outbox Pattern" },
+            { "title": "إدارة الاتساق في الأنظمة الموزعة" },
+            { "title": "تصميم نظام يتحمل فشل الخدمات" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "title": "القسم الثاني والعشرون: المشروعات التطبيقية من المبتدئ إلى المحترف",
+      "englishTitle": "Applied Capstone Projects (Junior to Pro)",
+      "mainIndices": [
+        {
+          "title": "المشروع الأول: تطبيق إدارة المهام",
+          "subIndices": [
+            { "title": "تحليل المتطلبات وتصميم المشروع" },
+            { "title": "إنشاء مشروع Node.js" },
+            { "title": "إنشاء مهام جديدة" },
+            { "title": "عرض المهام وتحديثها" },
+            { "title": "حذف المهام" },
+            { "title": "تخزين البيانات داخل JSON File" },
+            { "title": "إضافة معالجة الأخطاء" },
+            { "title": "اختبار التطبيق وتوثيقه" }
+          ]
+        },
+        {
+          "title": "المشروع الثاني: REST API لإدارة المنتجات",
+          "subIndices": [
+            { "title": "تصميم Product Model" },
+            { "title": "إنشاء Express Server" },
+            { "title": "إنشاء Products Routes" },
+            { "title": "إنشاء Controllers وServices" },
+            { "title": "ربط PostgreSQL" },
+            { "title": "تنفيذ CRUD" },
+            { "title": "إضافة Validation" },
+            { "title": "إضافة Pagination وSearch" },
+            { "title": "كتابة اختبارات API" },
+            { "title": "توثيق API باستخدام Swagger" }
+          ]
+        },
+        {
+          "title": "المشروع الثالث: نظام مستخدمين ومصادقة",
+          "subIndices": [
+            { "title": "تصميم Users Schema" },
+            { "title": "إنشاء Register Endpoint" },
+            { "title": "تشفير كلمات المرور" },
+            { "title": "إنشاء Login Endpoint" },
+            { "title": "إنشاء JWT Authentication" },
+            { "title": "إنشاء Refresh Token Flow" },
+            { "title": "إضافة Roles وPermissions" },
+            { "title": "تنفيذ Forgot Password" },
+            { "title": "إضافة Email Verification" },
+            { "title": "اختبار الثغرات الأمنية الأساسية" }
+          ]
+        },
+        {
+          "title": "المشروع الرابع: نظام محادثة فورية",
+          "subIndices": [
+            { "title": "تصميم قاعدة بيانات المحادثات" },
+            { "title": "ربط Socket.IO" },
+            { "title": "إرسال واستقبال الرسائل" },
+            { "title": "إنشاء Chat Rooms" },
+            { "title": "إضافة Online Status" },
+            { "title": "حفظ سجل المحادثات" },
+            { "title": "إضافة إشعارات فورية" },
+            { "title": "حماية اتصالات المستخدمين" },
+            { "title": "اختبار الاتصالات المتزامنة" }
+          ]
+        },
+        {
+          "title": "المشروع الخامس: متجر إلكتروني Backend متكامل",
+          "subIndices": [
+            { "title": "تحليل متطلبات المتجر" },
+            { "title": "تصميم Database Schema" },
+            { "title": "إنشاء Users وRoles" },
+            { "title": "إنشاء Products وCategories" },
+            { "title": "إنشاء Shopping Cart" },
+            { "title": "إنشاء Orders" },
+            { "title": "إدارة المخزون Stock Management" },
+            { "title": "ربط بوابة دفع تجريبية" },
+            { "title": "التحقق الآمن من Payment Webhooks" },
+            { "title": "إنشاء Coupons وDiscounts" },
+            { "title": "إضافة رفع صور المنتجات" },
+            { "title": "إنشاء Admin APIs" },
+            { "title": "إضافة Redis Cache" },
+            { "title": "كتابة Unit وIntegration Tests" },
+            { "title": "نشر النظام باستخدام Docker" }
+          ]
+        },
+        {
+          "title": "المشروع السادس: منصة تعليمية LMS",
+          "subIndices": [
+            { "title": "تحليل أدوار Admin وTeacher وStudent" },
+            { "title": "تصميم Courses وLessons" },
+            { "title": "تصميم Enrollments" },
+            { "title": "إنشاء API لإدارة الدورات" },
+            { "title": "إنشاء API للدروس التعليمية" },
+            { "title": "إدارة صلاحيات الطلاب والمعلمين" },
+            { "title": "رفع الملفات التعليمية" },
+            { "title": "إنشاء اختبارات وتسجيل النتائج" },
+            { "title": "تتبع تقدم الطالب" },
+            { "title": "إرسال إشعارات تلقائية" },
+            { "title": "إنشاء Background Jobs" },
+            { "title": "توثيق جميع Endpoints" },
+            { "title": "إعداد اختبارات متكاملة" },
+            { "title": "نشر المنصة ومراقبة تشغيلها" }
+          ]
+        },
+        {
+          "title": "المشروع السابع: نظام أتمتة متكامل",
+          "subIndices": [
+            { "title": "تصميم Workflow Engine مبسط" },
+            { "title": "إنشاء API لاستقبال المهام" },
+            { "title": "إنشاء Webhook Endpoints" },
+            { "title": "التحقق من الطلبات الواردة" },
+            { "title": "ربط BullMQ مع Redis" },
+            { "title": "تنفيذ Jobs في الخلفية" },
+            { "title": "إضافة جدولة المهام" },
+            { "title": "ربط Telegram Bot API" },
+            { "title": "إرسال تنبيهات نجاح وفشل العمليات" },
+            { "title": "إضافة Retries وDead Letter Handling" },
+            { "title": "بناء API لمتابعة حالة المهام" },
+            { "title": "إنشاء نظام Logging" },
+            { "title": "اختبار دورة الأتمتة الكاملة" },
+            { "title": "نشر الخدمات باستخدام Docker Compose" }
+          ]
+        },
+        {
+          "title": "المشروع النهائي: Backend احترافي جاهز للإنتاج",
+          "subIndices": [
+            { "title": "كتابة وثيقة متطلبات المشروع" },
+            { "title": "تصميم Architecture Diagram" },
+            { "title": "تحديد قاعدة البيانات ومبررات الاختيار" },
+            { "title": "بناء التطبيق باستخدام Node.js وTypeScript" },
+            { "title": "تطبيق Clean Architecture" },
+            { "title": "بناء REST APIs موثقة" },
+            { "title": "تطبيق Authentication وAuthorization" },
+            { "title": "تطبيق قواعد الأمان الأساسية" },
+            { "title": "إضافة Cache وBackground Jobs" },
+            { "title": "إعداد Unit وIntegration Tests" },
+            { "title": "إنشاء Docker Images" },
+            { "title": "إعداد CI/CD Pipeline" },
+            { "title": "نشر Staging Environment" },
+            { "title": "تنفيذ Performance Testing" },
+            { "title": "إعداد Logging وMonitoring" },
+            { "title": "اختبار Backup وRestore" },
+            { "title": "نشر Production Environment" },
+            { "title": "إعداد README ووثائق التشغيل" },
+            { "title": "تجهيز المشروع لعرضه في Portfolio" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "title": "القسم الثالث والعشرون: الاستعداد لسوق العمل والاحتراف",
+      "englishTitle": "Career Readiness, Interviews & Portfolio",
+      "mainIndices": [
+        {
+          "title": "مهارات Backend Developer",
+          "subIndices": [
+            { "title": "فهم دورة حياة تطوير البرمجيات" },
+            { "title": "تحليل المتطلبات الفنية" },
+            { "title": "قراءة توثيق المكتبات" },
+            { "title": "حل الأخطاء بطريقة منهجية" },
+            { "title": "كتابة أكواد قابلة للصيانة" },
+            { "title": "المشاركة في Code Review" },
+            { "title": "العمل باستخدام Git Workflow" }
+          ]
+        },
+        {
+          "title": "التحضير للمقابلات التقنية",
+          "subIndices": [
+            { "title": "أسئلة JavaScript الأساسية" },
+            { "title": "أسئلة Promises وAsync Await" },
+            { "title": "أسئلة Event Loop" },
+            { "title": "أسئلة Node.js Core Modules" },
+            { "title": "أسئلة Express وMiddleware" },
+            { "title": "أسئلة SQL وDatabase Design" },
+            { "title": "أسئلة Authentication وSecurity" },
+            { "title": "أسئلة Testing وDebugging" },
+            { "title": "أسئلة Performance وScalability" },
+            { "title": "أسئلة System Design للمستوى المتقدم" }
+          ]
+        },
+        {
+          "title": "حل المشكلات والخوارزميات",
+          "subIndices": [
+            { "title": "مراجعة Arrays وStrings" },
+            { "title": "مراجعة Objects وMaps وSets" },
+            { "title": "فهم Time Complexity" },
+            { "title": "فهم Space Complexity" },
+            { "title": "مفهوم Big O Notation" },
+            { "title": "خوارزميات البحث والفرز" },
+            { "title": "مقدمة في Recursion" },
+            { "title": "حل مشكلات برمجية باستخدام JavaScript" }
+          ]
+        },
+        {
+          "title": "بناء Portfolio احترافي",
+          "subIndices": [
+            { "title": "اختيار ثلاثة مشروعات قوية" },
+            { "title": "تنظيم المستودعات على GitHub" },
+            { "title": "كتابة README احترافي" },
+            { "title": "إضافة API Documentation" },
+            { "title": "إضافة أمثلة للاستخدام" },
+            { "title": "عرض الاختبارات ونتائجها" },
+            { "title": "توفير رابط Demo للمشروعات" },
+            { "title": "شرح القرارات الهندسية والتحديات" }
+          ]
+        },
+        {
+          "title": "خطة التطوير المهني المستمر",
+          "subIndices": [
+            { "title": "متابعة توثيق Node.js الرسمي" },
+            { "title": "متابعة إصدارات LTS والتحديثات الأمنية" },
+            { "title": "قراءة مشاريع Open Source" },
+            { "title": "المساهمة في GitHub" },
+            { "title": "التوسع في NestJS عند الحاجة" },
+            { "title": "تعلم أساسيات Cloud Architecture" },
+            { "title": "التدرج من Junior إلى Mid-Level" },
+            { "title": "التدرج إلى Senior Backend Developer" },
+            { "title": "اختيار تخصص في الأنظمة الموزعة أو البنية السحابية" }
+          ]
+        }
+      ]
+    }
+  ]
+}

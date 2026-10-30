@@ -1,0 +1,1629 @@
+﻿<USER_REQUEST>
+
+أريد تعلم "خريطة الطريق الشاملة لتعلم Express.js من الصفر إلى الاحتراف" في express.js.
+
+لدي خريطة الطريق التالية التي تحتوي على 27 أقسام، 154 موضوع رئيسي، و 1315 موضوع فرعي:
+
+# خريطة الطريق: خريطة الطريق الشاملة لتعلم Express.js من الصفر إلى الاحتراف
+
+
+## 1. القسم الأول: المتطلبات الأساسية قبل تعلم Express.js
+   1. مقدمة في تطوير الويب
+      a. ما هو تطوير الويب؟
+      b. الفرق بين Frontend وBackend
+      c. كيف يعمل المتصفح والخادم؟
+      d. مفهوم Client وServer
+      e. ما هو Web Server؟
+      f. دورة حياة طلب الويب
+      g. مثال عملي: ماذا يحدث عند فتح موقع؟
+   2. أساسيات HTTP
+      a. ما هو بروتوكول HTTP؟
+      b. الفرق بين HTTP وHTTPS
+      c. مفهوم Request وResponse
+      d. طرق HTTP: GET وPOST وPUT وPATCH وDELETE
+      e. مفهوم HTTP Headers
+      f. مفهوم Request Body
+      g. مفهوم Query Parameters
+      h. مفهوم Status Codes
+      i. مفهوم Cookies
+   3. أساسيات JavaScript المطلوبة
+      a. المتغيرات وأنواع البيانات
+      b. الشروط والحلقات التكرارية
+      c. الدوال العادية وArrow Functions
+      d. Arrays وObjects
+      e. Destructuring وSpread Operator
+      f. Callback Functions
+      g. Promises
+      h. Async وAwait
+      i. Try وCatch
+      j. التعامل مع JSON
+   4. أساسيات Node.js
+      a. ما هو Node.js؟
+      b. الفرق بين JavaScript وNode.js
+      c. تشغيل ملفات JavaScript باستخدام Node.js
+      d. مفهوم Event Loop
+      e. فهم العمليات غير المتزامنة
+      f. مفهوم Modules
+      g. استخدام CommonJS وES Modules
+      h. التعامل مع npm
+      i. فهم package.json
+   5. مقدمة في API
+      a. ما هي API؟
+      b. ما هي REST API؟
+      c. مفهوم Endpoint
+      d. مفهوم CRUD
+      e. الفرق بين REST وGraphQL
+      f. كيف يتواصل Frontend مع Backend؟
+      g. مثال عملي على إرسال طلب API
+
+
+## 2. القسم الثاني: التعرف على Express.js وإعداد بيئة العمل
+   1. مقدمة في Express.js
+      a. ما هو Express.js؟
+      b. لماذا نستخدم Express.js؟
+      c. الفرق بين Node.js وExpress.js
+      d. كيف يعمل Express.js؟
+      e. مفهوم Web Framework
+      f. مميزات Express.js وحدوده
+      g. متى نستخدم Express.js؟
+      h. الفرق بين Express وFastify وNestJS
+   2. إعداد بيئة التطوير
+      a. تثبيت إصدار Node.js مدعوم
+      b. تثبيت Visual Studio Code
+      c. التعرف على Terminal
+      d. إنشاء مجلد المشروع
+      e. تشغيل npm init
+      f. تثبيت Express 5
+      g. إعداد ملف .gitignore
+      h. تنظيم ملفات المشروع الأول
+   3. إنشاء أول Express Server
+      a. إنشاء ملف app.js
+      b. استيراد مكتبة Express
+      c. فهم express()
+      d. إنشاء أول Route باستخدام app.get
+      e. إرسال استجابة باستخدام res.send
+      f. تشغيل الخادم باستخدام app.listen
+      g. فهم مفهوم Port
+      h. اختبار الخادم باستخدام المتصفح
+      i. إيقاف الخادم وإعادة تشغيله
+   4. أدوات تطوير Express.js
+      a. استخدام Node.js Watch Mode
+      b. استخدام Nodemon عند الحاجة
+      c. اختبار الطلبات باستخدام Postman
+      d. استخدام Thunder Client
+      e. استخدام REST Client
+      f. استخدام curl
+      g. إعداد ESLint
+      h. إعداد Prettier
+   5. فهم ملفات المشروع
+      a. وظيفة package.json
+      b. وظيفة package-lock.json
+      c. وظيفة node_modules
+      d. استخدام npm scripts
+      e. إنشاء ملفات البيئة .env
+      f. الفرق بين Dependencies وDevDependencies
+      g. إدارة إصدارات المكتبات
+   6. مشروع عملي: خادم ترحيبي
+      a. إنشاء خادم Express بسيط
+      b. إنشاء الصفحة الرئيسية
+      c. إنشاء صفحة About
+      d. إنشاء صفحة Contact
+      e. إرجاع رسالة JSON
+      f. اختبار جميع المسارات
+      g. رفع المشروع على GitHub
+
+
+## 3. القسم الثالث: فهم Request وResponse بالتفصيل
+   1. كائن الطلب Request
+      a. ما هو req؟
+      b. قراءة req.method
+      c. قراءة req.path
+      d. الفرق بين req.url وreq.originalUrl
+      e. قراءة req.hostname
+      f. قراءة req.protocol
+      g. استخدام req.get
+      h. قراءة req.ip وفهم إعدادات Proxy
+   2. قراءة البيانات من الطلب
+      a. استخدام req.params
+      b. استخدام req.query
+      c. استخدام req.body
+      d. استخدام req.headers
+      e. قراءة Cookies
+      f. الفرق بين Params وQuery وBody
+      g. التحقق من وجود البيانات المطلوبة
+      h. فهم أن مدخلات المستخدم غير موثوقة
+   3. تحليل Request Body
+      a. استخدام express.json
+      b. استخدام express.urlencoded
+      c. استخدام express.text
+      d. استخدام express.raw
+      e. فهم Content-Type
+      f. ضبط حدود حجم الطلب
+      g. التعامل مع JSON غير صالح
+      h. فهم حالة req.body عند غياب التحليل في Express 5
+   4. كائن الاستجابة Response
+      a. ما هو res؟
+      b. استخدام res.send
+      c. استخدام res.json
+      d. استخدام res.status
+      e. استخدام res.sendStatus
+      f. استخدام res.set
+      g. استخدام res.type
+      h. استخدام res.redirect
+      i. استخدام res.end
+   5. الاستجابات المتقدمة
+      a. إرسال ملفات باستخدام res.sendFile
+      b. تحميل الملفات باستخدام res.download
+      c. استخدام res.cookie
+      d. استخدام res.clearCookie
+      e. التحقق من res.headersSent
+      f. إضافة Response Headers
+      g. إرسال الاستجابات بأنواع Content-Type مختلفة
+      h. منع إرسال Response مرتين
+   6. أكواد حالة HTTP
+      a. 200 OK
+      b. 201 Created
+      c. 204 No Content
+      d. 301 و302 Redirect
+      e. 400 Bad Request
+      f. 401 Unauthorized
+      g. 403 Forbidden
+      h. 404 Not Found
+      i. 409 Conflict
+      j. 422 Unprocessable Content
+      k. 429 Too Many Requests
+      l. 500 Internal Server Error
+
+
+## 4. القسم الرابع: احتراف Routing في Express.js
+   1. أساسيات Routing
+      a. ما هو Routing؟
+      b. استخدام app.get
+      c. استخدام app.post
+      d. استخدام app.put
+      e. استخدام app.patch
+      f. استخدام app.delete
+      g. استخدام app.all
+      h. الفرق بين HTTP Methods
+   2. المسارات الديناميكية
+      a. ما هي Dynamic Routes؟
+      b. استخدام Route Parameters
+      c. إنشاء مسار باستخدام :id
+      d. استخدام أكثر من Parameter
+      e. التحقق من صحة Parameters
+      f. استخدام Optional Route Segments في Express 5
+      g. فهم Wildcard Routes في Express 5
+      h. قواعد تسمية Route Parameters
+   3. استخدام Express Router
+      a. ما هو express.Router؟
+      b. إنشاء Router مستقل
+      c. استخدام router.get وrouter.post
+      d. استخدام router.route
+      e. استخدام router.use
+      f. تقسيم Routes إلى ملفات
+      g. استخدام Route Prefixes
+      h. استخدام mergeParams مع Nested Routers
+   4. تنظيم ومعالجة المسارات
+      a. أهمية ترتيب Routes
+      b. التعامل مع Nested Routes
+      c. الفرق بين Static وDynamic Routes
+      d. استخدام router.param
+      e. استخدام next('route')
+      f. إنشاء 404 Handler
+      g. تنظيم Routes حسب موارد النظام
+      h. تقسيم API إلى إصدارات
+   5. مشروع عملي: Routes لإدارة الطلاب
+      a. إنشاء Students Router
+      b. عرض جميع الطلاب
+      c. عرض طالب باستخدام ID
+      d. إضافة طالب جديد
+      e. تعديل بيانات طالب
+      f. حذف طالب
+      g. تنظيم المسارات حسب HTTP Methods
+      h. اختبار جميع Endpoints
+
+
+## 5. القسم الخامس: Middleware من الأساسيات إلى الاحتراف
+   1. مقدمة في Middleware
+      a. ما هي Middleware؟
+      b. كيف تعمل Middleware؟
+      c. دورة تنفيذ Middleware
+      d. الفرق بين Middleware وRoute Handler
+      e. فهم req وres وnext
+      f. فهم next()
+      g. أهمية ترتيب Middleware
+      h. الأخطاء الشائعة في استخدام next
+   2. أنواع Middleware
+      a. Application-Level Middleware
+      b. Router-Level Middleware
+      c. Built-in Middleware
+      d. Third-Party Middleware
+      e. Error-Handling Middleware
+      f. استخدام Middleware على مسار محدد
+      g. استخدام عدة Middleware على نفس المسار
+   3. Middleware المدمجة مع Express
+      a. استخدام express.json
+      b. استخدام express.urlencoded
+      c. استخدام express.static
+      d. استخدام express.text
+      e. استخدام express.raw
+      f. تحديد خيارات Body Parsing
+      g. ضبط حدود الطلبات
+   4. إنشاء Middleware مخصصة
+      a. إنشاء Logger Middleware
+      b. إنشاء Request Timer
+      c. إنشاء Middleware للتحقق من API Key
+      d. إنشاء Middleware للتحقق من المستخدم
+      e. إنشاء Middleware للتحقق من الصلاحيات
+      f. إضافة بيانات مخصصة إلى req
+      g. استخدام res.locals
+      h. إنشاء Middleware قابلة لإعادة الاستخدام
+   5. استخدام Middleware خارجية
+      a. استخدام Morgan لتسجيل الطلبات
+      b. استخدام Helmet
+      c. استخدام CORS Middleware
+      d. استخدام Cookie Parser
+      e. استخدام express-rate-limit
+      f. استخدام Compression Middleware
+      g. ضبط Middlewares حسب البيئة
+   6. تطبيق عملي على Middleware
+      a. تسجيل جميع HTTP Requests
+      b. قياس زمن معالجة الطلب
+      c. حماية Admin Routes
+      d. التحقق من البيانات قبل تنفيذ Controller
+      e. منع الطلبات غير المصرح بها
+      f. تنفيذ Middleware لمعالجة الأخطاء
+      g. اختبار ترتيب تنفيذ Middleware
+
+
+## 6. القسم السادس: معالجة الأخطاء Error Handling
+   1. أساسيات معالجة الأخطاء
+      a. ما هو Error Handling؟
+      b. الفرق بين Operational وProgramming Errors
+      c. استخدام try وcatch
+      d. استخدام throw
+      e. استخدام next(err)
+      f. إنشاء Error Middleware
+      g. فهم معاملات Error Handler الأربعة
+   2. معالجة الأخطاء غير المتزامنة
+      a. الأخطاء داخل async Functions
+      b. معالجة Promise Rejections في Express 5
+      c. الفرق بين Express 4 وExpress 5 في Async Errors
+      d. معالجة أخطاء Callbacks
+      e. معالجة أخطاء العمليات خارج مسار الطلب
+      f. التعامل مع أخطاء قاعدة البيانات
+      g. تجنب Unhandled Promise Rejections
+   3. إنشاء نظام أخطاء احترافي
+      a. إنشاء Custom Error Class
+      b. إنشاء NotFoundError
+      c. إنشاء ValidationError
+      d. إنشاء AuthenticationError
+      e. إنشاء AuthorizationError
+      f. إنشاء DatabaseError
+      g. توحيد صيغة Error Response
+      h. إنشاء Global Error Handler
+   4. معالجة الأخطاء في Production
+      a. الفرق بين أخطاء Development وProduction
+      b. إخفاء Stack Trace عن المستخدم
+      c. استخدام NODE_ENV
+      d. تسجيل الأخطاء باستخدام Logger
+      e. التعامل مع res.headersSent
+      f. منع تسريب البيانات الحساسة
+      g. تسجيل Correlation ID مع الخطأ
+      h. اختبار حالات فشل API
+
+
+## 7. القسم السابع: بناء RESTful APIs احترافية
+   1. مبادئ REST API
+      a. ما هو REST؟
+      b. مفهوم Resources
+      c. مفهوم Statelessness
+      d. مفهوم Uniform Interface
+      e. استخدام HTTP Methods بطريقة صحيحة
+      f. تصميم أسماء Endpoints
+      g. الفرق بين PUT وPATCH
+      h. مفهوم Idempotency
+   2. تنفيذ CRUD APIs
+      a. إنشاء GET All Endpoint
+      b. إنشاء GET By ID Endpoint
+      c. إنشاء POST Endpoint
+      d. إنشاء PUT Endpoint
+      e. إنشاء PATCH Endpoint
+      f. إنشاء DELETE Endpoint
+      g. التعامل مع الموارد غير الموجودة
+      h. توحيد Response Format
+   3. البحث والفلترة وترتيب البيانات
+      a. تنفيذ Search API
+      b. تنفيذ Filtering
+      c. تنفيذ Sorting
+      d. تنفيذ Pagination
+      e. الفرق بين Offset وCursor Pagination
+      f. تنفيذ Field Selection
+      g. إرجاع معلومات Pagination
+      h. التحقق من Query Parameters
+   4. تصميم استجابات API
+      a. توحيد Success Responses
+      b. توحيد Error Responses
+      c. استخدام Status Codes المناسبة
+      d. إرجاع Metadata
+      e. إرجاع روابط الموارد عند الحاجة
+      f. تجنب كشف الحقول الحساسة
+      g. استخدام Response DTOs
+   5. إدارة إصدارات API
+      a. ما هو API Versioning؟
+      b. استخدام /api/v1
+      c. إنشاء Version 2
+      d. مفهوم Backward Compatibility
+      e. تجنب Breaking Changes
+      f. إدارة Deprecated Endpoints
+      g. كتابة API Changelog
+   6. مشروع عملي: نظام إدارة الكتب
+      a. تصميم Book Resource
+      b. إنشاء Books Router
+      c. إنشاء Books Controller
+      d. تنفيذ CRUD كامل
+      e. إضافة البحث عن الكتب
+      f. إضافة الفلترة حسب التصنيف
+      g. إضافة Pagination
+      h. إضافة Error Handling
+      i. اختبار API باستخدام Postman
+
+
+## 8. القسم الثامن: التحقق من البيانات Validation وSanitization
+   1. مقدمة في التحقق من البيانات
+      a. ما هو Input Validation؟
+      b. لماذا يجب التحقق من المدخلات؟
+      c. الفرق بين Validation وSanitization
+      d. الفرق بين Client-Side وServer-Side Validation
+      e. التحقق من النصوص والأرقام
+      f. التحقق من البريد الإلكتروني
+      g. التحقق من كلمات المرور
+      h. التحقق من البيانات المتداخلة
+   2. استخدام Zod
+      a. تثبيت Zod
+      b. إنشاء Validation Schema
+      c. التحقق من String وNumber
+      d. التحقق من Arrays وObjects
+      e. استخدام Optional وNullable Fields
+      f. استخدام safeParse
+      g. إنشاء Custom Validation
+      h. إنشاء Validation Middleware
+   3. استخدام express-validator
+      a. تثبيت express-validator
+      b. استخدام body Validation
+      c. استخدام param Validation
+      d. استخدام query Validation
+      e. التحقق من وجود الحقول المطلوبة
+      f. إنشاء Custom Validators
+      g. استخدام validationResult
+      h. توحيد Validation Errors
+   4. التحقق من البيانات بطريقة احترافية
+      a. التحقق من أنواع البيانات أثناء التشغيل
+      b. رفض الحقول غير المسموح بها
+      c. منع Mass Assignment
+      d. تنظيف المدخلات عند الحاجة
+      e. منع تمرير معاملات غير متوقعة
+      f. التحقق من معرفات الموارد
+      g. إنشاء Validation Schemas قابلة لإعادة الاستخدام
+      h. اختبار بيانات صحيحة وخاطئة
+
+
+## 9. القسم التاسع: تنظيم المشروع وهندسة Express.js
+   1. بنية المشروع الأساسية
+      a. تنظيم مجلد src
+      b. إنشاء Routes Folder
+      c. إنشاء Controllers Folder
+      d. إنشاء Services Folder
+      e. إنشاء Models Folder
+      f. إنشاء Middleware Folder
+      g. إنشاء Config Folder
+      h. إنشاء Utils Folder
+   2. فصل المسؤوليات
+      a. مفهوم Separation of Concerns
+      b. دور Routes
+      c. دور Controllers
+      d. دور Services
+      e. دور Repositories
+      f. دور Models
+      g. تجنب وضع Business Logic داخل Routes
+      h. تنظيم الاعتماديات بين الطبقات
+   3. MVC Architecture
+      a. ما هو MVC؟
+      b. مفهوم Model
+      c. مفهوم View
+      d. مفهوم Controller
+      e. تطبيق MVC مع Express
+      f. MVC في تطبيقات REST API
+      g. مقارنة MVC وLayered Architecture
+   4. Service وRepository Patterns
+      a. إنشاء Service Layer
+      b. إنشاء Repository Layer
+      c. فصل Business Logic عن Database Logic
+      d. استخدام Dependency Injection
+      e. إنشاء Interfaces للخدمات باستخدام TypeScript
+      f. كتابة Reusable Services
+      g. اختبار الطبقات بشكل منفصل
+   5. Clean Architecture
+      a. مقدمة في Clean Architecture
+      b. مبدأ Dependency Rule
+      c. مفهوم Domain Entities
+      d. مفهوم Use Cases
+      e. مفهوم Ports وAdapters
+      f. عزل Express عن Domain Logic
+      g. عزل قاعدة البيانات عن منطق الأعمال
+      h. تطبيق Clean Architecture على API
+   6. إدارة الإعدادات والبيئات
+      a. إنشاء Config Module
+      b. إدارة Environment Variables
+      c. الفرق بين Development وTesting وProduction
+      d. التحقق من متغيرات البيئة
+      e. إدارة Secrets
+      f. منع رفع الأسرار إلى GitHub
+      g. فصل app.js عن server.js
+      h. تهيئة التطبيق بطريقة قابلة للاختبار
+
+
+## 10. القسم العاشر: قواعد البيانات SQL مع Express.js
+   1. مقدمة في قواعد البيانات
+      a. ما هي Database؟
+      b. الفرق بين SQL وNoSQL
+      c. مفهوم Tables وRows وColumns
+      d. مفهوم Primary Key
+      e. مفهوم Foreign Key
+      f. العلاقات بين الجداول
+      g. مفهوم Database Schema
+   2. أساسيات SQL
+      a. إنشاء Tables
+      b. استخدام SELECT
+      c. استخدام INSERT
+      d. استخدام UPDATE
+      e. استخدام DELETE
+      f. استخدام WHERE
+      g. استخدام ORDER BY وLIMIT
+      h. استخدام JOIN
+      i. مفهوم Indexes
+   3. ربط PostgreSQL مع Express
+      a. تثبيت PostgreSQL
+      b. إنشاء قاعدة بيانات
+      c. تثبيت مكتبة pg
+      d. إعداد Database Connection
+      e. استخدام Connection Pool
+      f. تنفيذ Queries داخل Services
+      g. استخدام Parameterized Queries
+      h. التعامل مع أخطاء قاعدة البيانات
+   4. استخدام Prisma ORM
+      a. ما هو ORM؟
+      b. تثبيت Prisma
+      c. إعداد Prisma Schema
+      d. إنشاء Models
+      e. إدارة Prisma Migrations
+      f. تنفيذ create وfindMany
+      g. تنفيذ update وdelete
+      h. إنشاء العلاقات بين Models
+      i. استخدام Prisma داخل Express Services
+   5. استخدام Sequelize كبديل
+      a. مقدمة في Sequelize
+      b. إنشاء Models
+      c. تعريف Relationships
+      d. تنفيذ CRUD
+      e. استخدام Migrations
+      f. التعامل مع Transactions
+      g. مقارنة Sequelize وPrisma
+   6. قواعد البيانات المتقدمة
+      a. مفهوم Database Transactions
+      b. خصائص ACID
+      c. استخدام COMMIT وROLLBACK
+      d. التعامل مع Race Conditions
+      e. منع مشكلة N+1 Queries
+      f. تحسين Database Indexes
+      g. تحليل الاستعلامات البطيئة
+      h. تطبيق Database Constraints
+   7. مشروع عملي: إدارة العملاء
+      a. تصميم Customers Table
+      b. إنشاء Customers Model
+      c. ربط Express بقاعدة البيانات
+      d. إنشاء Customers Routes
+      e. إنشاء Customers Controller
+      f. إنشاء Customers Service
+      g. تنفيذ CRUD
+      h. تنفيذ Search وPagination
+      i. إضافة Validation
+      j. اختبار عمليات قاعدة البيانات
+
+
+## 11. القسم الحادي عشر: MongoDB وMongoose مع Express
+   1. مقدمة في MongoDB
+      a. ما هي MongoDB؟
+      b. الفرق بين SQL وNoSQL
+      c. مفهوم Documents
+      d. مفهوم Collections
+      e. مفهوم ObjectId
+      f. استخدام MongoDB Atlas
+      g. متى نستخدم MongoDB مع Express؟
+   2. ربط MongoDB مع Express
+      a. تثبيت MongoDB Driver
+      b. إنشاء Connection String
+      c. فتح الاتصال بقاعدة البيانات
+      d. تنفيذ Insert
+      e. تنفيذ Find
+      f. تنفيذ Update
+      g. تنفيذ Delete
+      h. معالجة أخطاء الاتصال
+   3. استخدام Mongoose
+      a. ما هو Mongoose؟
+      b. تثبيت Mongoose
+      c. إنشاء Schema
+      d. إنشاء Model
+      e. تحديد Schema Validation
+      f. تنفيذ CRUD
+      g. استخدام Virtual Fields
+      h. استخدام Middleware Hooks
+   4. العلاقات والاستعلامات المتقدمة
+      a. استخدام References
+      b. استخدام populate
+      c. استخدام Embedded Documents
+      d. تنفيذ Aggregation Pipeline
+      e. استخدام Indexes
+      f. تنفيذ Pagination
+      g. استخدام MongoDB Transactions
+      h. تجنب NoSQL Injection
+   5. مشروع عملي: مدونة إلكترونية
+      a. تصميم Users وPosts وComments
+      b. إنشاء Mongoose Models
+      c. إنشاء Posts API
+      d. إنشاء Comments API
+      e. ربط التعليقات بالمقالات
+      f. إضافة البحث والتصنيفات
+      g. تنفيذ Pagination
+      h. إضافة Validation وError Handling
+      i. اختبار المشروع
+
+
+## 12. القسم الثاني عشر: المصادقة وإدارة المستخدمين Authentication
+   1. مفاهيم Authentication
+      a. ما هي Authentication؟
+      b. الفرق بين Authentication وAuthorization
+      c. مفهوم Registration
+      d. مفهوم Login
+      e. مفهوم Session
+      f. مفهوم Token
+      g. الفرق بين Session-Based وToken-Based Authentication
+   2. إنشاء نظام تسجيل المستخدمين
+      a. تصميم User Model
+      b. إنشاء Register API
+      c. التحقق من بيانات التسجيل
+      d. منع تكرار البريد الإلكتروني
+      e. تشفير كلمات المرور باستخدام Argon2 أو bcrypt
+      f. حفظ المستخدم في قاعدة البيانات
+      g. إنشاء Login API
+      h. التحقق من كلمة المرور
+   3. JWT Authentication
+      a. ما هو JSON Web Token؟
+      b. مكونات JWT
+      c. إنشاء Access Token
+      d. توقيع JWT بشكل آمن
+      e. التحقق من Token
+      f. إنشاء Authentication Middleware
+      g. حماية Private Routes
+      h. التحقق من انتهاء صلاحية Token
+      i. إدارة Refresh Tokens
+      j. إبطال Refresh Tokens
+   4. Session Authentication
+      a. استخدام express-session
+      b. إنشاء Session بعد تسجيل الدخول
+      c. إدارة Session Cookie
+      d. استخدام Session Store دائم
+      e. تخزين Sessions باستخدام Redis
+      f. حماية Session Cookies
+      g. منع Session Fixation
+      h. تنفيذ Logout وإبطال Session
+   5. OAuth 2.0 وOpenID Connect
+      a. ما هو OAuth 2.0؟
+      b. الفرق بين OAuth وOpenID Connect
+      c. مفهوم Authorization Code Flow
+      d. مفهوم PKCE
+      e. استخدام Passport.js
+      f. إنشاء Google Login
+      g. ربط حساب خارجي بمستخدم موجود
+      h. التحقق من State وTokens
+   6. إدارة الحسابات
+      a. تأكيد البريد الإلكتروني
+      b. إعادة تعيين كلمة المرور
+      c. تغيير كلمة المرور
+      d. تحديث ملف المستخدم
+      e. تنفيذ Logout من جميع الأجهزة
+      f. إدارة الجلسات النشطة
+      g. مقدمة في Multi-Factor Authentication
+      h. اختبار تدفقات المصادقة
+
+
+## 13. القسم الثالث عشر: الصلاحيات Authorization وإدارة الأدوار
+   1. مقدمة في Authorization
+      a. ما هي Authorization؟
+      b. الفرق بين Role وPermission
+      c. مفهوم Protected Resources
+      d. مفهوم Ownership
+      e. الفرق بين 401 و403
+      f. مبدأ Least Privilege
+   2. Role-Based Access Control
+      a. ما هو RBAC؟
+      b. إنشاء أدوار Admin وUser
+      c. إضافة Role إلى User Model
+      d. إنشاء Role Middleware
+      e. حماية Admin Endpoints
+      f. إدارة صلاحيات متعددة
+      g. اختبار الأدوار والصلاحيات
+   3. Permission-Based Access Control
+      a. إنشاء Permissions Table
+      b. ربط Roles بالصلاحيات
+      c. ربط Users بالأدوار
+      d. التحقق من Permission داخل Middleware
+      e. تنفيذ Resource-Level Authorization
+      f. منع الوصول إلى بيانات مستخدم آخر
+      g. إنشاء سياسات Authorization قابلة لإعادة الاستخدام
+   4. الصلاحيات المتقدمة
+      a. مقدمة في Attribute-Based Access Control
+      b. مفهوم Policy-Based Authorization
+      c. التحقق من ملكية الموارد
+      d. تنفيذ Tenant Isolation
+      e. منع Broken Object Level Authorization
+      f. تسجيل تغييرات الصلاحيات
+      g. اختبار محاولات تجاوز الصلاحيات
+   5. مشروع عملي: لوحة تحكم متعددة الأدوار
+      a. إنشاء Users وRoles وPermissions
+      b. إنشاء APIs لإدارة المستخدمين
+      c. إنشاء APIs لإدارة الأدوار
+      d. ربط الأدوار بالصلاحيات
+      e. إنشاء Authorization Middleware
+      f. تقييد العمليات الإدارية
+      g. إنشاء Audit Log
+      h. اختبار صلاحيات كل دور
+
+
+## 14. القسم الرابع عشر: أمن Express.js وحماية REST APIs
+   1. مقدمة في Web Security
+      a. ما هو Web Application Security؟
+      b. مقدمة في OWASP Top 10
+      c. مقدمة في OWASP API Security Top 10
+      d. مفهوم Attack Surface
+      e. مفهوم Input Trust Boundaries
+      f. مبدأ Defense in Depth
+      g. الفرق بين Authentication وAPI Security
+   2. الحماية من هجمات الحقن
+      a. ما هو SQL Injection؟
+      b. منع SQL Injection باستخدام Parameterized Queries
+      c. ما هو NoSQL Injection؟
+      d. التحقق من مدخلات MongoDB
+      e. ما هو Command Injection؟
+      f. منع تنفيذ أوامر غير موثوقة
+      g. التحقق من أسماء الملفات والمسارات
+      h. منع Path Traversal
+   3. الحماية من XSS وCSRF
+      a. ما هو Cross-Site Scripting؟
+      b. الفرق بين Stored وReflected XSS
+      c. الهروب الآمن للبيانات داخل HTML
+      d. ما هو CSRF؟
+      e. تحديد حالات الحاجة إلى CSRF Protection
+      f. استخدام CSRF Tokens
+      g. استخدام SameSite Cookies
+      h. اختبار حماية النماذج والجلسات
+   4. CORS وSecurity Headers
+      a. ما هو CORS؟
+      b. ما هو Same-Origin Policy؟
+      c. فهم Preflight Requests
+      d. ضبط Allowed Origins
+      e. ضبط Credentials
+      f. فهم أن CORS ليس بديلاً للمصادقة
+      g. استخدام Helmet
+      h. مفهوم Content Security Policy
+      i. إخفاء X-Powered-By
+   5. Rate Limiting والحماية من إساءة الاستخدام
+      a. ما هو Rate Limiting؟
+      b. استخدام express-rate-limit
+      c. حماية Login Endpoint
+      d. منع Brute Force
+      e. استخدام Redis لتخزين عدادات الطلبات
+      f. مفهوم Request Throttling
+      g. الحد من أحجام الطلبات
+      h. التعامل مع 429 Responses
+   6. حماية بيانات التطبيق والإعدادات
+      a. إدارة Environment Variables
+      b. حماية API Keys
+      c. إدارة JWT Secrets
+      d. استخدام HTTPS
+      e. إعداد Secure وHttpOnly Cookies
+      f. حماية بيانات السجلات
+      g. منع كشف Stack Traces
+      h. استخدام npm audit
+      i. تحديث الحزم المعرضة للثغرات
+   7. الأمان المتقدم
+      a. مفهوم Server-Side Request Forgery
+      b. منع SSRF عند استدعاء روابط خارجية
+      c. ضبط trust proxy بطريقة آمنة
+      d. تطبيق Request Timeouts
+      e. منع رفع الملفات الضارة
+      f. حماية Webhook Signatures
+      g. منع Replay Attacks
+      h. إنشاء Security Audit Checklist
+      i. اختبار Broken Access Control
+
+
+## 15. القسم الخامس عشر: الملفات والقوالب والمحتوى الثابت
+   1. Static Files
+      a. ما هي Static Files؟
+      b. استخدام express.static
+      c. إنشاء Public Folder
+      d. عرض CSS وJavaScript Files
+      e. عرض الصور
+      f. استخدام Virtual Path Prefix
+      g. إعداد Cache Headers
+      h. حماية الملفات غير العامة
+   2. Template Engines
+      a. ما هي Template Engine؟
+      b. الفرق بين SSR وCSR
+      c. إعداد Views Folder
+      d. استخدام res.render
+      e. إرسال البيانات إلى View
+      f. إنشاء صفحات ديناميكية
+      g. فهم Layouts وPartials
+   3. استخدام EJS
+      a. تثبيت EJS
+      b. إعداد View Engine
+      c. إنشاء EJS Template
+      d. عرض المتغيرات داخل HTML
+      e. استخدام الشروط والحلقات
+      f. استخدام Partials
+      g. إنشاء صفحات CRUD
+      h. حماية البيانات المعروضة من XSS
+   4. رفع الملفات باستخدام Multer
+      a. فهم multipart/form-data
+      b. تثبيت Multer
+      c. رفع ملف واحد
+      d. رفع ملفات متعددة
+      e. تحديد حدود حجم الملفات
+      f. التحقق من نوع ومحتوى الملفات
+      g. توليد أسماء ملفات آمنة
+      h. معالجة أخطاء الرفع
+      i. تخزين معلومات الملفات في قاعدة البيانات
+   5. تنزيل الملفات ومعالجتها
+      a. استخدام res.download
+      b. استخدام res.sendFile
+      c. إنشاء API لتصدير CSV
+      d. إنشاء API لتصدير PDF
+      e. قراءة ملفات كبيرة باستخدام Streams
+      f. التعامل مع Download Headers
+      g. حماية روابط تنزيل الملفات
+      h. تطبيق File Access Authorization
+   6. التخزين السحابي
+      a. مفهوم Object Storage
+      b. مقدمة في Amazon S3
+      c. رفع الملفات إلى S3
+      d. استخدام Presigned URLs
+      e. تخزين مسارات الملفات في قاعدة البيانات
+      f. تنفيذ صلاحيات الوصول للملفات
+      g. إدارة حذف الملفات
+      h. التعامل مع الملفات الكبيرة
+
+
+## 16. القسم السادس عشر: HTTP المتقدم والتكامل مع المتصفح
+   1. HTTP Headers المتقدمة
+      a. فهم Content-Type
+      b. فهم Accept Header
+      c. فهم Authorization Header
+      d. فهم Cache-Control
+      e. فهم ETag
+      f. فهم Last-Modified
+      g. فهم Content-Disposition
+      h. استخدام Conditional Requests
+   2. Cookies بالتفصيل
+      a. ما هي HTTP Cookies؟
+      b. استخدام res.cookie
+      c. قراءة Cookies باستخدام Middleware
+      d. استخدام Signed Cookies
+      e. استخدام HttpOnly
+      f. استخدام Secure
+      g. استخدام SameSite
+      h. إدارة Cookie Expiration
+   3. الاتصال بين React وExpress
+      a. إنشاء Backend API باستخدام Express
+      b. إرسال طلبات باستخدام Fetch
+      c. استخدام Axios
+      d. إعداد CORS بين Frontend وBackend
+      e. إرسال بيانات Forms
+      f. عرض Validation Errors
+      g. إدارة Authentication بين الطرفين
+      h. رفع الملفات من React إلى Express
+      i. إدارة متغيرات البيئة في الطرفين
+   4. التحكم في الاستجابات
+      a. مفهوم Content Negotiation
+      b. استخدام req.accepts
+      c. إدارة Redirects
+      d. إرسال Streaming Responses
+      e. استخدام Server-Sent Events
+      f. التحكم في Cache-Control
+      g. تفعيل Response Compression
+      h. التعامل مع Client Disconnect
+
+
+## 17. القسم السابع عشر: الخدمات الخارجية وWebhooks
+   1. استهلاك APIs خارجية
+      a. استخدام Fetch داخل Express Services
+      b. استخدام Axios
+      c. تمرير Authorization Headers
+      d. إدارة API Keys
+      e. معالجة API Errors
+      f. تطبيق Timeout
+      g. تنفيذ Retry آمن
+      h. التحقق من بيانات الخدمات الخارجية
+   2. Webhooks
+      a. ما هو Webhook؟
+      b. الفرق بين Webhook وREST API
+      c. إنشاء Webhook Endpoint
+      d. استخدام Raw Body للتحقق من التوقيع
+      e. التحقق من Webhook Signature
+      f. معالجة Webhook Events
+      g. منع تكرار معالجة الأحداث
+      h. إرجاع استجابة سريعة للمرسل
+      i. تسجيل Webhook Delivery Events
+   3. إرسال البريد الإلكتروني
+      a. ما هو SMTP؟
+      b. استخدام Nodemailer
+      c. إرسال نصوص ورسائل HTML
+      d. إنشاء Email Templates
+      e. إرسال Email Verification
+      f. إرسال Password Reset Email
+      g. استخدام Email Queue
+      h. التعامل مع فشل إرسال البريد
+   4. بوابات الدفع
+      a. مقدمة في Payment Gateways
+      b. إنشاء Payment API
+      c. استخدام Sandbox Environment
+      d. بدء عملية دفع باستخدام SDK معتمد
+      e. استقبال Payment Webhook
+      f. التحقق من Payment Status
+      g. منع تكرار تسجيل الدفع
+      h. تحديث حالة الطلب بعد التحقق من الدفع
+      i. عدم تخزين بيانات البطاقات الحساسة
+   5. دمج Telegram والإشعارات
+      a. مقدمة في Telegram Bot API
+      b. إرسال رسالة من Express
+      c. إنشاء Webhook لاستقبال رسائل البوت
+      d. حماية Telegram Bot Token
+      e. إرسال إشعارات نجاح العمليات
+      f. إرسال تنبيهات الأخطاء
+      g. ربط الإشعارات بقاعدة البيانات
+      h. تنفيذ إرسال الرسائل بالخلفية
+   6. دمج خدمات الذكاء الاصطناعي
+      a. إنشاء AI Proxy API باستخدام Express
+      b. استدعاء نموذج ذكاء اصطناعي من الخادم
+      c. حماية مفاتيح API
+      d. إنشاء Chat Endpoint
+      e. إرسال Streaming Responses
+      f. التحقق من مدخلات المستخدم
+      g. إدارة Timeout وRetries
+      h. تسجيل الاستهلاك والتكلفة
+      i. تطبيق Rate Limiting لخدمات AI
+
+
+## 18. القسم الثامن عشر: TypeScript مع Express.js
+   1. مقدمة في TypeScript
+      a. ما هي TypeScript؟
+      b. الفرق بين TypeScript وJavaScript
+      c. فهم Static Typing
+      d. استخدام Interfaces
+      e. استخدام Type Aliases
+      f. استخدام Union Types
+      g. استخدام Generics
+      h. مفهوم Type Narrowing
+   2. إعداد Express مع TypeScript
+      a. إنشاء TypeScript Project
+      b. تثبيت TypeScript والأدوات اللازمة
+      c. إعداد tsconfig.json
+      d. إعداد Module System
+      e. استخدام Express Type Definitions
+      f. إعداد Scripts للتطوير والبناء
+      g. فهم الفرق بين Type Checking وRuntime Validation
+   3. Typing في Express
+      a. تعريف Request Type
+      b. تعريف Response Type
+      c. تعريف NextFunction Type
+      d. تحديد أنواع Route Parameters
+      e. تحديد أنواع Query Parameters
+      f. تحديد أنواع Request Body
+      g. إنشاء Typed Middleware
+      h. إضافة خصائص مخصصة إلى Request Type
+   4. DTOs وValidation
+      a. ما هو DTO؟
+      b. إنشاء CreateUserDTO
+      c. إنشاء UpdateUserDTO
+      d. إنشاء Response DTO
+      e. ربط Zod مع TypeScript
+      f. استخراج Types من Schemas
+      g. منع استخدام any دون ضرورة
+      h. إنشاء Type-Safe Services
+   5. مشروع عملي باستخدام TypeScript
+      a. إنشاء Express TypeScript API
+      b. تصميم Typed Models
+      c. إنشاء Typed Controllers
+      d. إنشاء Typed Services
+      e. إنشاء Validation Schemas
+      f. ربط قاعدة البيانات
+      g. تنفيذ CRUD
+      h. كتابة اختبارات TypeScript
+      i. بناء المشروع وتشغيله
+
+
+## 19. القسم التاسع عشر: اختبارات Express.js وتصحيح الأخطاء
+   1. مقدمة في Software Testing
+      a. ما هو Software Testing؟
+      b. الفرق بين Unit وIntegration وE2E Tests
+      c. مفهوم Test Cases
+      d. مفهوم Assertions
+      e. مفهوم Test Coverage
+      f. الفرق بين Mock وStub وFake
+      g. مفهوم Test Isolation
+   2. اختبارات Node.js وExpress
+      a. استخدام node:test
+      b. استخدام node:assert
+      c. التعرف على Jest وVitest
+      d. كتابة Unit Test
+      e. اختبار Async Functions
+      f. إنشاء Mock Services
+      g. اختبار Error Handling
+   3. اختبار REST APIs
+      a. استخدام Supertest
+      b. اختبار GET Endpoints
+      c. اختبار POST Endpoints
+      d. اختبار PUT وPATCH
+      e. اختبار DELETE
+      f. اختبار Status Codes
+      g. اختبار Response Bodies
+      h. اختبار Validation Errors
+      i. اختبار 404 و500 Errors
+   4. اختبارات المصادقة والصلاحيات
+      a. اختبار Register API
+      b. اختبار Login API
+      c. اختبار JWT Verification
+      d. اختبار Expired Tokens
+      e. اختبار Unauthorized Requests
+      f. اختبار Forbidden Requests
+      g. اختبار تجاوز صلاحيات الموارد
+      h. اختبار Password Reset Flow
+   5. اختبارات قواعد البيانات
+      a. إنشاء Test Database
+      b. عزل بيانات الاختبارات
+      c. استخدام Test Fixtures
+      d. إعادة ضبط البيانات بين الاختبارات
+      e. اختبار Database Transactions
+      f. اختبار Prisma Repositories
+      g. اختبار Mongoose Models
+      h. استخدام Testcontainers
+   6. Debugging
+      a. قراءة Stack Traces
+      b. استخدام VS Code Debugger
+      c. استخدام Breakpoints
+      d. فحص req وres أثناء التنفيذ
+      e. استخدام Node.js Inspector
+      f. تسجيل Logs منظمة
+      g. تحليل أخطاء Database Connections
+      h. تصحيح أخطاء Middleware Order
+   7. اختبارات الجودة المتقدمة
+      a. مفهوم Test-Driven Development
+      b. قياس Code Coverage
+      c. اختبار Rate Limiting
+      d. اختبار File Upload Security
+      e. اختبار External API Failures
+      f. اختبار Race Conditions
+      g. تشغيل الاختبارات داخل CI Pipeline
+
+
+## 20. القسم العشرون: توثيق APIs وGraphQL والتقنيات البديلة
+   1. توثيق REST API
+      a. أهمية API Documentation
+      b. ما هو OpenAPI؟
+      c. ما هو Swagger UI؟
+      d. إنشاء OpenAPI Specification
+      e. توثيق Request Parameters
+      f. توثيق Request Body
+      g. توثيق Response Schemas
+      h. توثيق Authentication
+      i. توثيق Error Responses
+   2. استخدام Postman باحتراف
+      a. إنشاء Postman Collection
+      b. إعداد Environment Variables
+      c. استخدام Collection Variables
+      d. إرسال Authentication Tokens
+      e. إنشاء Automated Tests
+      f. تنظيم Requests داخل Folders
+      g. تصدير ومشاركة Collections
+      h. تشغيل Collection Tests
+   3. GraphQL مع Express
+      a. ما هو GraphQL؟
+      b. الفرق بين REST وGraphQL
+      c. مفهوم GraphQL Schema
+      d. مفهوم Query وMutation
+      e. مفهوم Resolvers
+      f. ربط GraphQL Server مع Express
+      g. إضافة Authentication إلى GraphQL
+      h. معالجة N+1 Queries
+      i. التحكم في Query Complexity
+   4. gRPC والتواصل بين الخدمات
+      a. ما هو gRPC؟
+      b. مفهوم Protocol Buffers
+      c. إنشاء gRPC Service
+      d. إنشاء gRPC Client
+      e. ربط Express بخدمة gRPC
+      f. التعامل مع Errors وDeadlines
+      g. مقارنة REST وGraphQL وgRPC
+
+
+## 21. القسم الحادي والعشرون: الوقت الحقيقي والمهام الخلفية
+   1. مقدمة في Real-Time Applications
+      a. ما هي Real-Time Applications؟
+      b. الفرق بين Polling وWebSocket
+      c. مفهوم Server-Sent Events
+      d. الفرق بين SSE وWebSocket
+      e. حالات استخدام Real-Time APIs
+      f. إدارة الاتصالات طويلة المدة
+   2. Socket.IO مع Express
+      a. تثبيت Socket.IO
+      b. إنشاء HTTP Server لتطبيق Express
+      c. ربط Socket.IO بالخادم
+      d. إرسال Events
+      e. استقبال Events
+      f. استخدام Rooms
+      g. إدارة Connected Users
+      h. حماية Socket Connections
+      i. التعامل مع Reconnection
+   3. Background Jobs
+      a. ما هي Background Jobs؟
+      b. الفرق بين Request Processing وBackground Processing
+      c. مقدمة في Redis
+      d. استخدام BullMQ
+      e. إنشاء Queue
+      f. إنشاء Worker
+      g. إضافة Job إلى Queue
+      h. تسجيل حالة تنفيذ Job
+      i. التعامل مع Failed Jobs
+   4. الجدولة وإعادة المحاولة
+      a. مفهوم Scheduled Jobs
+      b. إنشاء مهمة مجدولة
+      c. إرسال بريد إلكتروني مجدول
+      d. توليد تقارير يومية
+      e. تطبيق Retry Policy
+      f. استخدام Exponential Backoff
+      g. منع التنفيذ المكرر للمهام
+      h. مراقبة Queues وWorkers
+   5. مشروع عملي: نظام إشعارات
+      a. إنشاء Notifications Model
+      b. إنشاء Notifications Routes
+      c. إرسال إشعارات فورية
+      d. إرسال إشعارات عبر Queue
+      e. حفظ الإشعارات في قاعدة البيانات
+      f. تمييز الإشعارات كمقروءة
+      g. إرسال رسائل Telegram
+      h. معالجة الرسائل الفاشلة
+      i. اختبار النظام بالكامل
+
+
+## 22. القسم الثاني والعشرون: تحسين الأداء والتخزين المؤقت والتوسع
+   1. مفاهيم الأداء
+      a. ما هو Performance؟
+      b. مفهوم Latency
+      c. مفهوم Throughput
+      d. مفهوم Requests Per Second
+      e. قياس Response Time
+      f. فهم Event Loop Blocking
+      g. اكتشاف Slow Endpoints
+      h. تحديد Performance Bottlenecks
+   2. Redis Caching
+      a. ما هو Caching؟
+      b. الفرق بين Memory Cache وRedis
+      c. الاتصال بـ Redis
+      d. تخزين API Responses
+      e. استخدام TTL
+      f. تطبيق Cache-Aside Pattern
+      g. تنفيذ Cache Invalidation
+      h. تجنب تخزين بيانات حساسة بصورة غير آمنة
+   3. HTTP Caching
+      a. مفهوم HTTP Cache
+      b. استخدام Cache-Control
+      c. فهم ETag
+      d. استخدام Conditional GET
+      e. التعامل مع 304 Not Modified
+      f. الفرق بين Public وPrivate Cache
+      g. Caching للملفات الثابتة
+   4. تحسين أداء Express
+      a. استخدام NODE_ENV=production
+      b. تقليل حجم JSON Responses
+      c. تحسين Database Queries
+      d. استخدام Pagination بدلاً من إرجاع جميع البيانات
+      e. استخدام Compression
+      f. تجنب العمليات المتزامنة البطيئة
+      g. استخدام Streams للملفات الكبيرة
+      h. تحديد Timeouts مناسبة
+      i. إدارة Connection Pools
+   5. Load Testing
+      a. ما هو Load Testing؟
+      b. استخدام Autocannon
+      c. إنشاء سيناريو Load Test
+      d. قياس Requests Per Second
+      e. قياس P95 وP99 Latency
+      f. مراقبة استهلاك CPU
+      g. مراقبة Memory Usage
+      h. تحليل النتائج وتحسين الأداء
+   6. التوسع Scaling
+      a. الفرق بين Vertical وHorizontal Scaling
+      b. مفهوم Load Balancer
+      c. استخدام عدة Express Instances
+      d. مفهوم Stateless API
+      e. إدارة Sessions في الأنظمة متعددة النسخ
+      f. استخدام Redis بين نسخ التطبيق
+      g. توزيع المهام الخلفية
+      h. تطبيق Graceful Shutdown
+
+
+## 23. القسم الثالث والعشرون: النشر وDocker وDevOps
+   1. الاستعداد للنشر
+      a. الفرق بين Development وProduction
+      b. إعداد Production Configuration
+      c. إدارة Environment Variables
+      d. إعداد Production Database
+      e. تفعيل HTTPS
+      f. إنشاء Health Check Endpoint
+      g. إعداد Error Logging
+      h. اختبار التطبيق قبل النشر
+   2. نشر Express على Linux VPS
+      a. مقدمة في VPS
+      b. الاتصال بالخادم باستخدام SSH
+      c. تثبيت Node.js على الخادم
+      d. رفع ملفات المشروع
+      e. تثبيت Production Dependencies
+      f. تشغيل التطبيق كخدمة باستخدام systemd
+      g. إعداد Firewall
+      h. مراقبة سجلات التطبيق
+   3. Nginx وReverse Proxy
+      a. ما هو Reverse Proxy؟
+      b. تثبيت Nginx
+      c. ربط Nginx بـ Express
+      d. إعداد Domain Name
+      e. إعداد HTTPS باستخدام Let's Encrypt
+      f. ضبط Proxy Headers
+      g. ضبط trust proxy في Express
+      h. إعداد Load Balancing
+   4. Docker
+      a. ما هو Docker؟
+      b. مفهوم Image وContainer
+      c. إنشاء Dockerfile
+      d. إعداد .dockerignore
+      e. بناء Express Docker Image
+      f. تشغيل Express Container
+      g. استخدام Multi-Stage Build
+      h. تشغيل التطبيق بمستخدم غير Root
+      i. إدارة Environment Variables داخل Container
+   5. Docker Compose
+      a. ما هو Docker Compose؟
+      b. إنشاء compose.yaml
+      c. تشغيل Express مع PostgreSQL
+      d. تشغيل Express مع MongoDB
+      e. إضافة Redis Service
+      f. إدارة Docker Networks
+      g. إدارة Volumes
+      h. إعداد Healthchecks
+      i. تشغيل Stack كامل محلياً
+   6. النشر السحابي
+      a. مقدمة في Cloud Deployment
+      b. نشر Express على Render
+      c. نشر Express على Railway
+      d. مقدمة في AWS
+      e. نشر Express داخل Container Service
+      f. استخدام Managed Databases
+      g. التعرف على Serverless Deployment
+      h. إدارة تكاليف الاستضافة
+   7. CI/CD باستخدام GitHub Actions
+      a. ما هو Continuous Integration؟
+      b. ما هو Continuous Deployment؟
+      c. إنشاء GitHub Actions Workflow
+      d. تشغيل ESLint تلقائياً
+      e. تشغيل Unit Tests
+      f. تشغيل Integration Tests
+      g. بناء Docker Image
+      h. إدارة CI Secrets
+      i. النشر التلقائي بعد نجاح الاختبارات
+      j. إنشاء Rollback Strategy
+
+
+## 24. القسم الرابع والعشرون: Logging وMonitoring والموثوقية
+   1. Application Logging
+      a. ما هو Logging؟
+      b. مستويات Logs
+      c. استخدام Pino
+      d. استخدام Winston كبديل
+      e. إنشاء Structured Logs
+      f. تسجيل HTTP Requests
+      g. استخدام Request ID
+      h. منع تسجيل كلمات المرور والرموز السرية
+   2. Monitoring
+      a. ما هو Application Monitoring؟
+      b. مراقبة CPU Usage
+      c. مراقبة Memory Usage
+      d. مراقبة Response Times
+      e. مراقبة Error Rate
+      f. مراقبة Database Connections
+      g. مراقبة Queue Jobs
+      h. إعداد Alerts
+   3. Observability
+      a. الفرق بين Monitoring وObservability
+      b. مفهوم Metrics
+      c. مفهوم Traces
+      d. مفهوم Distributed Tracing
+      e. استخدام OpenTelemetry مع Express
+      f. مقدمة في Prometheus
+      g. مقدمة في Grafana
+      h. إنشاء Dashboard لمراقبة API
+   4. Reliability Patterns
+      a. مفهوم High Availability
+      b. مفهوم Fault Tolerance
+      c. مفهوم Circuit Breaker
+      d. مفهوم Exponential Backoff
+      e. مفهوم Bulkhead Pattern
+      f. تطبيق Timeouts
+      g. إدارة Graceful Shutdown
+      h. معالجة فشل الخدمات الخارجية
+   5. النسخ الاحتياطي والتعافي
+      a. مفهوم Backup Strategy
+      b. تنفيذ Database Backup
+      c. اختبار Database Restore
+      d. حماية ملفات النسخ الاحتياطي
+      e. مفهوم Disaster Recovery
+      f. إنشاء Incident Response Plan
+      g. إنشاء Runbook لتشغيل النظام
+      h. توثيق إجراءات استعادة الخدمة
+
+
+## 25. القسم الخامس والعشرون: Express 5 والموضوعات المتقدمة
+   1. الفروق بين Express 4 وExpress 5
+      a. التعرف على Express 5
+      b. متطلبات إصدار Node.js
+      c. التغييرات في Routing Syntax
+      d. التغييرات في Wildcard Routes
+      e. التغييرات في Optional Route Parameters
+      f. التغييرات في req.body
+      g. التغييرات في express.urlencoded
+      h. التغييرات في express.static
+      i. التغييرات في app.listen
+   2. معالجة الأخطاء في Express 5
+      a. التعامل التلقائي مع Promise Rejections
+      b. استخدام async Controllers مباشرة
+      c. الفرق بين Express 4 و5 في Error Forwarding
+      d. معالجة أخطاء Middleware غير المتزامنة
+      e. التعامل مع Error Handler المدمج
+      f. اختبار أخطاء Express 5
+   3. ترقية مشروع من Express 4 إلى Express 5
+      a. مراجعة Breaking Changes
+      b. تحديث Dependencies
+      c. مراجعة Route Patterns
+      d. استبدال APIs القديمة المحذوفة
+      e. تحديث Error Handling
+      f. مراجعة إعدادات Static Files
+      g. استخدام Codemods عند الحاجة
+      h. تشغيل Regression Tests
+      i. اختبار التطبيق بعد الترقية
+   4. هندسة الأنظمة الكبيرة
+      a. الفرق بين Monolith وMicroservices
+      b. مفهوم Modular Monolith
+      c. تقسيم Express إلى Feature Modules
+      d. مفهوم API Gateway
+      e. التواصل بين الخدمات
+      f. استخدام Message Brokers
+      g. مفهوم Event-Driven Architecture
+      h. مفهوم Eventual Consistency
+      i. إدارة Distributed Transactions
+   5. Design Patterns المتقدمة
+      a. Factory Pattern
+      b. Strategy Pattern
+      c. Repository Pattern
+      d. Dependency Injection Pattern
+      e. Adapter Pattern
+      f. Observer Pattern
+      g. مفهوم CQRS
+      h. مفهوم Event Sourcing
+      i. مفهوم Outbox Pattern
+      j. مفهوم Saga Pattern
+   6. Multi-Tenant Applications
+      a. ما هو Multi-Tenancy؟
+      b. الفرق بين Single-Tenant وMulti-Tenant
+      c. تصميم Tenant Model
+      d. إنشاء Tenant Resolution Middleware
+      e. تطبيق Tenant Isolation
+      f. إدارة صلاحيات كل Tenant
+      g. التحقق من Tenant Ownership
+      h. منع تسريب بيانات المستأجرين
+      i. اختبار عزل البيانات
+
+
+## 26. القسم السادس والعشرون: المشروعات التطبيقية المتدرجة
+   1. المشروع الأول: خادم Express للمبتدئين
+      a. إنشاء Express Project
+      b. إنشاء الصفحة الرئيسية
+      c. إنشاء About Route
+      d. إنشاء Contact Route
+      e. إرسال JSON Response
+      f. إضافة Logger Middleware
+      g. إضافة 404 Handler
+      h. اختبار المشروع ورفعه على GitHub
+   2. المشروع الثاني: Todo REST API
+      a. تصميم Todo Model
+      b. إنشاء Todo Routes
+      c. إنشاء Todo Controller
+      d. إنشاء Todo Service
+      e. إنشاء مهمة جديدة
+      f. عرض جميع المهام
+      g. تعديل حالة المهمة
+      h. حذف المهمة
+      i. إضافة Validation
+      j. إضافة Error Handling
+      k. اختبار جميع Endpoints
+   3. المشروع الثالث: نظام إدارة المنتجات
+      a. تصميم قاعدة بيانات المنتجات
+      b. ربط PostgreSQL مع Express
+      c. إنشاء Product Model
+      d. إنشاء Products Router
+      e. إنشاء Products Controller
+      f. إنشاء Products Service
+      g. تنفيذ CRUD كامل
+      h. تنفيذ Search وFiltering
+      i. تنفيذ Pagination
+      j. رفع صور المنتجات
+      k. إضافة Validation وError Handling
+      l. كتابة API Tests
+      m. توثيق المشروع باستخدام Swagger
+   4. المشروع الرابع: نظام مستخدمين ومصادقة
+      a. تصميم Users Database
+      b. إنشاء Registration API
+      c. إنشاء Login API
+      d. تشفير كلمات المرور
+      e. إنشاء JWT Authentication
+      f. إنشاء Refresh Tokens
+      g. إنشاء User Profile API
+      h. تنفيذ Role-Based Access Control
+      i. تنفيذ Email Verification
+      j. تنفيذ Forgot Password
+      k. إضافة Rate Limiting
+      l. اختبار Authentication وAuthorization
+   5. المشروع الخامس: مدونة إلكترونية احترافية
+      a. تحليل متطلبات المدونة
+      b. تصميم Users وPosts وComments
+      c. ربط MongoDB باستخدام Mongoose
+      d. إنشاء Authentication APIs
+      e. إنشاء Posts CRUD
+      f. إنشاء Comments CRUD
+      g. إنشاء Categories وTags
+      h. تنفيذ Search وPagination
+      i. رفع Cover Images
+      j. إدارة صلاحيات Authors وAdmins
+      k. إنشاء API Documentation
+      l. كتابة Integration Tests
+      m. نشر المشروع
+   6. المشروع السادس: متجر إلكتروني Backend
+      a. تحليل متطلبات المتجر
+      b. تصميم Database Schema
+      c. إنشاء Users وRoles
+      d. إنشاء Products وCategories
+      e. إنشاء Shopping Cart
+      f. إنشاء Orders
+      g. إدارة Inventory
+      h. تنفيذ Coupons وDiscounts
+      i. ربط بوابة دفع تجريبية
+      j. التحقق من Payment Webhooks
+      k. تنفيذ Database Transactions
+      l. إرسال Order Confirmation Emails
+      m. إضافة Redis Cache
+      n. إنشاء Admin APIs
+      o. إضافة Tests وSwagger
+      p. نشر المشروع باستخدام Docker
+   7. المشروع السابع: نظام محادثة وإشعارات
+      a. تصميم Chat Database
+      b. إنشاء Express REST API
+      c. إضافة JWT Authentication
+      d. ربط Socket.IO
+      e. إنشاء Chat Rooms
+      f. إرسال واستقبال الرسائل
+      g. تخزين Message History
+      h. عرض Online Status
+      i. إرسال Notifications
+      j. ربط Redis للمهام والإشعارات
+      k. اختبار الاتصالات المتزامنة
+      l. نشر النظام ومراقبته
+   8. المشروع الثامن: منصة تعليمية LMS
+      a. تصميم متطلبات المنصة
+      b. تصميم Users وCourses وLessons
+      c. إنشاء أدوار Admin وTeacher وStudent
+      d. إنشاء Authentication وAuthorization
+      e. إنشاء Courses APIs
+      f. إنشاء Lessons APIs
+      g. إنشاء Enrollments APIs
+      h. إنشاء نظام اختبارات ودرجات
+      i. تتبع تقدم الطلاب
+      j. رفع الملفات التعليمية
+      k. إضافة إشعارات فورية
+      l. إضافة Background Jobs
+      m. إنشاء Admin Dashboard APIs
+      n. تطبيق Validation والأمان
+      o. كتابة اختبارات شاملة
+      p. إعداد Swagger Documentation
+      q. نشر المنصة باستخدام Docker Compose
+   9. المشروع التاسع: منظومة أتمتة باستخدام Express
+      a. تحليل نظام الأتمتة
+      b. تصميم Workflows وTasks
+      c. إنشاء API لإضافة المهام
+      d. إنشاء Webhook Endpoints
+      e. إعداد Redis وBullMQ
+      f. إنشاء Queue Workers
+      g. تنفيذ Scheduled Jobs
+      h. إنشاء Task Status API
+      i. ربط Telegram Bot API
+      j. إرسال تنبيهات النجاح والفشل
+      k. إنشاء Retry Mechanism
+      l. منع تكرار تنفيذ المهام
+      m. تسجيل العمليات في قاعدة البيانات
+      n. إنشاء Monitoring Endpoints
+      o. كتابة Integration Tests
+      p. نشر النظام باستخدام Docker Compose
+   10. المشروع النهائي: Express Backend جاهز للإنتاج
+      a. كتابة وثيقة متطلبات المشروع
+      b. رسم Architecture Diagram
+      c. اختيار Database المناسبة
+      d. إنشاء Express 5 مع TypeScript
+      e. تطبيق Clean Architecture
+      f. إنشاء RESTful APIs
+      g. تنفيذ Authentication وAuthorization
+      h. إنشاء Validation Layer
+      i. إنشاء Global Error Handler
+      j. تطبيق API Security
+      k. إضافة Redis Cache
+      l. إضافة Background Jobs
+      m. إنشاء Structured Logging
+      n. تنفيذ Unit Tests
+      o. تنفيذ Integration Tests
+      p. توثيق جميع Endpoints باستخدام OpenAPI
+      q. إنشاء Dockerfile
+      r. إعداد Docker Compose
+      s. إعداد GitHub Actions CI/CD
+      t. إعداد Staging Environment
+      u. تنفيذ Load Testing
+      v. إعداد Production Monitoring
+      w. اختبار Backup وRestore
+      x. نشر المشروع على Production
+      y. إعداد README وDeployment Guide
+      z. إعداد عرض تقني للمشروع
+
+
+## 27. القسم السابع والعشرون: الاستعداد للعمل كمطور Express.js محترف
+   1. مراجعة المفاهيم الأساسية
+      a. مراجعة HTTP وREST
+      b. مراجعة Routing
+      c. مراجعة Middleware
+      d. مراجعة Request وResponse
+      e. مراجعة Error Handling
+      f. مراجعة قواعد البيانات
+      g. مراجعة Authentication وAuthorization
+      h. مراجعة Testing وSecurity
+   2. أسئلة مقابلات Express.js
+      a. ما هو Express.js؟
+      b. ما الفرق بين Node.js وExpress.js؟
+      c. كيف يعمل Middleware؟
+      d. ما الفرق بين app.use وapp.get؟
+      e. ما الفرق بين req.params وreq.query وreq.body؟
+      f. كيف تعمل Error-Handling Middleware؟
+      g. كيف تتعامل Express 5 مع Async Errors؟
+      h. كيف تصمم RESTful API؟
+      i. كيف تحمي Express API؟
+      j. كيف تختبر Express Application؟
+      k. كيف تحسن أداء Express؟
+      l. كيف تنشر Express في Production؟
+   3. مهارات Backend Developer
+      a. تحليل المتطلبات
+      b. تصميم API Contracts
+      c. تصميم Database Schemas
+      d. كتابة Clean Code
+      e. استخدام Git وGitHub
+      f. المشاركة في Code Reviews
+      g. كتابة Unit وIntegration Tests
+      h. قراءة Documentation الرسمية
+      i. حل المشكلات وتصحيح الأخطاء
+   4. بناء Portfolio
+      a. اختيار ثلاثة مشروعات قوية
+      b. تنظيم GitHub Repositories
+      c. كتابة README احترافي
+      d. إضافة Architecture Diagrams
+      e. إضافة API Documentation
+      f. إضافة Postman Collections
+      g. عرض نتائج الاختبارات
+      h. توفير Live Demo
+      i. شرح التحديات والحلول التقنية
+   5. التطوير المهني المستمر
+      a. متابعة توثيق Express.js الرسمي
+      b. متابعة Express Security Updates
+      c. متابعة إصدارات Node.js المدعومة
+      d. تعلم TypeScript بعمق
+      e. تعلم Database Optimization
+      f. التوسع في Docker وCloud Deployment
+      g. دراسة System Design
+      h. التعرف على Fastify وNestJS
+      i. المساهمة في Open Source
+      j. الانتقال من Junior إلى Mid-Level Backend Developer
+      k. الانتقال إلى Senior Backend Developer
+      l. اختيار تخصص في Software Architecture أو Cloud Systems
+
+
+---
+
+🎯 **المطلوب بالتفصيل:**
+
+## 📚 أسلوب الشرح:
+- اشرح كأنك تتحدث مع شخص **لا يعرف أي شيء عن البرمجة**
+- استخدم **أمثلة من الحياة اليومية** لتبسيط كل مفهوم قبل الدخول في الكود
+- اشرح **لماذا** نحتاج هذا المفهوم وليس فقط **ماذا** يفعل
+- اشرح **كل مصطلح إنجليزي** يظهر مع ترجمته ومعناه
+- ** عمل انفو جرافيك وشرح كامل في صورة قوية وجذابة لتكون مرجع كامل للدرس  بعد نهاية كل درس
+
+## 💻 طريقة كتابة الأكواد:
+- اكتب **تعليق عربي فوق كل سطر كود** يشرح ما يفعله هذا السطر
+- اكتب **تعليق على نفس السطر** إذا كان يحتاج توضيح إضافي
+- قسّم الكود إلى **أجزاء صغيرة** واشرح كل جزء على حدة قبل دمجهم
+- ابدأ بأبسط مثال ممكن ثم **طوّره تدريجياً** خطوة بخطوة
+- أضف **أمثلة خاطئة شائعة** (Common Mistakes) مع شرح سبب الخطأ وكيفية تصحيحه
+
+## 📖 لكل مفهوم قدّم:
+1. **تعريف مبسط** - ما هو هذا المفهوم بكلمات بسيطة؟
+2. **مثال من الحياة** - تشبيه يوضح الفكرة
+3. **لماذا نحتاجه؟** - ما المشكلة التي يحلها؟
+4. **الصيغة العامة (Syntax)** - كيف نكتبه مع شرح كل جزء
+5. **مثال عملي بسيط** - مع تعليق على كل سطر
+6. **مثال عملي متقدم** - تطبيق أكبر مع تعليقات كاملة
+7. **شرح المخرجات** - ماذا سيظهر بالضبط ولماذا؟
+8. **أخطاء شائعة** - أخطاء يقع فيها المبتدئون مع الحل
+9. **نصائح مهمة** - أفضل الممارسات (Best Practices)
+10. ** عمل صورة انفوجرافيك ** - مل انفو جرافيك وشرح كامل في صورة قوية وجذابة لتكون مرجع كامل للدرس
+
+## 🔄 بعد كل موضوع رئيسي:
+- **اختبر فهمك**: 3 أسئلة سريعة مع الإجابات
+- **تمرين تطبيقي**: مطلوب من المتعلم حله مع تلميحات
+- **الحل الكامل**: مع شرح تفصيلي لكل سطر
+- ** عمل انفو جرافيك وشرح كامل في صورة قوية وجذابة لتكون مرجع كامل للدرس
+
+## 📋 بعد كل قسم:
+- **ملخص القسم** في نقاط واضحة
+- **جدول مرجعي سريع** بأهم الأوامر والصيغ
+- **مشروع تطبيقي صغير** يجمع كل مفاهيم القسم
+- ** عمل انفو جرافيك وشرح كامل في صورة قوية وجذابة لتكون مرجع كامل للدرس
+
+⚡ **ابدأ الآن من القسم الأول** وقدم شرح شامل ومنظم.==============
+عاوز داش بورد بنفس الشرح رياكت جي اس
+=====================
+وعاوز ملفات صور انفوجرافك لكل درس  بنفس الشرح وملخص للدرس ومربوطه ب الداش بورد وامكانية التحميل
+==========================
+كتاب كامل يحتوي علي الانفوجرافيك pdf 
+=============================
+curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent" \
+  -H 'Content-Type: application/json' \
+  -H 'X-goog-api-key: ' \
+  -X POST \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {
+            "text": "Explain how AI works in a few words"
+          }
+        ]
+      }
+    ]
+  }'
+================
+انشئ المشروع في فولدر اExpress.js  
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-30T01:38:05+02:00.
+</ADDITIONAL_METADATA>

@@ -1,0 +1,6348 @@
+[
+  {
+    "id": 1,
+    "title": "القسم الأول: المتطلبات الأساسية قبل تعلم Express.js",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مقدمة في تطوير الويب",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو تطوير الويب؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين Frontend وBackend"
+          },
+          {
+            "letter": "c",
+            "title": "كيف يعمل المتصفح والخادم؟"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Client وServer"
+          },
+          {
+            "letter": "e",
+            "title": "ما هو Web Server؟"
+          },
+          {
+            "letter": "f",
+            "title": "دورة حياة طلب الويب"
+          },
+          {
+            "letter": "g",
+            "title": "مثال عملي: ماذا يحدث عند فتح موقع؟"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "أساسيات HTTP",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو بروتوكول HTTP؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين HTTP وHTTPS"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Request وResponse"
+          },
+          {
+            "letter": "d",
+            "title": "طرق HTTP: GET وPOST وPUT وPATCH وDELETE"
+          },
+          {
+            "letter": "e",
+            "title": "مفهوم HTTP Headers"
+          },
+          {
+            "letter": "f",
+            "title": "مفهوم Request Body"
+          },
+          {
+            "letter": "g",
+            "title": "مفهوم Query Parameters"
+          },
+          {
+            "letter": "h",
+            "title": "مفهوم Status Codes"
+          },
+          {
+            "letter": "i",
+            "title": "مفهوم Cookies"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "أساسيات JavaScript المطلوبة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "المتغيرات وأنواع البيانات"
+          },
+          {
+            "letter": "b",
+            "title": "الشروط والحلقات التكرارية"
+          },
+          {
+            "letter": "c",
+            "title": "الدوال العادية وArrow Functions"
+          },
+          {
+            "letter": "d",
+            "title": "Arrays وObjects"
+          },
+          {
+            "letter": "e",
+            "title": "Destructuring وSpread Operator"
+          },
+          {
+            "letter": "f",
+            "title": "Callback Functions"
+          },
+          {
+            "letter": "g",
+            "title": "Promises"
+          },
+          {
+            "letter": "h",
+            "title": "Async وAwait"
+          },
+          {
+            "letter": "i",
+            "title": "Try وCatch"
+          },
+          {
+            "letter": "j",
+            "title": "التعامل مع JSON"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "أساسيات Node.js",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Node.js؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين JavaScript وNode.js"
+          },
+          {
+            "letter": "c",
+            "title": "تشغيل ملفات JavaScript باستخدام Node.js"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Event Loop"
+          },
+          {
+            "letter": "e",
+            "title": "فهم العمليات غير المتزامنة"
+          },
+          {
+            "letter": "f",
+            "title": "مفهوم Modules"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام CommonJS وES Modules"
+          },
+          {
+            "letter": "h",
+            "title": "التعامل مع npm"
+          },
+          {
+            "letter": "i",
+            "title": "فهم package.json"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "مقدمة في API",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي API؟"
+          },
+          {
+            "letter": "b",
+            "title": "ما هي REST API؟"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Endpoint"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم CRUD"
+          },
+          {
+            "letter": "e",
+            "title": "الفرق بين REST وGraphQL"
+          },
+          {
+            "letter": "f",
+            "title": "كيف يتواصل Frontend مع Backend؟"
+          },
+          {
+            "letter": "g",
+            "title": "مثال عملي على إرسال طلب API"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "القسم الثاني: التعرف على Express.js وإعداد بيئة العمل",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Express.js",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Express.js؟"
+          },
+          {
+            "letter": "b",
+            "title": "لماذا نستخدم Express.js؟"
+          },
+          {
+            "letter": "c",
+            "title": "الفرق بين Node.js وExpress.js"
+          },
+          {
+            "letter": "d",
+            "title": "كيف يعمل Express.js؟"
+          },
+          {
+            "letter": "e",
+            "title": "مفهوم Web Framework"
+          },
+          {
+            "letter": "f",
+            "title": "مميزات Express.js وحدوده"
+          },
+          {
+            "letter": "g",
+            "title": "متى نستخدم Express.js؟"
+          },
+          {
+            "letter": "h",
+            "title": "الفرق بين Express وFastify وNestJS"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "إعداد بيئة التطوير",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تثبيت إصدار Node.js مدعوم"
+          },
+          {
+            "letter": "b",
+            "title": "تثبيت Visual Studio Code"
+          },
+          {
+            "letter": "c",
+            "title": "التعرف على Terminal"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء مجلد المشروع"
+          },
+          {
+            "letter": "e",
+            "title": "تشغيل npm init"
+          },
+          {
+            "letter": "f",
+            "title": "تثبيت Express 5"
+          },
+          {
+            "letter": "g",
+            "title": "إعداد ملف .gitignore"
+          },
+          {
+            "letter": "h",
+            "title": "تنظيم ملفات المشروع الأول"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "إنشاء أول Express Server",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء ملف app.js"
+          },
+          {
+            "letter": "b",
+            "title": "استيراد مكتبة Express"
+          },
+          {
+            "letter": "c",
+            "title": "فهم express()"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء أول Route باستخدام app.get"
+          },
+          {
+            "letter": "e",
+            "title": "إرسال استجابة باستخدام res.send"
+          },
+          {
+            "letter": "f",
+            "title": "تشغيل الخادم باستخدام app.listen"
+          },
+          {
+            "letter": "g",
+            "title": "فهم مفهوم Port"
+          },
+          {
+            "letter": "h",
+            "title": "اختبار الخادم باستخدام المتصفح"
+          },
+          {
+            "letter": "i",
+            "title": "إيقاف الخادم وإعادة تشغيله"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "أدوات تطوير Express.js",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "استخدام Node.js Watch Mode"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام Nodemon عند الحاجة"
+          },
+          {
+            "letter": "c",
+            "title": "اختبار الطلبات باستخدام Postman"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام Thunder Client"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام REST Client"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام curl"
+          },
+          {
+            "letter": "g",
+            "title": "إعداد ESLint"
+          },
+          {
+            "letter": "h",
+            "title": "إعداد Prettier"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "فهم ملفات المشروع",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "وظيفة package.json"
+          },
+          {
+            "letter": "b",
+            "title": "وظيفة package-lock.json"
+          },
+          {
+            "letter": "c",
+            "title": "وظيفة node_modules"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام npm scripts"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء ملفات البيئة .env"
+          },
+          {
+            "letter": "f",
+            "title": "الفرق بين Dependencies وDevDependencies"
+          },
+          {
+            "letter": "g",
+            "title": "إدارة إصدارات المكتبات"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "مشروع عملي: خادم ترحيبي",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء خادم Express بسيط"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء الصفحة الرئيسية"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء صفحة About"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء صفحة Contact"
+          },
+          {
+            "letter": "e",
+            "title": "إرجاع رسالة JSON"
+          },
+          {
+            "letter": "f",
+            "title": "اختبار جميع المسارات"
+          },
+          {
+            "letter": "g",
+            "title": "رفع المشروع على GitHub"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "القسم الثالث: فهم Request وResponse بالتفصيل",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "كائن الطلب Request",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو req؟"
+          },
+          {
+            "letter": "b",
+            "title": "قراءة req.method"
+          },
+          {
+            "letter": "c",
+            "title": "قراءة req.path"
+          },
+          {
+            "letter": "d",
+            "title": "الفرق بين req.url وreq.originalUrl"
+          },
+          {
+            "letter": "e",
+            "title": "قراءة req.hostname"
+          },
+          {
+            "letter": "f",
+            "title": "قراءة req.protocol"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام req.get"
+          },
+          {
+            "letter": "h",
+            "title": "قراءة req.ip وفهم إعدادات Proxy"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "قراءة البيانات من الطلب",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "استخدام req.params"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام req.query"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام req.body"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام req.headers"
+          },
+          {
+            "letter": "e",
+            "title": "قراءة Cookies"
+          },
+          {
+            "letter": "f",
+            "title": "الفرق بين Params وQuery وBody"
+          },
+          {
+            "letter": "g",
+            "title": "التحقق من وجود البيانات المطلوبة"
+          },
+          {
+            "letter": "h",
+            "title": "فهم أن مدخلات المستخدم غير موثوقة"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "تحليل Request Body",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "استخدام express.json"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام express.urlencoded"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام express.text"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام express.raw"
+          },
+          {
+            "letter": "e",
+            "title": "فهم Content-Type"
+          },
+          {
+            "letter": "f",
+            "title": "ضبط حدود حجم الطلب"
+          },
+          {
+            "letter": "g",
+            "title": "التعامل مع JSON غير صالح"
+          },
+          {
+            "letter": "h",
+            "title": "فهم حالة req.body عند غياب التحليل في Express 5"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "كائن الاستجابة Response",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو res؟"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام res.send"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام res.json"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام res.status"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام res.sendStatus"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام res.set"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام res.type"
+          },
+          {
+            "letter": "h",
+            "title": "استخدام res.redirect"
+          },
+          {
+            "letter": "i",
+            "title": "استخدام res.end"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "الاستجابات المتقدمة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إرسال ملفات باستخدام res.sendFile"
+          },
+          {
+            "letter": "b",
+            "title": "تحميل الملفات باستخدام res.download"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام res.cookie"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام res.clearCookie"
+          },
+          {
+            "letter": "e",
+            "title": "التحقق من res.headersSent"
+          },
+          {
+            "letter": "f",
+            "title": "إضافة Response Headers"
+          },
+          {
+            "letter": "g",
+            "title": "إرسال الاستجابات بأنواع Content-Type مختلفة"
+          },
+          {
+            "letter": "h",
+            "title": "منع إرسال Response مرتين"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "أكواد حالة HTTP",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "200 OK"
+          },
+          {
+            "letter": "b",
+            "title": "201 Created"
+          },
+          {
+            "letter": "c",
+            "title": "204 No Content"
+          },
+          {
+            "letter": "d",
+            "title": "301 و302 Redirect"
+          },
+          {
+            "letter": "e",
+            "title": "400 Bad Request"
+          },
+          {
+            "letter": "f",
+            "title": "401 Unauthorized"
+          },
+          {
+            "letter": "g",
+            "title": "403 Forbidden"
+          },
+          {
+            "letter": "h",
+            "title": "404 Not Found"
+          },
+          {
+            "letter": "i",
+            "title": "409 Conflict"
+          },
+          {
+            "letter": "j",
+            "title": "422 Unprocessable Content"
+          },
+          {
+            "letter": "k",
+            "title": "429 Too Many Requests"
+          },
+          {
+            "letter": "l",
+            "title": "500 Internal Server Error"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "القسم الرابع: احتراف Routing في Express.js",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "أساسيات Routing",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Routing؟"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام app.get"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام app.post"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام app.put"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام app.patch"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام app.delete"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام app.all"
+          },
+          {
+            "letter": "h",
+            "title": "الفرق بين HTTP Methods"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "المسارات الديناميكية",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي Dynamic Routes؟"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام Route Parameters"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء مسار باستخدام :id"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام أكثر من Parameter"
+          },
+          {
+            "letter": "e",
+            "title": "التحقق من صحة Parameters"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام Optional Route Segments في Express 5"
+          },
+          {
+            "letter": "g",
+            "title": "فهم Wildcard Routes في Express 5"
+          },
+          {
+            "letter": "h",
+            "title": "قواعد تسمية Route Parameters"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "استخدام Express Router",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو express.Router؟"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Router مستقل"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام router.get وrouter.post"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام router.route"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام router.use"
+          },
+          {
+            "letter": "f",
+            "title": "تقسيم Routes إلى ملفات"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام Route Prefixes"
+          },
+          {
+            "letter": "h",
+            "title": "استخدام mergeParams مع Nested Routers"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "تنظيم ومعالجة المسارات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "أهمية ترتيب Routes"
+          },
+          {
+            "letter": "b",
+            "title": "التعامل مع Nested Routes"
+          },
+          {
+            "letter": "c",
+            "title": "الفرق بين Static وDynamic Routes"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام router.param"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام next('route')"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء 404 Handler"
+          },
+          {
+            "letter": "g",
+            "title": "تنظيم Routes حسب موارد النظام"
+          },
+          {
+            "letter": "h",
+            "title": "تقسيم API إلى إصدارات"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "مشروع عملي: Routes لإدارة الطلاب",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Students Router"
+          },
+          {
+            "letter": "b",
+            "title": "عرض جميع الطلاب"
+          },
+          {
+            "letter": "c",
+            "title": "عرض طالب باستخدام ID"
+          },
+          {
+            "letter": "d",
+            "title": "إضافة طالب جديد"
+          },
+          {
+            "letter": "e",
+            "title": "تعديل بيانات طالب"
+          },
+          {
+            "letter": "f",
+            "title": "حذف طالب"
+          },
+          {
+            "letter": "g",
+            "title": "تنظيم المسارات حسب HTTP Methods"
+          },
+          {
+            "letter": "h",
+            "title": "اختبار جميع Endpoints"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "القسم الخامس: Middleware من الأساسيات إلى الاحتراف",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Middleware",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي Middleware؟"
+          },
+          {
+            "letter": "b",
+            "title": "كيف تعمل Middleware؟"
+          },
+          {
+            "letter": "c",
+            "title": "دورة تنفيذ Middleware"
+          },
+          {
+            "letter": "d",
+            "title": "الفرق بين Middleware وRoute Handler"
+          },
+          {
+            "letter": "e",
+            "title": "فهم req وres وnext"
+          },
+          {
+            "letter": "f",
+            "title": "فهم next()"
+          },
+          {
+            "letter": "g",
+            "title": "أهمية ترتيب Middleware"
+          },
+          {
+            "letter": "h",
+            "title": "الأخطاء الشائعة في استخدام next"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "أنواع Middleware",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "Application-Level Middleware"
+          },
+          {
+            "letter": "b",
+            "title": "Router-Level Middleware"
+          },
+          {
+            "letter": "c",
+            "title": "Built-in Middleware"
+          },
+          {
+            "letter": "d",
+            "title": "Third-Party Middleware"
+          },
+          {
+            "letter": "e",
+            "title": "Error-Handling Middleware"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام Middleware على مسار محدد"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام عدة Middleware على نفس المسار"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Middleware المدمجة مع Express",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "استخدام express.json"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام express.urlencoded"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام express.static"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام express.text"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام express.raw"
+          },
+          {
+            "letter": "f",
+            "title": "تحديد خيارات Body Parsing"
+          },
+          {
+            "letter": "g",
+            "title": "ضبط حدود الطلبات"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "إنشاء Middleware مخصصة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Logger Middleware"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Request Timer"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Middleware للتحقق من API Key"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Middleware للتحقق من المستخدم"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Middleware للتحقق من الصلاحيات"
+          },
+          {
+            "letter": "f",
+            "title": "إضافة بيانات مخصصة إلى req"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام res.locals"
+          },
+          {
+            "letter": "h",
+            "title": "إنشاء Middleware قابلة لإعادة الاستخدام"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "استخدام Middleware خارجية",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "استخدام Morgan لتسجيل الطلبات"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام Helmet"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام CORS Middleware"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام Cookie Parser"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام express-rate-limit"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام Compression Middleware"
+          },
+          {
+            "letter": "g",
+            "title": "ضبط Middlewares حسب البيئة"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "تطبيق عملي على Middleware",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تسجيل جميع HTTP Requests"
+          },
+          {
+            "letter": "b",
+            "title": "قياس زمن معالجة الطلب"
+          },
+          {
+            "letter": "c",
+            "title": "حماية Admin Routes"
+          },
+          {
+            "letter": "d",
+            "title": "التحقق من البيانات قبل تنفيذ Controller"
+          },
+          {
+            "letter": "e",
+            "title": "منع الطلبات غير المصرح بها"
+          },
+          {
+            "letter": "f",
+            "title": "تنفيذ Middleware لمعالجة الأخطاء"
+          },
+          {
+            "letter": "g",
+            "title": "اختبار ترتيب تنفيذ Middleware"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "القسم السادس: معالجة الأخطاء Error Handling",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "أساسيات معالجة الأخطاء",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Error Handling؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين Operational وProgramming Errors"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام try وcatch"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام throw"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام next(err)"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Error Middleware"
+          },
+          {
+            "letter": "g",
+            "title": "فهم معاملات Error Handler الأربعة"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "معالجة الأخطاء غير المتزامنة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "الأخطاء داخل async Functions"
+          },
+          {
+            "letter": "b",
+            "title": "معالجة Promise Rejections في Express 5"
+          },
+          {
+            "letter": "c",
+            "title": "الفرق بين Express 4 وExpress 5 في Async Errors"
+          },
+          {
+            "letter": "d",
+            "title": "معالجة أخطاء Callbacks"
+          },
+          {
+            "letter": "e",
+            "title": "معالجة أخطاء العمليات خارج مسار الطلب"
+          },
+          {
+            "letter": "f",
+            "title": "التعامل مع أخطاء قاعدة البيانات"
+          },
+          {
+            "letter": "g",
+            "title": "تجنب Unhandled Promise Rejections"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "إنشاء نظام أخطاء احترافي",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Custom Error Class"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء NotFoundError"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء ValidationError"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء AuthenticationError"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء AuthorizationError"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء DatabaseError"
+          },
+          {
+            "letter": "g",
+            "title": "توحيد صيغة Error Response"
+          },
+          {
+            "letter": "h",
+            "title": "إنشاء Global Error Handler"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "معالجة الأخطاء في Production",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "الفرق بين أخطاء Development وProduction"
+          },
+          {
+            "letter": "b",
+            "title": "إخفاء Stack Trace عن المستخدم"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام NODE_ENV"
+          },
+          {
+            "letter": "d",
+            "title": "تسجيل الأخطاء باستخدام Logger"
+          },
+          {
+            "letter": "e",
+            "title": "التعامل مع res.headersSent"
+          },
+          {
+            "letter": "f",
+            "title": "منع تسريب البيانات الحساسة"
+          },
+          {
+            "letter": "g",
+            "title": "تسجيل Correlation ID مع الخطأ"
+          },
+          {
+            "letter": "h",
+            "title": "اختبار حالات فشل API"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "القسم السابع: بناء RESTful APIs احترافية",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مبادئ REST API",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو REST؟"
+          },
+          {
+            "letter": "b",
+            "title": "مفهوم Resources"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Statelessness"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Uniform Interface"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام HTTP Methods بطريقة صحيحة"
+          },
+          {
+            "letter": "f",
+            "title": "تصميم أسماء Endpoints"
+          },
+          {
+            "letter": "g",
+            "title": "الفرق بين PUT وPATCH"
+          },
+          {
+            "letter": "h",
+            "title": "مفهوم Idempotency"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "تنفيذ CRUD APIs",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء GET All Endpoint"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء GET By ID Endpoint"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء POST Endpoint"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء PUT Endpoint"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء PATCH Endpoint"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء DELETE Endpoint"
+          },
+          {
+            "letter": "g",
+            "title": "التعامل مع الموارد غير الموجودة"
+          },
+          {
+            "letter": "h",
+            "title": "توحيد Response Format"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "البحث والفلترة وترتيب البيانات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تنفيذ Search API"
+          },
+          {
+            "letter": "b",
+            "title": "تنفيذ Filtering"
+          },
+          {
+            "letter": "c",
+            "title": "تنفيذ Sorting"
+          },
+          {
+            "letter": "d",
+            "title": "تنفيذ Pagination"
+          },
+          {
+            "letter": "e",
+            "title": "الفرق بين Offset وCursor Pagination"
+          },
+          {
+            "letter": "f",
+            "title": "تنفيذ Field Selection"
+          },
+          {
+            "letter": "g",
+            "title": "إرجاع معلومات Pagination"
+          },
+          {
+            "letter": "h",
+            "title": "التحقق من Query Parameters"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "تصميم استجابات API",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "توحيد Success Responses"
+          },
+          {
+            "letter": "b",
+            "title": "توحيد Error Responses"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام Status Codes المناسبة"
+          },
+          {
+            "letter": "d",
+            "title": "إرجاع Metadata"
+          },
+          {
+            "letter": "e",
+            "title": "إرجاع روابط الموارد عند الحاجة"
+          },
+          {
+            "letter": "f",
+            "title": "تجنب كشف الحقول الحساسة"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام Response DTOs"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "إدارة إصدارات API",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو API Versioning؟"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام /api/v1"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Version 2"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Backward Compatibility"
+          },
+          {
+            "letter": "e",
+            "title": "تجنب Breaking Changes"
+          },
+          {
+            "letter": "f",
+            "title": "إدارة Deprecated Endpoints"
+          },
+          {
+            "letter": "g",
+            "title": "كتابة API Changelog"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "مشروع عملي: نظام إدارة الكتب",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تصميم Book Resource"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Books Router"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Books Controller"
+          },
+          {
+            "letter": "d",
+            "title": "تنفيذ CRUD كامل"
+          },
+          {
+            "letter": "e",
+            "title": "إضافة البحث عن الكتب"
+          },
+          {
+            "letter": "f",
+            "title": "إضافة الفلترة حسب التصنيف"
+          },
+          {
+            "letter": "g",
+            "title": "إضافة Pagination"
+          },
+          {
+            "letter": "h",
+            "title": "إضافة Error Handling"
+          },
+          {
+            "letter": "i",
+            "title": "اختبار API باستخدام Postman"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "القسم الثامن: التحقق من البيانات Validation وSanitization",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مقدمة في التحقق من البيانات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Input Validation؟"
+          },
+          {
+            "letter": "b",
+            "title": "لماذا يجب التحقق من المدخلات؟"
+          },
+          {
+            "letter": "c",
+            "title": "الفرق بين Validation وSanitization"
+          },
+          {
+            "letter": "d",
+            "title": "الفرق بين Client-Side وServer-Side Validation"
+          },
+          {
+            "letter": "e",
+            "title": "التحقق من النصوص والأرقام"
+          },
+          {
+            "letter": "f",
+            "title": "التحقق من البريد الإلكتروني"
+          },
+          {
+            "letter": "g",
+            "title": "التحقق من كلمات المرور"
+          },
+          {
+            "letter": "h",
+            "title": "التحقق من البيانات المتداخلة"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "استخدام Zod",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تثبيت Zod"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Validation Schema"
+          },
+          {
+            "letter": "c",
+            "title": "التحقق من String وNumber"
+          },
+          {
+            "letter": "d",
+            "title": "التحقق من Arrays وObjects"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام Optional وNullable Fields"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام safeParse"
+          },
+          {
+            "letter": "g",
+            "title": "إنشاء Custom Validation"
+          },
+          {
+            "letter": "h",
+            "title": "إنشاء Validation Middleware"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "استخدام express-validator",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تثبيت express-validator"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام body Validation"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام param Validation"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام query Validation"
+          },
+          {
+            "letter": "e",
+            "title": "التحقق من وجود الحقول المطلوبة"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Custom Validators"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام validationResult"
+          },
+          {
+            "letter": "h",
+            "title": "توحيد Validation Errors"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "التحقق من البيانات بطريقة احترافية",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "التحقق من أنواع البيانات أثناء التشغيل"
+          },
+          {
+            "letter": "b",
+            "title": "رفض الحقول غير المسموح بها"
+          },
+          {
+            "letter": "c",
+            "title": "منع Mass Assignment"
+          },
+          {
+            "letter": "d",
+            "title": "تنظيف المدخلات عند الحاجة"
+          },
+          {
+            "letter": "e",
+            "title": "منع تمرير معاملات غير متوقعة"
+          },
+          {
+            "letter": "f",
+            "title": "التحقق من معرفات الموارد"
+          },
+          {
+            "letter": "g",
+            "title": "إنشاء Validation Schemas قابلة لإعادة الاستخدام"
+          },
+          {
+            "letter": "h",
+            "title": "اختبار بيانات صحيحة وخاطئة"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "القسم التاسع: تنظيم المشروع وهندسة Express.js",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "بنية المشروع الأساسية",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تنظيم مجلد src"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Routes Folder"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Controllers Folder"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Services Folder"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Models Folder"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Middleware Folder"
+          },
+          {
+            "letter": "g",
+            "title": "إنشاء Config Folder"
+          },
+          {
+            "letter": "h",
+            "title": "إنشاء Utils Folder"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "فصل المسؤوليات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مفهوم Separation of Concerns"
+          },
+          {
+            "letter": "b",
+            "title": "دور Routes"
+          },
+          {
+            "letter": "c",
+            "title": "دور Controllers"
+          },
+          {
+            "letter": "d",
+            "title": "دور Services"
+          },
+          {
+            "letter": "e",
+            "title": "دور Repositories"
+          },
+          {
+            "letter": "f",
+            "title": "دور Models"
+          },
+          {
+            "letter": "g",
+            "title": "تجنب وضع Business Logic داخل Routes"
+          },
+          {
+            "letter": "h",
+            "title": "تنظيم الاعتماديات بين الطبقات"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "MVC Architecture",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو MVC؟"
+          },
+          {
+            "letter": "b",
+            "title": "مفهوم Model"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم View"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Controller"
+          },
+          {
+            "letter": "e",
+            "title": "تطبيق MVC مع Express"
+          },
+          {
+            "letter": "f",
+            "title": "MVC في تطبيقات REST API"
+          },
+          {
+            "letter": "g",
+            "title": "مقارنة MVC وLayered Architecture"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Service وRepository Patterns",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Service Layer"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Repository Layer"
+          },
+          {
+            "letter": "c",
+            "title": "فصل Business Logic عن Database Logic"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام Dependency Injection"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Interfaces للخدمات باستخدام TypeScript"
+          },
+          {
+            "letter": "f",
+            "title": "كتابة Reusable Services"
+          },
+          {
+            "letter": "g",
+            "title": "اختبار الطبقات بشكل منفصل"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Clean Architecture",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مقدمة في Clean Architecture"
+          },
+          {
+            "letter": "b",
+            "title": "مبدأ Dependency Rule"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Domain Entities"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Use Cases"
+          },
+          {
+            "letter": "e",
+            "title": "مفهوم Ports وAdapters"
+          },
+          {
+            "letter": "f",
+            "title": "عزل Express عن Domain Logic"
+          },
+          {
+            "letter": "g",
+            "title": "عزل قاعدة البيانات عن منطق الأعمال"
+          },
+          {
+            "letter": "h",
+            "title": "تطبيق Clean Architecture على API"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "إدارة الإعدادات والبيئات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Config Module"
+          },
+          {
+            "letter": "b",
+            "title": "إدارة Environment Variables"
+          },
+          {
+            "letter": "c",
+            "title": "الفرق بين Development وTesting وProduction"
+          },
+          {
+            "letter": "d",
+            "title": "التحقق من متغيرات البيئة"
+          },
+          {
+            "letter": "e",
+            "title": "إدارة Secrets"
+          },
+          {
+            "letter": "f",
+            "title": "منع رفع الأسرار إلى GitHub"
+          },
+          {
+            "letter": "g",
+            "title": "فصل app.js عن server.js"
+          },
+          {
+            "letter": "h",
+            "title": "تهيئة التطبيق بطريقة قابلة للاختبار"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "title": "القسم العاشر: قواعد البيانات SQL مع Express.js",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مقدمة في قواعد البيانات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي Database؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين SQL وNoSQL"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Tables وRows وColumns"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Primary Key"
+          },
+          {
+            "letter": "e",
+            "title": "مفهوم Foreign Key"
+          },
+          {
+            "letter": "f",
+            "title": "العلاقات بين الجداول"
+          },
+          {
+            "letter": "g",
+            "title": "مفهوم Database Schema"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "أساسيات SQL",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Tables"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام SELECT"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام INSERT"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام UPDATE"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام DELETE"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام WHERE"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام ORDER BY وLIMIT"
+          },
+          {
+            "letter": "h",
+            "title": "استخدام JOIN"
+          },
+          {
+            "letter": "i",
+            "title": "مفهوم Indexes"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "ربط PostgreSQL مع Express",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تثبيت PostgreSQL"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء قاعدة بيانات"
+          },
+          {
+            "letter": "c",
+            "title": "تثبيت مكتبة pg"
+          },
+          {
+            "letter": "d",
+            "title": "إعداد Database Connection"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام Connection Pool"
+          },
+          {
+            "letter": "f",
+            "title": "تنفيذ Queries داخل Services"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام Parameterized Queries"
+          },
+          {
+            "letter": "h",
+            "title": "التعامل مع أخطاء قاعدة البيانات"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "استخدام Prisma ORM",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو ORM؟"
+          },
+          {
+            "letter": "b",
+            "title": "تثبيت Prisma"
+          },
+          {
+            "letter": "c",
+            "title": "إعداد Prisma Schema"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Models"
+          },
+          {
+            "letter": "e",
+            "title": "إدارة Prisma Migrations"
+          },
+          {
+            "letter": "f",
+            "title": "تنفيذ create وfindMany"
+          },
+          {
+            "letter": "g",
+            "title": "تنفيذ update وdelete"
+          },
+          {
+            "letter": "h",
+            "title": "إنشاء العلاقات بين Models"
+          },
+          {
+            "letter": "i",
+            "title": "استخدام Prisma داخل Express Services"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "استخدام Sequelize كبديل",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مقدمة في Sequelize"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Models"
+          },
+          {
+            "letter": "c",
+            "title": "تعريف Relationships"
+          },
+          {
+            "letter": "d",
+            "title": "تنفيذ CRUD"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام Migrations"
+          },
+          {
+            "letter": "f",
+            "title": "التعامل مع Transactions"
+          },
+          {
+            "letter": "g",
+            "title": "مقارنة Sequelize وPrisma"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "قواعد البيانات المتقدمة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مفهوم Database Transactions"
+          },
+          {
+            "letter": "b",
+            "title": "خصائص ACID"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام COMMIT وROLLBACK"
+          },
+          {
+            "letter": "d",
+            "title": "التعامل مع Race Conditions"
+          },
+          {
+            "letter": "e",
+            "title": "منع مشكلة N+1 Queries"
+          },
+          {
+            "letter": "f",
+            "title": "تحسين Database Indexes"
+          },
+          {
+            "letter": "g",
+            "title": "تحليل الاستعلامات البطيئة"
+          },
+          {
+            "letter": "h",
+            "title": "تطبيق Database Constraints"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "مشروع عملي: إدارة العملاء",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تصميم Customers Table"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Customers Model"
+          },
+          {
+            "letter": "c",
+            "title": "ربط Express بقاعدة البيانات"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Customers Routes"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Customers Controller"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Customers Service"
+          },
+          {
+            "letter": "g",
+            "title": "تنفيذ CRUD"
+          },
+          {
+            "letter": "h",
+            "title": "تنفيذ Search وPagination"
+          },
+          {
+            "letter": "i",
+            "title": "إضافة Validation"
+          },
+          {
+            "letter": "j",
+            "title": "اختبار عمليات قاعدة البيانات"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "title": "القسم الحادي عشر: MongoDB وMongoose مع Express",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مقدمة في MongoDB",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي MongoDB؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين SQL وNoSQL"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Documents"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Collections"
+          },
+          {
+            "letter": "e",
+            "title": "مفهوم ObjectId"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام MongoDB Atlas"
+          },
+          {
+            "letter": "g",
+            "title": "متى نستخدم MongoDB مع Express؟"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "ربط MongoDB مع Express",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تثبيت MongoDB Driver"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Connection String"
+          },
+          {
+            "letter": "c",
+            "title": "فتح الاتصال بقاعدة البيانات"
+          },
+          {
+            "letter": "d",
+            "title": "تنفيذ Insert"
+          },
+          {
+            "letter": "e",
+            "title": "تنفيذ Find"
+          },
+          {
+            "letter": "f",
+            "title": "تنفيذ Update"
+          },
+          {
+            "letter": "g",
+            "title": "تنفيذ Delete"
+          },
+          {
+            "letter": "h",
+            "title": "معالجة أخطاء الاتصال"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "استخدام Mongoose",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Mongoose؟"
+          },
+          {
+            "letter": "b",
+            "title": "تثبيت Mongoose"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Schema"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Model"
+          },
+          {
+            "letter": "e",
+            "title": "تحديد Schema Validation"
+          },
+          {
+            "letter": "f",
+            "title": "تنفيذ CRUD"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام Virtual Fields"
+          },
+          {
+            "letter": "h",
+            "title": "استخدام Middleware Hooks"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "العلاقات والاستعلامات المتقدمة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "استخدام References"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام populate"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام Embedded Documents"
+          },
+          {
+            "letter": "d",
+            "title": "تنفيذ Aggregation Pipeline"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام Indexes"
+          },
+          {
+            "letter": "f",
+            "title": "تنفيذ Pagination"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام MongoDB Transactions"
+          },
+          {
+            "letter": "h",
+            "title": "تجنب NoSQL Injection"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "مشروع عملي: مدونة إلكترونية",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تصميم Users وPosts وComments"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Mongoose Models"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Posts API"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Comments API"
+          },
+          {
+            "letter": "e",
+            "title": "ربط التعليقات بالمقالات"
+          },
+          {
+            "letter": "f",
+            "title": "إضافة البحث والتصنيفات"
+          },
+          {
+            "letter": "g",
+            "title": "تنفيذ Pagination"
+          },
+          {
+            "letter": "h",
+            "title": "إضافة Validation وError Handling"
+          },
+          {
+            "letter": "i",
+            "title": "اختبار المشروع"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "title": "القسم الثاني عشر: المصادقة وإدارة المستخدمين Authentication",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مفاهيم Authentication",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي Authentication؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين Authentication وAuthorization"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Registration"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Login"
+          },
+          {
+            "letter": "e",
+            "title": "مفهوم Session"
+          },
+          {
+            "letter": "f",
+            "title": "مفهوم Token"
+          },
+          {
+            "letter": "g",
+            "title": "الفرق بين Session-Based وToken-Based Authentication"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "إنشاء نظام تسجيل المستخدمين",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تصميم User Model"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Register API"
+          },
+          {
+            "letter": "c",
+            "title": "التحقق من بيانات التسجيل"
+          },
+          {
+            "letter": "d",
+            "title": "منع تكرار البريد الإلكتروني"
+          },
+          {
+            "letter": "e",
+            "title": "تشفير كلمات المرور باستخدام Argon2 أو bcrypt"
+          },
+          {
+            "letter": "f",
+            "title": "حفظ المستخدم في قاعدة البيانات"
+          },
+          {
+            "letter": "g",
+            "title": "إنشاء Login API"
+          },
+          {
+            "letter": "h",
+            "title": "التحقق من كلمة المرور"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "JWT Authentication",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو JSON Web Token؟"
+          },
+          {
+            "letter": "b",
+            "title": "مكونات JWT"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Access Token"
+          },
+          {
+            "letter": "d",
+            "title": "توقيع JWT بشكل آمن"
+          },
+          {
+            "letter": "e",
+            "title": "التحقق من Token"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Authentication Middleware"
+          },
+          {
+            "letter": "g",
+            "title": "حماية Private Routes"
+          },
+          {
+            "letter": "h",
+            "title": "التحقق من انتهاء صلاحية Token"
+          },
+          {
+            "letter": "i",
+            "title": "إدارة Refresh Tokens"
+          },
+          {
+            "letter": "j",
+            "title": "إبطال Refresh Tokens"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Session Authentication",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "استخدام express-session"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Session بعد تسجيل الدخول"
+          },
+          {
+            "letter": "c",
+            "title": "إدارة Session Cookie"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام Session Store دائم"
+          },
+          {
+            "letter": "e",
+            "title": "تخزين Sessions باستخدام Redis"
+          },
+          {
+            "letter": "f",
+            "title": "حماية Session Cookies"
+          },
+          {
+            "letter": "g",
+            "title": "منع Session Fixation"
+          },
+          {
+            "letter": "h",
+            "title": "تنفيذ Logout وإبطال Session"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "OAuth 2.0 وOpenID Connect",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو OAuth 2.0؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين OAuth وOpenID Connect"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Authorization Code Flow"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم PKCE"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام Passport.js"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Google Login"
+          },
+          {
+            "letter": "g",
+            "title": "ربط حساب خارجي بمستخدم موجود"
+          },
+          {
+            "letter": "h",
+            "title": "التحقق من State وTokens"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "إدارة الحسابات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تأكيد البريد الإلكتروني"
+          },
+          {
+            "letter": "b",
+            "title": "إعادة تعيين كلمة المرور"
+          },
+          {
+            "letter": "c",
+            "title": "تغيير كلمة المرور"
+          },
+          {
+            "letter": "d",
+            "title": "تحديث ملف المستخدم"
+          },
+          {
+            "letter": "e",
+            "title": "تنفيذ Logout من جميع الأجهزة"
+          },
+          {
+            "letter": "f",
+            "title": "إدارة الجلسات النشطة"
+          },
+          {
+            "letter": "g",
+            "title": "مقدمة في Multi-Factor Authentication"
+          },
+          {
+            "letter": "h",
+            "title": "اختبار تدفقات المصادقة"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "title": "القسم الثالث عشر: الصلاحيات Authorization وإدارة الأدوار",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Authorization",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي Authorization؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين Role وPermission"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Protected Resources"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Ownership"
+          },
+          {
+            "letter": "e",
+            "title": "الفرق بين 401 و403"
+          },
+          {
+            "letter": "f",
+            "title": "مبدأ Least Privilege"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Role-Based Access Control",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو RBAC؟"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء أدوار Admin وUser"
+          },
+          {
+            "letter": "c",
+            "title": "إضافة Role إلى User Model"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Role Middleware"
+          },
+          {
+            "letter": "e",
+            "title": "حماية Admin Endpoints"
+          },
+          {
+            "letter": "f",
+            "title": "إدارة صلاحيات متعددة"
+          },
+          {
+            "letter": "g",
+            "title": "اختبار الأدوار والصلاحيات"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Permission-Based Access Control",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Permissions Table"
+          },
+          {
+            "letter": "b",
+            "title": "ربط Roles بالصلاحيات"
+          },
+          {
+            "letter": "c",
+            "title": "ربط Users بالأدوار"
+          },
+          {
+            "letter": "d",
+            "title": "التحقق من Permission داخل Middleware"
+          },
+          {
+            "letter": "e",
+            "title": "تنفيذ Resource-Level Authorization"
+          },
+          {
+            "letter": "f",
+            "title": "منع الوصول إلى بيانات مستخدم آخر"
+          },
+          {
+            "letter": "g",
+            "title": "إنشاء سياسات Authorization قابلة لإعادة الاستخدام"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "الصلاحيات المتقدمة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مقدمة في Attribute-Based Access Control"
+          },
+          {
+            "letter": "b",
+            "title": "مفهوم Policy-Based Authorization"
+          },
+          {
+            "letter": "c",
+            "title": "التحقق من ملكية الموارد"
+          },
+          {
+            "letter": "d",
+            "title": "تنفيذ Tenant Isolation"
+          },
+          {
+            "letter": "e",
+            "title": "منع Broken Object Level Authorization"
+          },
+          {
+            "letter": "f",
+            "title": "تسجيل تغييرات الصلاحيات"
+          },
+          {
+            "letter": "g",
+            "title": "اختبار محاولات تجاوز الصلاحيات"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "مشروع عملي: لوحة تحكم متعددة الأدوار",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Users وRoles وPermissions"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء APIs لإدارة المستخدمين"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء APIs لإدارة الأدوار"
+          },
+          {
+            "letter": "d",
+            "title": "ربط الأدوار بالصلاحيات"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Authorization Middleware"
+          },
+          {
+            "letter": "f",
+            "title": "تقييد العمليات الإدارية"
+          },
+          {
+            "letter": "g",
+            "title": "إنشاء Audit Log"
+          },
+          {
+            "letter": "h",
+            "title": "اختبار صلاحيات كل دور"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "title": "القسم الرابع عشر: أمن Express.js وحماية REST APIs",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Web Security",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Web Application Security؟"
+          },
+          {
+            "letter": "b",
+            "title": "مقدمة في OWASP Top 10"
+          },
+          {
+            "letter": "c",
+            "title": "مقدمة في OWASP API Security Top 10"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Attack Surface"
+          },
+          {
+            "letter": "e",
+            "title": "مفهوم Input Trust Boundaries"
+          },
+          {
+            "letter": "f",
+            "title": "مبدأ Defense in Depth"
+          },
+          {
+            "letter": "g",
+            "title": "الفرق بين Authentication وAPI Security"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "الحماية من هجمات الحقن",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو SQL Injection؟"
+          },
+          {
+            "letter": "b",
+            "title": "منع SQL Injection باستخدام Parameterized Queries"
+          },
+          {
+            "letter": "c",
+            "title": "ما هو NoSQL Injection؟"
+          },
+          {
+            "letter": "d",
+            "title": "التحقق من مدخلات MongoDB"
+          },
+          {
+            "letter": "e",
+            "title": "ما هو Command Injection؟"
+          },
+          {
+            "letter": "f",
+            "title": "منع تنفيذ أوامر غير موثوقة"
+          },
+          {
+            "letter": "g",
+            "title": "التحقق من أسماء الملفات والمسارات"
+          },
+          {
+            "letter": "h",
+            "title": "منع Path Traversal"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "الحماية من XSS وCSRF",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Cross-Site Scripting؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين Stored وReflected XSS"
+          },
+          {
+            "letter": "c",
+            "title": "الهروب الآمن للبيانات داخل HTML"
+          },
+          {
+            "letter": "d",
+            "title": "ما هو CSRF؟"
+          },
+          {
+            "letter": "e",
+            "title": "تحديد حالات الحاجة إلى CSRF Protection"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام CSRF Tokens"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام SameSite Cookies"
+          },
+          {
+            "letter": "h",
+            "title": "اختبار حماية النماذج والجلسات"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "CORS وSecurity Headers",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو CORS؟"
+          },
+          {
+            "letter": "b",
+            "title": "ما هو Same-Origin Policy؟"
+          },
+          {
+            "letter": "c",
+            "title": "فهم Preflight Requests"
+          },
+          {
+            "letter": "d",
+            "title": "ضبط Allowed Origins"
+          },
+          {
+            "letter": "e",
+            "title": "ضبط Credentials"
+          },
+          {
+            "letter": "f",
+            "title": "فهم أن CORS ليس بديلاً للمصادقة"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام Helmet"
+          },
+          {
+            "letter": "h",
+            "title": "مفهوم Content Security Policy"
+          },
+          {
+            "letter": "i",
+            "title": "إخفاء X-Powered-By"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Rate Limiting والحماية من إساءة الاستخدام",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Rate Limiting؟"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام express-rate-limit"
+          },
+          {
+            "letter": "c",
+            "title": "حماية Login Endpoint"
+          },
+          {
+            "letter": "d",
+            "title": "منع Brute Force"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام Redis لتخزين عدادات الطلبات"
+          },
+          {
+            "letter": "f",
+            "title": "مفهوم Request Throttling"
+          },
+          {
+            "letter": "g",
+            "title": "الحد من أحجام الطلبات"
+          },
+          {
+            "letter": "h",
+            "title": "التعامل مع 429 Responses"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "حماية بيانات التطبيق والإعدادات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إدارة Environment Variables"
+          },
+          {
+            "letter": "b",
+            "title": "حماية API Keys"
+          },
+          {
+            "letter": "c",
+            "title": "إدارة JWT Secrets"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام HTTPS"
+          },
+          {
+            "letter": "e",
+            "title": "إعداد Secure وHttpOnly Cookies"
+          },
+          {
+            "letter": "f",
+            "title": "حماية بيانات السجلات"
+          },
+          {
+            "letter": "g",
+            "title": "منع كشف Stack Traces"
+          },
+          {
+            "letter": "h",
+            "title": "استخدام npm audit"
+          },
+          {
+            "letter": "i",
+            "title": "تحديث الحزم المعرضة للثغرات"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "الأمان المتقدم",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مفهوم Server-Side Request Forgery"
+          },
+          {
+            "letter": "b",
+            "title": "منع SSRF عند استدعاء روابط خارجية"
+          },
+          {
+            "letter": "c",
+            "title": "ضبط trust proxy بطريقة آمنة"
+          },
+          {
+            "letter": "d",
+            "title": "تطبيق Request Timeouts"
+          },
+          {
+            "letter": "e",
+            "title": "منع رفع الملفات الضارة"
+          },
+          {
+            "letter": "f",
+            "title": "حماية Webhook Signatures"
+          },
+          {
+            "letter": "g",
+            "title": "منع Replay Attacks"
+          },
+          {
+            "letter": "h",
+            "title": "إنشاء Security Audit Checklist"
+          },
+          {
+            "letter": "i",
+            "title": "اختبار Broken Access Control"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "title": "القسم الخامس عشر: الملفات والقوالب والمحتوى الثابت",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "Static Files",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي Static Files؟"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام express.static"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Public Folder"
+          },
+          {
+            "letter": "d",
+            "title": "عرض CSS وJavaScript Files"
+          },
+          {
+            "letter": "e",
+            "title": "عرض الصور"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام Virtual Path Prefix"
+          },
+          {
+            "letter": "g",
+            "title": "إعداد Cache Headers"
+          },
+          {
+            "letter": "h",
+            "title": "حماية الملفات غير العامة"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Template Engines",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي Template Engine؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين SSR وCSR"
+          },
+          {
+            "letter": "c",
+            "title": "إعداد Views Folder"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام res.render"
+          },
+          {
+            "letter": "e",
+            "title": "إرسال البيانات إلى View"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء صفحات ديناميكية"
+          },
+          {
+            "letter": "g",
+            "title": "فهم Layouts وPartials"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "استخدام EJS",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تثبيت EJS"
+          },
+          {
+            "letter": "b",
+            "title": "إعداد View Engine"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء EJS Template"
+          },
+          {
+            "letter": "d",
+            "title": "عرض المتغيرات داخل HTML"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام الشروط والحلقات"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام Partials"
+          },
+          {
+            "letter": "g",
+            "title": "إنشاء صفحات CRUD"
+          },
+          {
+            "letter": "h",
+            "title": "حماية البيانات المعروضة من XSS"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "رفع الملفات باستخدام Multer",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "فهم multipart/form-data"
+          },
+          {
+            "letter": "b",
+            "title": "تثبيت Multer"
+          },
+          {
+            "letter": "c",
+            "title": "رفع ملف واحد"
+          },
+          {
+            "letter": "d",
+            "title": "رفع ملفات متعددة"
+          },
+          {
+            "letter": "e",
+            "title": "تحديد حدود حجم الملفات"
+          },
+          {
+            "letter": "f",
+            "title": "التحقق من نوع ومحتوى الملفات"
+          },
+          {
+            "letter": "g",
+            "title": "توليد أسماء ملفات آمنة"
+          },
+          {
+            "letter": "h",
+            "title": "معالجة أخطاء الرفع"
+          },
+          {
+            "letter": "i",
+            "title": "تخزين معلومات الملفات في قاعدة البيانات"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "تنزيل الملفات ومعالجتها",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "استخدام res.download"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام res.sendFile"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء API لتصدير CSV"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء API لتصدير PDF"
+          },
+          {
+            "letter": "e",
+            "title": "قراءة ملفات كبيرة باستخدام Streams"
+          },
+          {
+            "letter": "f",
+            "title": "التعامل مع Download Headers"
+          },
+          {
+            "letter": "g",
+            "title": "حماية روابط تنزيل الملفات"
+          },
+          {
+            "letter": "h",
+            "title": "تطبيق File Access Authorization"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "التخزين السحابي",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مفهوم Object Storage"
+          },
+          {
+            "letter": "b",
+            "title": "مقدمة في Amazon S3"
+          },
+          {
+            "letter": "c",
+            "title": "رفع الملفات إلى S3"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام Presigned URLs"
+          },
+          {
+            "letter": "e",
+            "title": "تخزين مسارات الملفات في قاعدة البيانات"
+          },
+          {
+            "letter": "f",
+            "title": "تنفيذ صلاحيات الوصول للملفات"
+          },
+          {
+            "letter": "g",
+            "title": "إدارة حذف الملفات"
+          },
+          {
+            "letter": "h",
+            "title": "التعامل مع الملفات الكبيرة"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "title": "القسم السادس عشر: HTTP المتقدم والتكامل مع المتصفح",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "HTTP Headers المتقدمة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "فهم Content-Type"
+          },
+          {
+            "letter": "b",
+            "title": "فهم Accept Header"
+          },
+          {
+            "letter": "c",
+            "title": "فهم Authorization Header"
+          },
+          {
+            "letter": "d",
+            "title": "فهم Cache-Control"
+          },
+          {
+            "letter": "e",
+            "title": "فهم ETag"
+          },
+          {
+            "letter": "f",
+            "title": "فهم Last-Modified"
+          },
+          {
+            "letter": "g",
+            "title": "فهم Content-Disposition"
+          },
+          {
+            "letter": "h",
+            "title": "استخدام Conditional Requests"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Cookies بالتفصيل",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي HTTP Cookies؟"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام res.cookie"
+          },
+          {
+            "letter": "c",
+            "title": "قراءة Cookies باستخدام Middleware"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام Signed Cookies"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام HttpOnly"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام Secure"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام SameSite"
+          },
+          {
+            "letter": "h",
+            "title": "إدارة Cookie Expiration"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "الاتصال بين React وExpress",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Backend API باستخدام Express"
+          },
+          {
+            "letter": "b",
+            "title": "إرسال طلبات باستخدام Fetch"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام Axios"
+          },
+          {
+            "letter": "d",
+            "title": "إعداد CORS بين Frontend وBackend"
+          },
+          {
+            "letter": "e",
+            "title": "إرسال بيانات Forms"
+          },
+          {
+            "letter": "f",
+            "title": "عرض Validation Errors"
+          },
+          {
+            "letter": "g",
+            "title": "إدارة Authentication بين الطرفين"
+          },
+          {
+            "letter": "h",
+            "title": "رفع الملفات من React إلى Express"
+          },
+          {
+            "letter": "i",
+            "title": "إدارة متغيرات البيئة في الطرفين"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "التحكم في الاستجابات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مفهوم Content Negotiation"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام req.accepts"
+          },
+          {
+            "letter": "c",
+            "title": "إدارة Redirects"
+          },
+          {
+            "letter": "d",
+            "title": "إرسال Streaming Responses"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام Server-Sent Events"
+          },
+          {
+            "letter": "f",
+            "title": "التحكم في Cache-Control"
+          },
+          {
+            "letter": "g",
+            "title": "تفعيل Response Compression"
+          },
+          {
+            "letter": "h",
+            "title": "التعامل مع Client Disconnect"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "title": "القسم السابع عشر: الخدمات الخارجية وWebhooks",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "استهلاك APIs خارجية",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "استخدام Fetch داخل Express Services"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام Axios"
+          },
+          {
+            "letter": "c",
+            "title": "تمرير Authorization Headers"
+          },
+          {
+            "letter": "d",
+            "title": "إدارة API Keys"
+          },
+          {
+            "letter": "e",
+            "title": "معالجة API Errors"
+          },
+          {
+            "letter": "f",
+            "title": "تطبيق Timeout"
+          },
+          {
+            "letter": "g",
+            "title": "تنفيذ Retry آمن"
+          },
+          {
+            "letter": "h",
+            "title": "التحقق من بيانات الخدمات الخارجية"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Webhooks",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Webhook؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين Webhook وREST API"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Webhook Endpoint"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام Raw Body للتحقق من التوقيع"
+          },
+          {
+            "letter": "e",
+            "title": "التحقق من Webhook Signature"
+          },
+          {
+            "letter": "f",
+            "title": "معالجة Webhook Events"
+          },
+          {
+            "letter": "g",
+            "title": "منع تكرار معالجة الأحداث"
+          },
+          {
+            "letter": "h",
+            "title": "إرجاع استجابة سريعة للمرسل"
+          },
+          {
+            "letter": "i",
+            "title": "تسجيل Webhook Delivery Events"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "إرسال البريد الإلكتروني",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو SMTP؟"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام Nodemailer"
+          },
+          {
+            "letter": "c",
+            "title": "إرسال نصوص ورسائل HTML"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Email Templates"
+          },
+          {
+            "letter": "e",
+            "title": "إرسال Email Verification"
+          },
+          {
+            "letter": "f",
+            "title": "إرسال Password Reset Email"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام Email Queue"
+          },
+          {
+            "letter": "h",
+            "title": "التعامل مع فشل إرسال البريد"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "بوابات الدفع",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مقدمة في Payment Gateways"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Payment API"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام Sandbox Environment"
+          },
+          {
+            "letter": "d",
+            "title": "بدء عملية دفع باستخدام SDK معتمد"
+          },
+          {
+            "letter": "e",
+            "title": "استقبال Payment Webhook"
+          },
+          {
+            "letter": "f",
+            "title": "التحقق من Payment Status"
+          },
+          {
+            "letter": "g",
+            "title": "منع تكرار تسجيل الدفع"
+          },
+          {
+            "letter": "h",
+            "title": "تحديث حالة الطلب بعد التحقق من الدفع"
+          },
+          {
+            "letter": "i",
+            "title": "عدم تخزين بيانات البطاقات الحساسة"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "دمج Telegram والإشعارات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مقدمة في Telegram Bot API"
+          },
+          {
+            "letter": "b",
+            "title": "إرسال رسالة من Express"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Webhook لاستقبال رسائل البوت"
+          },
+          {
+            "letter": "d",
+            "title": "حماية Telegram Bot Token"
+          },
+          {
+            "letter": "e",
+            "title": "إرسال إشعارات نجاح العمليات"
+          },
+          {
+            "letter": "f",
+            "title": "إرسال تنبيهات الأخطاء"
+          },
+          {
+            "letter": "g",
+            "title": "ربط الإشعارات بقاعدة البيانات"
+          },
+          {
+            "letter": "h",
+            "title": "تنفيذ إرسال الرسائل بالخلفية"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "دمج خدمات الذكاء الاصطناعي",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء AI Proxy API باستخدام Express"
+          },
+          {
+            "letter": "b",
+            "title": "استدعاء نموذج ذكاء اصطناعي من الخادم"
+          },
+          {
+            "letter": "c",
+            "title": "حماية مفاتيح API"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Chat Endpoint"
+          },
+          {
+            "letter": "e",
+            "title": "إرسال Streaming Responses"
+          },
+          {
+            "letter": "f",
+            "title": "التحقق من مدخلات المستخدم"
+          },
+          {
+            "letter": "g",
+            "title": "إدارة Timeout وRetries"
+          },
+          {
+            "letter": "h",
+            "title": "تسجيل الاستهلاك والتكلفة"
+          },
+          {
+            "letter": "i",
+            "title": "تطبيق Rate Limiting لخدمات AI"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "title": "القسم الثامن عشر: TypeScript مع Express.js",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مقدمة في TypeScript",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي TypeScript؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين TypeScript وJavaScript"
+          },
+          {
+            "letter": "c",
+            "title": "فهم Static Typing"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام Interfaces"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام Type Aliases"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام Union Types"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام Generics"
+          },
+          {
+            "letter": "h",
+            "title": "مفهوم Type Narrowing"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "إعداد Express مع TypeScript",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء TypeScript Project"
+          },
+          {
+            "letter": "b",
+            "title": "تثبيت TypeScript والأدوات اللازمة"
+          },
+          {
+            "letter": "c",
+            "title": "إعداد tsconfig.json"
+          },
+          {
+            "letter": "d",
+            "title": "إعداد Module System"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام Express Type Definitions"
+          },
+          {
+            "letter": "f",
+            "title": "إعداد Scripts للتطوير والبناء"
+          },
+          {
+            "letter": "g",
+            "title": "فهم الفرق بين Type Checking وRuntime Validation"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Typing في Express",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تعريف Request Type"
+          },
+          {
+            "letter": "b",
+            "title": "تعريف Response Type"
+          },
+          {
+            "letter": "c",
+            "title": "تعريف NextFunction Type"
+          },
+          {
+            "letter": "d",
+            "title": "تحديد أنواع Route Parameters"
+          },
+          {
+            "letter": "e",
+            "title": "تحديد أنواع Query Parameters"
+          },
+          {
+            "letter": "f",
+            "title": "تحديد أنواع Request Body"
+          },
+          {
+            "letter": "g",
+            "title": "إنشاء Typed Middleware"
+          },
+          {
+            "letter": "h",
+            "title": "إضافة خصائص مخصصة إلى Request Type"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "DTOs وValidation",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو DTO؟"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء CreateUserDTO"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء UpdateUserDTO"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Response DTO"
+          },
+          {
+            "letter": "e",
+            "title": "ربط Zod مع TypeScript"
+          },
+          {
+            "letter": "f",
+            "title": "استخراج Types من Schemas"
+          },
+          {
+            "letter": "g",
+            "title": "منع استخدام any دون ضرورة"
+          },
+          {
+            "letter": "h",
+            "title": "إنشاء Type-Safe Services"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "مشروع عملي باستخدام TypeScript",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Express TypeScript API"
+          },
+          {
+            "letter": "b",
+            "title": "تصميم Typed Models"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Typed Controllers"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Typed Services"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Validation Schemas"
+          },
+          {
+            "letter": "f",
+            "title": "ربط قاعدة البيانات"
+          },
+          {
+            "letter": "g",
+            "title": "تنفيذ CRUD"
+          },
+          {
+            "letter": "h",
+            "title": "كتابة اختبارات TypeScript"
+          },
+          {
+            "letter": "i",
+            "title": "بناء المشروع وتشغيله"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "title": "القسم التاسع عشر: اختبارات Express.js وتصحيح الأخطاء",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Software Testing",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Software Testing؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين Unit وIntegration وE2E Tests"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Test Cases"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Assertions"
+          },
+          {
+            "letter": "e",
+            "title": "مفهوم Test Coverage"
+          },
+          {
+            "letter": "f",
+            "title": "الفرق بين Mock وStub وFake"
+          },
+          {
+            "letter": "g",
+            "title": "مفهوم Test Isolation"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "اختبارات Node.js وExpress",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "استخدام node:test"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام node:assert"
+          },
+          {
+            "letter": "c",
+            "title": "التعرف على Jest وVitest"
+          },
+          {
+            "letter": "d",
+            "title": "كتابة Unit Test"
+          },
+          {
+            "letter": "e",
+            "title": "اختبار Async Functions"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Mock Services"
+          },
+          {
+            "letter": "g",
+            "title": "اختبار Error Handling"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "اختبار REST APIs",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "استخدام Supertest"
+          },
+          {
+            "letter": "b",
+            "title": "اختبار GET Endpoints"
+          },
+          {
+            "letter": "c",
+            "title": "اختبار POST Endpoints"
+          },
+          {
+            "letter": "d",
+            "title": "اختبار PUT وPATCH"
+          },
+          {
+            "letter": "e",
+            "title": "اختبار DELETE"
+          },
+          {
+            "letter": "f",
+            "title": "اختبار Status Codes"
+          },
+          {
+            "letter": "g",
+            "title": "اختبار Response Bodies"
+          },
+          {
+            "letter": "h",
+            "title": "اختبار Validation Errors"
+          },
+          {
+            "letter": "i",
+            "title": "اختبار 404 و500 Errors"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "اختبارات المصادقة والصلاحيات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "اختبار Register API"
+          },
+          {
+            "letter": "b",
+            "title": "اختبار Login API"
+          },
+          {
+            "letter": "c",
+            "title": "اختبار JWT Verification"
+          },
+          {
+            "letter": "d",
+            "title": "اختبار Expired Tokens"
+          },
+          {
+            "letter": "e",
+            "title": "اختبار Unauthorized Requests"
+          },
+          {
+            "letter": "f",
+            "title": "اختبار Forbidden Requests"
+          },
+          {
+            "letter": "g",
+            "title": "اختبار تجاوز صلاحيات الموارد"
+          },
+          {
+            "letter": "h",
+            "title": "اختبار Password Reset Flow"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "اختبارات قواعد البيانات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Test Database"
+          },
+          {
+            "letter": "b",
+            "title": "عزل بيانات الاختبارات"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام Test Fixtures"
+          },
+          {
+            "letter": "d",
+            "title": "إعادة ضبط البيانات بين الاختبارات"
+          },
+          {
+            "letter": "e",
+            "title": "اختبار Database Transactions"
+          },
+          {
+            "letter": "f",
+            "title": "اختبار Prisma Repositories"
+          },
+          {
+            "letter": "g",
+            "title": "اختبار Mongoose Models"
+          },
+          {
+            "letter": "h",
+            "title": "استخدام Testcontainers"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Debugging",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "قراءة Stack Traces"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام VS Code Debugger"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام Breakpoints"
+          },
+          {
+            "letter": "d",
+            "title": "فحص req وres أثناء التنفيذ"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام Node.js Inspector"
+          },
+          {
+            "letter": "f",
+            "title": "تسجيل Logs منظمة"
+          },
+          {
+            "letter": "g",
+            "title": "تحليل أخطاء Database Connections"
+          },
+          {
+            "letter": "h",
+            "title": "تصحيح أخطاء Middleware Order"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "اختبارات الجودة المتقدمة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مفهوم Test-Driven Development"
+          },
+          {
+            "letter": "b",
+            "title": "قياس Code Coverage"
+          },
+          {
+            "letter": "c",
+            "title": "اختبار Rate Limiting"
+          },
+          {
+            "letter": "d",
+            "title": "اختبار File Upload Security"
+          },
+          {
+            "letter": "e",
+            "title": "اختبار External API Failures"
+          },
+          {
+            "letter": "f",
+            "title": "اختبار Race Conditions"
+          },
+          {
+            "letter": "g",
+            "title": "تشغيل الاختبارات داخل CI Pipeline"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "title": "القسم العشرون: توثيق APIs وGraphQL والتقنيات البديلة",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "توثيق REST API",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "أهمية API Documentation"
+          },
+          {
+            "letter": "b",
+            "title": "ما هو OpenAPI؟"
+          },
+          {
+            "letter": "c",
+            "title": "ما هو Swagger UI؟"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء OpenAPI Specification"
+          },
+          {
+            "letter": "e",
+            "title": "توثيق Request Parameters"
+          },
+          {
+            "letter": "f",
+            "title": "توثيق Request Body"
+          },
+          {
+            "letter": "g",
+            "title": "توثيق Response Schemas"
+          },
+          {
+            "letter": "h",
+            "title": "توثيق Authentication"
+          },
+          {
+            "letter": "i",
+            "title": "توثيق Error Responses"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "استخدام Postman باحتراف",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Postman Collection"
+          },
+          {
+            "letter": "b",
+            "title": "إعداد Environment Variables"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام Collection Variables"
+          },
+          {
+            "letter": "d",
+            "title": "إرسال Authentication Tokens"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Automated Tests"
+          },
+          {
+            "letter": "f",
+            "title": "تنظيم Requests داخل Folders"
+          },
+          {
+            "letter": "g",
+            "title": "تصدير ومشاركة Collections"
+          },
+          {
+            "letter": "h",
+            "title": "تشغيل Collection Tests"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "GraphQL مع Express",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو GraphQL؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين REST وGraphQL"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم GraphQL Schema"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Query وMutation"
+          },
+          {
+            "letter": "e",
+            "title": "مفهوم Resolvers"
+          },
+          {
+            "letter": "f",
+            "title": "ربط GraphQL Server مع Express"
+          },
+          {
+            "letter": "g",
+            "title": "إضافة Authentication إلى GraphQL"
+          },
+          {
+            "letter": "h",
+            "title": "معالجة N+1 Queries"
+          },
+          {
+            "letter": "i",
+            "title": "التحكم في Query Complexity"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "gRPC والتواصل بين الخدمات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو gRPC؟"
+          },
+          {
+            "letter": "b",
+            "title": "مفهوم Protocol Buffers"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء gRPC Service"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء gRPC Client"
+          },
+          {
+            "letter": "e",
+            "title": "ربط Express بخدمة gRPC"
+          },
+          {
+            "letter": "f",
+            "title": "التعامل مع Errors وDeadlines"
+          },
+          {
+            "letter": "g",
+            "title": "مقارنة REST وGraphQL وgRPC"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "title": "القسم الحادي والعشرون: الوقت الحقيقي والمهام الخلفية",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Real-Time Applications",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي Real-Time Applications؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين Polling وWebSocket"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Server-Sent Events"
+          },
+          {
+            "letter": "d",
+            "title": "الفرق بين SSE وWebSocket"
+          },
+          {
+            "letter": "e",
+            "title": "حالات استخدام Real-Time APIs"
+          },
+          {
+            "letter": "f",
+            "title": "إدارة الاتصالات طويلة المدة"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Socket.IO مع Express",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تثبيت Socket.IO"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء HTTP Server لتطبيق Express"
+          },
+          {
+            "letter": "c",
+            "title": "ربط Socket.IO بالخادم"
+          },
+          {
+            "letter": "d",
+            "title": "إرسال Events"
+          },
+          {
+            "letter": "e",
+            "title": "استقبال Events"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام Rooms"
+          },
+          {
+            "letter": "g",
+            "title": "إدارة Connected Users"
+          },
+          {
+            "letter": "h",
+            "title": "حماية Socket Connections"
+          },
+          {
+            "letter": "i",
+            "title": "التعامل مع Reconnection"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Background Jobs",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هي Background Jobs؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين Request Processing وBackground Processing"
+          },
+          {
+            "letter": "c",
+            "title": "مقدمة في Redis"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام BullMQ"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Queue"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Worker"
+          },
+          {
+            "letter": "g",
+            "title": "إضافة Job إلى Queue"
+          },
+          {
+            "letter": "h",
+            "title": "تسجيل حالة تنفيذ Job"
+          },
+          {
+            "letter": "i",
+            "title": "التعامل مع Failed Jobs"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "الجدولة وإعادة المحاولة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مفهوم Scheduled Jobs"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء مهمة مجدولة"
+          },
+          {
+            "letter": "c",
+            "title": "إرسال بريد إلكتروني مجدول"
+          },
+          {
+            "letter": "d",
+            "title": "توليد تقارير يومية"
+          },
+          {
+            "letter": "e",
+            "title": "تطبيق Retry Policy"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام Exponential Backoff"
+          },
+          {
+            "letter": "g",
+            "title": "منع التنفيذ المكرر للمهام"
+          },
+          {
+            "letter": "h",
+            "title": "مراقبة Queues وWorkers"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "مشروع عملي: نظام إشعارات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Notifications Model"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Notifications Routes"
+          },
+          {
+            "letter": "c",
+            "title": "إرسال إشعارات فورية"
+          },
+          {
+            "letter": "d",
+            "title": "إرسال إشعارات عبر Queue"
+          },
+          {
+            "letter": "e",
+            "title": "حفظ الإشعارات في قاعدة البيانات"
+          },
+          {
+            "letter": "f",
+            "title": "تمييز الإشعارات كمقروءة"
+          },
+          {
+            "letter": "g",
+            "title": "إرسال رسائل Telegram"
+          },
+          {
+            "letter": "h",
+            "title": "معالجة الرسائل الفاشلة"
+          },
+          {
+            "letter": "i",
+            "title": "اختبار النظام بالكامل"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "title": "القسم الثاني والعشرون: تحسين الأداء والتخزين المؤقت والتوسع",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مفاهيم الأداء",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Performance؟"
+          },
+          {
+            "letter": "b",
+            "title": "مفهوم Latency"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Throughput"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Requests Per Second"
+          },
+          {
+            "letter": "e",
+            "title": "قياس Response Time"
+          },
+          {
+            "letter": "f",
+            "title": "فهم Event Loop Blocking"
+          },
+          {
+            "letter": "g",
+            "title": "اكتشاف Slow Endpoints"
+          },
+          {
+            "letter": "h",
+            "title": "تحديد Performance Bottlenecks"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Redis Caching",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Caching؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين Memory Cache وRedis"
+          },
+          {
+            "letter": "c",
+            "title": "الاتصال بـ Redis"
+          },
+          {
+            "letter": "d",
+            "title": "تخزين API Responses"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام TTL"
+          },
+          {
+            "letter": "f",
+            "title": "تطبيق Cache-Aside Pattern"
+          },
+          {
+            "letter": "g",
+            "title": "تنفيذ Cache Invalidation"
+          },
+          {
+            "letter": "h",
+            "title": "تجنب تخزين بيانات حساسة بصورة غير آمنة"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "HTTP Caching",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مفهوم HTTP Cache"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام Cache-Control"
+          },
+          {
+            "letter": "c",
+            "title": "فهم ETag"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام Conditional GET"
+          },
+          {
+            "letter": "e",
+            "title": "التعامل مع 304 Not Modified"
+          },
+          {
+            "letter": "f",
+            "title": "الفرق بين Public وPrivate Cache"
+          },
+          {
+            "letter": "g",
+            "title": "Caching للملفات الثابتة"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "تحسين أداء Express",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "استخدام NODE_ENV=production"
+          },
+          {
+            "letter": "b",
+            "title": "تقليل حجم JSON Responses"
+          },
+          {
+            "letter": "c",
+            "title": "تحسين Database Queries"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام Pagination بدلاً من إرجاع جميع البيانات"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام Compression"
+          },
+          {
+            "letter": "f",
+            "title": "تجنب العمليات المتزامنة البطيئة"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام Streams للملفات الكبيرة"
+          },
+          {
+            "letter": "h",
+            "title": "تحديد Timeouts مناسبة"
+          },
+          {
+            "letter": "i",
+            "title": "إدارة Connection Pools"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Load Testing",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Load Testing؟"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام Autocannon"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء سيناريو Load Test"
+          },
+          {
+            "letter": "d",
+            "title": "قياس Requests Per Second"
+          },
+          {
+            "letter": "e",
+            "title": "قياس P95 وP99 Latency"
+          },
+          {
+            "letter": "f",
+            "title": "مراقبة استهلاك CPU"
+          },
+          {
+            "letter": "g",
+            "title": "مراقبة Memory Usage"
+          },
+          {
+            "letter": "h",
+            "title": "تحليل النتائج وتحسين الأداء"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "التوسع Scaling",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "الفرق بين Vertical وHorizontal Scaling"
+          },
+          {
+            "letter": "b",
+            "title": "مفهوم Load Balancer"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام عدة Express Instances"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Stateless API"
+          },
+          {
+            "letter": "e",
+            "title": "إدارة Sessions في الأنظمة متعددة النسخ"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام Redis بين نسخ التطبيق"
+          },
+          {
+            "letter": "g",
+            "title": "توزيع المهام الخلفية"
+          },
+          {
+            "letter": "h",
+            "title": "تطبيق Graceful Shutdown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "title": "القسم الثالث والعشرون: النشر وDocker وDevOps",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "الاستعداد للنشر",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "الفرق بين Development وProduction"
+          },
+          {
+            "letter": "b",
+            "title": "إعداد Production Configuration"
+          },
+          {
+            "letter": "c",
+            "title": "إدارة Environment Variables"
+          },
+          {
+            "letter": "d",
+            "title": "إعداد Production Database"
+          },
+          {
+            "letter": "e",
+            "title": "تفعيل HTTPS"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Health Check Endpoint"
+          },
+          {
+            "letter": "g",
+            "title": "إعداد Error Logging"
+          },
+          {
+            "letter": "h",
+            "title": "اختبار التطبيق قبل النشر"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "نشر Express على Linux VPS",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مقدمة في VPS"
+          },
+          {
+            "letter": "b",
+            "title": "الاتصال بالخادم باستخدام SSH"
+          },
+          {
+            "letter": "c",
+            "title": "تثبيت Node.js على الخادم"
+          },
+          {
+            "letter": "d",
+            "title": "رفع ملفات المشروع"
+          },
+          {
+            "letter": "e",
+            "title": "تثبيت Production Dependencies"
+          },
+          {
+            "letter": "f",
+            "title": "تشغيل التطبيق كخدمة باستخدام systemd"
+          },
+          {
+            "letter": "g",
+            "title": "إعداد Firewall"
+          },
+          {
+            "letter": "h",
+            "title": "مراقبة سجلات التطبيق"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Nginx وReverse Proxy",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Reverse Proxy؟"
+          },
+          {
+            "letter": "b",
+            "title": "تثبيت Nginx"
+          },
+          {
+            "letter": "c",
+            "title": "ربط Nginx بـ Express"
+          },
+          {
+            "letter": "d",
+            "title": "إعداد Domain Name"
+          },
+          {
+            "letter": "e",
+            "title": "إعداد HTTPS باستخدام Let's Encrypt"
+          },
+          {
+            "letter": "f",
+            "title": "ضبط Proxy Headers"
+          },
+          {
+            "letter": "g",
+            "title": "ضبط trust proxy في Express"
+          },
+          {
+            "letter": "h",
+            "title": "إعداد Load Balancing"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Docker",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Docker؟"
+          },
+          {
+            "letter": "b",
+            "title": "مفهوم Image وContainer"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Dockerfile"
+          },
+          {
+            "letter": "d",
+            "title": "إعداد .dockerignore"
+          },
+          {
+            "letter": "e",
+            "title": "بناء Express Docker Image"
+          },
+          {
+            "letter": "f",
+            "title": "تشغيل Express Container"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام Multi-Stage Build"
+          },
+          {
+            "letter": "h",
+            "title": "تشغيل التطبيق بمستخدم غير Root"
+          },
+          {
+            "letter": "i",
+            "title": "إدارة Environment Variables داخل Container"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Docker Compose",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Docker Compose؟"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء compose.yaml"
+          },
+          {
+            "letter": "c",
+            "title": "تشغيل Express مع PostgreSQL"
+          },
+          {
+            "letter": "d",
+            "title": "تشغيل Express مع MongoDB"
+          },
+          {
+            "letter": "e",
+            "title": "إضافة Redis Service"
+          },
+          {
+            "letter": "f",
+            "title": "إدارة Docker Networks"
+          },
+          {
+            "letter": "g",
+            "title": "إدارة Volumes"
+          },
+          {
+            "letter": "h",
+            "title": "إعداد Healthchecks"
+          },
+          {
+            "letter": "i",
+            "title": "تشغيل Stack كامل محلياً"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "النشر السحابي",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مقدمة في Cloud Deployment"
+          },
+          {
+            "letter": "b",
+            "title": "نشر Express على Render"
+          },
+          {
+            "letter": "c",
+            "title": "نشر Express على Railway"
+          },
+          {
+            "letter": "d",
+            "title": "مقدمة في AWS"
+          },
+          {
+            "letter": "e",
+            "title": "نشر Express داخل Container Service"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام Managed Databases"
+          },
+          {
+            "letter": "g",
+            "title": "التعرف على Serverless Deployment"
+          },
+          {
+            "letter": "h",
+            "title": "إدارة تكاليف الاستضافة"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "CI/CD باستخدام GitHub Actions",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Continuous Integration؟"
+          },
+          {
+            "letter": "b",
+            "title": "ما هو Continuous Deployment؟"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء GitHub Actions Workflow"
+          },
+          {
+            "letter": "d",
+            "title": "تشغيل ESLint تلقائياً"
+          },
+          {
+            "letter": "e",
+            "title": "تشغيل Unit Tests"
+          },
+          {
+            "letter": "f",
+            "title": "تشغيل Integration Tests"
+          },
+          {
+            "letter": "g",
+            "title": "بناء Docker Image"
+          },
+          {
+            "letter": "h",
+            "title": "إدارة CI Secrets"
+          },
+          {
+            "letter": "i",
+            "title": "النشر التلقائي بعد نجاح الاختبارات"
+          },
+          {
+            "letter": "j",
+            "title": "إنشاء Rollback Strategy"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "title": "القسم الرابع والعشرون: Logging وMonitoring والموثوقية",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "Application Logging",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Logging؟"
+          },
+          {
+            "letter": "b",
+            "title": "مستويات Logs"
+          },
+          {
+            "letter": "c",
+            "title": "استخدام Pino"
+          },
+          {
+            "letter": "d",
+            "title": "استخدام Winston كبديل"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Structured Logs"
+          },
+          {
+            "letter": "f",
+            "title": "تسجيل HTTP Requests"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام Request ID"
+          },
+          {
+            "letter": "h",
+            "title": "منع تسجيل كلمات المرور والرموز السرية"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Monitoring",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Application Monitoring؟"
+          },
+          {
+            "letter": "b",
+            "title": "مراقبة CPU Usage"
+          },
+          {
+            "letter": "c",
+            "title": "مراقبة Memory Usage"
+          },
+          {
+            "letter": "d",
+            "title": "مراقبة Response Times"
+          },
+          {
+            "letter": "e",
+            "title": "مراقبة Error Rate"
+          },
+          {
+            "letter": "f",
+            "title": "مراقبة Database Connections"
+          },
+          {
+            "letter": "g",
+            "title": "مراقبة Queue Jobs"
+          },
+          {
+            "letter": "h",
+            "title": "إعداد Alerts"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Observability",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "الفرق بين Monitoring وObservability"
+          },
+          {
+            "letter": "b",
+            "title": "مفهوم Metrics"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Traces"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Distributed Tracing"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام OpenTelemetry مع Express"
+          },
+          {
+            "letter": "f",
+            "title": "مقدمة في Prometheus"
+          },
+          {
+            "letter": "g",
+            "title": "مقدمة في Grafana"
+          },
+          {
+            "letter": "h",
+            "title": "إنشاء Dashboard لمراقبة API"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Reliability Patterns",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مفهوم High Availability"
+          },
+          {
+            "letter": "b",
+            "title": "مفهوم Fault Tolerance"
+          },
+          {
+            "letter": "c",
+            "title": "مفهوم Circuit Breaker"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم Exponential Backoff"
+          },
+          {
+            "letter": "e",
+            "title": "مفهوم Bulkhead Pattern"
+          },
+          {
+            "letter": "f",
+            "title": "تطبيق Timeouts"
+          },
+          {
+            "letter": "g",
+            "title": "إدارة Graceful Shutdown"
+          },
+          {
+            "letter": "h",
+            "title": "معالجة فشل الخدمات الخارجية"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "النسخ الاحتياطي والتعافي",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مفهوم Backup Strategy"
+          },
+          {
+            "letter": "b",
+            "title": "تنفيذ Database Backup"
+          },
+          {
+            "letter": "c",
+            "title": "اختبار Database Restore"
+          },
+          {
+            "letter": "d",
+            "title": "حماية ملفات النسخ الاحتياطي"
+          },
+          {
+            "letter": "e",
+            "title": "مفهوم Disaster Recovery"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Incident Response Plan"
+          },
+          {
+            "letter": "g",
+            "title": "إنشاء Runbook لتشغيل النظام"
+          },
+          {
+            "letter": "h",
+            "title": "توثيق إجراءات استعادة الخدمة"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "title": "القسم الخامس والعشرون: Express 5 والموضوعات المتقدمة",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "الفروق بين Express 4 وExpress 5",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "التعرف على Express 5"
+          },
+          {
+            "letter": "b",
+            "title": "متطلبات إصدار Node.js"
+          },
+          {
+            "letter": "c",
+            "title": "التغييرات في Routing Syntax"
+          },
+          {
+            "letter": "d",
+            "title": "التغييرات في Wildcard Routes"
+          },
+          {
+            "letter": "e",
+            "title": "التغييرات في Optional Route Parameters"
+          },
+          {
+            "letter": "f",
+            "title": "التغييرات في req.body"
+          },
+          {
+            "letter": "g",
+            "title": "التغييرات في express.urlencoded"
+          },
+          {
+            "letter": "h",
+            "title": "التغييرات في express.static"
+          },
+          {
+            "letter": "i",
+            "title": "التغييرات في app.listen"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "معالجة الأخطاء في Express 5",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "التعامل التلقائي مع Promise Rejections"
+          },
+          {
+            "letter": "b",
+            "title": "استخدام async Controllers مباشرة"
+          },
+          {
+            "letter": "c",
+            "title": "الفرق بين Express 4 و5 في Error Forwarding"
+          },
+          {
+            "letter": "d",
+            "title": "معالجة أخطاء Middleware غير المتزامنة"
+          },
+          {
+            "letter": "e",
+            "title": "التعامل مع Error Handler المدمج"
+          },
+          {
+            "letter": "f",
+            "title": "اختبار أخطاء Express 5"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "ترقية مشروع من Express 4 إلى Express 5",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مراجعة Breaking Changes"
+          },
+          {
+            "letter": "b",
+            "title": "تحديث Dependencies"
+          },
+          {
+            "letter": "c",
+            "title": "مراجعة Route Patterns"
+          },
+          {
+            "letter": "d",
+            "title": "استبدال APIs القديمة المحذوفة"
+          },
+          {
+            "letter": "e",
+            "title": "تحديث Error Handling"
+          },
+          {
+            "letter": "f",
+            "title": "مراجعة إعدادات Static Files"
+          },
+          {
+            "letter": "g",
+            "title": "استخدام Codemods عند الحاجة"
+          },
+          {
+            "letter": "h",
+            "title": "تشغيل Regression Tests"
+          },
+          {
+            "letter": "i",
+            "title": "اختبار التطبيق بعد الترقية"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "هندسة الأنظمة الكبيرة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "الفرق بين Monolith وMicroservices"
+          },
+          {
+            "letter": "b",
+            "title": "مفهوم Modular Monolith"
+          },
+          {
+            "letter": "c",
+            "title": "تقسيم Express إلى Feature Modules"
+          },
+          {
+            "letter": "d",
+            "title": "مفهوم API Gateway"
+          },
+          {
+            "letter": "e",
+            "title": "التواصل بين الخدمات"
+          },
+          {
+            "letter": "f",
+            "title": "استخدام Message Brokers"
+          },
+          {
+            "letter": "g",
+            "title": "مفهوم Event-Driven Architecture"
+          },
+          {
+            "letter": "h",
+            "title": "مفهوم Eventual Consistency"
+          },
+          {
+            "letter": "i",
+            "title": "إدارة Distributed Transactions"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Design Patterns المتقدمة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "Factory Pattern"
+          },
+          {
+            "letter": "b",
+            "title": "Strategy Pattern"
+          },
+          {
+            "letter": "c",
+            "title": "Repository Pattern"
+          },
+          {
+            "letter": "d",
+            "title": "Dependency Injection Pattern"
+          },
+          {
+            "letter": "e",
+            "title": "Adapter Pattern"
+          },
+          {
+            "letter": "f",
+            "title": "Observer Pattern"
+          },
+          {
+            "letter": "g",
+            "title": "مفهوم CQRS"
+          },
+          {
+            "letter": "h",
+            "title": "مفهوم Event Sourcing"
+          },
+          {
+            "letter": "i",
+            "title": "مفهوم Outbox Pattern"
+          },
+          {
+            "letter": "j",
+            "title": "مفهوم Saga Pattern"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Multi-Tenant Applications",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Multi-Tenancy؟"
+          },
+          {
+            "letter": "b",
+            "title": "الفرق بين Single-Tenant وMulti-Tenant"
+          },
+          {
+            "letter": "c",
+            "title": "تصميم Tenant Model"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Tenant Resolution Middleware"
+          },
+          {
+            "letter": "e",
+            "title": "تطبيق Tenant Isolation"
+          },
+          {
+            "letter": "f",
+            "title": "إدارة صلاحيات كل Tenant"
+          },
+          {
+            "letter": "g",
+            "title": "التحقق من Tenant Ownership"
+          },
+          {
+            "letter": "h",
+            "title": "منع تسريب بيانات المستأجرين"
+          },
+          {
+            "letter": "i",
+            "title": "اختبار عزل البيانات"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "title": "القسم السادس والعشرون: المشروعات التطبيقية المتدرجة",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "المشروع الأول: خادم Express للمبتدئين",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "إنشاء Express Project"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء الصفحة الرئيسية"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء About Route"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Contact Route"
+          },
+          {
+            "letter": "e",
+            "title": "إرسال JSON Response"
+          },
+          {
+            "letter": "f",
+            "title": "إضافة Logger Middleware"
+          },
+          {
+            "letter": "g",
+            "title": "إضافة 404 Handler"
+          },
+          {
+            "letter": "h",
+            "title": "اختبار المشروع ورفعه على GitHub"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "المشروع الثاني: Todo REST API",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تصميم Todo Model"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Todo Routes"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Todo Controller"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Todo Service"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء مهمة جديدة"
+          },
+          {
+            "letter": "f",
+            "title": "عرض جميع المهام"
+          },
+          {
+            "letter": "g",
+            "title": "تعديل حالة المهمة"
+          },
+          {
+            "letter": "h",
+            "title": "حذف المهمة"
+          },
+          {
+            "letter": "i",
+            "title": "إضافة Validation"
+          },
+          {
+            "letter": "j",
+            "title": "إضافة Error Handling"
+          },
+          {
+            "letter": "k",
+            "title": "اختبار جميع Endpoints"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "المشروع الثالث: نظام إدارة المنتجات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تصميم قاعدة بيانات المنتجات"
+          },
+          {
+            "letter": "b",
+            "title": "ربط PostgreSQL مع Express"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Product Model"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Products Router"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Products Controller"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Products Service"
+          },
+          {
+            "letter": "g",
+            "title": "تنفيذ CRUD كامل"
+          },
+          {
+            "letter": "h",
+            "title": "تنفيذ Search وFiltering"
+          },
+          {
+            "letter": "i",
+            "title": "تنفيذ Pagination"
+          },
+          {
+            "letter": "j",
+            "title": "رفع صور المنتجات"
+          },
+          {
+            "letter": "k",
+            "title": "إضافة Validation وError Handling"
+          },
+          {
+            "letter": "l",
+            "title": "كتابة API Tests"
+          },
+          {
+            "letter": "m",
+            "title": "توثيق المشروع باستخدام Swagger"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "المشروع الرابع: نظام مستخدمين ومصادقة",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تصميم Users Database"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Registration API"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Login API"
+          },
+          {
+            "letter": "d",
+            "title": "تشفير كلمات المرور"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء JWT Authentication"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Refresh Tokens"
+          },
+          {
+            "letter": "g",
+            "title": "إنشاء User Profile API"
+          },
+          {
+            "letter": "h",
+            "title": "تنفيذ Role-Based Access Control"
+          },
+          {
+            "letter": "i",
+            "title": "تنفيذ Email Verification"
+          },
+          {
+            "letter": "j",
+            "title": "تنفيذ Forgot Password"
+          },
+          {
+            "letter": "k",
+            "title": "إضافة Rate Limiting"
+          },
+          {
+            "letter": "l",
+            "title": "اختبار Authentication وAuthorization"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "المشروع الخامس: مدونة إلكترونية احترافية",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تحليل متطلبات المدونة"
+          },
+          {
+            "letter": "b",
+            "title": "تصميم Users وPosts وComments"
+          },
+          {
+            "letter": "c",
+            "title": "ربط MongoDB باستخدام Mongoose"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Authentication APIs"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Posts CRUD"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Comments CRUD"
+          },
+          {
+            "letter": "g",
+            "title": "إنشاء Categories وTags"
+          },
+          {
+            "letter": "h",
+            "title": "تنفيذ Search وPagination"
+          },
+          {
+            "letter": "i",
+            "title": "رفع Cover Images"
+          },
+          {
+            "letter": "j",
+            "title": "إدارة صلاحيات Authors وAdmins"
+          },
+          {
+            "letter": "k",
+            "title": "إنشاء API Documentation"
+          },
+          {
+            "letter": "l",
+            "title": "كتابة Integration Tests"
+          },
+          {
+            "letter": "m",
+            "title": "نشر المشروع"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "المشروع السادس: متجر إلكتروني Backend",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تحليل متطلبات المتجر"
+          },
+          {
+            "letter": "b",
+            "title": "تصميم Database Schema"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء Users وRoles"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Products وCategories"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Shopping Cart"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Orders"
+          },
+          {
+            "letter": "g",
+            "title": "إدارة Inventory"
+          },
+          {
+            "letter": "h",
+            "title": "تنفيذ Coupons وDiscounts"
+          },
+          {
+            "letter": "i",
+            "title": "ربط بوابة دفع تجريبية"
+          },
+          {
+            "letter": "j",
+            "title": "التحقق من Payment Webhooks"
+          },
+          {
+            "letter": "k",
+            "title": "تنفيذ Database Transactions"
+          },
+          {
+            "letter": "l",
+            "title": "إرسال Order Confirmation Emails"
+          },
+          {
+            "letter": "m",
+            "title": "إضافة Redis Cache"
+          },
+          {
+            "letter": "n",
+            "title": "إنشاء Admin APIs"
+          },
+          {
+            "letter": "o",
+            "title": "إضافة Tests وSwagger"
+          },
+          {
+            "letter": "p",
+            "title": "نشر المشروع باستخدام Docker"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "المشروع السابع: نظام محادثة وإشعارات",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تصميم Chat Database"
+          },
+          {
+            "letter": "b",
+            "title": "إنشاء Express REST API"
+          },
+          {
+            "letter": "c",
+            "title": "إضافة JWT Authentication"
+          },
+          {
+            "letter": "d",
+            "title": "ربط Socket.IO"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Chat Rooms"
+          },
+          {
+            "letter": "f",
+            "title": "إرسال واستقبال الرسائل"
+          },
+          {
+            "letter": "g",
+            "title": "تخزين Message History"
+          },
+          {
+            "letter": "h",
+            "title": "عرض Online Status"
+          },
+          {
+            "letter": "i",
+            "title": "إرسال Notifications"
+          },
+          {
+            "letter": "j",
+            "title": "ربط Redis للمهام والإشعارات"
+          },
+          {
+            "letter": "k",
+            "title": "اختبار الاتصالات المتزامنة"
+          },
+          {
+            "letter": "l",
+            "title": "نشر النظام ومراقبته"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "المشروع الثامن: منصة تعليمية LMS",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تصميم متطلبات المنصة"
+          },
+          {
+            "letter": "b",
+            "title": "تصميم Users وCourses وLessons"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء أدوار Admin وTeacher وStudent"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Authentication وAuthorization"
+          },
+          {
+            "letter": "e",
+            "title": "إنشاء Courses APIs"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Lessons APIs"
+          },
+          {
+            "letter": "g",
+            "title": "إنشاء Enrollments APIs"
+          },
+          {
+            "letter": "h",
+            "title": "إنشاء نظام اختبارات ودرجات"
+          },
+          {
+            "letter": "i",
+            "title": "تتبع تقدم الطلاب"
+          },
+          {
+            "letter": "j",
+            "title": "رفع الملفات التعليمية"
+          },
+          {
+            "letter": "k",
+            "title": "إضافة إشعارات فورية"
+          },
+          {
+            "letter": "l",
+            "title": "إضافة Background Jobs"
+          },
+          {
+            "letter": "m",
+            "title": "إنشاء Admin Dashboard APIs"
+          },
+          {
+            "letter": "n",
+            "title": "تطبيق Validation والأمان"
+          },
+          {
+            "letter": "o",
+            "title": "كتابة اختبارات شاملة"
+          },
+          {
+            "letter": "p",
+            "title": "إعداد Swagger Documentation"
+          },
+          {
+            "letter": "q",
+            "title": "نشر المنصة باستخدام Docker Compose"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "المشروع التاسع: منظومة أتمتة باستخدام Express",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تحليل نظام الأتمتة"
+          },
+          {
+            "letter": "b",
+            "title": "تصميم Workflows وTasks"
+          },
+          {
+            "letter": "c",
+            "title": "إنشاء API لإضافة المهام"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Webhook Endpoints"
+          },
+          {
+            "letter": "e",
+            "title": "إعداد Redis وBullMQ"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء Queue Workers"
+          },
+          {
+            "letter": "g",
+            "title": "تنفيذ Scheduled Jobs"
+          },
+          {
+            "letter": "h",
+            "title": "إنشاء Task Status API"
+          },
+          {
+            "letter": "i",
+            "title": "ربط Telegram Bot API"
+          },
+          {
+            "letter": "j",
+            "title": "إرسال تنبيهات النجاح والفشل"
+          },
+          {
+            "letter": "k",
+            "title": "إنشاء Retry Mechanism"
+          },
+          {
+            "letter": "l",
+            "title": "منع تكرار تنفيذ المهام"
+          },
+          {
+            "letter": "m",
+            "title": "تسجيل العمليات في قاعدة البيانات"
+          },
+          {
+            "letter": "n",
+            "title": "إنشاء Monitoring Endpoints"
+          },
+          {
+            "letter": "o",
+            "title": "كتابة Integration Tests"
+          },
+          {
+            "letter": "p",
+            "title": "نشر النظام باستخدام Docker Compose"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "المشروع النهائي: Express Backend جاهز للإنتاج",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "كتابة وثيقة متطلبات المشروع"
+          },
+          {
+            "letter": "b",
+            "title": "رسم Architecture Diagram"
+          },
+          {
+            "letter": "c",
+            "title": "اختيار Database المناسبة"
+          },
+          {
+            "letter": "d",
+            "title": "إنشاء Express 5 مع TypeScript"
+          },
+          {
+            "letter": "e",
+            "title": "تطبيق Clean Architecture"
+          },
+          {
+            "letter": "f",
+            "title": "إنشاء RESTful APIs"
+          },
+          {
+            "letter": "g",
+            "title": "تنفيذ Authentication وAuthorization"
+          },
+          {
+            "letter": "h",
+            "title": "إنشاء Validation Layer"
+          },
+          {
+            "letter": "i",
+            "title": "إنشاء Global Error Handler"
+          },
+          {
+            "letter": "j",
+            "title": "تطبيق API Security"
+          },
+          {
+            "letter": "k",
+            "title": "إضافة Redis Cache"
+          },
+          {
+            "letter": "l",
+            "title": "إضافة Background Jobs"
+          },
+          {
+            "letter": "m",
+            "title": "إنشاء Structured Logging"
+          },
+          {
+            "letter": "n",
+            "title": "تنفيذ Unit Tests"
+          },
+          {
+            "letter": "o",
+            "title": "تنفيذ Integration Tests"
+          },
+          {
+            "letter": "p",
+            "title": "توثيق جميع Endpoints باستخدام OpenAPI"
+          },
+          {
+            "letter": "q",
+            "title": "إنشاء Dockerfile"
+          },
+          {
+            "letter": "r",
+            "title": "إعداد Docker Compose"
+          },
+          {
+            "letter": "s",
+            "title": "إعداد GitHub Actions CI/CD"
+          },
+          {
+            "letter": "t",
+            "title": "إعداد Staging Environment"
+          },
+          {
+            "letter": "u",
+            "title": "تنفيذ Load Testing"
+          },
+          {
+            "letter": "v",
+            "title": "إعداد Production Monitoring"
+          },
+          {
+            "letter": "w",
+            "title": "اختبار Backup وRestore"
+          },
+          {
+            "letter": "x",
+            "title": "نشر المشروع على Production"
+          },
+          {
+            "letter": "y",
+            "title": "إعداد README وDeployment Guide"
+          },
+          {
+            "letter": "z",
+            "title": "إعداد عرض تقني للمشروع"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "title": "القسم السابع والعشرون: الاستعداد للعمل كمطور Express.js محترف",
+    "mainTopics": [
+      {
+        "id": 1,
+        "title": "مراجعة المفاهيم الأساسية",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "مراجعة HTTP وREST"
+          },
+          {
+            "letter": "b",
+            "title": "مراجعة Routing"
+          },
+          {
+            "letter": "c",
+            "title": "مراجعة Middleware"
+          },
+          {
+            "letter": "d",
+            "title": "مراجعة Request وResponse"
+          },
+          {
+            "letter": "e",
+            "title": "مراجعة Error Handling"
+          },
+          {
+            "letter": "f",
+            "title": "مراجعة قواعد البيانات"
+          },
+          {
+            "letter": "g",
+            "title": "مراجعة Authentication وAuthorization"
+          },
+          {
+            "letter": "h",
+            "title": "مراجعة Testing وSecurity"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "أسئلة مقابلات Express.js",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "ما هو Express.js؟"
+          },
+          {
+            "letter": "b",
+            "title": "ما الفرق بين Node.js وExpress.js؟"
+          },
+          {
+            "letter": "c",
+            "title": "كيف يعمل Middleware؟"
+          },
+          {
+            "letter": "d",
+            "title": "ما الفرق بين app.use وapp.get؟"
+          },
+          {
+            "letter": "e",
+            "title": "ما الفرق بين req.params وreq.query وreq.body؟"
+          },
+          {
+            "letter": "f",
+            "title": "كيف تعمل Error-Handling Middleware؟"
+          },
+          {
+            "letter": "g",
+            "title": "كيف تتعامل Express 5 مع Async Errors؟"
+          },
+          {
+            "letter": "h",
+            "title": "كيف تصمم RESTful API؟"
+          },
+          {
+            "letter": "i",
+            "title": "كيف تحمي Express API؟"
+          },
+          {
+            "letter": "j",
+            "title": "كيف تختبر Express Application؟"
+          },
+          {
+            "letter": "k",
+            "title": "كيف تحسن أداء Express؟"
+          },
+          {
+            "letter": "l",
+            "title": "كيف تنشر Express في Production؟"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "مهارات Backend Developer",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "تحليل المتطلبات"
+          },
+          {
+            "letter": "b",
+            "title": "تصميم API Contracts"
+          },
+          {
+            "letter": "c",
+            "title": "تصميم Database Schemas"
+          },
+          {
+            "letter": "d",
+            "title": "كتابة Clean Code"
+          },
+          {
+            "letter": "e",
+            "title": "استخدام Git وGitHub"
+          },
+          {
+            "letter": "f",
+            "title": "المشاركة في Code Reviews"
+          },
+          {
+            "letter": "g",
+            "title": "كتابة Unit وIntegration Tests"
+          },
+          {
+            "letter": "h",
+            "title": "قراءة Documentation الرسمية"
+          },
+          {
+            "letter": "i",
+            "title": "حل المشكلات وتصحيح الأخطاء"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "بناء Portfolio",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "اختيار ثلاثة مشروعات قوية"
+          },
+          {
+            "letter": "b",
+            "title": "تنظيم GitHub Repositories"
+          },
+          {
+            "letter": "c",
+            "title": "كتابة README احترافي"
+          },
+          {
+            "letter": "d",
+            "title": "إضافة Architecture Diagrams"
+          },
+          {
+            "letter": "e",
+            "title": "إضافة API Documentation"
+          },
+          {
+            "letter": "f",
+            "title": "إضافة Postman Collections"
+          },
+          {
+            "letter": "g",
+            "title": "عرض نتائج الاختبارات"
+          },
+          {
+            "letter": "h",
+            "title": "توفير Live Demo"
+          },
+          {
+            "letter": "i",
+            "title": "شرح التحديات والحلول التقنية"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "التطوير المهني المستمر",
+        "subtopics": [
+          {
+            "letter": "a",
+            "title": "متابعة توثيق Express.js الرسمي"
+          },
+          {
+            "letter": "b",
+            "title": "متابعة Express Security Updates"
+          },
+          {
+            "letter": "c",
+            "title": "متابعة إصدارات Node.js المدعومة"
+          },
+          {
+            "letter": "d",
+            "title": "تعلم TypeScript بعمق"
+          },
+          {
+            "letter": "e",
+            "title": "تعلم Database Optimization"
+          },
+          {
+            "letter": "f",
+            "title": "التوسع في Docker وCloud Deployment"
+          },
+          {
+            "letter": "g",
+            "title": "دراسة System Design"
+          },
+          {
+            "letter": "h",
+            "title": "التعرف على Fastify وNestJS"
+          },
+          {
+            "letter": "i",
+            "title": "المساهمة في Open Source"
+          },
+          {
+            "letter": "j",
+            "title": "الانتقال من Junior إلى Mid-Level Backend Developer"
+          },
+          {
+            "letter": "k",
+            "title": "الانتقال إلى Senior Backend Developer"
+          },
+          {
+            "letter": "l",
+            "title": "اختيار تخصص في Software Architecture أو Cloud Systems"
+          }
+        ]
+      }
+    ]
+  }
+]
