@@ -25,10 +25,13 @@ import {
   Tag,
   Filter,
   CheckCircle2,
-  Layers
+  Layers,
+  Type
 } from 'lucide-react';
 import { highlightCodeLine } from '../../utils/codeHighlighter.jsx';
 import { addCodeNote, getNotesBySubtopic, deleteCodeNote, exportAllNotesAsJson } from '../../utils/notesDb.js';
+import { getActiveCodeFont } from '../../utils/codeFonts.js';
+import CodeFontModal from '../common/CodeFontModal.jsx';
 import { useToast } from '../../context/UiFeedbackContext.jsx';
 
 // وسوم الملاحظات السريعة
@@ -53,6 +56,19 @@ export default function CodeBlock({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isNativeFullscreen, setIsNativeFullscreen] = useState(false);
   const [isLineWrap, setIsLineWrap] = useState(false);
+  const [currentFont, setCurrentFont] = useState(getActiveCodeFont);
+  const [isFontModalOpen, setIsFontModalOpen] = useState(false);
+
+  // الاستماع لتغيير خط الأكواد البرمجية عالمياً لتحديث اسم الخط فورياً
+  useEffect(() => {
+    const handleFontChange = (e) => {
+      if (e.detail) {
+        setCurrentFont(e.detail);
+      }
+    };
+    window.addEventListener('code-font-changed', handleFontChange);
+    return () => window.removeEventListener('code-font-changed', handleFontChange);
+  }, []);
 
   // حالة دفتر الملاحظات (IndexedDB)
   const [notes, setNotes] = useState([]);
@@ -268,6 +284,16 @@ export default function CodeBlock({
               )}
             </div>
 
+            {/* زر اختيار وتخصيص خط الكود المباشر */}
+            <button
+              onClick={() => setIsFontModalOpen(true)}
+              className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-300 hover:text-cyan-300 bg-slate-800 hover:bg-slate-750 px-2 py-1 rounded-md border border-slate-700/80 transition-colors cursor-pointer font-sans"
+              title={`تغيير خط الكود البرمجي (الخط الحالي: ${currentFont.name})`}
+            >
+              <Type className="w-3 h-3 text-cyan-400" />
+              <span className="hidden sm:inline font-bold">{currentFont.name}</span>
+            </button>
+
             {/* شارة لغة البرمجة */}
             <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 text-cyan-300 border border-slate-700 select-none">
               {language}
@@ -429,6 +455,17 @@ export default function CodeBlock({
                 <span className="bg-amber-500/20 text-amber-300 font-mono text-[10px] px-1.5 py-0.2 rounded-full border border-amber-500/30">
                   {notes.length}
                 </span>
+              </button>
+
+              {/* زر اختيار وتغيير خط الكود في استوديو ملء الشاشة */}
+              <button
+                onClick={() => setIsFontModalOpen(true)}
+                className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg border bg-slate-950 text-cyan-300 border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900 transition-all cursor-pointer font-sans"
+                title={`تغيير خط الكود البرمجي (الحالي: ${currentFont.name})`}
+              >
+                <Type className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="hidden lg:inline">الخط:</span>
+                <span className="font-bold">{currentFont.name}</span>
               </button>
 
               {/* زر نسخ الكود كاملاً */}
@@ -768,6 +805,12 @@ export default function CodeBlock({
         </div>,
         document.body
       )}
+
+      {/* نافذة استوديو اختيار وتغيير خطوط الكود البرمجي */}
+      <CodeFontModal
+        isOpen={isFontModalOpen}
+        onClose={() => setIsFontModalOpen(false)}
+      />
     </>
   );
 }

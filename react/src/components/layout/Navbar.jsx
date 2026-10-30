@@ -1,7 +1,7 @@
 // src/components/layout/Navbar.jsx
 // شريط التنقل العلوي العام مع البحث، مؤشر الإنجاز، أزرار الكتب والمعلم الذكي وإعدادات المنصة
 import React from 'react';
-import { BookOpen, Sparkles, Search, CheckCircle2, Key, SlidersHorizontal, Bookmark, Layers, Monitor, LayoutGrid, Image as ImageIcon } from 'lucide-react';
+import { BookOpen, Sparkles, Search, CheckCircle2, Key, SlidersHorizontal, Bookmark, Layers, Monitor, LayoutGrid, Image as ImageIcon, Type } from 'lucide-react';
 import { useSwal, useToast } from '../../context/UiFeedbackContext.jsx';
 import { saveUserGeminiApiKey, getActiveApiKey } from '../../api/gemini.js';
 
@@ -11,6 +11,7 @@ export default function Navbar({
   onOpenTutor, 
   onOpenKeyPool,
   onOpenHighlights,
+  onOpenCodeFont,
   onOpenInfographicGallery,
   searchQuery, 
   setSearchQuery,
@@ -177,6 +178,15 @@ export default function Navbar({
             title="دفتر التظليلات والمقتطفات المحفوظة (IndexedDB)"
           >
             <Bookmark className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400" />
+          </button>
+
+          {/* زر استوديو خطوط الكود البرمجي العالمي */}
+          <button
+            onClick={onOpenCodeFont}
+            className="p-1.5 sm:p-2 text-slate-400 hover:text-cyan-300 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl transition-colors cursor-pointer"
+            title="استوديو خطوط الكود البرمجي (Fira Code, JetBrains Mono, Cascadia...)"
+          >
+            <Type className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
           </button>
 
           {/* زر إعدادات المفاتيح المتعددة Gemini API Pool */}

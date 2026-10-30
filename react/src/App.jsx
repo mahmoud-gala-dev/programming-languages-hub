@@ -16,6 +16,8 @@ import GeminiKeyPoolModal from './components/ai/GeminiKeyPoolModal.jsx';
 import SavedHighlightsModal from './components/common/SavedHighlightsModal.jsx';
 import ScrollToTopButton from './components/common/ScrollToTopButton.jsx';
 import InfographicGalleryModal from './components/gallery/InfographicGalleryModal.jsx';
+import CodeFontModal from './components/common/CodeFontModal.jsx';
+import { initCodeFont } from './utils/codeFonts.js';
 import { UiFeedbackProvider } from './context/UiFeedbackContext.jsx';
 import { SECTIONS_MAP, getSectionById } from './data/sections/index.js';
 
@@ -44,6 +46,7 @@ export default function App() {
   const [isTutorOpen, setIsTutorOpen] = useState(false);
   const [isKeyPoolOpen, setIsKeyPoolOpen] = useState(false);
   const [isHighlightsModalOpen, setIsHighlightsModalOpen] = useState(false);
+  const [isCodeFontModalOpen, setIsCodeFontModalOpen] = useState(false);
   const [isInfographicGalleryOpen, setIsInfographicGalleryOpen] = useState(false);
   const [galleryInitialSubtopicId, setGalleryInitialSubtopicId] = useState(null);
 
@@ -100,6 +103,11 @@ export default function App() {
       return next;
     });
   };
+
+  // تهيئة خط الأكواد المخصص المعتمد من قبل المستخدم فور بدء التشغيل
+  useEffect(() => {
+    initCodeFont();
+  }, []);
 
   // حفظ واسترجاع تقدم المتعلم عبر LocalStorage
   const [completedSubtopics, setCompletedSubtopics] = useState(() => {
@@ -227,6 +235,7 @@ export default function App() {
           onOpenTutor={() => setIsTutorOpen(true)}
           onOpenKeyPool={() => setIsKeyPoolOpen(true)}
           onOpenHighlights={() => setIsHighlightsModalOpen(true)}
+          onOpenCodeFont={() => setIsCodeFontModalOpen(true)}
           onOpenInfographicGallery={() => handleOpenInfographicGallery()}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -409,7 +418,13 @@ export default function App() {
           currentSubtopicId={currentSubtopic?.id}
         />
 
-        {/* 7. معرض الإنفوجرافيك الشامل لجميع الدروس والأقسام الـ 34 */}
+        {/* 7. استوديو اختيار وتخصيص خطوط الكود البرمجي العالمي */}
+        <CodeFontModal
+          isOpen={isCodeFontModalOpen}
+          onClose={() => setIsCodeFontModalOpen(false)}
+        />
+
+        {/* 8. معرض الإنفوجرافيك الشامل لجميع الدروس والأقسام الـ 34 */}
         <InfographicGalleryModal
           isOpen={isInfographicGalleryOpen}
           onClose={() => {
@@ -420,7 +435,7 @@ export default function App() {
           initialSectionId={currentSectionId}
         />
 
-        {/* 8. زر الصعود الذكي للأعلى مع حلقة مؤشر تقدم قراءة الدرس التفاعلية */}
+        {/* 9. زر الصعود الذكي للأعلى مع حلقة مؤشر تقدم قراءة الدرس التفاعلية */}
         <ScrollToTopButton 
           scrollProgress={scrollProgress} 
           subtopicTitle={currentSubtopic?.title} 
