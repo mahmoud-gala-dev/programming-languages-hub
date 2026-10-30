@@ -61,12 +61,14 @@ code, pre, kbd, samp,
   letter-spacing: normal !important;
 }
 
-/* حماية النصوص والتعليقات العربية داخل الأكواد البرمجية لضمان اتصال الحروف العربية وعدم تفككها */
+/* حماية النصوص والتعليقات العربية داخل الأكواد البرمجية لضمان اتصال الحروف العربية وعدم تفككها مع الحفاظ التام على اتجاه الكود LTR */
 .token-arabic,
-.token-arabic *,
 .highlighted-code-view .token-arabic,
+.code-container .token-arabic,
+pre .token-arabic,
+code .token-arabic,
+[data-code-block="true"] [data-arabic="true"],
 .highlighted-code-view [data-arabic="true"],
-.highlighted-code-view span[data-arabic="true"],
 .code-container [data-arabic="true"],
 pre [data-arabic="true"],
 code [data-arabic="true"] {
@@ -74,8 +76,18 @@ code [data-arabic="true"] {
   font-style: normal !important;
   letter-spacing: normal !important;
   word-spacing: normal !important;
-  direction: rtl !important;
   unicode-bidi: isolate !important;
+}
+
+/* ضمان بقاء علامات التظليل وأسطر الأكواد بالاتجاه البرمجي السليم LTR دون أي انعكاس */
+[data-code-block="true"] mark,
+.highlighted-code-view mark,
+.code-container mark,
+pre mark,
+code mark {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: normal !important;
 }
 
 /* عند استخدام font-mono مع وسوم الأكواد المباشرة */

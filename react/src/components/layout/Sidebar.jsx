@@ -176,7 +176,7 @@ export default function Sidebar({
       {/* رأس الشريط الجانبي */}
       <div className="p-4 border-b border-slate-800/40 bg-slate-950/60 shrink-0">
         <div className="flex items-center justify-between gap-1 mb-2">
-          <span className="text-xs font-extrabold text-cyan-400 flex items-center gap-1.5 uppercase tracking-wider font-sans">
+          <span className="text-xs font-extrabold text-cyan-400 flex items-center gap-1.5 font-sans">
             <Layers className="w-4 h-4 text-cyan-400" />
             فهرس خريطة الطريق
           </span>

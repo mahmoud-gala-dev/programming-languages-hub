@@ -160,7 +160,9 @@ export default function LessonViewer({
       amber: "bg-amber-400/35 text-amber-100 border-b-2 border-amber-400 hover:bg-amber-400/50 shadow-sm",
       emerald: "bg-emerald-400/35 text-emerald-100 border-b-2 border-emerald-400 hover:bg-emerald-400/50 shadow-sm",
       cyan: "bg-cyan-400/35 text-cyan-100 border-b-2 border-cyan-400 hover:bg-cyan-400/50 shadow-sm",
-      purple: "bg-purple-400/35 text-purple-100 border-b-2 border-purple-400 hover:bg-purple-400/50 shadow-sm"
+      purple: "bg-purple-400/35 text-purple-100 border-b-2 border-purple-400 hover:bg-purple-400/50 shadow-sm",
+      rose: "bg-rose-500/35 text-rose-100 border-b-2 border-rose-500 hover:bg-rose-500/50 shadow-sm",
+      orange: "bg-orange-500/35 text-orange-100 border-b-2 border-orange-500 hover:bg-orange-500/50 shadow-sm"
     };
 
     nonOverlapping.forEach((m, i) => {
@@ -546,7 +548,7 @@ export default function LessonViewer({
 
         {/* 1. التعريف المبسط */}
         <div className="space-y-2 mb-6">
-          <h4 className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+          <h4 className="text-xs font-bold text-cyan-400 flex items-center gap-1.5 font-sans">
             <span>📖</span> 1. التعريف المبسط (Simplified Definition):
           </h4>
           <p 
@@ -846,6 +848,8 @@ export default function LessonViewer({
         subtopicId={subtopic.id} 
         subtopicTitle={subtopic.title} 
         onHighlightSaved={loadLessonHighlights} 
+        onOpenTutor={onOpenTutor}
+        onOpenHighlights={() => setIsHighlightsModalOpen(true)}
       />
 
       {/* نافذة استعراض التظليلات والمقتطفات المحفوظة لهذا الدرس */}

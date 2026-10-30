@@ -24,7 +24,9 @@ const COLOR_MAP = {
   amber: { label: 'أصفر ذهبي', border: 'border-r-4 border-amber-400', badge: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
   emerald: { label: 'أخضر زمردي', border: 'border-r-4 border-emerald-400', badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
   cyan: { label: 'سماوي نيون', border: 'border-r-4 border-cyan-400', badge: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30' },
-  purple: { label: 'بنفسجي ملكي', border: 'border-r-4 border-purple-400', badge: 'bg-purple-500/20 text-purple-300 border-purple-500/30' }
+  purple: { label: 'بنفسجي ملكي', border: 'border-r-4 border-purple-400', badge: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
+  rose: { label: 'وردي ناري', border: 'border-r-4 border-rose-500', badge: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+  orange: { label: 'برتقالي شمسي', border: 'border-r-4 border-orange-500', badge: 'bg-orange-500/20 text-orange-300 border-orange-500/30' }
 };
 
 export default function SavedHighlightsModal({ isOpen, onClose, currentSubtopicId }) {

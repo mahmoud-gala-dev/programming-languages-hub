@@ -34,7 +34,9 @@ const HIGHLIGHT_COLOR_STYLES = {
   amber: "bg-amber-400/35 text-amber-100 border-b-2 border-amber-400 hover:bg-amber-400/50 shadow-sm",
   emerald: "bg-emerald-400/35 text-emerald-100 border-b-2 border-emerald-400 hover:bg-emerald-400/50 shadow-sm",
   cyan: "bg-cyan-400/35 text-cyan-100 border-b-2 border-cyan-400 hover:bg-cyan-400/50 shadow-sm",
-  purple: "bg-purple-400/35 text-purple-100 border-b-2 border-purple-400 hover:bg-purple-400/50 shadow-sm"
+  purple: "bg-purple-400/35 text-purple-100 border-b-2 border-purple-400 hover:bg-purple-400/50 shadow-sm",
+  rose: "bg-rose-500/35 text-rose-100 border-b-2 border-rose-500 hover:bg-rose-500/50 shadow-sm",
+  orange: "bg-orange-500/35 text-orange-100 border-b-2 border-orange-500 hover:bg-orange-500/50 shadow-sm"
 };
 
 /**
@@ -266,8 +268,8 @@ export function highlightCodeLine(line, userHighlights = [], onHighlightClick = 
           e.stopPropagation();
           if (onHighlightClick) onHighlightClick(m.highlight);
         }}
-        data-arabic={isMatchedAr ? "true" : undefined}
-        className={`px-1 py-0.5 rounded cursor-pointer transition-all duration-150 select-text ${styleClass} ${isMatchedAr ? 'token-arabic' : 'font-mono'}`}
+        dir="ltr"
+        className={`px-1 py-0.5 rounded cursor-pointer transition-all duration-150 select-text ${styleClass} font-mono`}
         title={m.highlight.note ? `الملاحظة: ${m.highlight.note}` : "انقر لإدارة هذا التظليل 🖍️"}
       >
         {isFullComment ? (

@@ -200,7 +200,7 @@ ${info.pitfall}`;
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span 
-                className="text-[11px] font-black uppercase tracking-wider text-white px-3.5 py-1 rounded-full shadow-md font-sans"
+                className="text-[11px] font-black text-white px-3.5 py-1 rounded-full shadow-md font-sans"
                 style={{ background: activeTheme.gradientHeader }}
               >
                 {info.badge}
@@ -219,7 +219,7 @@ ${info.pitfall}`;
                 {activeTheme.icon} {activeTheme.name}
               </span>
             </div>
-            <h3 className="text-xl sm:text-3xl font-black text-white leading-tight font-sans tracking-tight">
+            <h3 className="text-xl sm:text-3xl font-black text-white leading-tight font-sans">
               {info.title}
             </h3>
           </div>
@@ -369,7 +369,7 @@ ${info.pitfall}`;
               </span>
               <span className="font-mono text-[10px] text-slate-500">JavaScript / React JSX</span>
             </div>
-            <div className="bg-[#060a12] rounded-2xl border border-slate-850/90 p-3 sm:p-4 overflow-x-auto shadow-inner">
+            <div dir="ltr" className="bg-[#060a12] rounded-2xl border border-slate-850/90 p-3 sm:p-4 overflow-x-auto shadow-inner text-left">
               <HighlightedCodeView 
                 code={info.codeSnippet} 
                 highlights={highlights}
