@@ -17,6 +17,7 @@ import SavedHighlightsModal from './components/common/SavedHighlightsModal.jsx';
 import ScrollToTopButton from './components/common/ScrollToTopButton.jsx';
 import InfographicGalleryModal from './components/gallery/InfographicGalleryModal.jsx';
 import CodeFontModal from './components/common/CodeFontModal.jsx';
+import ShortcutsGuideModal from './components/common/ShortcutsGuideModal.jsx';
 import { initCodeFont } from './utils/codeFonts.js';
 import { UiFeedbackProvider } from './context/UiFeedbackContext.jsx';
 import { SECTIONS_MAP, getSectionById } from './data/sections/index.js';
@@ -47,6 +48,7 @@ export default function App() {
   const [isKeyPoolOpen, setIsKeyPoolOpen] = useState(false);
   const [isHighlightsModalOpen, setIsHighlightsModalOpen] = useState(false);
   const [isCodeFontModalOpen, setIsCodeFontModalOpen] = useState(false);
+  const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isInfographicGalleryOpen, setIsInfographicGalleryOpen] = useState(false);
   const [galleryInitialSubtopicId, setGalleryInitialSubtopicId] = useState(null);
 
@@ -104,9 +106,19 @@ export default function App() {
     });
   };
 
-  // تهيئة خط الأكواد المخصص المعتمد من قبل المستخدم فور بدء التشغيل
+  // تهيئة خط الأكواد المخصص المعتمد واختصار لوحة المفاتيح لدليل الاختصارات
   useEffect(() => {
     initCodeFont();
+
+    const handleGlobalShortcuts = (e) => {
+      // فتح دليل الاختصارات عند الضغط على Ctrl + / أو Cmd + /
+      if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+        e.preventDefault();
+        setIsShortcutsModalOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalShortcuts);
+    return () => window.removeEventListener('keydown', handleGlobalShortcuts);
   }, []);
 
   // حفظ واسترجاع تقدم المتعلم عبر LocalStorage
@@ -236,6 +248,7 @@ export default function App() {
           onOpenKeyPool={() => setIsKeyPoolOpen(true)}
           onOpenHighlights={() => setIsHighlightsModalOpen(true)}
           onOpenCodeFont={() => setIsCodeFontModalOpen(true)}
+          onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
           onOpenInfographicGallery={() => handleOpenInfographicGallery()}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -422,6 +435,12 @@ export default function App() {
         <CodeFontModal
           isOpen={isCodeFontModalOpen}
           onClose={() => setIsCodeFontModalOpen(false)}
+        />
+
+        {/* 8. موسوعة ودليل الاختصارات وأوامر الذكاء الاصطناعي بالعامية المصرية */}
+        <ShortcutsGuideModal
+          isOpen={isShortcutsModalOpen}
+          onClose={() => setIsShortcutsModalOpen(false)}
         />
 
         {/* 8. معرض الإنفوجرافيك الشامل لجميع الدروس والأقسام الـ 34 */}

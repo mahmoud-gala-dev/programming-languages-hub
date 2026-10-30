@@ -12,6 +12,7 @@ export default function Navbar({
   onOpenKeyPool,
   onOpenHighlights,
   onOpenCodeFont,
+  onOpenShortcuts,
   onOpenInfographicGallery,
   searchQuery, 
   setSearchQuery,
@@ -187,6 +188,15 @@ export default function Navbar({
             title="استوديو خطوط الكود البرمجي (Fira Code, JetBrains Mono, Cascadia...)"
           >
             <Type className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
+          </button>
+
+          {/* زر دليل وموسوعة الاختصارات بالعامية المصرية */}
+          <button
+            onClick={onOpenShortcuts}
+            className="p-1.5 sm:p-2 text-slate-400 hover:text-sky-300 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl transition-colors cursor-pointer flex items-center gap-1"
+            title="دليل وموسوعة الاختصارات وأوامر الذكاء الاصطناعي (Ctrl + /)"
+          >
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-400" />
           </button>
 
           {/* زر إعدادات المفاتيح المتعددة Gemini API Pool */}
