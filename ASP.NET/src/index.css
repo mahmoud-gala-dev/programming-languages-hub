@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700;900&family=Fira+Code:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Cairo', 'Tajawal', 'IBM Plex Sans Arabic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-arabic: 'Cairo', 'Tajawal', 'IBM Plex Sans Arabic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-code: 'Fira Code', 'Cairo', monospace;
+}
+
+:root {
+  --font-arabic: 'Cairo', 'Tajawal', 'IBM Plex Sans Arabic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-code: 'Fira Code', 'Cairo', monospace;
+  scroll-behavior: smooth;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-arabic) !important;
+  direction: rtl;
+  text-align: right;
+  letter-spacing: normal !important;
+}
+
+body {
+  font-family: var(--font-arabic) !important;
+  direction: rtl;
+  text-align: right;
+  background-color: #060814;
+  color: #f1f5f9;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  letter-spacing: normal !important;
+}
+
+/* تطبيق خط جوجل العربي (Cairo) بشكل شامل وتلقائي على كافة عناصر الواجهة والنصوص */
+*, *::before, *::after {
+  font-family: var(--font-arabic);
+  letter-spacing: normal !important;
+}
+
+button, input, select, textarea, optgroup, option {
+  font-family: var(--font-arabic) !important;
+  letter-spacing: normal !important;
+}
+
+/* استثناء الأكواد البرمجية فقط لتحتفظ بخط الأكواد Fira Code والاتجاه الأجنبي LTR */
+code, pre, kbd, samp, 
+.syntax-code, .code-font, 
+[data-code="true"], [data-code-block="true"], 
+.code-container pre, .code-container code,
+.code-view pre, .code-view code,
+.token-view, .highlighted-code-view, .highlighted-code-view * {
+  font-family: var(--font-code) !important;
+  direction: ltr !important;
+  text-align: left !important;
+  letter-spacing: normal !important;
+}
+
+/* حماية النصوص والتعليقات العربية داخل الأكواد البرمجية */
+.token-arabic,
+.token-arabic *,
+.highlighted-code-view .token-arabic,
+.highlighted-code-view [data-arabic="true"],
+.highlighted-code-view span[data-arabic="true"],
+.code-container [data-arabic="true"],
+pre [data-arabic="true"],
+code [data-arabic="true"] {
+  font-family: var(--font-arabic) !important;
+  font-style: normal !important;
+  direction: rtl !important;
+  display: inline-block;
+  unicode-bidi: plaintext;
+}
+
+/* تخصيص شريط التمرير Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090d1f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3b2d6b;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6343b4;
+}
+
+/* أنماط البطاقات الزجاجية Glassmorphism */
+.glass-panel {
+  background: rgba(13, 17, 36, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.glass-card {
+  background: rgba(18, 24, 49, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 85, 247, 0.12);
+}
+
+.glass-card:hover {
+  border-color: rgba(168, 85, 247, 0.3);
+  box-shadow: 0 8px 32px -8px rgba(147, 51, 234, 0.25);
+}
+
+/* توهج نيون */
+.neon-border-purple {
+  border-color: rgba(168, 85, 247, 0.4);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+}
+
+.neon-border-cyan {
+  border-color: rgba(6, 182, 212, 0.4);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+}
+
+/* تأثير التحديد بالماركر النيون */
+.hl-yellow {
+  background-color: rgba(250, 204, 21, 0.3);
+  border-bottom: 2px solid #facc15;
+  border-radius: 2px;
+  padding: 1px 4px;
+}
+
+.hl-emerald {
+  background-color: rgba(52, 211, 153, 0.3);
+  border-bottom: 2px solid #34d399;
+  border-radius: 2px;
+  padding: 1px 4px;
+}
+
+.hl-cyan {
+  background-color: rgba(34, 211, 238, 0.3);
+  border-bottom: 2px solid #22d3ee;
+  border-radius: 2px;
+  padding: 1px 4px;
+}
+
+.hl-rose {
+  background-color: rgba(251, 113, 133, 0.3);
+  border-bottom: 2px solid #fb7185;
+  border-radius: 2px;
+  padding: 1px 4px;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

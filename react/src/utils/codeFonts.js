@@ -138,3 +138,4 @@ export function initCodeFont() {
   applyCodeFont(currentFont.id);
   return currentFont;
 }
+

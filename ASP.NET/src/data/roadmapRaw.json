@@ -1,0 +1,3371 @@
+[
+  {
+    "id": 1,
+    "title": "القسم الأول: أساسيات البرمجة وتطوير الويب",
+    "englishTitle": "Programming Fundamentals & Web Development",
+    "icon": "Globe",
+    "category": "الأساسيات",
+    "description": "فهم أسس البرمجة، الإنترنت، معمارية العميل والخادم، بروتوكول HTTP، أدوات المطورين، وبناء صفحات الويب الأولية.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في تطوير البرمجيات",
+        "subtopics": [
+          "ما هي البرمجة وكيف تعمل؟",
+          "ما هي لغات البرمجة؟",
+          "الفرق بين Compiler وInterpreter",
+          "ما هو Source Code؟",
+          "مفهوم Algorithm",
+          "مفهوم Debugging",
+          "دورة حياة تطوير البرمجيات"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "مقدمة في تطوير الويب",
+        "subtopics": [
+          "ما هو Web Development؟",
+          "الفرق بين Frontend وBackend",
+          "ما هو Full Stack Developer؟",
+          "كيف يعمل المتصفح والخادم؟",
+          "مفهوم Client وServer",
+          "مفهوم Request وResponse",
+          "الفرق بين Static وDynamic Websites",
+          "الفرق بين Server-Side Rendering وClient-Side Rendering"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "أساسيات الإنترنت والشبكات",
+        "subtopics": [
+          "ما هو الإنترنت؟",
+          "ما هو عنوان IP؟",
+          "ما هو DNS؟",
+          "مفهوم Domain وHosting",
+          "مفهوم URL",
+          "ما هي Ports؟",
+          "الفرق بين HTTP وHTTPS",
+          "مقدمة في TCP/IP"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "أساسيات HTTP",
+        "subtopics": [
+          "ما هو HTTP Protocol؟",
+          "مكونات HTTP Request",
+          "مكونات HTTP Response",
+          "طرق GET وPOST وPUT وPATCH وDELETE",
+          "مفهوم HTTP Headers",
+          "مفهوم Request Body",
+          "مفهوم Query Parameters",
+          "مفهوم Status Codes",
+          "مفهوم Cookies وSessions"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "أساسيات HTML وCSS وJavaScript",
+        "subtopics": [
+          "بنية صفحة HTML",
+          "استخدام Headings وParagraphs",
+          "إنشاء Forms وInputs",
+          "إنشاء Tables",
+          "مقدمة في CSS",
+          "استخدام Selectors وClasses",
+          "مفهوم Flexbox وGrid",
+          "مقدمة في JavaScript",
+          "التعامل مع DOM",
+          "إرسال طلبات باستخدام Fetch API"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "أدوات المطور",
+        "subtopics": [
+          "استخدام Visual Studio",
+          "استخدام Visual Studio Code",
+          "التعرف على Terminal",
+          "استخدام Browser Developer Tools",
+          "فحص Network Requests",
+          "استخدام Git وGitHub",
+          "مقدمة في Postman"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "القسم الثاني: أساسيات لغة C#",
+    "englishTitle": "C# Programming Fundamentals",
+    "icon": "Code2",
+    "category": "لغة C#",
+    "description": "إتقان قواعد لغة C#، المتغيرات، أنواع البيانات، الجمل الشرطية، الحلقات التكرارية، الدوال، والمصفوفات.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في C#",
+        "subtopics": [
+          "ما هي لغة C#؟",
+          "استخدامات لغة C#",
+          "الفرق بين C# وJavaScript",
+          "مفهوم .NET Runtime",
+          "إنشاء أول Console Application",
+          "فهم بنية برنامج C#",
+          "استخدام Console.WriteLine",
+          "قراءة المدخلات باستخدام Console.ReadLine"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "المتغيرات وأنواع البيانات",
+        "subtopics": [
+          "تعريف Variables",
+          "استخدام int وlong",
+          "استخدام float وdouble وdecimal",
+          "استخدام string وchar",
+          "استخدام bool",
+          "استخدام var",
+          "استخدام const",
+          "الفرق بين Value Types وReference Types",
+          "التحويل بين أنواع البيانات",
+          "استخدام Parse وTryParse"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "العمليات Operators",
+        "subtopics": [
+          "العمليات الحسابية",
+          "عمليات المقارنة",
+          "العمليات المنطقية",
+          "عمليات الإسناد",
+          "استخدام Increment وDecrement",
+          "استخدام Ternary Operator",
+          "استخدام Null Coalescing Operator",
+          "ترتيب أولوية العمليات"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "الشروط واتخاذ القرارات",
+        "subtopics": [
+          "استخدام if",
+          "استخدام else وelse if",
+          "استخدام switch Statement",
+          "استخدام Switch Expression",
+          "استخدام Pattern Matching",
+          "دمج الشروط باستخدام AND وOR",
+          "الأخطاء الشائعة في الشروط"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "الحلقات التكرارية",
+        "subtopics": [
+          "استخدام for",
+          "استخدام while",
+          "استخدام do while",
+          "استخدام foreach",
+          "استخدام break",
+          "استخدام continue",
+          "الحلقات المتداخلة",
+          "تطبيق عملي على معالجة البيانات"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "الدوال Methods",
+        "subtopics": [
+          "ما هي Methods؟",
+          "تعريف Method",
+          "استخدام Parameters",
+          "استخدام return",
+          "استخدام Optional Parameters",
+          "استخدام Named Arguments",
+          "استخدام Method Overloading",
+          "الفرق بين ref وout وin",
+          "مفهوم Scope"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "المصفوفات والمجموعات",
+        "subtopics": [
+          "إنشاء Arrays",
+          "الوصول إلى عناصر Array",
+          "استخدام List",
+          "استخدام Dictionary",
+          "استخدام HashSet",
+          "استخدام Queue وStack",
+          "الفرق بين Array وList",
+          "التكرار على Collections",
+          "فرز البيانات والبحث فيها"
+        ]
+      },
+      {
+        "id": 8,
+        "title": "التعامل مع النصوص والتواريخ",
+        "subtopics": [
+          "استخدام String Interpolation",
+          "استخدام String Methods",
+          "استخدام StringBuilder",
+          "استخدام DateTime",
+          "استخدام DateOnly وTimeOnly",
+          "استخدام TimeSpan",
+          "التعامل مع Time Zones",
+          "تنسيق النصوص والأرقام والتواريخ"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "القسم الثالث: البرمجة كائنية التوجه OOP باستخدام C#",
+    "englishTitle": "Object-Oriented Programming (OOP) in C#",
+    "icon": "Boxes",
+    "category": "لغة C#",
+    "description": "فهم الكائنات والفئات، التغليف، الوراثة، تعدد الأشكال، التجريد، الواجهات، ومبادئ SOLID الهندسية.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في OOP",
+        "subtopics": [
+          "ما هي Object-Oriented Programming؟",
+          "الفرق بين Procedural وObject-Oriented Programming",
+          "مفهوم Class",
+          "مفهوم Object",
+          "إنشاء Class",
+          "إنشاء Object باستخدام new",
+          "استخدام Properties وMethods",
+          "أمثلة عملية من الحياة اليومية"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Classes وConstructors",
+        "subtopics": [
+          "تعريف Fields",
+          "تعريف Properties",
+          "استخدام Constructors",
+          "استخدام Constructor Overloading",
+          "استخدام this",
+          "استخدام Static Members",
+          "استخدام Readonly Fields",
+          "استخدام init Properties",
+          "مقدمة في Records"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Encapsulation",
+        "subtopics": [
+          "ما هو Encapsulation؟",
+          "استخدام public",
+          "استخدام private",
+          "استخدام protected",
+          "استخدام internal",
+          "استخدام Getters وSetters",
+          "حماية البيانات داخل Class",
+          "تطبيق عملي على Bank Account"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Inheritance",
+        "subtopics": [
+          "ما هو Inheritance؟",
+          "إنشاء Base Class",
+          "إنشاء Derived Class",
+          "استخدام base",
+          "استخدام virtual",
+          "استخدام override",
+          "استخدام sealed",
+          "متى نستخدم Inheritance؟"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Polymorphism وAbstraction",
+        "subtopics": [
+          "ما هو Polymorphism؟",
+          "Method Overloading",
+          "Method Overriding",
+          "ما هو Abstraction؟",
+          "إنشاء Abstract Class",
+          "إنشاء Abstract Method",
+          "الفرق بين Abstraction وEncapsulation",
+          "مثال عملي على نظام الموظفين"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Interfaces",
+        "subtopics": [
+          "ما هي Interface؟",
+          "إنشاء Interface",
+          "تطبيق Interface داخل Class",
+          "استخدام Multiple Interfaces",
+          "الفرق بين Interface وAbstract Class",
+          "استخدام Interfaces مع Dependency Injection",
+          "مثال عملي على Payment Services"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "مبادئ SOLID",
+        "subtopics": [
+          "مقدمة في SOLID Principles",
+          "Single Responsibility Principle",
+          "Open Closed Principle",
+          "Liskov Substitution Principle",
+          "Interface Segregation Principle",
+          "Dependency Inversion Principle",
+          "تطبيق SOLID في مشروع C#",
+          "الأخطاء الشائعة عند تطبيق SOLID"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "القسم الرابع: مفاهيم C# المتقدمة اللازمة لتطوير الويب",
+    "englishTitle": "Advanced C# Concepts for Web Developers",
+    "icon": "Cpu",
+    "category": "لغة C#",
+    "description": "إدارة الاستثناءات، Generics، Delegates، تعبيرات Lambda، استعلامات LINQ، البرمجة غير المتزامنة Async/Await، ومعالجة JSON.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "Exception Handling",
+        "subtopics": [
+          "ما هي Exceptions؟",
+          "استخدام try وcatch",
+          "استخدام finally",
+          "استخدام throw",
+          "إنشاء Custom Exceptions",
+          "الفرق بين Validation Errors وExceptions",
+          "تسجيل الأخطاء ومعالجتها"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Generics",
+        "subtopics": [
+          "ما هي Generics؟",
+          "إنشاء Generic Class",
+          "إنشاء Generic Method",
+          "استخدام Generic Constraints",
+          "استخدام IEnumerable",
+          "استخدام ICollection وIList",
+          "استخدام IReadOnlyCollection",
+          "تطبيق Generic Repository"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Delegates وLambda Expressions",
+        "subtopics": [
+          "ما هو Delegate؟",
+          "استخدام Action",
+          "استخدام Func",
+          "استخدام Predicate",
+          "كتابة Lambda Expressions",
+          "تمرير الدوال كمعاملات",
+          "مفهوم Events",
+          "استخدام Event Handlers"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "LINQ",
+        "subtopics": [
+          "ما هو LINQ؟",
+          "الفرق بين Query Syntax وMethod Syntax",
+          "استخدام Where",
+          "استخدام Select",
+          "استخدام OrderBy وThenBy",
+          "استخدام FirstOrDefault",
+          "استخدام Any وAll",
+          "استخدام GroupBy",
+          "استخدام Join",
+          "استخدام Skip وTake",
+          "استخدام Sum وCount وAverage"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Asynchronous Programming",
+        "subtopics": [
+          "الفرق بين Synchronous وAsynchronous",
+          "مفهوم Task",
+          "استخدام async",
+          "استخدام await",
+          "استخدام Task وTask<T>",
+          "استخدام Task.WhenAll",
+          "استخدام CancellationToken",
+          "التعامل مع Async Exceptions",
+          "الفرق بين Concurrency وParallelism",
+          "تجنب Blocking باستخدام Result وWait"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Nullable Types وإدارة الذاكرة",
+        "subtopics": [
+          "مفهوم Nullable Value Types",
+          "مفهوم Nullable Reference Types",
+          "استخدام Null Conditional Operator",
+          "استخدام Null Coalescing Operator",
+          "مفهوم Garbage Collection",
+          "استخدام IDisposable",
+          "استخدام using Statement",
+          "استخدام await using"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "التعامل مع JSON والملفات",
+        "subtopics": [
+          "ما هو JSON؟",
+          "استخدام System.Text.Json",
+          "تحويل Object إلى JSON",
+          "تحويل JSON إلى Object",
+          "قراءة وكتابة الملفات",
+          "استخدام Streams",
+          "التعامل مع Paths",
+          "معالجة أخطاء الملفات"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "القسم الخامس: التعرف على منصة .NET وإعداد البيئة",
+    "englishTitle": ".NET Platform & Environment Setup",
+    "icon": "Layers",
+    "category": "بيئة .NET",
+    "description": "فهم بنية .NET وCLR، ميزات ASP.NET Core، إعداد Visual Studio وVS Code، وأوامر dotnet CLI وإدارة الحزم NuGet.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في .NET",
+        "subtopics": [
+          "ما هي منصة .NET؟",
+          "الفرق بين .NET Framework و.NET الحديث",
+          "مفهوم .NET SDK",
+          "مفهوم .NET Runtime",
+          "مفهوم CLR",
+          "مفهوم Common Intermediate Language",
+          "مفهوم Just-In-Time Compilation",
+          "إصدارات .NET وفرق LTS وSTS"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "مقدمة في ASP.NET Core",
+        "subtopics": [
+          "ما هو ASP.NET Core؟",
+          "الفرق بين ASP.NET وASP.NET Core",
+          "الفرق بين ASP.NET Core وASP.NET Core MVC",
+          "مميزات ASP.NET Core",
+          "ما هو Kestrel؟",
+          "مفهوم Cross-Platform Development",
+          "مفهوم Request Pipeline",
+          "أنواع تطبيقات ASP.NET Core"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "تثبيت أدوات التطوير",
+        "subtopics": [
+          "تثبيت .NET SDK",
+          "تثبيت Visual Studio",
+          "اختيار ASP.NET and Web Development Workload",
+          "إعداد Visual Studio Code مع C# Dev Kit",
+          "التحقق من التثبيت باستخدام dotnet --info",
+          "إدارة إصدارات SDK باستخدام global.json",
+          "تثبيت SQL Server Developer أو Express",
+          "تثبيت SQL Server Management Studio"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "أوامر .NET CLI",
+        "subtopics": [
+          "استخدام dotnet new",
+          "استخدام dotnet run",
+          "استخدام dotnet build",
+          "استخدام dotnet restore",
+          "استخدام dotnet clean",
+          "استخدام dotnet publish",
+          "استخدام dotnet add package",
+          "استخدام dotnet test",
+          "إنشاء مشاريع باستخدام Templates"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "إدارة المشاريع والحزم",
+        "subtopics": [
+          "ما هو Solution؟",
+          "ما هو Project؟",
+          "فهم ملف .csproj",
+          "فهم ملف .sln و.slnx",
+          "استخدام NuGet Package Manager",
+          "إضافة Project References",
+          "فهم Target Framework",
+          "إدارة Package Versions",
+          "استخدام Git وملف .gitignore"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "القسم السادس: مقدمة في ASP.NET Core MVC وبناء أول مشروع",
+    "englishTitle": "Introduction to ASP.NET Core MVC & First Project",
+    "icon": "LayoutGrid",
+    "category": "ASP.NET Core MVC",
+    "description": "فهم نمط MVC، مقارنة تقنيات ASP.NET، بناء وتشغيل أول تطبيق MVC، وفهم بنية المجلدات وملف Program.cs.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "فهم MVC Pattern",
+        "subtopics": [
+          "ما هو Model View Controller؟",
+          "مفهوم Separation of Concerns",
+          "دور Model",
+          "دور View",
+          "دور Controller",
+          "كيف تتواصل مكونات MVC؟",
+          "دورة حياة طلب MVC",
+          "مثال من الحياة اليومية لشرح MVC"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "مقارنة تقنيات ASP.NET Core",
+        "subtopics": [
+          "الفرق بين MVC وRazor Pages",
+          "الفرق بين MVC وWeb API",
+          "الفرق بين MVC وBlazor",
+          "الفرق بين MVC وMinimal APIs",
+          "متى نستخدم MVC؟",
+          "متى نستخدم كل تقنية؟"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "إنشاء أول مشروع MVC",
+        "subtopics": [
+          "إنشاء مشروع ASP.NET Core Web App MVC",
+          "إنشاء مشروع باستخدام dotnet new mvc",
+          "فهم Template الافتراضي",
+          "تشغيل المشروع",
+          "فتح الموقع في المتصفح",
+          "تغيير الصفحة الرئيسية",
+          "إضافة صفحة جديدة",
+          "فهم Hot Reload"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "فهم هيكل المشروع",
+        "subtopics": [
+          "وظيفة Program.cs",
+          "مجلد Controllers",
+          "مجلد Models",
+          "مجلد Views",
+          "مجلد wwwroot",
+          "ملف appsettings.json",
+          "ملف appsettings.Development.json",
+          "مجلد Properties وlaunchSettings.json",
+          "مفهوم Dependencies"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "تشغيل التطبيق وإعداد الخادم",
+        "subtopics": [
+          "مفهوم WebApplication Builder",
+          "استخدام WebApplication.CreateBuilder",
+          "استخدام builder.Services",
+          "استخدام builder.Build",
+          "استخدام app.Run",
+          "فهم HTTP وHTTPS Ports",
+          "مفهوم Development Environment",
+          "تشغيل التطبيق باستخدام Kestrel"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "مشروع عملي: موقع تعريفي",
+        "subtopics": [
+          "إنشاء Home Page",
+          "إنشاء About Page",
+          "إنشاء Contact Page",
+          "إضافة Navigation Menu",
+          "عرض بيانات ديناميكية بسيطة",
+          "تنسيق الصفحات باستخدام CSS",
+          "اختبار التنقل بين الصفحات",
+          "رفع المشروع إلى GitHub"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "القسم السابع: Controllers وActions وAction Results",
+    "englishTitle": "Controllers, Actions & Action Results",
+    "icon": "Sliders",
+    "category": "ASP.NET Core MVC",
+    "description": "بناء وحدات التحكم Controllers، توجيه الإجراءات Actions، أنواع نتائج الإرجاع Action Results، وتمرير البيانات للواجهات.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Controllers",
+        "subtopics": [
+          "ما هو Controller؟",
+          "إنشاء Controller",
+          "الوراثة من Controller",
+          "فهم ControllerBase",
+          "الفرق بين Controller وControllerBase",
+          "استخدام Controller Suffix",
+          "تنظيم Controllers حسب الوظائف"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Action Methods",
+        "subtopics": [
+          "ما هي Action Method؟",
+          "إنشاء Action بسيطة",
+          "إرسال Parameters إلى Action",
+          "استخدام HttpGet",
+          "استخدام HttpPost",
+          "استخدام HttpPut وHttpPatch",
+          "استخدام HttpDelete",
+          "استخدام NonAction",
+          "إنشاء Async Actions"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Action Results",
+        "subtopics": [
+          "ما هو IActionResult؟",
+          "استخدام ViewResult",
+          "استخدام ContentResult",
+          "استخدام JsonResult",
+          "استخدام RedirectResult",
+          "استخدام RedirectToActionResult",
+          "استخدام FileResult",
+          "استخدام StatusCodeResult",
+          "استخدام NotFound وBadRequest"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "تمرير البيانات من Controller إلى View",
+        "subtopics": [
+          "استخدام ViewBag",
+          "استخدام ViewData",
+          "استخدام TempData",
+          "استخدام Strongly Typed Model",
+          "الفرق بين ViewBag وViewData وTempData",
+          "متى نستخدم ViewModel؟",
+          "تجنب وضع Business Logic داخل Controller"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Controller Properties",
+        "subtopics": [
+          "استخدام HttpContext",
+          "استخدام Request",
+          "استخدام Response",
+          "استخدام User",
+          "استخدام RouteData",
+          "استخدام ModelState",
+          "استخدام Url",
+          "استخدام ControllerContext"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "تطبيق عملي على Controllers",
+        "subtopics": [
+          "إنشاء ProductsController",
+          "إنشاء Index Action",
+          "إنشاء Details Action",
+          "إنشاء Create Action",
+          "إنشاء Edit Action",
+          "إنشاء Delete Action",
+          "إرجاع Views مختلفة",
+          "اختبار Action Results"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "القسم الثامن: Routing في ASP.NET Core MVC",
+    "englishTitle": "Routing & URL Management",
+    "icon": "Compass",
+    "category": "ASP.NET Core MVC",
+    "description": "إتقان Conventional Routing وAttribute Routing، قيود المسارات Route Constraints، وتوليد الروابط الصديقة لمحركات البحث SEO.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Routing",
+        "subtopics": [
+          "ما هو Routing؟",
+          "كيف يعمل Endpoint Routing؟",
+          "الفرق بين URL وRoute",
+          "مفهوم Route Template",
+          "فهم Controller وAction وID",
+          "فهم Route Values",
+          "مفهوم Route Matching"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Conventional Routing",
+        "subtopics": [
+          "ما هو Conventional Routing؟",
+          "استخدام MapControllerRoute",
+          "فهم Default Route",
+          "إنشاء Custom Route",
+          "استخدام Optional Parameters",
+          "استخدام Default Values",
+          "إنشاء أكثر من Route Pattern",
+          "فهم ترتيب المسارات"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Attribute Routing",
+        "subtopics": [
+          "ما هو Attribute Routing؟",
+          "استخدام Route Attribute",
+          "استخدام HttpGet مع Route",
+          "استخدام HttpPost مع Route",
+          "إنشاء Route Prefix",
+          "استخدام Controller وAction Tokens",
+          "الفرق بين Conventional وAttribute Routing",
+          "تصميم مسارات واضحة وقابلة للصيانة"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Route Parameters وConstraints",
+        "subtopics": [
+          "تمرير ID داخل URL",
+          "استخدام int Constraint",
+          "استخدام guid Constraint",
+          "استخدام min وmax Constraints",
+          "استخدام Optional Parameters",
+          "استخدام Catch-All Parameters",
+          "استخدام Custom Route Constraints",
+          "التعامل مع Routes غير المطابقة"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "توليد الروابط والتنقل",
+        "subtopics": [
+          "استخدام RedirectToAction",
+          "استخدام Url.Action",
+          "استخدام LinkGenerator",
+          "إنشاء روابط باستخدام Tag Helpers",
+          "إنشاء SEO-Friendly URLs",
+          "مفهوم Slugs",
+          "تجنب Hardcoded URLs"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "مشروع عملي على Routing",
+        "subtopics": [
+          "إنشاء مسارات المنتجات",
+          "إنشاء مسارات التصنيفات",
+          "إنشاء تفاصيل المنتج باستخدام ID",
+          "إنشاء صفحة باستخدام Slug",
+          "إضافة Route Constraints",
+          "إنشاء روابط ديناميكية",
+          "اختبار المسارات الصحيحة والخاطئة"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "القسم التاسع: Middleware وHTTP Request Pipeline",
+    "englishTitle": "Middleware & Request Pipeline",
+    "icon": "GitBranch",
+    "category": "ASP.NET Core MVC",
+    "description": "فهم خط سير معالجة الطلبات، إنشاء برمجيات وسيطة مخصصة Custom Middleware، إدارة الترتيب والأمان.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Middleware",
+        "subtopics": [
+          "ما هي Middleware؟",
+          "مفهوم Request Pipeline",
+          "كيف تمر الطلبات داخل Pipeline؟",
+          "مفهوم RequestDelegate",
+          "أهمية ترتيب Middleware",
+          "الفرق بين Middleware وMVC Filters",
+          "مثال عملي على مراحل معالجة الطلب"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "إنشاء Middleware",
+        "subtopics": [
+          "استخدام app.Use",
+          "استخدام app.Run",
+          "استخدام app.Map",
+          "إنشاء Inline Middleware",
+          "إنشاء Middleware Class",
+          "استخدام InvokeAsync",
+          "تمرير الطلب باستخدام next",
+          "إنشاء Middleware Extensions"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Middleware المدمجة",
+        "subtopics": [
+          "استخدام UseExceptionHandler",
+          "استخدام UseHttpsRedirection",
+          "استخدام UseStaticFiles",
+          "مقدمة في MapStaticAssets",
+          "استخدام UseRouting",
+          "استخدام UseAuthentication",
+          "استخدام UseAuthorization",
+          "استخدام UseSession",
+          "استخدام UseCors"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Middleware مخصصة",
+        "subtopics": [
+          "إنشاء Request Logging Middleware",
+          "إنشاء Request Timing Middleware",
+          "إنشاء API Key Middleware",
+          "إنشاء Correlation ID Middleware",
+          "إنشاء Maintenance Mode Middleware",
+          "إنشاء Middleware لمعالجة الأخطاء",
+          "إنشاء Middleware للتحقق من Headers"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "التحكم في Pipeline",
+        "subtopics": [
+          "مفهوم Short-Circuiting",
+          "استخدام UseWhen",
+          "استخدام MapWhen",
+          "إنشاء Conditional Middleware",
+          "التحكم في ترتيب Authentication وAuthorization",
+          "تجنب Middleware التي تمنع تنفيذ الطلب",
+          "تصحيح أخطاء Pipeline"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "title": "القسم العاشر: Models وModel Binding",
+    "englishTitle": "Models & Model Binding",
+    "icon": "Database",
+    "category": "ASP.NET Core MVC",
+    "description": "بناء النماذج Models، ربط البيانات القادمة من الروابط والنماذج والـ Headers، استخدام ViewModels وDTOs ومنع الـ Overposting.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Models",
+        "subtopics": [
+          "ما هو Model؟",
+          "إنشاء Model Class",
+          "تعريف Model Properties",
+          "استخدام Nullable Properties",
+          "الفرق بين Domain Model وViewModel",
+          "الفرق بين Entity وDTO",
+          "تنظيم مجلد Models"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Model Binding",
+        "subtopics": [
+          "ما هو Model Binding؟",
+          "كيف يعمل Model Binder؟",
+          "Binding من Route",
+          "Binding من Query String",
+          "Binding من Form Fields",
+          "Binding من Request Body",
+          "Binding من Headers",
+          "Binding للأنواع المعقدة",
+          "Binding للمصفوفات والقوائم"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Binding Attributes",
+        "subtopics": [
+          "استخدام FromRoute",
+          "استخدام FromQuery",
+          "استخدام FromForm",
+          "استخدام FromBody",
+          "استخدام FromHeader",
+          "استخدام FromServices",
+          "استخدام Bind وBindNever",
+          "منع Overposting"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "ViewModels وDTOs",
+        "subtopics": [
+          "ما هو ViewModel؟",
+          "إنشاء CreateProductViewModel",
+          "إنشاء EditProductViewModel",
+          "إنشاء ProductDetailsViewModel",
+          "إنشاء ViewModel يحتوي على عدة Models",
+          "إنشاء CreateDTO وUpdateDTO",
+          "تحويل Entity إلى ViewModel",
+          "استخدام Mapping Methods",
+          "مقدمة في AutoMapper"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "تطبيق عملي على Model Binding",
+        "subtopics": [
+          "إنشاء نموذج إدخال بيانات طالب",
+          "استقبال بيانات الطالب داخل Controller",
+          "ربط Form Fields بالـ ViewModel",
+          "عرض البيانات داخل View",
+          "التعامل مع القيم الاختيارية",
+          "التعامل مع بيانات غير صحيحة",
+          "منع تعديل الحقول غير المسموح بها"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "title": "القسم الحادي عشر: Data Annotations وModel Validation",
+    "englishTitle": "Data Annotations & Model Validation",
+    "icon": "CheckSquare",
+    "category": "ASP.NET Core MVC",
+    "description": "التحقق من صحة المدخلات على جهتي العميل والخادم، وسوم Data Annotations، وقواعد التحقق المخصصة Custom Validation.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Validation",
+        "subtopics": [
+          "ما هو Model Validation؟",
+          "أهمية التحقق من مدخلات المستخدم",
+          "الفرق بين Client-Side وServer-Side Validation",
+          "مفهوم ModelState",
+          "استخدام ModelState.IsValid",
+          "عرض Validation Errors",
+          "الفرق بين Binding Errors وValidation Errors"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Data Annotations",
+        "subtopics": [
+          "استخدام Required",
+          "استخدام StringLength",
+          "استخدام MaxLength وMinLength",
+          "استخدام Range",
+          "استخدام EmailAddress",
+          "استخدام Phone",
+          "استخدام RegularExpression",
+          "استخدام Compare",
+          "استخدام Display وDataType"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Client-Side Validation",
+        "subtopics": [
+          "كيف تعمل Client-Side Validation؟",
+          "استخدام jquery-validation",
+          "استخدام jquery-validation-unobtrusive",
+          "فهم Validation Attributes في HTML",
+          "استخدام asp-validation-for",
+          "استخدام asp-validation-summary",
+          "عرض رسائل التحقق باللغة العربية",
+          "التحقق من النماذج قبل الإرسال"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Custom Validation",
+        "subtopics": [
+          "إنشاء Custom Validation Attribute",
+          "تطبيق ValidationAttribute",
+          "استخدام IValidatableObject",
+          "التحقق من حقول مترابطة",
+          "إضافة ModelState Errors يدوياً",
+          "إنشاء Validation داخل Service Layer",
+          "التحقق غير المتزامن عند الحاجة",
+          "التمييز بين Business Rules وInput Validation"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "مشروع عملي: نموذج تسجيل مستخدم",
+        "subtopics": [
+          "إنشاء RegisterViewModel",
+          "إضافة Required Fields",
+          "التحقق من Email",
+          "التحقق من Password",
+          "التحقق من Confirm Password",
+          "عرض Validation Messages",
+          "إعادة عرض النموذج عند وجود خطأ",
+          "اختبار سيناريوهات إدخال مختلفة"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "title": "القسم الثاني عشر: Razor View Engine",
+    "englishTitle": "Razor View Engine",
+    "icon": "FileCode",
+    "category": "ASP.NET Core MVC",
+    "description": "بناء الواجهات التفاعلية باستخدام محرك Razor، قواعد بناء الشفرات @، العرض الموجه Strongly Typed، وإدارة ViewData وTempData.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Razor",
+        "subtopics": [
+          "ما هو Razor View Engine؟",
+          "ما هو ملف .cshtml؟",
+          "الفرق بين HTML وRazor",
+          "كيف يعرض الخادم Razor Views؟",
+          "إنشاء View جديدة",
+          "فهم View Discovery",
+          "استخدام return View()"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Razor Syntax",
+        "subtopics": [
+          "استخدام @ داخل Razor",
+          "كتابة C# Expressions",
+          "استخدام Code Blocks",
+          "استخدام if وelse",
+          "استخدام switch",
+          "استخدام for وforeach",
+          "استخدام Razor Comments",
+          "استخدام Razor Functions",
+          "فهم HTML Encoding"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Strongly Typed Views",
+        "subtopics": [
+          "ما هي Strongly Typed View؟",
+          "استخدام @model",
+          "الوصول إلى Model Properties",
+          "عرض Model واحد",
+          "عرض List من Models",
+          "استخدام ViewModel داخل Razor",
+          "التعامل مع Null Values",
+          "تجنب Business Logic داخل Views"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "ViewData وViewBag وTempData",
+        "subtopics": [
+          "استخدام ViewData",
+          "استخدام ViewBag",
+          "استخدام TempData",
+          "متى نستخدم TempData بعد Redirect؟",
+          "الفرق بين ViewData وViewBag",
+          "الفرق بين ViewModel وViewBag",
+          "أفضل طريقة لنقل البيانات إلى View"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "ملفات إعداد Razor",
+        "subtopics": [
+          "وظيفة _ViewImports.cshtml",
+          "وظيفة _ViewStart.cshtml",
+          "استخدام @using",
+          "استخدام @inject",
+          "استخدام @addTagHelper",
+          "تحديد Layout افتراضي",
+          "تنظيم Shared Views"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "مشروع عملي: صفحات عرض المنتجات",
+        "subtopics": [
+          "إنشاء Product Model",
+          "إنشاء ProductsController",
+          "إنشاء Index View",
+          "عرض قائمة المنتجات",
+          "إنشاء Details View",
+          "عرض تفاصيل منتج",
+          "استخدام Razor Conditions",
+          "تنسيق البيانات داخل الصفحة"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "title": "القسم الثالث عشر: Layouts وPartial Views وTag Helpers",
+    "englishTitle": "Layouts, Partial Views & Tag Helpers",
+    "icon": "LayoutTemplate",
+    "category": "ASP.NET Core MVC",
+    "description": "تصميم القوالب العامة Layouts، إعادة استخدام أجزاء الواجهة Partial Views، استخدام Tag Helpers وبناء View Components المخصصة.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "Layouts",
+        "subtopics": [
+          "ما هو Layout؟",
+          "إنشاء _Layout.cshtml",
+          "استخدام RenderBody",
+          "استخدام RenderSection",
+          "استخدام Sections",
+          "إنشاء Header وFooter مشتركين",
+          "إنشاء Layout خاص بلوحة التحكم",
+          "تغيير Layout حسب الصفحة"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Partial Views",
+        "subtopics": [
+          "ما هي Partial View؟",
+          "إنشاء Partial View",
+          "استخدام Partial Tag Helper",
+          "استخدام PartialAsync",
+          "تمرير Model إلى Partial View",
+          "إنشاء Product Card قابلة لإعادة الاستخدام",
+          "الفرق بين Partial View وLayout",
+          "متى نستخدم Partial Views؟"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Tag Helpers الأساسية",
+        "subtopics": [
+          "ما هي Tag Helpers؟",
+          "استخدام asp-controller",
+          "استخدام asp-action",
+          "استخدام asp-route-id",
+          "استخدام asp-for",
+          "استخدام asp-items",
+          "استخدام asp-validation-for",
+          "استخدام asp-validation-summary",
+          "استخدام Environment Tag Helper"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "HTML Helpers",
+        "subtopics": [
+          "ما هي HTML Helpers؟",
+          "استخدام Html.DisplayFor",
+          "استخدام Html.EditorFor",
+          "استخدام Html.TextBoxFor",
+          "استخدام Html.LabelFor",
+          "استخدام Html.ValidationMessageFor",
+          "الفرق بين HTML Helpers وTag Helpers",
+          "اختيار الأسلوب المناسب لبناء Forms"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "View Components",
+        "subtopics": [
+          "ما هي View Components؟",
+          "إنشاء ViewComponent",
+          "استخدام InvokeAsync",
+          "إنشاء View خاصة بالمكون",
+          "استخدام Dependency Injection داخل ViewComponent",
+          "إنشاء ShoppingCart ViewComponent",
+          "إنشاء Categories Menu Component",
+          "الفرق بين ViewComponent وPartial View"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Custom Tag Helpers",
+        "subtopics": [
+          "إنشاء Tag Helper مخصصة",
+          "استخدام TagHelper Class",
+          "استخدام ProcessAsync",
+          "إضافة Custom Attributes",
+          "إنشاء Status Badge Tag Helper",
+          "إنشاء Pagination Tag Helper",
+          "تسجيل Tag Helpers داخل المشروع"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "title": "القسم الرابع عشر: Forms وCRUD وواجهة المستخدم",
+    "englishTitle": "Forms, CRUD Operations & UI Integration",
+    "icon": "Table2",
+    "category": "ASP.NET Core MVC",
+    "description": "بناء النماذج، تنفيذ عمليات الإضافة والتعديل والحذف CRUD، نمط Post-Redirect-Get، دمج Bootstrap والـ AJAX والبحث والترقيم Pagination.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "إنشاء Forms",
+        "subtopics": [
+          "إنشاء HTML Form داخل Razor",
+          "استخدام Form Tag Helper",
+          "إرسال البيانات باستخدام POST",
+          "استخدام Input Tag Helper",
+          "إنشاء TextBox وTextArea",
+          "إنشاء CheckBox وRadio Buttons",
+          "إنشاء DropDownList",
+          "إنشاء Date Inputs",
+          "عرض Validation Errors"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "تنفيذ CRUD باستخدام MVC",
+        "subtopics": [
+          "فهم CRUD Operations",
+          "إنشاء Index Action وView",
+          "إنشاء Details Action وView",
+          "إنشاء Create GET Action",
+          "إنشاء Create POST Action",
+          "إنشاء Edit GET Action",
+          "إنشاء Edit POST Action",
+          "إنشاء Delete Confirmation Page",
+          "تنفيذ Delete POST Action"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Post Redirect Get Pattern",
+        "subtopics": [
+          "ما هو PRG Pattern؟",
+          "مشكلة إرسال النموذج أكثر من مرة",
+          "استخدام RedirectToAction بعد POST",
+          "عرض Success Message باستخدام TempData",
+          "عرض Validation Errors دون فقدان البيانات",
+          "منع Duplicate Form Submissions",
+          "تطبيق PRG على Create وEdit"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Bootstrap مع MVC",
+        "subtopics": [
+          "مقدمة في Bootstrap",
+          "إضافة Bootstrap للمشروع",
+          "استخدام Bootstrap Grid",
+          "تصميم Responsive Layout",
+          "تصميم Forms",
+          "تصميم Tables",
+          "استخدام Cards وModals",
+          "تصميم Navigation Bar",
+          "تصميم Admin Dashboard"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "JavaScript وAJAX مع MVC",
+        "subtopics": [
+          "استخدام JavaScript داخل Razor Views",
+          "مفهوم AJAX",
+          "استخدام Fetch API",
+          "إرسال بيانات JSON إلى Controller",
+          "إرسال FormData",
+          "معالجة JSON Responses",
+          "تحديث أجزاء من الصفحة دون إعادة تحميلها",
+          "عرض Loading Indicators",
+          "التعامل مع أخطاء الشبكة",
+          "إرسال Antiforgery Token مع AJAX"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "البحث والفلترة وتقسيم الصفحات",
+        "subtopics": [
+          "إنشاء Search Form",
+          "البحث باستخدام Query String",
+          "إضافة Filtering",
+          "إضافة Sorting",
+          "تنفيذ Pagination",
+          "استخدام Skip وTake",
+          "الحفاظ على الفلاتر أثناء التنقل",
+          "إنشاء Pagination Component"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "title": "القسم الخامس عشر: SQL Server وتصميم قواعد البيانات",
+    "englishTitle": "SQL Server & Database Design",
+    "icon": "Database",
+    "category": "قواعد البيانات",
+    "description": "مبادئ قواعد البيانات العلائقية، تثبيت SQL Server وSSMS، أوامر SQL، تصميم مخططات ERD، والتطبيع Normalization ومبادئ ACID.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في قواعد البيانات",
+        "subtopics": [
+          "ما هي Database؟",
+          "الفرق بين SQL وNoSQL",
+          "مفهوم Relational Database",
+          "مفهوم Tables وRows وColumns",
+          "مفهوم Primary Key",
+          "مفهوم Foreign Key",
+          "مفهوم Database Constraints",
+          "مفهوم Database Schema"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "SQL Server",
+        "subtopics": [
+          "ما هو SQL Server؟",
+          "الفرق بين SQL Server Express وDeveloper",
+          "تثبيت SQL Server",
+          "استخدام SQL Server Management Studio",
+          "إنشاء Database",
+          "إنشاء Table",
+          "تحديد Data Types",
+          "إنشاء Primary Key",
+          "إنشاء Foreign Key"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "أساسيات SQL",
+        "subtopics": [
+          "استخدام SELECT",
+          "استخدام INSERT",
+          "استخدام UPDATE",
+          "استخدام DELETE",
+          "استخدام WHERE",
+          "استخدام ORDER BY",
+          "استخدام GROUP BY",
+          "استخدام HAVING",
+          "استخدام JOIN",
+          "استخدام Aggregate Functions"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "تصميم قواعد البيانات",
+        "subtopics": [
+          "مفهوم ERD",
+          "علاقة One-to-One",
+          "علاقة One-to-Many",
+          "علاقة Many-to-Many",
+          "مفهوم Database Normalization",
+          "مفهوم First Normal Form",
+          "مفهوم Second Normal Form",
+          "مفهوم Third Normal Form",
+          "تصميم قاعدة بيانات لمتجر إلكتروني"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "SQL المتقدم",
+        "subtopics": [
+          "استخدام Subqueries",
+          "استخدام Common Table Expressions",
+          "مقدمة في Stored Procedures",
+          "مقدمة في Views",
+          "استخدام Transactions",
+          "مفهوم ACID",
+          "إنشاء Indexes",
+          "فهم Execution Plans",
+          "تجنب SQL Injection"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "title": "القسم السادس عشر: Entity Framework Core",
+    "englishTitle": "Entity Framework Core Fundamentals",
+    "icon": "Network",
+    "category": "Entity Framework",
+    "description": "فهم ORM وEF Core، نهج Code-First والترحيلات Migrations، عمليات CRUD، إدارة العلاقات One-to-Many و Many-to-Many، و Scaffolding.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Entity Framework Core",
+        "subtopics": [
+          "ما هو Entity Framework Core؟",
+          "ما هو ORM؟",
+          "الفرق بين EF Core وADO.NET",
+          "الفرق بين EF Core وDapper",
+          "مفهوم Code First",
+          "مفهوم Database First",
+          "متى نستخدم EF Core؟"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "إعداد EF Core",
+        "subtopics": [
+          "تثبيت EF Core Packages",
+          "تثبيت SQL Server Provider",
+          "تثبيت EF Core Tools",
+          "إنشاء DbContext",
+          "إنشاء DbSet",
+          "إضافة Connection String",
+          "استخدام AddDbContext",
+          "حقن DbContext داخل Controller أو Service"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Code First وMigrations",
+        "subtopics": [
+          "إنشاء Entity Classes",
+          "إنشاء Initial Migration",
+          "استخدام dotnet ef migrations add",
+          "استخدام dotnet ef database update",
+          "فهم ملفات Migrations",
+          "تعديل Database Schema",
+          "إضافة حقول جديدة",
+          "إدارة Migrations في فريق العمل",
+          "التراجع عن Migration بطريقة آمنة"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "CRUD باستخدام EF Core",
+        "subtopics": [
+          "إضافة سجل باستخدام AddAsync",
+          "حفظ التغييرات باستخدام SaveChangesAsync",
+          "قراءة البيانات باستخدام ToListAsync",
+          "البحث باستخدام FindAsync",
+          "استخدام FirstOrDefaultAsync",
+          "تعديل البيانات",
+          "حذف البيانات",
+          "التحقق من وجود السجل",
+          "معالجة DbUpdateException"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "العلاقات باستخدام EF Core",
+        "subtopics": [
+          "مفهوم Navigation Properties",
+          "علاقة One-to-One",
+          "علاقة One-to-Many",
+          "علاقة Many-to-Many",
+          "استخدام Include",
+          "استخدام ThenInclude",
+          "استخدام Fluent API",
+          "ضبط Cascade Delete",
+          "إدارة Foreign Keys"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Data Annotations وFluent API",
+        "subtopics": [
+          "استخدام Key Attribute",
+          "استخدام Required",
+          "استخدام MaxLength",
+          "استخدام Column Attribute",
+          "استخدام Table Attribute",
+          "استخدام NotMapped",
+          "استخدام OnModelCreating",
+          "إنشاء Entity Configurations",
+          "الفرق بين Data Annotations وFluent API"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Scaffolding باستخدام EF Core",
+        "subtopics": [
+          "ما هو Scaffolding؟",
+          "إنشاء MVC Controller باستخدام Scaffolding",
+          "إنشاء CRUD Views تلقائياً",
+          "استخدام Database First Scaffolding",
+          "مراجعة الكود المولد",
+          "تخصيص Controller بعد Scaffolding",
+          "تخصيص Views",
+          "تجنب الاعتماد الكامل على الكود المولد"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "title": "القسم السابع عشر: Entity Framework Core المتقدم",
+    "englishTitle": "Advanced Entity Framework Core",
+    "icon": "Zap",
+    "category": "Entity Framework",
+    "description": "تحسين الأداء باستخدام AsNoTracking، تجنب استعلامات N+1، المعاملات Transactions، التزامن المتفائل Optimistic Concurrency، والحذف المرن Soft Delete.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "LINQ مع EF Core",
+        "subtopics": [
+          "استخدام Where",
+          "استخدام Select",
+          "استخدام OrderBy وThenBy",
+          "استخدام GroupBy",
+          "استخدام Join",
+          "استخدام Skip وTake",
+          "استخدام AnyAsync وCountAsync",
+          "مفهوم Deferred Execution",
+          "الفرق بين IQueryable وIEnumerable"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "تحسين أداء EF Core",
+        "subtopics": [
+          "استخدام AsNoTracking",
+          "مفهوم Change Tracking",
+          "مفهوم Projection",
+          "تجنب جلب أعمدة غير ضرورية",
+          "الفرق بين Eager وExplicit وLazy Loading",
+          "منع N+1 Queries",
+          "استخدام Split Queries عند الحاجة",
+          "تحليل SQL الناتج",
+          "استخدام AsNoTrackingWithIdentityResolution"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Transactions",
+        "subtopics": [
+          "ما هي Database Transaction؟",
+          "استخدام BeginTransactionAsync",
+          "استخدام CommitAsync",
+          "استخدام RollbackAsync",
+          "فهم Isolation Levels",
+          "التعامل مع فشل عدة عمليات",
+          "منع Partial Updates",
+          "إدارة معاملات الطلبات المالية"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Concurrency Handling",
+        "subtopics": [
+          "ما هي Concurrency؟",
+          "مفهوم Optimistic Concurrency",
+          "استخدام RowVersion",
+          "معالجة DbUpdateConcurrencyException",
+          "منع Lost Updates",
+          "معالجة تعارض تعديل البيانات",
+          "تطبيق Concurrency على المخزون"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Advanced EF Core Features",
+        "subtopics": [
+          "استخدام Raw SQL Queries",
+          "استخدام ExecuteUpdateAsync",
+          "استخدام ExecuteDeleteAsync",
+          "إنشاء Global Query Filters",
+          "تنفيذ Soft Delete",
+          "إضافة Audit Fields",
+          "استخدام Value Converters",
+          "استخدام Shadow Properties",
+          "مقدمة في Compiled Queries"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Database Management",
+        "subtopics": [
+          "إنشاء Development Database",
+          "إنشاء Testing Database",
+          "إنشاء Production Database",
+          "استخدام Seed Data",
+          "إدارة Connection Pooling",
+          "إدارة Migrations عند النشر",
+          "إنشاء Database Backups",
+          "اختبار Restore",
+          "مراقبة Slow Queries"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "title": "القسم الثامن عشر: Dependency Injection وServices وConfiguration",
+    "englishTitle": "Dependency Injection, Services & Configuration",
+    "icon": "Share2",
+    "category": "معمارية .NET",
+    "description": "حقن التبعيات DI، فترات حياة الخدمات Lifetimes (Transient, Scoped, Singleton)، طبقة الخدمات ومستودع البيانات، ونظام الإعدادات والـ Logging.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Dependency Injection",
+        "subtopics": [
+          "ما هو Dependency Injection؟",
+          "ما هي Dependency؟",
+          "مشكلة Tight Coupling",
+          "مفهوم Loose Coupling",
+          "مفهوم IoC Container",
+          "استخدام Interfaces مع DI",
+          "حقن الخدمات داخل Controller"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Service Lifetimes",
+        "subtopics": [
+          "ما هو Service Lifetime؟",
+          "استخدام AddTransient",
+          "استخدام AddScoped",
+          "استخدام AddSingleton",
+          "الفرق بين Transient وScoped وSingleton",
+          "فهم Thread Safety للخدمات المشتركة",
+          "مشكلة Captive Dependency",
+          "اختيار Lifetime المناسبة"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Service Layer",
+        "subtopics": [
+          "ما هي Service Layer؟",
+          "إنشاء IProductService",
+          "إنشاء ProductService",
+          "إضافة Service إلى DI Container",
+          "استدعاء Service من Controller",
+          "فصل Business Logic عن Controller",
+          "إنشاء Reusable Services",
+          "اختبار Service بصورة مستقلة"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Repository Pattern",
+        "subtopics": [
+          "ما هو Repository Pattern؟",
+          "إنشاء Repository Interface",
+          "إنشاء Repository Implementation",
+          "حقن DbContext داخل Repository",
+          "الفرق بين Repository وService",
+          "مناقشة الحاجة إلى Repository مع EF Core",
+          "استخدام Specification Pattern عند الحاجة",
+          "اختبار طبقة الوصول للبيانات"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Configuration System",
+        "subtopics": [
+          "ما هو Configuration؟",
+          "استخدام appsettings.json",
+          "استخدام appsettings.Development.json",
+          "استخدام Environment Variables",
+          "استخدام IConfiguration",
+          "إنشاء Strongly Typed Options",
+          "استخدام IOptions",
+          "استخدام IOptionsSnapshot",
+          "استخدام IOptionsMonitor",
+          "التحقق من Configuration عند التشغيل"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Logging",
+        "subtopics": [
+          "ما هو Application Logging؟",
+          "استخدام ILogger",
+          "مستويات LogLevel",
+          "استخدام Structured Logging",
+          "استخدام Logging Providers",
+          "مقدمة في Serilog",
+          "تسجيل Exceptions",
+          "عدم تسجيل البيانات الحساسة"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "title": "القسم التاسع عشر: Authentication باستخدام ASP.NET Core Identity",
+    "englishTitle": "Authentication with ASP.NET Core Identity",
+    "icon": "KeyRound",
+    "category": "الأمان والمصادقة",
+    "description": "بناء أنظمة المصادقة وتسجيل الدخول والخروج، ملفات تعريف المستخدمين، تأكيد البريد، إعادة تعيين كلمة المرور، والمصادقة الخارجية 2FA و OAuth.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Authentication",
+        "subtopics": [
+          "ما هي Authentication؟",
+          "الفرق بين Authentication وAuthorization",
+          "مفهوم Claims",
+          "مفهوم Authentication Schemes",
+          "مفهوم Cookies Authentication",
+          "مفهوم Token Authentication",
+          "متى نستخدم ASP.NET Core Identity؟"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "ASP.NET Core Identity",
+        "subtopics": [
+          "ما هو ASP.NET Core Identity؟",
+          "إضافة Identity إلى مشروع MVC",
+          "مفهوم IdentityUser",
+          "مفهوم IdentityRole",
+          "إنشاء ApplicationUser",
+          "إنشاء ApplicationDbContext",
+          "إعداد Identity Services",
+          "إنشاء Identity Tables باستخدام Migrations"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Registration وLogin",
+        "subtopics": [
+          "إنشاء Registration Page",
+          "استخدام UserManager",
+          "إنشاء مستخدم جديد",
+          "تجزئة كلمات المرور بطريقة آمنة",
+          "إنشاء Login Page",
+          "استخدام SignInManager",
+          "تنفيذ Login",
+          "تنفيذ Logout",
+          "مفهوم Remember Me"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "إدارة حسابات المستخدمين",
+        "subtopics": [
+          "تأكيد البريد الإلكتروني",
+          "إنشاء Email Confirmation Token",
+          "إعادة تعيين كلمة المرور",
+          "تغيير كلمة المرور",
+          "تحديث Profile",
+          "إدارة معلومات الاتصال",
+          "تطبيق Account Lockout",
+          "إدارة Security Stamp",
+          "إبطال جلسات المستخدم"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Cookies Authentication",
+        "subtopics": [
+          "فهم Authentication Cookie",
+          "إعداد Cookie Expiration",
+          "استخدام Sliding Expiration",
+          "إعداد LoginPath",
+          "إعداد AccessDeniedPath",
+          "إعداد Secure وHttpOnly Cookies",
+          "استخدام SameSite",
+          "حماية Cookie Authentication من CSRF"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "External Login",
+        "subtopics": [
+          "مقدمة في OAuth 2.0",
+          "مقدمة في OpenID Connect",
+          "الفرق بين OAuth وOpenID Connect",
+          "إعداد Google Authentication",
+          "إعداد Microsoft Authentication",
+          "ربط External Login بحساب محلي",
+          "التحقق من External Claims",
+          "إدارة External Authentication Errors"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Two-Factor Authentication",
+        "subtopics": [
+          "ما هي Multi-Factor Authentication؟",
+          "تفعيل Two-Factor Authentication",
+          "استخدام Authenticator App",
+          "إنشاء Recovery Codes",
+          "إدارة Trusted Devices",
+          "حماية عمليات استرداد الحساب",
+          "اختبار سيناريوهات المصادقة"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "title": "القسم العشرون: Authorization وإدارة الأدوار والصلاحيات",
+    "englishTitle": "Authorization, Roles & Permission Management",
+    "icon": "ShieldCheck",
+    "category": "الأمان والمصادقة",
+    "description": "إدارة الصلاحيات عبر الأدوار RBAC، الصلاحيات القائمة على الادعاءات Claims، سياسات الأمان المخصصة Policies، وحماية لوحة التحكم.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Authorization",
+        "subtopics": [
+          "ما هي Authorization؟",
+          "مفهوم Roles",
+          "مفهوم Permissions",
+          "مفهوم Claims",
+          "مفهوم Policies",
+          "الفرق بين 401 و403",
+          "مبدأ Least Privilege"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Role-Based Authorization",
+        "subtopics": [
+          "إنشاء Roles",
+          "استخدام RoleManager",
+          "إضافة User إلى Role",
+          "إزالة User من Role",
+          "استخدام Authorize Attribute",
+          "استخدام Authorize مع Roles",
+          "حماية AdminController",
+          "إدارة الأدوار داخل لوحة التحكم"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Claims-Based Authorization",
+        "subtopics": [
+          "ما هي Claims؟",
+          "إنشاء Custom Claim",
+          "إضافة Claims إلى User",
+          "قراءة Claims داخل Controller",
+          "إنشاء Claim-Based Policy",
+          "ربط Policy مع Controller",
+          "التحقق من Claims داخل View"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Policy-Based Authorization",
+        "subtopics": [
+          "ما هي Authorization Policy؟",
+          "إنشاء Policy",
+          "استخدام RequireRole",
+          "استخدام RequireClaim",
+          "إنشاء Custom Requirement",
+          "إنشاء AuthorizationHandler",
+          "استخدام IAuthorizationService",
+          "تنفيذ Resource-Based Authorization"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Permission-Based Authorization",
+        "subtopics": [
+          "تصميم Permissions Table",
+          "ربط Permissions مع Roles",
+          "إنشاء Permission Requirement",
+          "إنشاء Permission Handler",
+          "إنشاء Dynamic Authorization Policies",
+          "منع الوصول إلى موارد مستخدم آخر",
+          "تسجيل تغييرات الصلاحيات",
+          "اختبار Authorization"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "مشروع عملي: نظام صلاحيات",
+        "subtopics": [
+          "إنشاء Admin وManager وEmployee Roles",
+          "إنشاء Permissions",
+          "إنشاء إدارة المستخدمين",
+          "تخصيص الصلاحيات لكل دور",
+          "حماية الصفحات",
+          "إخفاء عناصر الواجهة حسب الصلاحيات",
+          "التحقق من الصلاحيات داخل الخادم",
+          "اختبار محاولات تجاوز الصلاحيات"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "title": "القسم الحادي والعشرون: أمن ASP.NET Core MVC",
+    "englishTitle": "Web Security & OWASP Top 10",
+    "icon": "Lock",
+    "category": "الأمان والمصادقة",
+    "description": "الحماية من ثغرات XSS، CSRF، حقن SQL، Overposting، إعداد ترويسات الأمان Security Headers، إدارة الأسرار وRate Limiting.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مبادئ Web Security",
+        "subtopics": [
+          "مقدمة في OWASP Top 10",
+          "مفهوم Attack Surface",
+          "مفهوم Defense in Depth",
+          "التحقق من مدخلات المستخدم",
+          "مبدأ Least Privilege",
+          "حماية البيانات الحساسة",
+          "إدارة Security Updates"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Cross-Site Scripting",
+        "subtopics": [
+          "ما هو XSS؟",
+          "الفرق بين Stored وReflected XSS",
+          "فهم HTML Encoding في Razor",
+          "مخاطر Html.Raw",
+          "منع إخراج HTML غير موثوق",
+          "استخدام Content Security Policy",
+          "حماية JavaScript من البيانات غير الآمنة"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Cross-Site Request Forgery",
+        "subtopics": [
+          "ما هو CSRF؟",
+          "كيف تحدث CSRF؟",
+          "مفهوم Antiforgery Token",
+          "استخدام ValidateAntiForgeryToken",
+          "استخدام AutoValidateAntiforgeryToken",
+          "إرسال Antiforgery Token مع Forms",
+          "إرسال Antiforgery Token مع AJAX",
+          "اختبار حماية POST Actions"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "SQL Injection وOverposting",
+        "subtopics": [
+          "ما هو SQL Injection؟",
+          "استخدام Parameterized Queries",
+          "كتابة Raw SQL بطريقة آمنة",
+          "كيف يساعد EF Core في تقليل حقن SQL؟",
+          "ما هو Overposting؟",
+          "منع Overposting باستخدام ViewModels",
+          "تطبيق Field-Level Authorization",
+          "اختبار تعديل حقول غير مسموح بها"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "HTTPS وSecurity Headers",
+        "subtopics": [
+          "إعداد HTTPS",
+          "استخدام HSTS",
+          "مفهوم Content Security Policy",
+          "استخدام X-Content-Type-Options",
+          "استخدام Referrer-Policy",
+          "ضبط Cookie Security",
+          "مفهوم CORS",
+          "تجنب استخدام CORS كبديل للمصادقة"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "إدارة الأسرار وحماية الإنتاج",
+        "subtopics": [
+          "مخاطر تخزين الأسرار في Source Code",
+          "استخدام Secret Manager",
+          "استخدام Environment Variables",
+          "مقدمة في Azure Key Vault",
+          "حماية Connection Strings",
+          "تدوير API Keys",
+          "حماية Data Protection Keys",
+          "منع كشف Stack Traces في Production",
+          "تحديث NuGet Packages"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Rate Limiting والحماية من إساءة الاستخدام",
+        "subtopics": [
+          "ما هو Rate Limiting؟",
+          "استخدام AddRateLimiter",
+          "استخدام UseRateLimiter",
+          "مفهوم Fixed Window Limiter",
+          "مفهوم Sliding Window Limiter",
+          "مفهوم Token Bucket Limiter",
+          "حماية Login من Brute Force",
+          "تطبيق حدود حجم الطلبات",
+          "معالجة 429 Responses"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "title": "القسم الثاني والعشرون: إدارة الحالة والملفات والبريد الإلكتروني",
+    "englishTitle": "State Management, File Handling & Email",
+    "icon": "FileSpreadsheet",
+    "category": "إدارة الموارد",
+    "description": "إدارة الجلسات Sessions و Cookies، رفع وتحميل وتصدير الملفات (CSV, Excel, PDF)، خدمات إرسال البريد MailKit والتخزين السحابي Blob.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "State Management",
+        "subtopics": [
+          "مفهوم Stateless HTTP",
+          "متى نحتاج إلى State؟",
+          "استخدام Cookies",
+          "استخدام Sessions",
+          "استخدام TempData",
+          "الفرق بين TempData وSession",
+          "استخدام HttpContext.Items",
+          "اختيار طريقة التخزين المناسبة"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Session Management",
+        "subtopics": [
+          "إعداد Session Services",
+          "استخدام UseSession",
+          "تخزين String داخل Session",
+          "تخزين Int داخل Session",
+          "تخزين Objects باستخدام JSON",
+          "إدارة Session Timeout",
+          "استخدام Distributed Session Store",
+          "تجنب تخزين بيانات حساسة غير ضرورية"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "File Upload",
+        "subtopics": [
+          "استخدام IFormFile",
+          "إنشاء File Upload Form",
+          "رفع صورة واحدة",
+          "رفع ملفات متعددة",
+          "التحقق من حجم الملف",
+          "التحقق من نوع ومحتوى الملف",
+          "إنشاء أسماء ملفات آمنة",
+          "تخزين الملفات خارج Web Root عند الحاجة",
+          "إدارة حذف الملفات"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "File Download وExport",
+        "subtopics": [
+          "استخدام FileResult",
+          "استخدام PhysicalFileResult",
+          "إنشاء Download Action",
+          "تصدير البيانات إلى CSV",
+          "تصدير البيانات إلى Excel",
+          "إنشاء PDF Reports",
+          "تنزيل الملفات الكبيرة باستخدام Streams",
+          "التحقق من صلاحية تنزيل الملفات"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Email Services",
+        "subtopics": [
+          "مفهوم SMTP",
+          "استخدام MailKit",
+          "إنشاء IEmailService",
+          "إرسال Email بسيط",
+          "إرسال HTML Email",
+          "إنشاء Email Templates",
+          "إرسال Account Confirmation",
+          "إرسال Password Reset",
+          "إرسال البريد باستخدام Background Jobs"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Cloud File Storage",
+        "subtopics": [
+          "ما هو Object Storage؟",
+          "مقدمة في Azure Blob Storage",
+          "رفع الملفات إلى Azure Blob",
+          "مقدمة في Amazon S3",
+          "استخدام Presigned URLs",
+          "تخزين File Metadata داخل SQL Server",
+          "إدارة صلاحيات الملفات",
+          "مقارنة Local Storage وCloud Storage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "title": "القسم الثالث والعشرون: Areas وFilters وتنظيم التطبيقات الكبيرة",
+    "englishTitle": "Areas, MVC Filters & Application Architecture",
+    "icon": "FolderTree",
+    "category": "معمارية .NET",
+    "description": "تقسيم التطبيق إلى مناطق Areas (لوحة التحكم، العملاء)، استخدام مرشحات MVC Filters (Action, Exception, Resource)، والنمط النمطي Modular.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "MVC Areas",
+        "subtopics": [
+          "ما هي Areas؟",
+          "متى نستخدم Areas؟",
+          "إنشاء Admin Area",
+          "تنظيم Controllers داخل Area",
+          "تنظيم Views داخل Area",
+          "إعداد Area Routing",
+          "استخدام asp-area",
+          "إنشاء Layout خاص بكل Area"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "MVC Filters",
+        "subtopics": [
+          "ما هي MVC Filters؟",
+          "الفرق بين Filters وMiddleware",
+          "Authorization Filters",
+          "Resource Filters",
+          "Action Filters",
+          "Exception Filters",
+          "Result Filters",
+          "ترتيب تنفيذ Filters"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Custom Filters",
+        "subtopics": [
+          "إنشاء IActionFilter",
+          "إنشاء IAsyncActionFilter",
+          "إنشاء Exception Filter",
+          "إنشاء Result Filter",
+          "استخدام TypeFilter",
+          "استخدام ServiceFilter",
+          "حقن Dependencies داخل Filters",
+          "تسجيل Filters على مستوى Controller أو Global"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Application Modules",
+        "subtopics": [
+          "مفهوم Feature-Based Organization",
+          "تقسيم التطبيق حسب الوظائف",
+          "إنشاء Admin Module",
+          "إنشاء Products Module",
+          "إنشاء Orders Module",
+          "فصل Business Logic عن UI",
+          "استخدام Shared Services",
+          "إدارة الصلاحيات بين Modules"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "مشروع عملي: لوحة تحكم إدارية",
+        "subtopics": [
+          "إنشاء Admin Area",
+          "إنشاء Admin Layout",
+          "إنشاء DashboardController",
+          "إنشاء إدارة المستخدمين",
+          "إنشاء إدارة المنتجات",
+          "إضافة Role Authorization",
+          "إنشاء Action Logging Filter",
+          "اختبار صفحات الإدارة"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "title": "القسم الرابع والعشرون: Web APIs والتكامل مع الأنظمة الخارجية",
+    "englishTitle": "Web APIs & External Integrations",
+    "icon": "Webhook",
+    "category": "تطوير APIs",
+    "description": "بناء واجهات RESTful APIs، مصادقة JWT، توثيق OpenAPI/Swagger، استهلاك الخدمات بـ HttpClient، واستقبال Webhooks و gRPC.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في ASP.NET Core Web API",
+        "subtopics": [
+          "ما هي Web API؟",
+          "الفرق بين MVC Views وWeb APIs",
+          "مفهوم REST",
+          "مفهوم Resources وEndpoints",
+          "استخدام ApiController Attribute",
+          "إنشاء API Controller",
+          "الفرق بين Controller وControllerBase",
+          "مفهوم JSON Serialization"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "إنشاء REST API",
+        "subtopics": [
+          "إنشاء GET Endpoint",
+          "إنشاء POST Endpoint",
+          "إنشاء PUT Endpoint",
+          "إنشاء PATCH Endpoint",
+          "إنشاء DELETE Endpoint",
+          "استخدام ActionResult<T>",
+          "إرجاع HTTP Status Codes",
+          "استخدام CreatedAtAction",
+          "تنفيذ CRUD باستخدام EF Core"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "تصميم RESTful APIs",
+        "subtopics": [
+          "تصميم Resource URLs",
+          "استخدام DTOs",
+          "تنفيذ Filtering",
+          "تنفيذ Sorting",
+          "تنفيذ Pagination",
+          "تطبيق API Versioning",
+          "تطبيق ProblemDetails للأخطاء",
+          "توحيد API Responses عند الحاجة",
+          "مفهوم Idempotency"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "JWT Authentication",
+        "subtopics": [
+          "ما هو JWT؟",
+          "مكونات JWT",
+          "الفرق بين Access Token وRefresh Token",
+          "إعداد JWT Bearer Authentication",
+          "التحقق من JWT Signature",
+          "التحقق من Issuer وAudience",
+          "استخدام Authorize Attribute مع API",
+          "إدارة انتهاء صلاحية Tokens",
+          "إبطال Refresh Tokens بطريقة آمنة"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "API Documentation",
+        "subtopics": [
+          "ما هو OpenAPI؟",
+          "إنشاء OpenAPI Document",
+          "استخدام Swagger UI عند الحاجة",
+          "توثيق Request Parameters",
+          "توثيق Response Types",
+          "توثيق Authentication",
+          "توثيق Validation Errors",
+          "إنشاء Postman Collection"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "استهلاك APIs خارجية",
+        "subtopics": [
+          "استخدام HttpClient",
+          "استخدام IHttpClientFactory",
+          "إنشاء Typed HttpClient",
+          "إرسال GET وPOST Requests",
+          "قراءة JSON Responses",
+          "التعامل مع API Keys",
+          "إعداد Timeouts",
+          "تطبيق Retry وCircuit Breaker",
+          "التحقق من الاستجابات الخارجية"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Webhooks",
+        "subtopics": [
+          "ما هو Webhook؟",
+          "الفرق بين REST API وWebhook",
+          "إنشاء Webhook Endpoint",
+          "استقبال JSON Events",
+          "التحقق من Webhook Signature",
+          "منع معالجة الحدث أكثر من مرة",
+          "إرسال الأحداث إلى Background Queue",
+          "تسجيل Webhook Events"
+        ]
+      },
+      {
+        "id": 8,
+        "title": "GraphQL وgRPC",
+        "subtopics": [
+          "مقدمة في GraphQL",
+          "الفرق بين REST وGraphQL",
+          "مفهوم Queries وMutations",
+          "مقدمة في Hot Chocolate",
+          "مقدمة في gRPC",
+          "مفهوم Protocol Buffers",
+          "إنشاء gRPC Service",
+          "مقارنة REST وGraphQL وgRPC"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "title": "القسم الخامس والعشرون: Localization وواجهات المستخدم المتقدمة",
+    "englishTitle": "Localization, RTL & Modern UI Integration",
+    "icon": "Languages",
+    "category": "الواجهات المتقدمة",
+    "description": "دعم اللغات المتعددة، ملفات الموارد Resx، اتجاه RTL/LTR، معايير إمكانية الوصول WCAG، تهيئة محركات البحث SEO، ودمج Tailwind وReact.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "Globalization وLocalization",
+        "subtopics": [
+          "الفرق بين Globalization وLocalization",
+          "مفهوم CultureInfo",
+          "إعداد Request Localization",
+          "دعم العربية والإنجليزية",
+          "إنشاء Resource Files",
+          "استخدام IStringLocalizer",
+          "استخدام IViewLocalizer",
+          "ترجمة Validation Messages",
+          "التبديل بين اللغات"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "RTL وLTR",
+        "subtopics": [
+          "مفهوم Right-to-Left Layout",
+          "تغيير اتجاه الصفحة حسب اللغة",
+          "دعم Bootstrap RTL",
+          "استخدام خطوط عربية مناسبة",
+          "تنسيق الأرقام والتواريخ",
+          "دعم النصوص المختلطة عربي وإنجليزي",
+          "اختبار واجهة المستخدم باللغتين"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Accessibility",
+        "subtopics": [
+          "ما هي Web Accessibility؟",
+          "مقدمة في WCAG",
+          "استخدام Semantic HTML",
+          "ربط Labels مع Inputs",
+          "دعم Keyboard Navigation",
+          "مفهوم ARIA Attributes",
+          "تحسين تباين الألوان",
+          "إظهار رسائل الأخطاء بصورة واضحة"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "SEO في MVC",
+        "subtopics": [
+          "ما هو Search Engine Optimization؟",
+          "إنشاء SEO-Friendly URLs",
+          "إعداد Page Titles",
+          "إعداد Meta Descriptions",
+          "استخدام Canonical URLs",
+          "إنشاء Sitemap",
+          "إنشاء robots.txt",
+          "تحسين سرعة تحميل صفحات MVC"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Front-End Integration",
+        "subtopics": [
+          "استخدام Bootstrap مع Razor",
+          "استخدام Tailwind CSS مع MVC",
+          "دمج JavaScript Modules",
+          "استخدام Vite عند الحاجة",
+          "إنشاء Dynamic Forms",
+          "إضافة AJAX Search",
+          "إنشاء Dynamic Tables",
+          "دمج React Components داخل صفحات MVC"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "title": "القسم السادس والعشرون: الاختبارات وتصحيح الأخطاء وجودة الكود",
+    "englishTitle": "Software Testing, Debugging & Code Quality",
+    "icon": "Bug",
+    "category": "الاختبارات والجودة",
+    "description": "اختبارات الوحدة xUnit، تقنيات المحاكاة Moq، اختبارات التكامل WebApplicationFactory، اختبارات الواجهة Playwright، وأدوات التنقيح والتحليل.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Software Testing",
+        "subtopics": [
+          "ما هو Software Testing؟",
+          "الفرق بين Unit وIntegration وE2E Tests",
+          "مفهوم Test Case",
+          "مفهوم Assertion",
+          "مفهوم Test Coverage",
+          "مفهوم Mock وStub",
+          "مفهوم Test Isolation"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Unit Testing",
+        "subtopics": [
+          "مقدمة في xUnit",
+          "التعرف على NUnit وMSTest",
+          "إنشاء Test Project",
+          "كتابة أول Unit Test",
+          "استخدام Fact",
+          "استخدام Theory",
+          "استخدام Assert",
+          "اختبار Services",
+          "اختبار Async Methods"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Mocking",
+        "subtopics": [
+          "ما هو Mocking؟",
+          "استخدام Moq",
+          "إنشاء Mock Repository",
+          "إنشاء Mock Service",
+          "اختبار Controller مع Dependencies",
+          "التحقق من استدعاء Methods",
+          "اختبار Exceptions",
+          "تجنب الإفراط في Mocking"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Integration Testing",
+        "subtopics": [
+          "ما هو Integration Testing؟",
+          "استخدام WebApplicationFactory",
+          "استخدام TestServer",
+          "إنشاء HttpClient للاختبارات",
+          "اختبار MVC Routes",
+          "اختبار MVC Responses",
+          "اختبار Authentication",
+          "اختبار Authorization",
+          "اختبار قاعدة بيانات منفصلة",
+          "استخدام Testcontainers"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "End-to-End Testing",
+        "subtopics": [
+          "مفهوم E2E Testing",
+          "استخدام Playwright for .NET",
+          "فتح صفحات MVC آلياً",
+          "اختبار Forms",
+          "اختبار Login Flow",
+          "اختبار CRUD Screens",
+          "اختبار Navigation",
+          "اختبار رسائل Validation"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Debugging",
+        "subtopics": [
+          "استخدام Breakpoints",
+          "استخدام Step Into وStep Over",
+          "فحص Variables",
+          "فحص Call Stack",
+          "استخدام Watch Window",
+          "قراءة Exception Details",
+          "تصحيح أخطاء Model Binding",
+          "تصحيح أخطاء EF Core",
+          "استخدام Developer Exception Page"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Code Quality",
+        "subtopics": [
+          "مبادئ Clean Code",
+          "استخدام .editorconfig",
+          "استخدام dotnet format",
+          "تفعيل Nullable Reference Types",
+          "تفعيل Code Analysis",
+          "مقدمة في SonarQube",
+          "إجراء Code Review",
+          "كتابة Regression Tests",
+          "تطبيق Test-Driven Development"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "title": "القسم السابع والعشرون: الأداء والتخزين المؤقت والمهام الخلفية",
+    "englishTitle": "Performance, Caching & Background Services",
+    "icon": "Gauge",
+    "category": "الأداء والتطوير المتقدم",
+    "description": "التخزين المؤقت MemoryCache و Redis، التخزين المؤقت للمخرجات Output Caching، المهام الخلفية BackgroundService وجدولة المهام بـ Hangfire.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مفاهيم Performance",
+        "subtopics": [
+          "ما هو Application Performance؟",
+          "مفهوم Latency",
+          "مفهوم Throughput",
+          "مفهوم Requests Per Second",
+          "قياس Response Time",
+          "فهم CPU Usage",
+          "فهم Memory Usage",
+          "اكتشاف Performance Bottlenecks"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Caching",
+        "subtopics": [
+          "ما هو Caching؟",
+          "استخدام IMemoryCache",
+          "تخزين البيانات داخل Memory Cache",
+          "استخدام Absolute Expiration",
+          "استخدام Sliding Expiration",
+          "مفهوم Distributed Cache",
+          "استخدام IDistributedCache",
+          "مفهوم HybridCache",
+          "مفهوم Cache Invalidation"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Redis",
+        "subtopics": [
+          "ما هو Redis؟",
+          "تثبيت Redis",
+          "ربط ASP.NET Core مع Redis",
+          "استخدام Distributed Cache",
+          "إدارة Cache Expiration",
+          "تطبيق Cache-Aside Pattern",
+          "تجنب Cache Stampede",
+          "استخدام Redis مع Sessions"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Response Caching وOutput Caching",
+        "subtopics": [
+          "مفهوم HTTP Caching",
+          "استخدام Response Caching",
+          "استخدام Output Caching",
+          "تطبيق Cache Policies",
+          "التحكم في Cache Duration",
+          "استخدام Cache Tags",
+          "إبطال المخرجات المخزنة",
+          "تجنب تخزين صفحات تحتوي على بيانات شخصية"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Background Services",
+        "subtopics": [
+          "ما هي Background Services؟",
+          "استخدام IHostedService",
+          "استخدام BackgroundService",
+          "إنشاء Worker Service",
+          "استخدام PeriodicTimer",
+          "إدارة CancellationToken",
+          "إنشاء Scoped Services داخل Background Worker",
+          "التعامل مع Background Exceptions"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Job Scheduling",
+        "subtopics": [
+          "مفهوم Scheduled Jobs",
+          "مقدمة في Hangfire",
+          "إنشاء Background Job",
+          "إنشاء Recurring Job",
+          "مقدمة في Quartz.NET",
+          "جدولة إرسال البريد",
+          "إعداد Retries",
+          "منع تنفيذ المهمة أكثر من مرة",
+          "مراقبة Failed Jobs"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "تحسين الأداء المتقدم",
+        "subtopics": [
+          "تحسين استعلامات EF Core",
+          "استخدام Async I/O",
+          "استخدام Streaming للملفات الكبيرة",
+          "تقليل حجم الاستجابات",
+          "تفعيل Response Compression",
+          "مراقبة Thread Pool",
+          "استخدام dotnet-counters",
+          "استخدام dotnet-trace",
+          "تنفيذ Load Testing باستخدام k6"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "title": "القسم الثامن والعشرون: SignalR والتطبيقات الفورية",
+    "englishTitle": "SignalR & Real-Time Communication",
+    "icon": "Radio",
+    "category": "التطبيقات الفورية",
+    "description": "الاتصال اللحظي بتقنية WebSockets، بناء SignalR Hubs، إرسال واستقبال الرسائل، وإدارة المجموعات وبناء نظام إشعارات فورية متزامن.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مقدمة في Real-Time Applications",
+        "subtopics": [
+          "ما هي Real-Time Applications؟",
+          "الفرق بين Polling وLong Polling",
+          "ما هو WebSocket؟",
+          "مفهوم Server-Sent Events",
+          "الفرق بين WebSocket وHTTP",
+          "استخدامات التطبيقات الفورية"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "SignalR",
+        "subtopics": [
+          "ما هو ASP.NET Core SignalR؟",
+          "إعداد SignalR Services",
+          "إنشاء Hub",
+          "استخدام MapHub",
+          "إنشاء JavaScript SignalR Client",
+          "إنشاء Connection",
+          "إرسال رسائل من العميل إلى الخادم",
+          "إرسال رسائل من الخادم إلى العميل"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "SignalR المتقدم",
+        "subtopics": [
+          "إدارة Groups",
+          "إرسال رسالة لمستخدم محدد",
+          "إرسال رسالة لجميع المستخدمين",
+          "استخدام IHubContext",
+          "حماية Hubs باستخدام Authorization",
+          "إدارة Reconnection",
+          "التعامل مع Disconnect Events",
+          "التوسع باستخدام خدمات SignalR المناسبة"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "مشروع عملي: نظام إشعارات فورية",
+        "subtopics": [
+          "إنشاء Notifications Model",
+          "إنشاء Notifications Hub",
+          "إنشاء Notification Service",
+          "إرسال إشعار عند إنشاء طلب",
+          "عرض إشعارات داخل Layout",
+          "حفظ الإشعارات في قاعدة البيانات",
+          "تمييز الإشعارات كمقروءة",
+          "حماية إشعارات كل مستخدم",
+          "اختبار الإشعارات المتزامنة"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "title": "القسم التاسع والعشرون: هندسة البرمجيات وتصميم الأنظمة المتقدمة",
+    "englishTitle": "Software Architecture & Enterprise Design",
+    "icon": "Network",
+    "category": "المعمارية المتقدمة",
+    "description": "العمارة النظيفة Clean Architecture، التصميم الموجه بالمجال DDD، أنماط التصميم Design Patterns، نمط CQRS مع MediatR، والأنظمة متعددة المستأجرين Multi-Tenant.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "Clean Architecture",
+        "subtopics": [
+          "ما هي Clean Architecture؟",
+          "مفهوم Separation of Concerns",
+          "مفهوم Domain Layer",
+          "مفهوم Application Layer",
+          "مفهوم Infrastructure Layer",
+          "مفهوم Presentation Layer",
+          "مبدأ Dependency Rule",
+          "تطبيق Clean Architecture على MVC"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Domain-Driven Design",
+        "subtopics": [
+          "ما هو Domain-Driven Design؟",
+          "مفهوم Domain Model",
+          "مفهوم Entity",
+          "مفهوم Value Object",
+          "مفهوم Aggregate",
+          "مفهوم Aggregate Root",
+          "مفهوم Domain Service",
+          "مفهوم Domain Events",
+          "مفهوم Bounded Context"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Design Patterns",
+        "subtopics": [
+          "Factory Pattern",
+          "Strategy Pattern",
+          "Repository Pattern",
+          "Unit of Work Pattern",
+          "Adapter Pattern",
+          "Decorator Pattern",
+          "Observer Pattern",
+          "Mediator Pattern",
+          "Specification Pattern"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "CQRS وMediatR",
+        "subtopics": [
+          "ما هو CQRS؟",
+          "الفرق بين Commands وQueries",
+          "إنشاء Command",
+          "إنشاء Query",
+          "إنشاء Handlers",
+          "مقدمة في MediatR",
+          "استخدام Pipeline Behaviors",
+          "إضافة Validation Behavior",
+          "تحديد الحالات المناسبة لاستخدام CQRS"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Modular Monolith",
+        "subtopics": [
+          "ما هو Monolithic Architecture؟",
+          "ما هو Modular Monolith؟",
+          "تقسيم النظام إلى Modules",
+          "عزل Data Access لكل Module",
+          "التواصل بين Modules",
+          "تقليل الاعتماديات بين Modules",
+          "اختبار حدود Modules",
+          "متى ننتقل إلى Microservices؟"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Microservices",
+        "subtopics": [
+          "ما هي Microservices؟",
+          "الفرق بين Monolith وMicroservices",
+          "مفهوم API Gateway",
+          "التواصل بين الخدمات باستخدام HTTP",
+          "التواصل باستخدام gRPC",
+          "التواصل باستخدام Message Queues",
+          "مفهوم Eventual Consistency",
+          "مفهوم Outbox Pattern",
+          "مفهوم Saga Pattern",
+          "تحديات الأنظمة الموزعة"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Message Brokers",
+        "subtopics": [
+          "ما هو Message Broker؟",
+          "مقدمة في RabbitMQ",
+          "مقدمة في MassTransit",
+          "إنشاء Message Publisher",
+          "إنشاء Message Consumer",
+          "استخدام Retry Policies",
+          "استخدام Dead Letter Queues",
+          "مفهوم Idempotent Consumers",
+          "تتبع الرسائل بين الخدمات"
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Multi-Tenant Applications",
+        "subtopics": [
+          "ما هو Multi-Tenancy؟",
+          "الفرق بين Single-Tenant وMulti-Tenant",
+          "تصميم Tenant Model",
+          "تحديد Tenant داخل Middleware",
+          "ربط البيانات بالمستأجر",
+          "استخدام Global Query Filters",
+          "إدارة Tenant Permissions",
+          "منع تسريب البيانات بين المستأجرين",
+          "اختبار Tenant Isolation"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "title": "القسم الثلاثون: Docker والنشر وDevOps",
+    "englishTitle": "Docker, Deployment & CI/CD",
+    "icon": "Container",
+    "category": "النشر والعمليات",
+    "description": "حاويات Docker، إعداد Compose لمشروع MVC مع SQL Server و Redis، النشر على خوادم IIS و Linux/Nginx، وخطوط أنابيب GitHub Actions CI/CD.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "التحضير للنشر",
+        "subtopics": [
+          "الفرق بين Development وProduction",
+          "استخدام ASPNETCORE_ENVIRONMENT",
+          "إدارة Production Configuration",
+          "حماية Connection Strings",
+          "تشغيل Production Migrations",
+          "إنشاء Health Checks",
+          "إعداد HTTPS",
+          "تجهيز Production Build"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "النشر على IIS",
+        "subtopics": [
+          "ما هو IIS؟",
+          "تثبيت IIS",
+          "تثبيت ASP.NET Core Hosting Bundle",
+          "استخدام dotnet publish",
+          "إنشاء IIS Website",
+          "إعداد Application Pool",
+          "إعداد Website Bindings",
+          "تفعيل HTTPS Certificate",
+          "إعداد File Permissions",
+          "استكشاف أخطاء IIS Deployment"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "النشر على Linux",
+        "subtopics": [
+          "مقدمة في Linux Server",
+          "الاتصال باستخدام SSH",
+          "تثبيت .NET Runtime",
+          "نشر MVC Application",
+          "تشغيل Kestrel",
+          "إنشاء systemd Service",
+          "استخدام Nginx كـ Reverse Proxy",
+          "إعداد HTTPS",
+          "إدارة Firewall",
+          "قراءة Logs على Linux"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Docker",
+        "subtopics": [
+          "ما هو Docker؟",
+          "مفهوم Image وContainer",
+          "إنشاء Dockerfile لمشروع MVC",
+          "استخدام Multi-Stage Build",
+          "إنشاء .dockerignore",
+          "بناء Docker Image",
+          "تشغيل MVC Container",
+          "إدارة Environment Variables",
+          "تشغيل Container بمستخدم غير Root",
+          "إعداد Container Health Check"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Docker Compose",
+        "subtopics": [
+          "ما هو Docker Compose؟",
+          "إنشاء compose.yaml",
+          "تشغيل MVC مع SQL Server",
+          "تشغيل MVC مع Redis",
+          "إدارة Networks",
+          "إدارة Volumes",
+          "إعداد Healthchecks",
+          "إدارة Secrets",
+          "تشغيل البيئة كاملة محلياً"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Azure Deployment",
+        "subtopics": [
+          "مقدمة في Microsoft Azure",
+          "ما هو Azure App Service؟",
+          "نشر MVC على Azure App Service",
+          "استخدام Azure SQL Database",
+          "استخدام Azure Blob Storage",
+          "استخدام Azure Key Vault",
+          "إعداد Application Settings",
+          "إعداد Custom Domain",
+          "إدارة تكاليف Azure"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "CI/CD",
+        "subtopics": [
+          "ما هو Continuous Integration؟",
+          "ما هو Continuous Delivery؟",
+          "استخدام GitHub Actions",
+          "إنشاء Build Workflow",
+          "تشغيل Unit Tests تلقائياً",
+          "تشغيل Integration Tests",
+          "تشغيل Code Analysis",
+          "إنشاء Docker Image تلقائياً",
+          "إدارة Deployment Secrets",
+          "إنشاء Staging Environment",
+          "النشر التلقائي إلى Production",
+          "إنشاء Rollback Strategy"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "title": "القسم الحادي والثلاثون: Monitoring وObservability وProduction Reliability",
+    "englishTitle": "Monitoring, Observability & Site Reliability",
+    "icon": "Activity",
+    "category": "النشر والعمليات",
+    "description": "مراقبة التطبيقات في بيئات الإنتاج، المقاييس والسجلات والتتبع (Logs, Metrics, Traces)، تقنيات OpenTelemetry و Application Insights وخطط التعافي من الكوارث.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "Application Monitoring",
+        "subtopics": [
+          "ما هو Monitoring؟",
+          "مراقبة Response Time",
+          "مراقبة Error Rate",
+          "مراقبة CPU Usage",
+          "مراقبة Memory Usage",
+          "مراقبة Database Connections",
+          "إعداد Alerts",
+          "استخدام Health Checks"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Observability",
+        "subtopics": [
+          "الفرق بين Monitoring وObservability",
+          "مفهوم Logs",
+          "مفهوم Metrics",
+          "مفهوم Traces",
+          "استخدام OpenTelemetry",
+          "مقدمة في Prometheus",
+          "مقدمة في Grafana",
+          "إنشاء Monitoring Dashboard"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Application Insights",
+        "subtopics": [
+          "ما هو Azure Application Insights؟",
+          "ربط MVC مع Application Insights",
+          "تتبع HTTP Requests",
+          "تتبع Exceptions",
+          "تتبع Dependencies",
+          "مراقبة Performance",
+          "إنشاء Alerts",
+          "تحليل Production Failures"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Reliability",
+        "subtopics": [
+          "مفهوم High Availability",
+          "مفهوم Fault Tolerance",
+          "مفهوم Retry Policy",
+          "مفهوم Circuit Breaker",
+          "مفهوم Timeout",
+          "استخدام Graceful Shutdown",
+          "إدارة Failover",
+          "مفهوم Disaster Recovery"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Database Backups وIncident Management",
+        "subtopics": [
+          "إنشاء Backup Strategy",
+          "تنفيذ SQL Server Backup",
+          "اختبار Database Restore",
+          "تحديد Recovery Objectives",
+          "إنشاء Incident Response Plan",
+          "توثيق إجراءات استعادة النظام",
+          "تحليل أسباب الأعطال",
+          "إنشاء Production Runbook"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "title": "القسم الثاني والثلاثون: المشروعات العملية من المبتدئ إلى المحترف",
+    "englishTitle": "Practical Real-World Projects (Beginner to Pro)",
+    "icon": "Rocket",
+    "category": "المشاريع العملية",
+    "description": "9 مشاريع حقيقية متدرجة الصعوبة: موقع تعريفي، نظام طلاب، إدارة مخزون، نظام صلاحيات، مدونة CMS، متجر إلكتروني، منصة تعليمية LMS، نظام ERP، ومشروع التخرج النهائي المتكامل.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "المشروع الأول: موقع شخصي باستخدام MVC",
+        "subtopics": [
+          "تحليل متطلبات المشروع",
+          "إنشاء MVC Application",
+          "إنشاء HomeController",
+          "إنشاء Home View",
+          "إنشاء About View",
+          "إنشاء Contact View",
+          "إنشاء Shared Layout",
+          "إضافة Bootstrap",
+          "إنشاء Navigation Menu",
+          "اختبار الصفحات ونشر المشروع"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "المشروع الثاني: نظام إدارة الطلاب",
+        "subtopics": [
+          "تصميم Student Model",
+          "إنشاء StudentsController",
+          "إنشاء Index View",
+          "إنشاء Details View",
+          "إنشاء Create Form",
+          "إنشاء Edit Form",
+          "إنشاء Delete Confirmation",
+          "إضافة Data Annotations",
+          "إضافة Search وSorting",
+          "ربط SQL Server باستخدام EF Core",
+          "اختبار CRUD كاملاً"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "المشروع الثالث: نظام إدارة المخزون",
+        "subtopics": [
+          "تحليل متطلبات المخزون",
+          "تصميم Products وCategories",
+          "تصميم Suppliers",
+          "إنشاء Entity Relationships",
+          "إنشاء EF Core Migrations",
+          "إنشاء Products CRUD",
+          "إنشاء Categories CRUD",
+          "إنشاء Suppliers CRUD",
+          "إضافة Stock Movements",
+          "تنفيذ Search وFiltering",
+          "إضافة Pagination",
+          "إنشاء Low Stock Alerts",
+          "إنشاء Inventory Reports",
+          "إضافة Validation وError Handling",
+          "اختبار النظام"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "المشروع الرابع: نظام مستخدمين وصلاحيات",
+        "subtopics": [
+          "إنشاء ASP.NET Core Identity",
+          "إنشاء Registration",
+          "إنشاء Login وLogout",
+          "إنشاء User Profile",
+          "إنشاء Roles",
+          "إنشاء Permissions",
+          "إنشاء Admin Area",
+          "إنشاء Users Management",
+          "إدارة User Roles",
+          "تطبيق Policy-Based Authorization",
+          "إضافة Email Confirmation",
+          "إضافة Password Reset",
+          "إنشاء Audit Logs",
+          "اختبار Authentication وAuthorization"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "المشروع الخامس: مدونة إلكترونية CMS",
+        "subtopics": [
+          "تحليل متطلبات CMS",
+          "تصميم Posts وCategories وTags",
+          "إنشاء Authors وUsers",
+          "إنشاء لوحة تحكم للمقالات",
+          "إنشاء Post Editor",
+          "إضافة Cover Image Upload",
+          "إنشاء Comments System",
+          "إنشاء Search وPagination",
+          "إضافة SEO-Friendly URLs",
+          "إنشاء Sitemap",
+          "إضافة Roles وPermissions",
+          "إضافة Dashboard Statistics",
+          "اختبار ونشر المدونة"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "المشروع السادس: متجر إلكتروني باستخدام MVC",
+        "subtopics": [
+          "تحليل متطلبات المتجر",
+          "تصميم Database Schema",
+          "إنشاء Users وRoles",
+          "إنشاء Products وCategories",
+          "إنشاء Product Details Page",
+          "إنشاء Shopping Cart",
+          "إنشاء Checkout Flow",
+          "إنشاء Orders",
+          "إنشاء Order Items",
+          "إدارة Inventory",
+          "تنفيذ Database Transactions",
+          "ربط Payment Gateway تجريبية",
+          "التحقق من Payment Webhooks",
+          "إنشاء Discount Coupons",
+          "إرسال Order Confirmation Emails",
+          "إنشاء Admin Dashboard",
+          "إضافة Sales Reports",
+          "تطبيق Security Best Practices",
+          "كتابة Automated Tests",
+          "نشر المتجر باستخدام Docker"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "المشروع السابع: منصة تعليمية LMS",
+        "subtopics": [
+          "تحليل متطلبات المنصة التعليمية",
+          "تصميم Users وRoles",
+          "تصميم Courses وLessons",
+          "تصميم Enrollments",
+          "إنشاء Admin Area",
+          "إنشاء Teacher Dashboard",
+          "إنشاء Student Dashboard",
+          "إنشاء Courses CRUD",
+          "إنشاء Lessons CRUD",
+          "إضافة File Upload للدروس",
+          "إنشاء Quizzes",
+          "تسجيل درجات الطلاب",
+          "تتبع Student Progress",
+          "إنشاء Certificates",
+          "إضافة Notifications باستخدام SignalR",
+          "إضافة Background Jobs",
+          "إنشاء Reports Dashboard",
+          "تطبيق Authorization لكل دور",
+          "كتابة Unit وIntegration Tests",
+          "نشر المنصة ومراقبة تشغيلها"
+        ]
+      },
+      {
+        "id": 8,
+        "title": "المشروع الثامن: نظام ERP إداري",
+        "subtopics": [
+          "تحليل متطلبات نظام ERP",
+          "تصميم Modular Architecture",
+          "إنشاء Employees Module",
+          "إنشاء Departments Module",
+          "إنشاء Customers Module",
+          "إنشاء Suppliers Module",
+          "إنشاء Inventory Module",
+          "إنشاء Purchasing Module",
+          "إنشاء Sales Module",
+          "إنشاء Invoices Module",
+          "إنشاء Payments Module",
+          "إنشاء Roles وPermissions",
+          "إنشاء Audit Trail",
+          "إنشاء Excel وPDF Reports",
+          "إنشاء Dashboard KPIs",
+          "إضافة Notifications",
+          "تنفيذ Transactions للأعمال الحساسة",
+          "اختبار تكامل Modules",
+          "تطبيق Monitoring وLogging",
+          "نشر النظام على Production"
+        ]
+      },
+      {
+        "id": 9,
+        "title": "المشروع النهائي: تطبيق ASP.NET Core MVC احترافي",
+        "subtopics": [
+          "إنشاء Software Requirements Document",
+          "إنشاء Use Case Diagram",
+          "إنشاء Database ERD",
+          "إنشاء Architecture Diagram",
+          "إنشاء Solution متعددة المشاريع",
+          "تطبيق Clean Architecture",
+          "تطبيق SOLID Principles",
+          "إنشاء Domain Models",
+          "إنشاء Application Services",
+          "إنشاء Infrastructure Services",
+          "إنشاء MVC Controllers وViews",
+          "إنشاء ViewModels وDTOs",
+          "ربط SQL Server وEF Core",
+          "إنشاء Migrations",
+          "إعداد ASP.NET Core Identity",
+          "إنشاء RBAC وPermission Policies",
+          "تطبيق Validation وError Handling",
+          "تطبيق Antiforgery وSecurity Headers",
+          "إنشاء REST APIs",
+          "إضافة Redis Caching",
+          "إضافة Background Jobs",
+          "إضافة SignalR Notifications",
+          "إنشاء Admin Dashboard",
+          "إضافة Localization بالعربية والإنجليزية",
+          "إنشاء Unit Tests",
+          "إنشاء Integration Tests",
+          "إنشاء End-to-End Tests",
+          "إنشاء Dockerfile وDocker Compose",
+          "إنشاء GitHub Actions CI/CD",
+          "نشر Staging Environment",
+          "تنفيذ Load Testing",
+          "إعداد Logging وMonitoring",
+          "اختبار Backup وRestore",
+          "نشر Production Environment",
+          "إعداد Technical Documentation",
+          "إعداد README وDeployment Guide",
+          "تجهيز المشروع للعرض داخل Portfolio"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "title": "القسم الثالث والثلاثون: الاستعداد لسوق العمل والاحتراف",
+    "englishTitle": "Career Preparation & Interview Mastery",
+    "icon": "Briefcase",
+    "category": "سوق العمل والاحتراف",
+    "description": "مراجعة شاملة لأسئلة المقابلات التقنية في C# و ASP.NET Core MVC و EF Core، تصميم الأنظمة System Design، وبناء معرض أعمال Portfolio يجذب مسؤولي التوظيف.",
+    "topics": [
+      {
+        "id": 1,
+        "title": "مراجعة ASP.NET Core MVC",
+        "subtopics": [
+          "مراجعة C# وOOP",
+          "مراجعة MVC Architecture",
+          "مراجعة Controllers وActions",
+          "مراجعة Routing",
+          "مراجعة Middleware",
+          "مراجعة Model Binding وValidation",
+          "مراجعة Razor Views وTag Helpers",
+          "مراجعة Dependency Injection",
+          "مراجعة EF Core",
+          "مراجعة Identity وAuthorization"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "أسئلة مقابلات C#",
+        "subtopics": [
+          "الفرق بين Class وStruct",
+          "الفرق بين Interface وAbstract Class",
+          "شرح SOLID Principles",
+          "الفرق بين IEnumerable وIQueryable",
+          "الفرق بين Value Type وReference Type",
+          "شرح async وawait",
+          "الفرق بين Task وThread",
+          "شرح Garbage Collection",
+          "شرح LINQ Deferred Execution",
+          "شرح Dependency Injection"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "أسئلة مقابلات MVC",
+        "subtopics": [
+          "ما هو MVC Pattern؟",
+          "الفرق بين MVC وWeb API",
+          "الفرق بين ViewBag وViewData وTempData",
+          "شرح Model Binding",
+          "شرح Model Validation",
+          "شرح Routing",
+          "الفرق بين Middleware وFilters",
+          "شرح Action Results",
+          "الفرق بين Partial View وViewComponent",
+          "شرح Areas",
+          "شرح Antiforgery Token",
+          "شرح Authentication وAuthorization"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "أسئلة مقابلات EF Core وSQL",
+        "subtopics": [
+          "ما هو ORM؟",
+          "الفرق بين Code First وDatabase First",
+          "شرح DbContext",
+          "شرح Change Tracking",
+          "شرح AsNoTracking",
+          "شرح Include وThenInclude",
+          "شرح Database Migrations",
+          "شرح Transactions",
+          "شرح Optimistic Concurrency",
+          "شرح SQL Indexes",
+          "شرح N+1 Queries"
+        ]
+      },
+      {
+        "id": 5,
+        "title": "System Design للمقابلات المتقدمة",
+        "subtopics": [
+          "تصميم نظام تسجيل مستخدمين",
+          "تصميم نظام إدارة مخزون",
+          "تصميم متجر إلكتروني",
+          "تصميم نظام حجوزات",
+          "تصميم نظام إشعارات",
+          "تصميم Multi-Tenant Application",
+          "تصميم نظام يتحمل الضغط العالي",
+          "تصميم Database Scalability",
+          "تصميم Caching Strategy",
+          "تصميم نظام مراقبة الأعطال"
+        ]
+      },
+      {
+        "id": 6,
+        "title": "بناء Portfolio احترافي",
+        "subtopics": [
+          "اختيار أفضل ثلاثة مشروعات",
+          "تنظيم GitHub Repositories",
+          "كتابة README احترافي",
+          "إضافة Screenshots للمشروعات",
+          "إضافة Architecture Diagrams",
+          "إضافة Database ERD",
+          "إضافة API Documentation",
+          "إضافة Automated Test Results",
+          "توفير Live Demo",
+          "شرح القرارات الهندسية والتحديات"
+        ]
+      },
+      {
+        "id": 7,
+        "title": "خطة التطور المهني",
+        "subtopics": [
+          "مهارات Junior ASP.NET Core Developer",
+          "مهارات Mid-Level ASP.NET Core Developer",
+          "مهارات Senior ASP.NET Core Developer",
+          "التعمق في SQL Server",
+          "التعمق في Entity Framework Core",
+          "التعمق في Software Architecture",
+          "تعلم Azure وCloud Services",
+          "تعلم Docker وCI/CD",
+          "متابعة إصدارات .NET وASP.NET Core",
+          "قراءة توثيق Microsoft Learn",
+          "المساهمة في Open Source",
+          "الاستعداد لوظائف Full Stack .NET Developer",
+          "الانتقال إلى Software Architect"
+        ]
+      }
+    ]
+  }
+]
