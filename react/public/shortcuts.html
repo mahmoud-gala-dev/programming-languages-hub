@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دليل الاختصارات الاحترافية الكامل | AI & Development Shortcuts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      letter-spacing: normal !important;
+    }
+    body {
+      background-color: #07090e;
+      color: #f1f5f9;
+      font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(168, 85, 247, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.04) 0%, transparent 60%);
+      background-attachment: fixed;
+    }
+    .poster-container {
+      width: 1440px;
+      max-width: 100%;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(10, 15, 29, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 32px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 50px -10px rgba(56, 189, 248, 0.15);
+      padding: 44px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .poster-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #38bdf8, #a855f7, #10b981, #f59e0b, #ec4899);
+    }
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+      position: relative;
+    }
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 22px;
+      border-radius: 9999px;
+      color: #38bdf8;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+    .title {
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1.25;
+      background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      font-size: 15.5px;
+      color: #94a3b8;
+      font-weight: 600;
+      max-width: 820px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+    /* Section Card */
+    .section-card {
+      background: rgba(30, 41, 59, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      padding: 22px;
+      position: relative;
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .card-ai { border-top: 3px solid #38bdf8; }
+    .card-exec { border-top: 3px solid #10b981; }
+    .card-ui { border-top: 3px solid #a855f7; }
+    .card-code { border-top: 3px solid #f59e0b; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 12px;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 19px;
+      font-weight: 800;
+      color: #f8fafc;
+    }
+    .section-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+    .icon-ai { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+    .icon-exec { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+    .icon-ui { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+    .icon-code { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .item-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 9px 12px;
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+    }
+    .cmd-badge {
+      font-family: 'JetBrains Mono', monospace;
+      direction: ltr !important;
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 7px;
+      font-size: 12.5px;
+      font-weight: 700;
+      white-space: nowrap;
+      min-width: 100px;
+      text-align: center;
+    }
+    .cmd-ai { background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25); }
+    .cmd-exec { background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25); }
+    .cmd-ui { background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.25); }
+    .cmd-code { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); }
+    .cmd-key { background: rgba(236, 72, 153, 0.12); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.25); }
+
+    .item-desc {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+      font-weight: 600;
+      flex: 1;
+    }
+    .item-desc strong {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 30px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .footer-tags {
+      display: flex;
+      gap: 16px;
+    }
+    .footer-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #94a3b8;
+    }
+    .btn-download {
+      margin-top: 24px;
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+      color: white;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.4);
+      transition: all 0.2s ease;
+    }
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px -5px rgba(2, 132, 199, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="poster-container" id="poster">
+    <!-- Header -->
+    <header class="header">
+      <div class="badge-pill">
+        <span>⚡ دليل الاختصارات الاحترافية الكامل | ALL READY SHORTCUTS</span>
+      </div>
+      <h1 class="title">موسوعة أوامر المنظومة الذكية والواجهات</h1>
+      <p class="subtitle">دليل بصري شامل وسريع لجميع أوامر التوجيه السريعة (Slash Commands)، أدوات الأتمتة، ومهارات التصميم والأكواد الجاهزة للاستخدام الفوري.</p>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="grid">
+
+      <!-- Column 1: AI & Strategy -->
+      <section class="section-card card-ai">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-icon icon-ai">🧠</div>
+            <span>الذكاء الاستراتيجي والتخطيط</span>
+          </div>
+          <span style="font-size: 12px; color: #38bdf8; font-weight: 700;">AI Core</span>
+        </div>
+        <div class="items-list">
+          <div class="item-row">
+            <span class="cmd-badge cmd-ai">/plan</span>
+            <div class="item-desc"><strong>التخطيط المعماري:</strong> إنشاء خطة تنفيذ خطوة بخطوة قبل لمس أي كود لضمان الدقة وتفادي الأخطاء.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-ai">/goal</span>
+            <div class="item-desc"><strong>المهمة المستمرة:</strong> تشغيل الوكيل في مهام طويلة ومعقدة دون توقف حتى تحقيق الهدف كاملاً.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-ai">/boost</span>
+            <div class="item-desc"><strong>التفكير الاستراتيجي العميق:</strong> تفعيل أقصى درجات التحليل، تعدد زوايا التفكير، والتحقق الصارم.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-ai">/teamwork</span>
+            <div class="item-desc"><strong>الفرق المتوازية:</strong> إطلاق فريق من الوكلاء الذاتيين للعمل معاً على مهام مستقلة بالتوازي.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-ai">/grill-me</span>
+            <div class="item-desc"><strong>مقابلة التصميم التفاعلية:</strong> استجواب تفاعلي لتحديد القرارات المعمارية والتصميمية بدقة.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-ai">/compact</span>
+            <div class="item-desc"><strong>ضغط السياق:</strong> تلخيص المحادثات الطويلة لتحرير الذاكرة وتسريع استجابة الوكيل.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Column 2: Automation & Browser -->
+      <section class="section-card card-exec">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-icon icon-exec">⚡</div>
+            <span>الأتمتة ومحركات التنفيذ</span>
+          </div>
+          <span style="font-size: 12px; color: #10b981; font-weight: 700;">Automation</span>
+        </div>
+        <div class="items-list">
+          <div class="item-row">
+            <span class="cmd-badge cmd-exec">/browser</span>
+            <div class="item-desc"><strong>المتصفح الحي:</strong> تصفح الإنترنت، التفاعل مع التطبيقات، والتقاط لقطات الشاشة وفحص الشبكة.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-exec">/schedule</span>
+            <div class="item-desc"><strong>المؤقت والجدولة:</strong> ضبط مهام دورية (Cron) أو مؤقتات زمنية تنبهك تلقائياً عند الاكتمال.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-exec">/automation</span>
+            <div class="item-desc"><strong>بناء الأتمتة المخصصة:</strong> دليل تفاعلي لتصميم وتشغيل خلفيات مهام متكررة وآلية.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-exec">/learn</span>
+            <div class="item-desc"><strong>تثبيت وتوريث المعرفة:</strong> حفظ القواعد والتصحيحات وسياق العمل لتطبيقها تلقائياً لاحقاً.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-exec">/plugin</span>
+            <div class="item-desc"><strong>إدارة الإضافات:</strong> استعراض، تفعيل، وإنشاء حزم المهارات ومزودات MCP والوكلاء.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Column 3: UI & Craft -->
+      <section class="section-card card-ui">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-icon icon-ui">🎨</div>
+            <span>هندسة وتصميم الواجهات</span>
+          </div>
+          <span style="font-size: 12px; color: #c084fc; font-weight: 700;">UI & Craft</span>
+        </div>
+        <div class="items-list">
+          <div class="item-row">
+            <span class="cmd-badge cmd-ui">/ui-skills-root</span>
+            <div class="item-desc"><strong>بوابة توجيه الواجهات:</strong> اختيار أفضل وأدق مهارة UI تلقائياً بناءً على نوع مشكلتك.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-ui">/baseline-ui</span>
+            <div class="item-desc"><strong>تلميع سريع للواجهة:</strong> إصلاح تباعدات العناصر، التسلسل الهرمي، وتنظيف مظهر الـ UI.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-ui">/frontend-design</span>
+            <div class="item-desc"><strong>تصميم وهوية استثنائية:</strong> ابتكار واجهات جمالية ذات شخصية فريدة بعيداً عن القوالب النمطية.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-ui">/create-design-md</span>
+            <div class="item-desc"><strong>توثيق نظام التصميم:</strong> استخراج وحفظ Design Tokens وقواعد الواجهة في DESIGN.md.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-ui">/fixing-accessibility</span>
+            <div class="item-desc"><strong>إمكانية الوصول (A11y):</strong> مراجعة تباين الألوان، تنقل لوحة المفاتيح، وتوافق معايير WCAG.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-ui">/fixing-motion</span>
+            <div class="item-desc"><strong>سلاسة الأنيميشن:</strong> إصلاح تعثر الحركات وتفادي استهلاك المعالج لتحقيق 60FPS.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Column 4: Clean Code & Platform Keys -->
+      <section class="section-card card-code">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-icon icon-code">🛠️</div>
+            <span>تنظيف الأكواد واختصارات المنصة</span>
+          </div>
+          <span style="font-size: 12px; color: #fbbf24; font-weight: 700;">Code & Keys</span>
+        </div>
+        <div class="items-list">
+          <div class="item-row">
+            <span class="cmd-badge cmd-code">/ponytail-audit</span>
+            <div class="item-desc"><strong>فحص التعقيد الزائد:</strong> مسح المستودع كاملاً لاكتشاف وترشيح ما يمكن حذفه وتبسيطه.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-code">/ponytail-review</span>
+            <div class="item-desc"><strong>مراجعة الأكواد التبسيطية:</strong> استبدال التبعيات المرهقة بحلول لغة أصلية (Native Stdlib).</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-code">/ponytail-gain</span>
+            <div class="item-desc"><strong>لوحة قياس الأثر:</strong> إحصائيات تقليل الأسطر البرمجية، توفير التكلفة، ومضاعفة السرعة.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-key">[ 1 ] - [ 6 ]</span>
+            <div class="item-desc"><strong>تظليل فوري في المنصة:</strong> تظليل النص المحدد بأحد ألوان النيون الستة وحفظه بنقرة زر.</div>
+          </div>
+          <div class="item-row">
+            <span class="cmd-badge cmd-key">ESC / Space</span>
+            <div class="item-desc"><strong>إغلاق النوافذ المنبثقة:</strong> الخروج الفوري من نوافذ التظليل، استوديو الخطوط، أو استوديو IDE.</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div>🚀 نظام الدعم الذكي الفائق &bull; منصة مجمع لغات البرمجة والذكاء الاصطناعي</div>
+      <div class="footer-tags">
+        <div class="footer-tag">💡 <span>اكتب الشرطة المائلة ( / ) في المحادثة لاستدعاء أي أمر فوراً</span></div>
+      </div>
+    </footer>
+  </div>
+
+  <button class="btn-download" onclick="downloadImage()">
+    📥 تحميل صورة الانفوجرافيك كـ PNG عالية الدقة
+  </button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    async function downloadImage() {
+      const poster = document.getElementById('poster');
+      const btn = document.querySelector('.btn-download');
+      btn.innerText = '⏳ جاري المعالجة...';
+      const canvas = await html2canvas(poster, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#07090e'
+      });
+      const link = document.createElement('a');
+      link.download = 'AI_and_Dev_Shortcuts_Infographic.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      btn.innerText = '✅ تم تحميل الصورة بنجاح!';
+      setTimeout(() => {
+        btn.innerText = '📥 تحميل صورة الانفوجرافيك كـ PNG عالية الدقة';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
