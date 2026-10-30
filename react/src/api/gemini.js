@@ -89,46 +89,46 @@ export async function testGeminiKeysInParallel(keys) {
       const latency = Math.round(performance.now() - startTime);
 
       if (res.ok) {
-        return { 
-          key, 
-          status: "active", 
-          latency, 
-          message: "نشط ويعمل بكفاءة ✓" 
+        return {
+          key,
+          status: "active",
+          latency,
+          message: "نشط ويعمل بكفاءة ✓"
         };
       }
 
       if (res.status === 429) {
-        return { 
-          key, 
-          status: "quota_exhausted", 
-          latency, 
-          message: "تم استنفاد الحصة المسموحة (429 Quota Exceeded)" 
+        return {
+          key,
+          status: "quota_exhausted",
+          latency,
+          message: "تم استنفاد الحصة المسموحة (429 Quota Exceeded)"
         };
       }
 
       if (res.status === 400) {
-        return { 
-          key, 
-          status: "invalid", 
-          latency, 
-          message: "مفتاح غير صالح (تحقق من صحة المفتاح)" 
+        return {
+          key,
+          status: "invalid",
+          latency,
+          message: "مفتاح غير صالح (تحقق من صحة المفتاح)"
         };
       }
 
       if (res.status === 403) {
-        return { 
-          key, 
-          status: "forbidden", 
-          latency, 
-          message: "غير متاح أو مقيد الصلاحيات جغرافياً (403)" 
+        return {
+          key,
+          status: "forbidden",
+          latency,
+          message: "غير متاح أو مقيد الصلاحيات جغرافياً (403)"
         };
       }
 
-      return { 
-        key, 
-        status: "invalid", 
-        latency, 
-        message: `مفتاح غير صالح (${res.status})` 
+      return {
+        key,
+        status: "invalid",
+        latency,
+        message: `مفتاح غير صالح (${res.status})`
       };
     } catch (err) {
       const latency = Math.round(performance.now() - startTime);
