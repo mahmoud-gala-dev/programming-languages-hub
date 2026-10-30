@@ -118,7 +118,7 @@ export default function BookViewModal({ sectionData, isOpen, onClose }) {
             {sectionData.topics.map((t, tIdx) => (
               <div key={t.id} className="space-y-8 page-break pt-6">
                 <div className="bg-blue-900 text-white p-5 rounded-2xl">
-                  <span className="text-xs text-blue-200 font-mono">الموضوع {t.id}</span>
+                  <span className="text-xs text-blue-200 font-bold">الموضوع {t.id}</span>
                   <h2 className="text-xl sm:text-2xl font-black mt-1">
                     {tIdx + 1}. {t.title} - {t.englishTitle}
                   </h2>
@@ -129,7 +129,7 @@ export default function BookViewModal({ sectionData, isOpen, onClose }) {
                   <div key={sub.id} className="p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                       <div>
-                        <span className="text-[11px] font-bold text-blue-600 font-mono">الدرس {sub.id}</span>
+                        <span className="text-[11px] font-bold text-blue-600">الدرس {sub.id}</span>
                         <h3 className="text-lg font-bold text-slate-900">{sub.title}</h3>
                         <span className="text-xs text-slate-500 font-mono">{sub.englishTitle}</span>
                       </div>

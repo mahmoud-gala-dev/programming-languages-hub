@@ -221,15 +221,15 @@ export default function Sidebar({
         {/* كارت القسم النشط حالياً مع خط كبير ومريح */}
         <div className="mt-2.5 p-3.5 rounded-2xl bg-gradient-to-r from-blue-950/80 via-slate-900 to-slate-950 border border-blue-800/50 shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold bg-cyan-500/20 text-cyan-300 px-2.5 py-0.5 rounded-full border border-cyan-500/30 font-mono">
+            <span className="text-xs font-bold bg-cyan-500/20 text-cyan-300 px-2.5 py-0.5 rounded-full border border-cyan-500/30">
               القسم {sectionData.id} من 34
             </span>
-            <span className="text-xs text-slate-400 font-mono font-medium">{totalSectionSubtopics} درساً متاحاً</span>
+            <span className="text-xs text-slate-400 font-medium">{totalSectionSubtopics} درساً متاحاً</span>
           </div>
           <h2 className={`${currentFont.sectionTitle} text-white mt-2 leading-snug`}>
             {sectionData.title}
           </h2>
-          <p className="text-xs text-slate-400 font-mono truncate mt-1">{sectionData.englishTitle}</p>
+          <p className="text-xs text-slate-400 truncate mt-1">{sectionData.englishTitle}</p>
         </div>
       </div>
 
@@ -302,7 +302,7 @@ export default function Sidebar({
               <FileText className="w-4 h-4 text-cyan-400 shrink-0" />
               <span className={`${currentFont.specialView} truncate`}>ملخص {sectionData.title}</span>
             </span>
-            <span className="text-xs bg-slate-900 px-2 py-0.5 rounded-full text-slate-400 font-mono shrink-0">
+            <span className="text-xs bg-slate-900 px-2 py-0.5 rounded-full text-slate-400 shrink-0 font-medium">
               {sectionData.summary?.length || 8} نقاط
             </span>
           </button>
@@ -319,7 +319,7 @@ export default function Sidebar({
               <BookMarked className="w-4 h-4 text-amber-400 shrink-0" />
               <span className={`${currentFont.specialView} truncate`}>جدول المرجع السريع (Cheat Sheet)</span>
             </span>
-            <span className="text-xs bg-slate-900 px-2 py-0.5 rounded-full text-slate-400 font-mono shrink-0">
+            <span className="text-xs bg-slate-900 px-2 py-0.5 rounded-full text-slate-400 shrink-0 font-medium">
               {sectionData.cheatSheet?.length || 20} صيغة
             </span>
           </button>
@@ -400,7 +400,7 @@ export default function Sidebar({
                     </span>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-xs text-slate-400 font-mono bg-slate-950 px-2 py-0.5 rounded-full">
+                    <span className="text-xs text-slate-400 bg-slate-950 px-2 py-0.5 rounded-full font-medium">
                       {topic.subtopics.length} دروس
                     </span>
                     {isExpanded ? (
@@ -492,10 +492,10 @@ export default function Sidebar({
 
       {/* شريط الإحصائيات السفلي */}
       <div className="p-3.5 border-t border-slate-800/40 bg-slate-950/90 flex items-center justify-between text-xs text-slate-400 shrink-0 font-sans">
-        <span>المنجز: <strong className="text-white font-mono">{completedSubtopics.size}</strong> درساً</span>
+        <span>المنجز: <strong className="text-white font-bold">{completedSubtopics.size}</strong> درساً</span>
         <div className="flex items-center gap-1.5">
           <span>نسبة الإنجاز:</span>
-          <span className="text-cyan-400 font-bold font-mono">
+          <span className="text-cyan-400 font-bold">
             {Math.round((completedSubtopics.size / Math.max(totalSectionSubtopics, 1)) * 100)}%
           </span>
         </div>

@@ -100,7 +100,7 @@ ${info.pitfall}`;
           <div>
             <h4 className="text-xs font-extrabold text-white flex items-center gap-2 font-sans">
               استوديو الإنفوجرافيك المعماري للدرس
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border shadow-sm" style={{ color: activeTheme.primary, borderColor: `${activeTheme.primary}40`, backgroundColor: `${activeTheme.primary}15` }}>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-sm" style={{ color: activeTheme.primary, borderColor: `${activeTheme.primary}40`, backgroundColor: `${activeTheme.primary}15` }}>
                 4K Ultra HD
               </span>
             </h4>
@@ -202,7 +202,7 @@ ${info.pitfall}`;
                 {info.badge}
               </span>
               <span 
-                className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-lg border shadow-inner"
+                className="text-xs font-bold px-2.5 py-0.5 rounded-lg border shadow-inner"
                 style={{ 
                   color: activeTheme.primary, 
                   backgroundColor: `${activeTheme.primary}12`,
@@ -211,7 +211,7 @@ ${info.pitfall}`;
               >
                 {info.englishTitle}
               </span>
-              <span className="text-[10px] bg-slate-900 text-slate-400 px-2 py-0.5 rounded-md border border-slate-800 font-mono">
+              <span className="text-[10px] bg-slate-900 text-slate-400 px-2 py-0.5 rounded-md border border-slate-800 font-bold">
                 {activeTheme.icon} {activeTheme.name}
               </span>
             </div>
@@ -222,7 +222,7 @@ ${info.pitfall}`;
 
           <div className="text-left sm:text-right shrink-0 bg-slate-950/80 border border-slate-800/90 p-3 rounded-2xl shadow-sm">
             <div className="text-[11px] text-slate-300 font-bold">خريطة طريق React.js الشاملة</div>
-            <div className="text-[10px] font-mono font-bold mt-0.5" style={{ color: activeTheme.primary }}>
+            <div className="text-[10px] font-bold mt-0.5" style={{ color: activeTheme.primary }}>
               من المبتدئ إلى مهندس واجهات محترف ⚛️
             </div>
           </div>

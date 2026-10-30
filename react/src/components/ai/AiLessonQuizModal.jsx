@@ -259,7 +259,7 @@ export default function AiLessonQuizModal({
             </h3>
 
             <p className="text-sm text-slate-300">
-              حققت نتيجة <b className="text-cyan-400 text-lg font-mono">{score}</b> من أصل <b className="text-white text-lg font-mono">{questions.length}</b> أسئلة
+              حققت نتيجة <b className="text-cyan-400 text-lg font-bold">{score}</b> من أصل <b className="text-white text-lg font-bold">{questions.length}</b> أسئلة
             </p>
 
             <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs text-slate-400 max-w-sm">

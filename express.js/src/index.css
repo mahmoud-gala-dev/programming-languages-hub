@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700;900&family=Fira+Code:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -14,6 +15,10 @@
 
 html {
   scroll-behavior: smooth;
+  font-family: var(--font-arabic) !important;
+  direction: rtl;
+  text-align: right;
+  letter-spacing: normal !important;
 }
 
 body {
@@ -24,17 +29,39 @@ body {
   color: #f1f5f9;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  letter-spacing: normal !important;
+}
+
+/* تطبيق خط جوجل العربي (Cairo) بشكل شامل وتلقائي على كافة عناصر الواجهة والنصوص */
+*, *::before, *::after {
+  font-family: var(--font-arabic);
+  letter-spacing: normal !important;
 }
 
 /* تطبيق الخط العربي على كافة الأزرار وعناصر الإدخال والقوائم */
 button, input, select, textarea, optgroup, option {
   font-family: var(--font-arabic) !important;
+  letter-spacing: normal !important;
 }
 
-code, pre, .font-mono {
+/* استثناء الأكواد البرمجية فقط لتحتفظ بخط الأكواد Fira Code والاتجاه الأجنبي LTR */
+code, pre, kbd, samp, 
+.syntax-code, .code-font, 
+[data-code="true"], [data-code-block="true"], 
+.code-container pre, .code-container code,
+.code-view pre, .code-view code,
+.token-view, .highlighted-code-view, .highlighted-code-view * {
   font-family: var(--font-code) !important;
-  direction: ltr;
-  text-align: left;
+  direction: ltr !important;
+  text-align: left !important;
+  letter-spacing: normal !important;
+}
+
+/* حماية الشارات والنصوص العربية التي تحتوي على font-mono من تفكك الحروف العربية */
+:not(code):not(pre):not(kbd):not(samp):not(.syntax-code):not([dir="ltr"]).font-mono {
+  font-family: var(--font-arabic) !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: normal !important;
 }
 
 /* تنعيم شريط التمرير العصري (Smooth Modern Scrollbars) */

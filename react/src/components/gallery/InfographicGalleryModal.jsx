@@ -158,7 +158,7 @@ export default function InfographicGalleryModal({
             <div>
               <h2 className="text-base sm:text-lg font-black text-white font-sans flex items-center gap-2">
                 معرض الإنفوجرافيك الشامل لـ React
-                <span className="text-[11px] bg-cyan-500/20 text-cyan-300 font-mono px-2.5 py-0.5 rounded-full border border-cyan-500/30">
+                <span className="text-[11px] bg-cyan-500/20 text-cyan-300 font-bold px-2.5 py-0.5 rounded-full border border-cyan-500/30">
                   {filteredList.length} بطاقة بصرية
                 </span>
               </h2>
@@ -367,7 +367,7 @@ export default function InfographicGalleryModal({
 
                     {/* تذييل الكارت */}
                     <div className="flex items-center justify-between pt-3 border-t border-slate-800/80 text-xs">
-                      <span className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
+                      <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
                         <Workflow className="w-3 h-3 text-cyan-400" />
                         {item.visualDiagram?.nodes?.length || 3} مراحل معمارية
                       </span>
