@@ -1,111 +1,32 @@
 // src/components/views/ProjectView.jsx
 import React, { useState } from 'react';
-import { FolderGit2, CheckCircle2, Download, Terminal, Layers, Server, Database, Shield, Zap } from 'lucide-react';
+import { FolderGit2, CheckCircle2, Download, Terminal, Layers, Server, Code, FileText } from 'lucide-react';
 import CodeBlock from '../lesson/CodeBlock.jsx';
 import { useToast } from '../../context/UiFeedbackContext.jsx';
 
-export default function ProjectView({ onBackToLessons }) {
-  const [selectedProjectIdx, setSelectedProjectIdx] = useState(0);
+export default function ProjectView({ sectionData, currentSection, onBackToLessons }) {
+  const section = currentSection || sectionData;
   const showToast = useToast();
+  const [selectedFileIdx, setSelectedFileIdx] = useState(0);
 
-  const projects = [
-    {
-      id: "proj-1",
-      title: "المشروع 1: نظام إدارة المنتجات المتكامل (Store REST API)",
-      desc: "بناء واجهة برمجية متكاملة لمتجر إلكتروني باستخدام Express و PostgreSQL و Prisma مع دعم البحث والفلترة وتخزين Redis المؤقت.",
-      difficulty: "متوسط",
-      tech: ["Node.js", "Express.js", "PostgreSQL", "Prisma", "Redis", "Zod"],
-      structure: `ecommerce-api/
-├── src/
-│   ├── config/
-│   │   ├── database.js
-│   │   └── redis.js
-│   ├── controllers/
-│   │   └── productController.js
-│   ├── middlewares/
-│   │   ├── errorHandler.js
-│   │   └── validateRequest.js
-│   ├── routes/
-│   │   └── productRoutes.js
-│   ├── services/
-│   │   └── productService.js
-│   └── app.js
-├── prisma/
-│   └── schema.prisma
-├── package.json
-└── .env`,
-      codeSample: `// src/controllers/productController.js
-import { productService } from '../services/productService.js';
+  const miniProj = section?.miniProject || {};
+  const fullProj = section?.project || {};
 
-export const getProducts = async (req, res, next) => {
-  try {
-    const { page = 1, limit = 10, search = '', category } = req.query;
-    const result = await productService.findAll({
-      page: Number(page),
-      limit: Number(limit),
-      search,
-      category
-    });
-    
-    res.status(200).json({
-      status: 'success',
-      data: result.products,
-      pagination: result.pagination
-    });
-  } catch (error) {
-    next(error);
-  }
-};`
-    },
-    {
-      id: "proj-2",
-      title: "المشروع 2: خادم المحادثة الفورية المشفر (Real-time Socket Chat)",
-      desc: "بناء منصة تواصل فورية بالاعتماد على WebSockets و Socket.IO مع إدارة الغرف وحالة المستخدمين (Online Status) وتخزين سجل الرسائل.",
-      difficulty: "متقدم",
-      tech: ["Node.js", "Socket.IO", "Redis Pub/Sub", "MongoDB", "JWT"],
-      structure: `chat-server/
-├── src/
-│   ├── sockets/
-│   │   ├── chatHandler.js
-│   │   └── authMiddleware.js
-│   ├── models/
-│   │   ├── Message.js
-│   │   └── Room.js
-│   ├── server.js
-│   └── app.js
-├── package.json
-└── .env`,
-      codeSample: `// src/sockets/chatHandler.js
-export const registerChatHandlers = (io, socket) => {
-  const { user } = socket;
-
-  socket.on('join_room', (roomId) => {
-    socket.join(roomId);
-    socket.to(roomId).emit('user_joined', { userId: user.id, username: user.name });
-  });
-
-  socket.on('send_message', async (data) => {
-    const messagePayload = {
-      senderId: user.id,
-      text: data.text,
-      timestamp: new Date()
-    };
-    
-    // بث الرسالة لكافة أعضاء الغرفة
-    io.to(data.roomId).emit('new_message', messagePayload);
-  });
-};`
-    }
-  ];
-
-  const activeProj = projects[selectedProjectIdx];
+  const title = miniProj.title || fullProj.title || "مشروع تطبيقي متكامل";
+  const scenario = fullProj.scenario || miniProj.description || "بناء مشروع عملي يدمج المفاهيم البرمجية المكتسبة في هذا القسم.";
+  const difficulty = miniProj.difficulty || "متوسط";
+  const techStack = miniProj.techStack || ["Node.js", "JavaScript"];
+  const directoryStructure = miniProj.directoryStructure || "";
+  const codeFiles = miniProj.codeFiles || [];
+  const stepsToRun = miniProj.stepsToRun || fullProj.requirements || [];
+  const completeSolution = fullProj.completeSolution || (codeFiles[0]?.code || "");
 
   const handleDownloadCode = () => {
-    const blob = new Blob([activeProj.codeSample], { type: 'text/javascript' });
+    const blob = new Blob([completeSolution], { type: 'text/javascript' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${activeProj.id}_sample.js`;
+    a.download = `${section?.id ? `section_${section.id}_project` : 'project_solution'}.js`;
     a.click();
     URL.revokeObjectURL(url);
     showToast("تم تنزيل الشفرة المصدرية للمشروع بنجاح! 🚀", "success");
@@ -114,17 +35,21 @@ export const registerChatHandlers = (io, socket) => {
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 animate-fadeIn text-slate-100" dir="rtl">
       
+      {/* الترويسة */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6 mb-8">
         <div>
-          <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
-            المشروعات التطبيقية الحقيقية (Real-World Projects)
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
+              المشروع التطبيقي للقسم (Mini-Project)
+            </span>
+            <span className="text-xs font-mono text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-0.5 rounded-full">
+              مستوى: {difficulty}
+            </span>
+          </div>
           <h1 className="text-2xl sm:text-3xl font-black text-white mt-2">
-            مستودع المشروعات الهندسية الكاملة
+            {title}
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            مشروعات برمجية واقعية جاهزة للتنفيذ ومجهزة لـ Portfolio المطورين
-          </p>
+          <p className="text-xs text-slate-400 mt-1">{section?.title}</p>
         </div>
 
         <button
@@ -135,72 +60,129 @@ export const registerChatHandlers = (io, socket) => {
         </button>
       </div>
 
-      {/* شريط اختيار المشروع */}
-      <div className="flex gap-3 mb-8 overflow-x-auto pb-2">
-        {projects.map((proj, idx) => (
-          <button
-            key={proj.id}
-            onClick={() => setSelectedProjectIdx(idx)}
-            className={`px-5 py-3 rounded-2xl border text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer ${
-              selectedProjectIdx === idx
-                ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-500/20"
-                : "bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700"
-            }`}
-          >
-            {proj.title}
-          </button>
-        ))}
-      </div>
-
-      {/* تفاصيل المشروع النشط */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+      {/* سيناريو المشروع والتقنيات */}
+      <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-          <div>
-            <h2 className="text-xl font-bold text-white">{activeProj.title}</h2>
-            <p className="text-xs text-slate-400 mt-1">{activeProj.desc}</p>
+          <div className="flex items-start gap-3">
+            <Server className="w-5 h-5 text-emerald-400 shrink-0 mt-1" />
+            <div>
+              <h3 className="text-sm font-bold text-white mb-1">سيناريو المشروع العملي</h3>
+              <p className="text-xs text-slate-300 font-sans leading-relaxed">{scenario}</p>
+            </div>
           </div>
           <button
             onClick={handleDownloadCode}
             className="flex items-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-xl transition-all shadow-md shadow-emerald-500/20 cursor-pointer shrink-0"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>تنزيل نموذج الكود</span>
+            <span>تنزيل الحل الكامل</span>
           </button>
         </div>
 
-        {/* التقنيات المستخدمة */}
-        <div>
-          <h4 className="text-xs font-bold text-emerald-400 mb-2">حزمة التقنيات (Tech Stack):</h4>
-          <div className="flex flex-wrap gap-2">
-            {activeProj.tech.map((t, idx) => (
-              <span
-                key={idx}
-                className="text-xs font-mono bg-slate-950 text-slate-300 border border-slate-800 px-3 py-1 rounded-xl"
-              >
-                {t}
-              </span>
-            ))}
+        {/* حزمة التقنيات */}
+        {techStack.length > 0 && (
+          <div>
+            <h4 className="text-xs font-bold text-emerald-400 mb-2">حزمة التقنيات المستخدمة:</h4>
+            <div className="flex flex-wrap gap-2">
+              {techStack.map((tech, idx) => (
+                <span
+                  key={idx}
+                  className="text-xs font-mono bg-slate-950 text-slate-300 border border-slate-800 px-3 py-1 rounded-xl"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* هيكل المجلدات */}
-        <div>
-          <h4 className="text-xs font-bold text-emerald-400 mb-2">هيكل الملفات والمجلدات المقترح:</h4>
-          <pre className="p-4 bg-slate-950 text-emerald-300 font-mono text-xs rounded-2xl border border-slate-800 overflow-x-auto leading-relaxed" dir="ltr">
-            {activeProj.structure}
-          </pre>
-        </div>
+        {directoryStructure && (
+          <div>
+            <h4 className="text-xs font-bold text-emerald-400 mb-2">هيكل الملفات والمجلدات المقترح:</h4>
+            <pre className="p-4 bg-slate-950 text-emerald-300 font-mono text-xs rounded-2xl border border-slate-800 overflow-x-auto leading-relaxed" dir="ltr">
+              {directoryStructure}
+            </pre>
+          </div>
+        )}
 
-        {/* نموذج كود تطبيقي */}
-        <div>
-          <h4 className="text-xs font-bold text-emerald-400 mb-2">مقتطف من شفرة منطق الأعمال:</h4>
+        {/* خطوات التشغيل والمتطلبات */}
+        {stepsToRun.length > 0 && (
+          <div>
+            <h4 className="text-xs font-bold text-emerald-400 mb-2">خطوات التنفيذ والتشغيل:</h4>
+            <div className="space-y-2">
+              {stepsToRun.map((step, idx) => (
+                <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
+                  <div className="w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center shrink-0 text-xs">
+                    {idx + 1}
+                  </div>
+                  <span className="text-xs text-slate-300 font-sans leading-relaxed">{step}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ملفات الكود للمشروع */}
+      {codeFiles.length > 0 && (
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 mb-8">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div className="flex items-center gap-2">
+              <Code className="w-5 h-5 text-emerald-400" />
+              <h3 className="text-sm font-bold text-white">الملفات المصدرية للمشروع ({codeFiles.length})</h3>
+            </div>
+
+            {codeFiles.length > 1 && (
+              <div className="flex gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                {codeFiles.map((f, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedFileIdx(idx)}
+                    className={`px-3 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer ${
+                      selectedFileIdx === idx
+                        ? 'bg-emerald-500 text-slate-950 font-bold'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {f.filename}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {codeFiles[selectedFileIdx] && (
+            <div className="space-y-3">
+              <p className="text-xs text-slate-300 font-sans">
+                {codeFiles[selectedFileIdx].explanation}
+              </p>
+              <CodeBlock
+                code={codeFiles[selectedFileIdx].code}
+                title={codeFiles[selectedFileIdx].filename}
+                language="javascript"
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* الحل النموذجي المتكامل */}
+      {completeSolution && (!codeFiles.length || completeSolution !== codeFiles[0]?.code) && (
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+              <h3 className="text-sm font-bold text-white">الكود البرمجي الكامل والحل النموذجي (Complete Solution)</h3>
+            </div>
+          </div>
           <CodeBlock
-            code={activeProj.codeSample}
-            title="نموذج من الكود الحقيقي للمشروع"
+            code={completeSolution}
+            title={`${title} - Complete Solution`}
             language="javascript"
           />
         </div>
-      </div>
+      )}
 
     </div>
   );

@@ -157,17 +157,25 @@ code mark {
     color: #0f172a !important;
   }
   
-  .no-print {
+  .no-print, button {
     display: none !important;
   }
 
-  .print-page-break {
-    page-break-before: always;
-    break-before: page;
+  .print-page-break,
+  .page-break,
+  .page-break-after {
+    page-break-after: always;
+    break-after: page;
   }
 
   .print-avoid-break {
     page-break-inside: avoid;
     break-inside: avoid;
   }
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm 15mm;
+  }
 }
+

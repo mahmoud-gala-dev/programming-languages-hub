@@ -1,204 +1,567 @@
 // src/components/book/BookViewModal.jsx
-import React, { useRef, useState } from 'react';
-import { X, Download, Printer, BookOpen, Layers, CheckCircle2, ChevronRight, FileText, Sparkles } from 'lucide-react';
+// كتاب خريطة طريق Node.js التعليمي الشامل (23 قسماً • 126 موضوعاً • 981 درساً)
+// متوافق مع نظام الطباعة الورقية A4 وVector PDF والتصفح الداكن في الشاشة (Dark Cyberpunk)
+
+import React, { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { 
+  X, 
+  Download, 
+  Printer, 
+  BookOpen, 
+  Layers, 
+  Sparkles, 
+  CheckCircle2, 
+  ChevronDown, 
+  Search, 
+  FileText, 
+  Terminal, 
+  ShieldCheck, 
+  Code2, 
+  BookmarkCheck,
+  Compass
+} from 'lucide-react';
 import { downloadBookAsPdf } from '../../utils/exportPdf.js';
 import { useToast } from '../../context/UiFeedbackContext.jsx';
+import { fetchSectionData, ROADMAP_SECTIONS } from '../../data/sections/index.js';
 import InfographicCard from '../infographic/InfographicCard.jsx';
 import CodeBlock from '../lesson/CodeBlock.jsx';
 
 export default function BookViewModal({ isOpen, onClose, currentSection }) {
   const bookRef = useRef(null);
-  const [downloading, setDownloading] = useState(false);
   const showToast = useToast();
 
-  if (!isOpen || !currentSection) return null;
+  const [downloading, setDownloading] = useState(false);
+  const [scope, setScope] = useState('all'); // 'all' (23 sections) | 'current' (single section)
+  const [allSections, setAllSections] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [loadedCount, setLoadedCount] = useState(0);
+  const [searchFilter, setSearchFilter] = useState('');
+  const [activeSectionId, setActiveSectionId] = useState(1);
 
+  // تحميل جميع الأقسام الـ 23 بشكل متوازي عند فتح النافذة
+  useEffect(() => {
+    let isMounted = true;
+    if (isOpen && allSections.length === 0) {
+      setLoading(true);
+      setLoadedCount(0);
+      const total = ROADMAP_SECTIONS.length;
+      
+      Promise.all(
+        ROADMAP_SECTIONS.map(async (sec) => {
+          try {
+            const data = await fetchSectionData(sec.id);
+            if (isMounted) {
+              setLoadedCount(prev => prev + 1);
+            }
+            return data;
+          } catch (err) {
+            console.error(`Error loading section ${sec.id}:`, err);
+            return null;
+          }
+        })
+      ).then(results => {
+        if (isMounted) {
+          const valid = results.filter(Boolean).sort((a, b) => a.id - b.id);
+          setAllSections(valid);
+          setLoading(false);
+        }
+      });
+    }
+    return () => { isMounted = false; };
+  }, [isOpen]);
+
+  // إغلاق النافذة عند الضغط على زر Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  // تحديد مصفوفة الأقسام المعروضة حسب النطاق المختار
+  const sectionsToRender = scope === 'current' && currentSection 
+    ? [currentSection] 
+    : (allSections.length > 0 ? allSections : (currentSection ? [currentSection] : []));
+
+  // إحصائيات المحتوى المعروض
+  const totalTopicsCount = sectionsToRender.reduce((sum, s) => sum + (s.topics?.length || 0), 0);
+  const totalSubtopicsCount = sectionsToRender.reduce((sum, s) => {
+    return sum + (s.topics ? s.topics.reduce((tSum, t) => tSum + (t.subtopics?.length || 0), 0) : 0);
+  }, 0);
+
+  // إجراء تنزيل ملف PDF
   const handleDownloadPdf = async () => {
     setDownloading(true);
     showToast("جاري تجهيز وتوليد كتاب الـ PDF...", "info", 4000);
     try {
-      const fileName = `كتاب_خريطة_طريق_Nodejs_${currentSection.id || 'القسم'}.pdf`;
+      const scopeLabel = scope === 'all' ? 'المنهاج_الكامل_23_قسما' : `القسم_${currentSection?.id || 'المحدد'}`;
+      const fileName = `كتاب_خريطة_طريق_Nodejs_${scopeLabel}.pdf`;
       await downloadBookAsPdf(bookRef.current, fileName);
       showToast("تم توليد وتحميل كتاب الـ PDF بنجاح! 📚", "success");
     } catch {
-      showToast("تعذر التصدير المباشر، جاري فتح نافذة الطباعة كبديل عالي الدقة", "warning");
+      showToast("تعذر التصدير المباشر عبر المحاكي، جاري فتح نافذة الطباعة المتجهية كبديل فائق الجودة", "warning");
       window.print();
     } finally {
       setDownloading(false);
     }
   };
 
+  // إجراء الطباعة المتجهية المباشرة عبر المتصفح
   const handlePrint = () => {
     window.print();
   };
 
-  const allSubtopics = currentSection.topics ? currentSection.topics.flatMap(t => t.subtopics || []) : [];
+  // التمرير السلس إلى قسم محدد
+  const scrollToSection = (secId) => {
+    setActiveSectionId(secId);
+    const targetEl = document.getElementById(`book-sec-${secId}`);
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn" dir="rtl">
-      <div className="bg-slate-900 border border-slate-700 rounded-3xl max-w-5xl w-full h-[92vh] flex flex-col shadow-2xl relative overflow-hidden text-slate-100">
+  const modalContent = (
+    <div 
+      className="fixed inset-0 z-[99998] w-screen h-screen min-h-screen bg-black/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto print:fixed print:inset-0 print:w-full print:h-auto print:bg-white print:overflow-visible print:p-0 print:m-0 print:z-auto"
+      dir="rtl"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose?.();
+        }
+      }}
+    >
+      <div className="bg-slate-900 border border-slate-700/80 rounded-3xl w-full max-w-6xl h-[94vh] sm:h-[92vh] flex flex-col shadow-2xl overflow-hidden print:bg-white print:border-none print:shadow-none print:w-full print:max-w-none print:h-auto print:rounded-none print:overflow-visible text-slate-100">
         
-        {/* الترويسة العلوية وأزرار التصدير */}
-        <div className="px-6 py-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between no-print">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-emerald-500/20">
+        {/* ======================================================== */}
+        {/* شريط الإجراءات والتحكم العلوي للنافذة (مخفي أثناء الطباعة) */}
+        {/* ======================================================== */}
+        <div className="flex flex-wrap items-center justify-between px-4 sm:px-6 py-3 bg-slate-950 border-b border-slate-800 no-print shrink-0 gap-3">
+          
+          {/* عنوان ومعلومات الكتاب */}
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-emerald-500/20 shrink-0">
               <BookOpen className="w-5 h-5" />
             </div>
-            <div>
-              <h3 className="font-extrabold text-sm sm:text-base text-white flex items-center gap-2">
-                كتاب Node.js الإلكتروني الشامل
-                <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-normal">
-                  PDF & Vector Print
+            <div className="min-w-0">
+              <h3 className="font-extrabold text-sm sm:text-base text-white flex items-center gap-2 truncate">
+                كتاب Node.js التعليمي الشامل
+                <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-normal hidden sm:inline">
+                  2026 Edition • A4 Print
                 </span>
               </h3>
-              <p className="text-xs text-slate-400">
-                {currentSection.title} • {allSubtopics.length} درساً تفصيلياً مع الإنفوجرافيك
+              <p className="text-[11px] sm:text-xs text-slate-400 truncate">
+                {scope === 'all' 
+                  ? `المنهاج المتكامل: 23 قسماً • ${totalTopicsCount} موضوعاً • ${totalSubtopicsCount} درساً مع الأكواد والإنفوجرافيك`
+                  : `${currentSection?.title || 'القسم المحدد'} • ${totalSubtopicsCount} درساً تفصيلياً`
+                }
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* تبديل النطاق وأزرار التصدير */}
+          <div className="flex items-center flex-wrap gap-2">
+            
+            {/* محدد نطاق الكتاب */}
+            <div className="flex items-center bg-slate-800/80 p-0.5 rounded-xl border border-slate-700 text-xs">
+              <button
+                onClick={() => setScope('all')}
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                  scope === 'all' 
+                    ? 'bg-emerald-500 text-slate-950 shadow-sm' 
+                    : 'text-slate-300 hover:text-white'
+                }`}
+                title="تجميع وطباعة المنهاج كاملاً بكافة أقسامه الـ 23"
+              >
+                📚 المنهاج الكامل (23)
+              </button>
+              {currentSection && (
+                <button
+                  onClick={() => setScope('current')}
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                    scope === 'current' 
+                      ? 'bg-emerald-500 text-slate-950 shadow-sm' 
+                      : 'text-slate-300 hover:text-white'
+                  }`}
+                  title="عرض وطباعة محتوى القسم الحالي فقط"
+                >
+                  📖 القسم الحالي
+                </button>
+              )}
+            </div>
+
+            {/* قائمة الانتقال السريع للأقسام */}
+            {scope === 'all' && (
+              <select
+                value={activeSectionId}
+                onChange={(e) => scrollToSection(Number(e.target.value))}
+                className="bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold px-2.5 py-1.5 rounded-xl cursor-pointer focus:outline-none focus:border-emerald-500 hidden md:block"
+                title="الانتقال المباشر لأي قسم"
+              >
+                {ROADMAP_SECTIONS.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    قسم {s.id}: {s.title.slice(0, 28)}...
+                  </option>
+                ))}
+              </select>
+            )}
+
+            {/* زر الطباعة المتجهية */}
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-3 sm:px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition-all cursor-pointer"
-              title="طباعة متجهية عالية الدقة للمستند"
+              className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-1.5 sm:py-2 rounded-xl border border-slate-700 transition-all cursor-pointer"
+              title="طباعة متجهية عالية الدقة للمستند أو حفظه كـ PDF عبر المتصفح"
             >
               <Printer className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="hidden sm:inline">طباعة المتجهية</span>
+              <span className="hidden sm:inline">طباعة</span>
             </button>
 
+            {/* زر تحميل PDF */}
             <button
               onClick={handleDownloadPdf}
-              disabled={downloading}
-              className="flex items-center gap-1.5 px-4 sm:px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 cursor-pointer disabled:opacity-50"
+              disabled={downloading || loading}
+              className="flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl shadow-lg shadow-emerald-600/20 transition-all cursor-pointer disabled:opacity-50"
+              title="توليد وتحميل ملف PDF متكامل"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>{downloading ? "جاري التوليد..." : "تحميل كتاب PDF"}</span>
+              <span>{downloading ? "جاري التوليد..." : "تحميل PDF"}</span>
             </button>
 
+            {/* زر إغلاق النافذة */}
             <button
               onClick={onClose}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer mr-1"
+              title="إغلاق النافذة"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* جسم الكتاب القابل للتمرير والمجهز للطباعة والتصدير */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-slate-950 font-sans">
+        {/* مؤشر حالة التحميل التراكمي في حال جاري تجميع الأقسام */}
+        {loading && (
+          <div className="bg-emerald-950/40 border-b border-emerald-500/20 px-6 py-2 flex items-center justify-between text-xs text-emerald-300 no-print">
+            <span className="flex items-center gap-2">
+              <span className="animate-spin">⏳</span>
+              جاري تجهيز وتجميع فصول الكتاب الـ 23 في الذاكرة... ({loadedCount} من 23 قسماً)
+            </span>
+            <div className="w-36 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-emerald-500 transition-all duration-300"
+                style={{ width: `${(loadedCount / 23) * 100}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* جسم ومحتوى الكتاب القابل للتمرير والطباعة والتصدير       */}
+        {/* ======================================================== */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-10 bg-slate-950 font-sans print:p-0 print:m-0 print:overflow-visible print:bg-white text-slate-900 print:text-slate-950">
           <div 
             ref={bookRef}
-            className="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-12 shadow-2xl space-y-12 text-slate-100"
+            className="max-w-4xl mx-auto space-y-12 bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-12 shadow-2xl text-slate-100 print:bg-white print:border-none print:shadow-none print:p-0 print:m-0 print:text-slate-900"
           >
-            {/* غلاف الكتاب */}
-            <div className="text-center py-12 border-b-2 border-slate-800 space-y-4">
-              <div className="inline-block p-4 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-4xl mb-2">
-                🟢
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-black text-white">
-                خريطة طريق Node.js الشاملة
-              </h1>
-              <p className="text-lg text-emerald-400 font-bold font-mono">
-                من الصفر إلى الاحتراف (Zero to Hero)
-              </p>
-              <div className="pt-4 max-w-xl mx-auto">
-                <span className="inline-block px-4 py-1.5 rounded-full bg-slate-800 text-slate-300 text-xs font-semibold">
-                  {currentSection.title}
-                </span>
-                <p className="text-xs text-slate-400 mt-3 leading-relaxed">
-                  {currentSection.description}
+            
+            {/* ---------------------------------------------------- */}
+            {/* 1. صفحة غلاف الكتاب الفخمة (Page 1)                   */}
+            {/* ---------------------------------------------------- */}
+            <div className="min-h-[580px] flex flex-col justify-between p-8 sm:p-12 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-white rounded-3xl border border-slate-800 text-center print-page-break print:bg-white print:text-slate-900 print:border-none shadow-2xl">
+              <div className="pt-4 space-y-4">
+                <div className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-extrabold px-4 py-1.5 rounded-full mb-3 shadow-inner">
+                  <span>🟢</span>
+                  <span>خريطة طريق Node.js الشاملة • الإصدار الاحترافي المعتمد 2026</span>
+                </div>
+
+                <h1 className="text-3xl sm:text-5xl font-black leading-tight text-white print:text-slate-950">
+                  كتاب Node.js الشامل وهندسة الباك إند
+                </h1>
+                
+                <h2 className="text-lg sm:text-2xl font-bold text-emerald-400 print:text-emerald-700 font-mono">
+                  من الصفر إلى الاحتراف (From Zero to Production Architecture)
+                </h2>
+
+                <p className="text-xs sm:text-sm text-slate-300 print:text-slate-700 max-w-2xl mx-auto leading-relaxed pt-2">
+                  مرجع تعليمي هندسي متكامل يغطي 23 قسماً تخصصياً، 126 موضوعاً رئيسياً، و981 درساً مشروحاً خطوة بخطوة باللغة العربية، مع أمثلة وتشبيهات من الحياة اليومية، أكواد برمجية مع تعليق على كل سطر، بطاقات إنفوجرافيك معمارية، جداول مرجعية سريعة، ومشاريع تطبيقية حقيقية.
                 </p>
+
+                {/* شارات إحصائيات المنهاج */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 max-w-2xl mx-auto text-xs">
+                  <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 print:border-slate-300 print:bg-slate-50">
+                    <div className="text-xl font-black text-emerald-400 font-mono">23</div>
+                    <div className="text-slate-400 text-[11px]">قسماً تخصصياً</div>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 print:border-slate-300 print:bg-slate-50">
+                    <div className="text-xl font-black text-teal-400 font-mono">126</div>
+                    <div className="text-slate-400 text-[11px]">موضوعاً محورياً</div>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 print:border-slate-300 print:bg-slate-50">
+                    <div className="text-xl font-black text-cyan-400 font-mono">981</div>
+                    <div className="text-slate-400 text-[11px]">درساً بيداغوجياً</div>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 print:border-slate-300 print:bg-slate-50">
+                    <div className="text-xl font-black text-amber-400 font-mono">100%</div>
+                    <div className="text-slate-400 text-[11px]">عربي مشروح بالكامل</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-8 border-t border-slate-800/80 print:border-slate-300 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 print:text-slate-600 gap-2">
+                <span>إعداد: منصة خريطة طريق Node.js التفاعلية الاحترافية</span>
+                <span>تاريخ التصدير: {new Date().toLocaleDateString('ar-EG')}</span>
               </div>
             </div>
 
-            {/* فهرس محتويات الكتاب */}
-            <div className="py-6 border-b border-slate-800">
-              <h2 className="text-lg font-black text-white mb-4 flex items-center gap-2">
-                <Layers className="w-5 h-5 text-emerald-400" />
-                فهرس موضوعات الكتاب والإنفوجرافيك:
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {allSubtopics.map((sub, sIdx) => (
-                  <div key={sIdx} className="bg-slate-950/70 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
-                    <span className="font-bold text-slate-200">{sIdx + 1}. {sub.title}</span>
-                    <span className="font-mono text-emerald-400 text-[11px]">{sub.id}</span>
+            {/* ---------------------------------------------------- */}
+            {/* 2. فهرس المحتويات الشامل (Table of Contents)          */}
+            {/* ---------------------------------------------------- */}
+            <div className="print-page-break space-y-6 pt-4">
+              <div className="flex items-center justify-between border-b-2 border-emerald-500 pb-3">
+                <h2 className="text-xl sm:text-2xl font-black text-white print:text-slate-950 flex items-center gap-2">
+                  <Layers className="w-6 h-6 text-emerald-400" />
+                  فهرس محتويات المنهاج التعليمي
+                </h2>
+                <span className="text-xs text-slate-400 print:text-slate-600 font-mono">
+                  {sectionsToRender.length} فصول معتمدة
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {sectionsToRender.map((sec, idx) => (
+                  <div 
+                    key={sec.id}
+                    onClick={() => scrollToSection(sec.id)}
+                    className="p-3.5 rounded-xl border border-slate-800 bg-slate-950/70 hover:bg-slate-800/50 print:bg-white print:border-slate-300 transition-all cursor-pointer flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between text-xs mb-1">
+                        <span className="font-mono text-emerald-400 font-bold">فصل {sec.id}</span>
+                        <span className="text-[10px] text-slate-500 font-mono">صفحة {idx + 2}</span>
+                      </div>
+                      <h4 className="font-bold text-sm text-slate-100 print:text-slate-900 leading-snug">
+                        {sec.title}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 print:text-slate-600 font-mono mt-0.5">
+                        {sec.englishTitle}
+                      </p>
+                    </div>
+
+                    <div className="mt-2.5 pt-2 border-t border-slate-800/80 print:border-slate-200 flex items-center justify-between text-[11px] text-slate-400">
+                      <span>{sec.topics?.length || 0} موضوعات</span>
+                      <span className="text-emerald-400 font-mono font-semibold">
+                        {sec.topics ? sec.topics.reduce((sum, t) => sum + (t.subtopics?.length || 0), 0) : 0} درساً
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* سرد كافة الدروس والإنفوجرافيكس سطراً بسطر */}
-            {allSubtopics.map((sub, sIdx) => (
-              <div key={sIdx} className="pt-8 border-b border-slate-800/80 pb-12 print-page-break">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-mono bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20 font-bold">
-                    الدرس {sub.id}
-                  </span>
-                  <span className="text-xs text-slate-500 font-mono">
-                    {sub.englishTitle}
-                  </span>
+            {/* ---------------------------------------------------- */}
+            {/* 3. سرد كافة الأقسام والدروس والإنفوجرافيكس          */}
+            {/* ---------------------------------------------------- */}
+            {sectionsToRender.map((sec) => (
+              <div 
+                key={sec.id} 
+                id={`book-sec-${sec.id}`}
+                className="print-page-break space-y-8 pt-8"
+              >
+                {/* ترويسة وبانر بداية القسم */}
+                <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-emerald-950 border border-emerald-500/30 p-6 rounded-3xl text-white print:bg-slate-100 print:text-slate-900 print:border-slate-300">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="text-xs font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full font-bold">
+                      الفصل {sec.number || sec.id} • {sec.badge || 'تخصصي'}
+                    </span>
+                    <span className="text-xs text-slate-400 font-mono">{sec.englishTitle}</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-black mt-1 text-white print:text-slate-950">
+                    {sec.title}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-300 print:text-slate-700 mt-2 leading-relaxed">
+                    {sec.description}
+                  </p>
                 </div>
 
-                <h3 className="text-2xl font-black text-white mb-4">
-                  {sub.title}
-                </h3>
-
-                {/* التعريف المبسط */}
-                {sub.definition && (
-                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 mb-4">
-                    <h5 className="text-xs font-bold text-emerald-400 mb-1">التعريف الأساسي:</h5>
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">{sub.definition}</p>
+                {/* ملخص القسم والقواعد الذهبية */}
+                {sec.summary && (
+                  <div className="p-6 rounded-2xl border border-slate-800 bg-slate-950/80 print:bg-white print:border-slate-300 space-y-4 print-avoid-break">
+                    <h3 className="text-base font-extrabold text-emerald-400 print:text-emerald-800 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4" />
+                      ملخص الفصل والقواعد الذهبية:
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-300 print:text-slate-700 leading-relaxed">
+                      {sec.summary.overview}
+                    </p>
+                    
+                    {sec.summary.goldenRules && sec.summary.goldenRules.length > 0 && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+                        {sec.summary.goldenRules.map((gr, grIdx) => (
+                          <div key={grIdx} className="p-3 rounded-xl bg-slate-900 border border-slate-800/80 print:bg-slate-50 print:border-slate-200 text-xs">
+                            <b className="text-emerald-300 print:text-emerald-900 block mb-1">
+                              ✓ {gr.title}
+                            </b>
+                            <p className="text-slate-400 print:text-slate-600 text-[11px] leading-relaxed">
+                              {gr.desc}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
 
-                {/* التشبيه الحياتي */}
-                {sub.analogy && (
-                  <div className="bg-amber-950/20 border border-amber-500/20 p-4 rounded-xl mb-4">
-                    <h5 className="text-xs font-bold text-amber-300 mb-1 flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                      التشبيه من الحياة اليومية:
-                    </h5>
-                    <p className="text-xs sm:text-sm text-amber-100/90 leading-relaxed font-sans">{sub.analogy}</p>
+                {/* البطاقة المرجعية السريعة (Cheat Sheet) */}
+                {sec.cheatSheet && (sec.cheatSheet.entries || sec.cheatSheet.items) && (
+                  <div className="p-6 rounded-2xl border border-slate-800 bg-slate-950/80 print:bg-white print:border-slate-300 space-y-3 print-avoid-break">
+                    <h3 className="text-sm font-bold text-teal-400 print:text-teal-800 flex items-center gap-2">
+                      <FileText className="w-4 h-4" />
+                      {sec.cheatSheet.title || `البطاقة المرجعية السريعة (Cheat Sheet)`}
+                    </h3>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-right text-xs border border-slate-800 print:border-slate-300 border-collapse">
+                        <thead>
+                          <tr className="bg-slate-900 print:bg-slate-100 text-slate-200 print:text-slate-900">
+                            <th className="p-2.5 border border-slate-800 print:border-slate-300 font-bold w-1/4">التصنيف</th>
+                            <th className="p-2.5 border border-slate-800 print:border-slate-300 font-bold w-1/3">الأمر / الصيغة البرمجية</th>
+                            <th className="p-2.5 border border-slate-800 print:border-slate-300 font-bold">الوظيفة والشرح</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(sec.cheatSheet.entries || sec.cheatSheet.items || []).map((row, rIdx) => (
+                            <tr key={rIdx} className={rIdx % 2 === 0 ? "bg-slate-950 print:bg-white" : "bg-slate-900/60 print:bg-slate-50"}>
+                              <td className="p-2 border border-slate-800 print:border-slate-300 font-bold text-emerald-400 print:text-emerald-800">{row.category}</td>
+                              <td className="p-2 border border-slate-800 print:border-slate-300 font-mono text-cyan-300 print:text-cyan-800" dir="ltr">{row.commandOrSyntax || row.syntax || row.command}</td>
+                              <td className="p-2 border border-slate-800 print:border-slate-300 text-slate-300 print:text-slate-700">{row.description}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 )}
 
-                {/* الإنفوجرافيك المرجعي الكامل */}
-                {sub.infographic && (
-                  <div className="my-6">
-                    <InfographicCard subtopic={sub} />
-                  </div>
-                )}
-
-                {/* الأكواد التوضيحية */}
-                {sub.simpleCode && (
-                  <div className="my-4">
-                    <CodeBlock code={sub.simpleCode} title="الشفرة البرمجية المشروحة" language="javascript" />
-                  </div>
-                )}
-
-                {/* الأخطاء الشائعة */}
-                {sub.commonMistakes && sub.commonMistakes.length > 0 && (
-                  <div className="bg-rose-950/20 border border-rose-500/20 p-4 rounded-xl my-4 text-xs">
-                    <h5 className="font-bold text-rose-400 mb-2">تنبيهات وأخطاء شائعة:</h5>
-                    {sub.commonMistakes.map((cm, cIdx) => (
-                      <p key={cIdx} className="text-slate-300 leading-relaxed">
-                        <span className="text-rose-400 font-semibold">✕ الخطأ: </span>{cm.wrong} — <span className="text-emerald-400 font-semibold">✓ الصواب: </span>{cm.right}
+                {/* سرد موضوعات ودروس القسم */}
+                {sec.topics && sec.topics.map((topic, tIdx) => (
+                  <div key={topic.id || tIdx} className="space-y-6 pt-4">
+                    <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 print:bg-slate-50 print:border-slate-200">
+                      <span className="text-[11px] font-mono text-emerald-400 font-bold">
+                        الموضوع {topic.id}
+                      </span>
+                      <h3 className="text-lg sm:text-xl font-black text-white print:text-slate-950 mt-0.5">
+                        {topic.title}
+                      </h3>
+                      <p className="text-xs text-slate-400 print:text-slate-600 mt-1">
+                        {topic.description}
                       </p>
+                    </div>
+
+                    {/* دروس ومفاهيم الموضوع */}
+                    {topic.subtopics && topic.subtopics.map((sub, sIdx) => (
+                      <div 
+                        key={sub.id || sIdx}
+                        className="p-6 rounded-2xl border border-slate-800/80 bg-slate-950/70 print:bg-white print:border-slate-300 print-avoid-break space-y-4 shadow-sm"
+                      >
+                        <div className="flex items-center justify-between border-b border-slate-800/60 print:border-slate-200 pb-3">
+                          <div>
+                            <span className="text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
+                              الدرس {sub.id}
+                            </span>
+                            <h4 className="text-lg font-bold text-white print:text-slate-950 mt-1">
+                              {sub.title}
+                            </h4>
+                          </div>
+                          <span className="text-xs text-slate-500 font-mono">
+                            {sub.englishTitle}
+                          </span>
+                        </div>
+
+                        {/* التعريف المبسط */}
+                        {sub.definition && (
+                          <div className="text-xs sm:text-sm text-slate-300 print:text-slate-800 leading-relaxed">
+                            <b className="text-emerald-400 print:text-emerald-800">📖 التعريف الأساسي: </b>
+                            {sub.definition}
+                          </div>
+                        )}
+
+                        {/* التشبيه الحياتي */}
+                        {sub.analogy && (
+                          <div className="p-4 rounded-xl bg-amber-950/20 border-r-4 border-amber-500 text-xs sm:text-sm text-amber-200 print:bg-amber-50 print:text-amber-950 leading-relaxed">
+                            <b className="text-amber-400 print:text-amber-800">💡 مثال وتشبيه من الحياة اليومية: </b>
+                            {sub.analogy}
+                          </div>
+                        )}
+
+                        {/* لماذا نحتاجه */}
+                        {sub.why && (
+                          <div className="text-xs sm:text-sm text-slate-300 print:text-slate-800 leading-relaxed">
+                            <b className="text-teal-400 print:text-teal-800">❓ لماذا نحتاجه والمشكلة التي يحلها: </b>
+                            {sub.why}
+                          </div>
+                        )}
+
+                        {/* كود عملي نموذجي مشروح باللغة العربية فوق كل سطر */}
+                        {sub.simpleCode && (
+                          <div className="my-3">
+                            <div className="text-xs font-bold text-slate-300 print:text-slate-800 mb-1 flex items-center gap-1.5">
+                              <Code2 className="w-3.5 h-3.5 text-emerald-400" />
+                              <span>الكود العملي المشروح (مع تعليق عربي فوق كل سطر):</span>
+                            </div>
+                            <CodeBlock 
+                              code={sub.simpleCode} 
+                              title={`شفرة: ${sub.title}`} 
+                              language="javascript" 
+                            />
+                          </div>
+                        )}
+
+                        {/* بطاقة الإنفوجرافيك المرجعية */}
+                        {sub.infographic && (
+                          <div className="my-4">
+                            <InfographicCard subtopic={sub} />
+                          </div>
+                        )}
+
+                        {/* الأخطاء الشائعة */}
+                        {sub.commonMistakes && sub.commonMistakes.length > 0 && (
+                          <div className="bg-rose-950/20 border border-rose-500/20 print:bg-rose-50 print:border-rose-200 p-4 rounded-xl my-2 text-xs">
+                            <h5 className="font-bold text-rose-400 print:text-rose-800 mb-2">تنبيهات وأخطاء شائعة:</h5>
+                            {sub.commonMistakes.map((cm, cIdx) => (
+                              <p key={cIdx} className="text-slate-300 print:text-slate-700 leading-relaxed mb-1">
+                                <span className="text-rose-400 print:text-rose-700 font-semibold">✕ الخطأ: </span>{cm.wrong} — <span className="text-emerald-400 print:text-emerald-700 font-semibold">✓ الصواب: </span>{cm.right}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
-                )}
+                ))}
               </div>
             ))}
 
-            {/* خاتمة الكتاب */}
-            <div className="text-center py-8 text-xs text-slate-500 font-sans">
-              تم إعداد وتنسيق هذا الكتاب إلكترونياً عبر منصة خريطة طريق Node.js الاحترافية ©
+            {/* ---------------------------------------------------- */}
+            {/* 4. خاتمة الكتاب وحقوق الملكية                       */}
+            {/* ---------------------------------------------------- */}
+            <div className="text-center pt-10 border-t-2 border-slate-800 print:border-slate-300 text-xs text-slate-400 print:text-slate-600 print-page-break space-y-2">
+              <p className="font-bold text-emerald-400 print:text-emerald-800 text-sm">
+                تم بحمد الله اكتمال منهاج خريطة طريق Node.js الاحترافية الشاملة.
+              </p>
+              <p>23 قسماً • 126 موضوعاً رئيسياً • 981 درساً تفصيلياً مع الإنفوجرافيك وكود البرمجة.</p>
+              <p className="mt-2 text-slate-500 print:text-slate-400">
+                منصة خريطة طريق Node.js © 2026 - جميع الحقوق محفوظة للمتعلمين والمطورين.
+              </p>
             </div>
+
           </div>
         </div>
 
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : null;
 }

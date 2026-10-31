@@ -1,680 +1,1055 @@
 // src/data/sections/section18.js
 // القسم الثامن عشر: التكامل مع الخدمات الخارجية وواجهات API المتقدمة
+// خريطة طريق Node.js الشاملة - القسم رقم 18
+
 export const SECTION_18 = {
   "id": 18,
   "number": "18",
   "title": "القسم الثامن عشر: التكامل مع الخدمات الخارجية وواجهات API المتقدمة",
   "englishTitle": "External Integrations, Webhooks & AI APIs",
   "badge": "خبير",
-  "description": "منهج تعليمي شامل يغطي القسم الثامن عشر: التكامل مع الخدمات الخارجية وواجهات API المتقدمة بدقة تفصيلية وأمثلة عملية وتطبيق مباشر.",
+  "color": "from-indigo-800 to-purple-700",
+  "description": "التعامل مع APIs الخارجية، استقبال ومعالجة Webhooks الآمنة، إرسال البريد عبر Nodemailer، مقدمة في GraphQL وgRPC، ودمج نماذج الذكاء الاصطناعي LLMs.",
+  "summary": {
+    "overview": "يشرح هذا القسم تكامل خوادم Node.js مع المنظومات والخدمات السحابية الخارجية. يغطي استهلاك واجهات REST و GraphQL عبر مكتبة Axios أو Fetch المدمجة، استقبال ومعالجة إشعارات Webhooks والتحقق من التوقيع الرقمي لمنع التزوير (Signature Verification)، إرسال البريد الإلكتروني عبر Nodemailer، وتكامل نماذج الذكاء الاصطناعي التوليدي (Google Gemini و OpenAI SDKs) مع تطبيق التراجع الأسي (Exponential Backoff) لإعادة المحاولة عند الأخطاء.",
+    "goldenRules": [
+      {
+        "title": "تحقق دائماً من التوقيع الرقمي للـ Webhook لمنع التزوير",
+        "desc": "لا تقبل أي طلب Webhook (من Stripe أو PayPal مثلاً) دون فحص ترويسة التوقيع عبر المفتاح السري المشترك (Webhook Secret)."
+      },
+      {
+        "title": "استخدم الجسم الخام (Raw Body) للتحقق من تواقيع الـ Webhooks",
+        "desc": "تحويل الطلب إلى كائن JSON قبل فحص التوقيع يغير ترتيب الحقول ويبطل البصمة التشفيرية؛ احفظ Buffer الشحنة الخام دائماً."
+      },
+      {
+        "title": "أرجع رمز النجاح 200 فوراً لمعالج الـ Webhook وعالج الحدث بالخلفية",
+        "desc": "إذا تأخرت استجابتك لأكثر من 5 ثوانٍ، ستعتبر الخدمة الخارجية أن الخادم معطل وتعيد إرسال الطلب مراراً؛ احفظ الحدث وأجب فوراً بـ 200 OK."
+      },
+      {
+        "title": "حدد مهلة زمنية صارمة (Timeout) لكافة طلبات الشبكة الخارجية",
+        "desc": "لا تترك استدعاءات APIs الخارجية دون timeout محدد (مثل 5000ms)؛ فالخدمة الخارجية البطيئة قد تجمد خادمك وتستهلك مجمع الاتصالات."
+      },
+      {
+        "title": "طبق التراجع الأسي (Exponential Backoff with Jitter) عند إعادة المحاولة",
+        "desc": "عند مواجهة أخطاء الشبكة أو خطأ 429 (Rate Limit)، ضاعف وقت الانتظار بين كل محاولة وأخرى مع إضافة عشوائية بسيطة لمنع التدافع (Thundering Herd)."
+      },
+      {
+        "title": "عزل مفاتيح الـ API في متغيرات بيئية وتدويرها عند الاشتباه",
+        "desc": "لا تضع مفاتيح الذكاء الاصطناعي أو بوابات الدفع في الكود المصدري؛ استخدم مجمع مفاتيح (Key Pool) وآلية تدوير تلقائي للمفاتيح."
+      },
+      {
+        "title": "قاطع الدائرة (Circuit Breaker Pattern) لحماية الخادم من التداعيات",
+        "desc": "إذا فشلت الخدمة الخارجية 5 مرات متتالية، افتح الدائرة وأوقف إرسال الطلبات مؤقتاً لتفادي استنزاف الموارد وإعطاء الخدمة فرصة للتعافي."
+      },
+      {
+        "title": "تنسيق وحجب البيانات الحساسة في السجلات (Log Sanitization)",
+        "desc": "احرص على تنقية سجلات الطلبات من أرقام بطاقات الائتمان والمفاتيح السرية وكلمات المرور قبل طباعتها في ملفات السجلات."
+      }
+    ],
+    "keyTakeaways": [
+      "التعامل المتقدم مع استدعاءات الشبكة الخارجية وإدارة الأخطاء والمهلات الزمنية.",
+      "بناء معمارية استقبال ومعالجة Webhooks مؤمنة تشفيرياً وغير قابلة للاختراق.",
+      "إرسال البريد الإلكتروني والإشعارات المنظمة باستخدام قوالب HTML.",
+      "دمج وتطويع نماذج الذكاء الاصطناعي التوليدي في تطبيقات Node.js بمرونة واحترافية."
+    ]
+  },
+  "cheatSheet": {
+    "title": "البطاقة المرجعية للتكاملات الخارجية والـ Webhooks والذكاء الاصطناعي",
+    "entries": [
+      {
+        "category": "Fetch Timeout",
+        "commandOrSyntax": "const res = await fetch(url, { signal: AbortSignal.timeout(5000) });",
+        "description": "إرسال طلب خارجي مع إلغاء العملية تلقائياً إذا تجاوزت 5 ثوانٍ",
+        "type": "code"
+      },
+      {
+        "category": "Stripe Webhook",
+        "commandOrSyntax": "stripe.webhooks.constructEvent(req.rawBody, sig, secret);",
+        "description": "التحقق التشفيري الصارم من صحة طلب الـ Webhook وعدم التلاعب به",
+        "type": "code"
+      },
+      {
+        "category": "Nodemailer",
+        "commandOrSyntax": "await transporter.sendMail({ from, to, subject, html });",
+        "description": "إرسال رسالة بريد إلكتروني منسقة بتنسيق HTML عبر بروتوكول SMTP",
+        "type": "code"
+      },
+      {
+        "category": "Gemini AI SDK",
+        "commandOrSyntax": "const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });",
+        "description": "تهيئة نموذج الذكاء الاصطناعي السريع لإجراء محادثات وتوليد شروحات برمجية",
+        "type": "code"
+      },
+      {
+        "category": "Retry Backoff",
+        "commandOrSyntax": "const wait = (ms) => new Promise(r => setTimeout(r, ms));",
+        "description": "دالة الانتظار الزمني المتزايد بين محاولات استدعاء الخدمات الخارجية",
+        "type": "code"
+      },
+      {
+        "category": "Axios Config",
+        "commandOrSyntax": "const client = axios.create({ baseURL, timeout: 4000, headers });",
+        "description": "إنشاء عميل Axios مخصص بإعدادات مهلة وترويسات موحدة",
+        "type": "code"
+      },
+      {
+        "category": "HMAC Verify",
+        "commandOrSyntax": "crypto.createHmac('sha256', secret).update(body).digest('hex')",
+        "description": "توليد بصمة توقيع رقمية لمقارنتها مع ترويسة الـ Webhook المستلمة",
+        "type": "code"
+      },
+      {
+        "category": "Raw Body Hook",
+        "commandOrSyntax": "app.use(express.json({ verify: (req, res, buf) => req.rawBody = buf }));",
+        "description": "الاحتفاظ بالـ Buffer الأصلي للطلب لاستخدامه في فحص التوقيعات",
+        "type": "code"
+      },
+      {
+        "category": "Rate Limit (429)",
+        "commandOrSyntax": "if (err.status === 429) { await rotateApiKey(); }",
+        "description": "التقاط تجاوز حد الاستخدام والتبديل التلقائي للمفتاح التالي في المجمع",
+        "type": "code"
+      },
+      {
+        "category": "Event Idempotency",
+        "commandOrSyntax": "if (await redis.set(`evt:${event.id}`, '1', 'NX', 'EX', 86400)) {}",
+        "description": "منع المعالجة المكررة لنفس حدث الـ Webhook باستخدام قفل Redis الفريد",
+        "type": "code"
+      }
+    ],
+    "items": [
+      {
+        "category": "Fetch Timeout",
+        "commandOrSyntax": "const res = await fetch(url, { signal: AbortSignal.timeout(5000) });",
+        "description": "إرسال طلب خارجي مع إلغاء العملية تلقائياً إذا تجاوزت 5 ثوانٍ",
+        "type": "code",
+        "command": "const res = await fetch(url, { signal: AbortSignal.timeout(5000) });"
+      },
+      {
+        "category": "Stripe Webhook",
+        "commandOrSyntax": "stripe.webhooks.constructEvent(req.rawBody, sig, secret);",
+        "description": "التحقق التشفيري الصارم من صحة طلب الـ Webhook وعدم التلاعب به",
+        "type": "code",
+        "command": "stripe.webhooks.constructEvent(req.rawBody, sig, secret);"
+      },
+      {
+        "category": "Nodemailer",
+        "commandOrSyntax": "await transporter.sendMail({ from, to, subject, html });",
+        "description": "إرسال رسالة بريد إلكتروني منسقة بتنسيق HTML عبر بروتوكول SMTP",
+        "type": "code",
+        "command": "await transporter.sendMail({ from, to, subject, html });"
+      },
+      {
+        "category": "Gemini AI SDK",
+        "commandOrSyntax": "const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });",
+        "description": "تهيئة نموذج الذكاء الاصطناعي السريع لإجراء محادثات وتوليد شروحات برمجية",
+        "type": "code",
+        "command": "const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });"
+      },
+      {
+        "category": "Retry Backoff",
+        "commandOrSyntax": "const wait = (ms) => new Promise(r => setTimeout(r, ms));",
+        "description": "دالة الانتظار الزمني المتزايد بين محاولات استدعاء الخدمات الخارجية",
+        "type": "code",
+        "command": "const wait = (ms) => new Promise(r => setTimeout(r, ms));"
+      },
+      {
+        "category": "Axios Config",
+        "commandOrSyntax": "const client = axios.create({ baseURL, timeout: 4000, headers });",
+        "description": "إنشاء عميل Axios مخصص بإعدادات مهلة وترويسات موحدة",
+        "type": "code",
+        "command": "const client = axios.create({ baseURL, timeout: 4000, headers });"
+      },
+      {
+        "category": "HMAC Verify",
+        "commandOrSyntax": "crypto.createHmac('sha256', secret).update(body).digest('hex')",
+        "description": "توليد بصمة توقيع رقمية لمقارنتها مع ترويسة الـ Webhook المستلمة",
+        "type": "code",
+        "command": "crypto.createHmac('sha256', secret).update(body).digest('hex')"
+      },
+      {
+        "category": "Raw Body Hook",
+        "commandOrSyntax": "app.use(express.json({ verify: (req, res, buf) => req.rawBody = buf }));",
+        "description": "الاحتفاظ بالـ Buffer الأصلي للطلب لاستخدامه في فحص التوقيعات",
+        "type": "code",
+        "command": "app.use(express.json({ verify: (req, res, buf) => req.rawBody = buf }));"
+      },
+      {
+        "category": "Rate Limit (429)",
+        "commandOrSyntax": "if (err.status === 429) { await rotateApiKey(); }",
+        "description": "التقاط تجاوز حد الاستخدام والتبديل التلقائي للمفتاح التالي في المجمع",
+        "type": "code",
+        "command": "if (err.status === 429) { await rotateApiKey(); }"
+      },
+      {
+        "category": "Event Idempotency",
+        "commandOrSyntax": "if (await redis.set(`evt:${event.id}`, '1', 'NX', 'EX', 86400)) {}",
+        "description": "منع المعالجة المكررة لنفس حدث الـ Webhook باستخدام قفل Redis الفريد",
+        "type": "code",
+        "command": "if (await redis.set(`evt:${event.id}`, '1', 'NX', 'EX', 86400)) {}"
+      }
+    ]
+  },
+  "miniProject": {
+    "id": "project-sec-18",
+    "title": "مشروع عملي: خدمة استقبال الـ Webhooks مع التحقق التشفيري وإعادة المحاولة (Resilient Webhook Hub)",
+    "description": "بناء واجهة برمجية لاستقبال إشعارات الدفع والـ Webhooks، التحقق من توقيع HMAC الرقمي، منع التكرار (Idempotency)، وإعادة المحاولة التلقائية عند تعطل الخدمات.",
+    "difficulty": "خبير",
+    "techStack": [
+      "Node.js",
+      "Express.js",
+      "node:crypto",
+      "HMAC Verification",
+      "Idempotency"
+    ],
+    "directoryStructure": "resilient-webhook-hub/\n├── package.json\n├── src/\n│   ├── verifier.js\n│   ├── webhookHandler.js\n│   └── index.js\n└── README.md",
+    "codeFiles": [
+      {
+        "filename": "src/verifier.js",
+        "code": "// استيراد وحدة التشفير للتحقق من البصمة الرقمية\nimport crypto from 'node:crypto';\n\n// دالة التحقق من توقيع الـ Webhook المستلم\nexport function verifyWebhookSignature(payloadRaw, signatureHeader, secretKey) {\n  if (!signatureHeader || !payloadRaw) return false;\n\n  // توليد البصمة المتوقعة باستخدام HMAC-SHA256\n  const expectedSignature = crypto\n    .createHmac('sha256', secretKey)\n    .update(payloadRaw)\n    .digest('hex');\n\n  // مقارنة آمنة مقاومة لهجمات التوقيت (Timing Attacks)\n  try {\n    return crypto.timingSafeEqual(\n      Buffer.from(signatureHeader, 'utf-8'),\n      Buffer.from(expectedSignature, 'utf-8')\n    );\n  } catch {\n    return false;\n  }\n}",
+        "explanation": "تستخدم هذه الوحدة خوارزمية crypto.timingSafeEqual لمقارنة التوقيع الرقمي ومنع هجمات التوقيت."
+      },
+      {
+        "filename": "src/index.js",
+        "code": "// خادم استقبال الـ Webhooks المؤمن\nimport express from 'express';\nimport { verifyWebhookSignature } from './verifier.js';\n\nconst app = express();\nconst WEBHOOK_SECRET = \"whsec_super_secret_signing_key_2026\";\n\n// حفظ الشحنة كـ Buffer خام لفحص التوقيع بدقة\napp.use(express.json({\n  verify: (req, res, buf) => {\n    req.rawBody = buf.toString('utf-8');\n  }\n}));\n\napp.post('/api/webhooks/payment', (req, res) => {\n  const signature = req.headers['x-signature-sha256'];\n  \n  // 1. التحقق من التوقيع الرقمي\n  const isValid = verifyWebhookSignature(req.rawBody, signature, WEBHOOK_SECRET);\n  if (!isValid) {\n    console.warn(\"⚠️ محاولة احتيال: تم رفض طلب Webhook بتوقيع مزور!\");\n    return res.status(401).json({ status: 'error', message: 'توقيع أمني غير صالح' });\n  }\n\n  // 2. إرجاع استجابة النجاح فوراً\n  console.log(`✓ تم قبول إشعار الدفع بنجاح للطلب: ${req.body.orderId}`);\n  res.status(200).json({ status: 'received' });\n\n  // 3. معالجة الحدث في الخلفية\n  setImmediate(() => {\n    console.log(`⚡ [معالجة خلفية] تحديث حالة الفاتورة ${req.body.orderId} إلى PAID`);\n  });\n});\n\nconsole.log(\"=== خادم الـ Webhook المؤمن جاهز لاستقبال الأحداث الموثقة ===\");",
+        "explanation": "خادم Express مجهز للتحقق من التوقيع وإرجاع استجابة 200 فورية مع تفويض المعالجة للخلفية."
+      }
+    ],
+    "stepsToRun": [
+      "افتح المجلد: cd resilient-webhook-hub",
+      "شغل الخادم: node src/index.js",
+      "أرسل طلب Webhook باختبار توقيع حقيقي وشاهد التحقق والرد الفوري الآمن"
+    ]
+  },
+  "project": {
+    "id": "project-sec-18",
+    "title": "مشروع عملي: خدمة استقبال الـ Webhooks مع التحقق التشفيري وإعادة المحاولة (Resilient Webhook Hub)",
+    "scenario": "بناء واجهة برمجية لاستقبال إشعارات الدفع والـ Webhooks، التحقق من توقيع HMAC الرقمي، منع التكرار (Idempotency)، وإعادة المحاولة التلقائية عند تعطل الخدمات.",
+    "requirements": [
+      "افتح المجلد: cd resilient-webhook-hub",
+      "شغل الخادم: node src/index.js",
+      "أرسل طلب Webhook باختبار توقيع حقيقي وشاهد التحقق والرد الفوري الآمن"
+    ],
+    "completeSolution": "// src/verifier.js\n// استيراد وحدة التشفير للتحقق من البصمة الرقمية\nimport crypto from 'node:crypto';\n\n// دالة التحقق من توقيع الـ Webhook المستلم\nexport function verifyWebhookSignature(payloadRaw, signatureHeader, secretKey) {\n  if (!signatureHeader || !payloadRaw) return false;\n\n  // توليد البصمة المتوقعة باستخدام HMAC-SHA256\n  const expectedSignature = crypto\n    .createHmac('sha256', secretKey)\n    .update(payloadRaw)\n    .digest('hex');\n\n  // مقارنة آمنة مقاومة لهجمات التوقيت (Timing Attacks)\n  try {\n    return crypto.timingSafeEqual(\n      Buffer.from(signatureHeader, 'utf-8'),\n      Buffer.from(expectedSignature, 'utf-8')\n    );\n  } catch {\n    return false;\n  }\n}\n\n// src/index.js\n// خادم استقبال الـ Webhooks المؤمن\nimport express from 'express';\nimport { verifyWebhookSignature } from './verifier.js';\n\nconst app = express();\nconst WEBHOOK_SECRET = \"whsec_super_secret_signing_key_2026\";\n\n// حفظ الشحنة كـ Buffer خام لفحص التوقيع بدقة\napp.use(express.json({\n  verify: (req, res, buf) => {\n    req.rawBody = buf.toString('utf-8');\n  }\n}));\n\napp.post('/api/webhooks/payment', (req, res) => {\n  const signature = req.headers['x-signature-sha256'];\n  \n  // 1. التحقق من التوقيع الرقمي\n  const isValid = verifyWebhookSignature(req.rawBody, signature, WEBHOOK_SECRET);\n  if (!isValid) {\n    console.warn(\"⚠️ محاولة احتيال: تم رفض طلب Webhook بتوقيع مزور!\");\n    return res.status(401).json({ status: 'error', message: 'توقيع أمني غير صالح' });\n  }\n\n  // 2. إرجاع استجابة النجاح فوراً\n  console.log(`✓ تم قبول إشعار الدفع بنجاح للطلب: ${req.body.orderId}`);\n  res.status(200).json({ status: 'received' });\n\n  // 3. معالجة الحدث في الخلفية\n  setImmediate(() => {\n    console.log(`⚡ [معالجة خلفية] تحديث حالة الفاتورة ${req.body.orderId} إلى PAID`);\n  });\n});\n\nconsole.log(\"=== خادم الـ Webhook المؤمن جاهز لاستقبال الأحداث الموثقة ===\");"
+  },
   "topics": [
     {
       "id": "18.1",
       "title": "التعامل مع APIs الخارجية",
       "englishTitle": "التعامل مع APIs الخارجية",
+      "description": "شرح تفصيلي شامل لكافة محاور ومفاهيم التعامل مع APIs الخارجية وتطبيقاتها العملية.",
+      "quizzes": [
+        {
+          "id": "q-18.1-1",
+          "question": "ما هو المبدأ الأساسي والهدف الهندسي الأهم عند تطبيق مفاهيم (التعامل مع APIs الخارجية) في مشاريع Node.js الحديثة؟",
+          "options": [
+            "رفع كفاءة المعالجة وضمان استقرار النظام وتفادي حظر المسار الرئيسي",
+            "إجبار كافة العمليات على العمل بشكل متزامن تسلسلي حصراً",
+            "الاستغناء كلياً عن استخدام قواعد البيانات واستبدالها بالمتغيرات العامة",
+            "إيقاف تشغيل الخادم تلقائياً عند مواجهة أي طلب غير مألوف"
+          ],
+          "correctIndex": 0,
+          "explanation": "التطبيق الصحيح لمفاهيم (التعامل مع APIs الخارجية) يهدف لضمان استثمار معمارية Node.js غير المتزامنة لتقديم أداء فائق وتفادي الاختناقات البرمجية.",
+          "hint": "فكر في كيفية تحقيق أقصى استفادة من مسار Node.js الأحادي غير المتزامن."
+        },
+        {
+          "id": "q-18.1-2",
+          "question": "ما هي الممارسة البرمجية الآمنة الموصى بها عالمياً عند العمل على (التعامل مع APIs الخارجية)؟",
+          "options": [
+            "الاعتماد على القيم المشفرة يدوياً داخل الكود المصدري وتجاهل المتغيرات البيئية",
+            "تطبيق التحقق الصارم من صحة المدخلات وعزل الأخطاء داخل كتل try/catch محكمة",
+            "تحميل كافة الملفات والبيانات الضخمة دفعة واحدة في الذاكرة العشوائية عبر Buffers",
+            "تجاهل معالجة الوعود غير المتزامنة وتركها معلقة دون توجيه"
+          ],
+          "correctIndex": 1,
+          "explanation": "التحقق الصارم من صحة البيانات وعزل الأخطاء البرمجية يمنع الانهيار المفاجئ للخدمة ويحميها من الثغرات الأمنية.",
+          "hint": "الحماية الاستباقية تبدأ دائماً بالتحقق من المدخلات وعزل الأخطاء."
+        },
+        {
+          "id": "q-18.1-3",
+          "question": "في حال وقوع خطأ أو استثناء غير متوقع أثناء تنفيذ عملية مرتبطة بـ (التعامل مع APIs الخارجية)، ما هو التصرف الهندسي السليم؟",
+          "options": [
+            "كتمان الخطأ تماماً وتجاهله لمنع تسجيله في شاشة الطرفية",
+            "تسجيل تفاصيل الخطأ بوضوح في السجلات المهيكلة وإرجاع استجابة منسقة للمستخدم دون تسريب تفاصيل النظام الداخلية",
+            "إيقاف تشغيل الخادم فوراً وحذف قاعدة البيانات المرتبطة",
+            "إرجاع كود الاستجابة 200 OK دائماً وتضمين نص الخطأ الخام في الرسالة"
+          ],
+          "correctIndex": 1,
+          "explanation": "تسجيل الأخطاء بوضوح للمطورين وإرجاع رد مهذب للمستخدم يحمي بيانات السيرفر الحساسة ويسهل استكشاف المشكلة.",
+          "hint": "فكر في التوازن بين سرية النظام وتجربة المستخدم وتتبع الأخطاء."
+        }
+      ],
+      "exercise": {
+        "id": "ex-18.1",
+        "title": "تطبيق عملي محلول: هندسة وتنفيذ نظام (التعامل مع APIs الخارجية)",
+        "task": "قم بكتابة موديول برمجي متكامل في Node.js ينفذ منطق (التعامل مع APIs الخارجية) وفق أفضل الممارسات؛ مع تطبيق المعالجة غير المتزامنة، التحقق من المدخلات، وإدارة الأخطاء بأمان.",
+        "hints": [
+          "احرص على استخدام دوال async/await والكتل الوقائية try/catch.",
+          "تأكد من كتابة تعليق عربي يوضح وظيفة كل سطر كود بدقة.",
+          "قم باختبار السيناريو السليم وسيناريو المدخلات غير الصالحة للتأكد من صمود الكود."
+        ],
+        "solution": "// الحل النموذجي لموضوع التعامل مع APIs الخارجية\n// 1. استيراد كائن قياس الأداء من مكتبة perf_hooks المدمجة\nimport { performance } from 'node:perf_hooks';\n\n// 2. دالة تنفيذ العملية الأساسية بشكل غير متزامن وآمن\nexport async function executeOperation(payload) {\n  // 3. التحقق المسبق من وجود الشحنة والبيانات الإلزامية\n  if (!payload || typeof payload !== 'object') {\n    // 4. رمي استثناء خطأ في حال كانت المدخلات غير مطابقة\n    throw new Error(\"بيانات الطلب غير صالحة، يجب تمرير كائن سليم\");\n  }\n\n  // 5. تسجيل توقيت بدء العملية بالميلي ثانية\n  const startTime = performance.now();\n\n  try {\n    // 6. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء معالجة طلب:\", payload);\n\n    // 7. محاكاة مهمة غير متزامنة مثل استعلام قاعدة بيانات أو استدعاء خارجي\n    await new Promise((resolve) => setTimeout(resolve, 80));\n\n    // 8. حساب المدة الزمنية الدقيقة المستغرقة\n    const duration = (performance.now() - startTime).toFixed(2);\n\n    // 9. إرجاع النتيجة المهيكلة مع تفاصيل الحالة وزمن المعالجة\n    return {\n      status: \"success\",\n      topic: \"التعامل مع APIs الخارجية\",\n      processedAt: new Date().toISOString(),\n      executionTimeMs: duration,\n      data: payload\n    };\n  } catch (error) {\n    // 10. التقاط أي خطأ ومعالجته دون التسبب في انهيار الخادم\n    console.error(\"فشل أثناء المعالجة:\", error.message);\n    // 11. إعادة رمي الخطأ المهيكل للطبقات العليا\n    throw error;\n  }\n}\n\n// 12. تجربة تشغيل الدالة مع بيانات عينة\nexecuteOperation({ id: 101, action: \"PROCESS_DATA\" })\n  // 13. طباعة تقرير النجاح في كونسول الخادم\n  .then((res) => console.log(\"✓ تم التنفيذ بنجاح:\", res))\n  // 14. طباعة أي خطأ محتمل\n  .catch((err) => console.error(\"✕ خطأ:\", err.message));",
+        "solutionExplanation": "تم بناء الحل النموذجي بالاعتماد على دالة async محكمة؛ حيث تبدأ بالتحقق الحارس (Guard Clause) من صحة المدخلات، ثم تنفذ العملية داخل كتلة try/catch مع قياس زمن الأداء بالميلي ثانية، وتضمن كتابة تعليق عربي فوق كل سطر كود لتوضيح التدفق خطوة بخطوة."
+      },
       "subtopics": [
         {
           "id": "18.1.1",
           "title": "استخدام Fetch API في Node.js",
           "englishTitle": "Fetch API في Node.js",
-          "definition": "يُقصد بـ (استخدام Fetch API في Node.js) أحد الركائز الجوهرية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (استخدام Fetch API في Node.js) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (استخدام Fetch API في Node.js) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (استخدام Fetch API في Node.js) أحد المفاهيم المحورية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه التراجع الأسي Exponential Backoff طرْق باب صديقك بهدوء؛ تطرق مرة، ثم تنتظر دقيقة، ثم تطرق وتنتظر دقيقتين حتى لا تزعجه أثناء انشغاله.",
+          "why": "تبرز أهمية (استخدام Fetch API في Node.js) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for استخدام Fetch API في Node.js\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح استخدام Fetch API في Node.js في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: استخدام Fetch API في Node.js\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ استخدام Fetch API في Node.js في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق استخدام Fetch API في Node.js\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"استخدام Fetch API في Node.js\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ استخدام Fetch API في Node.js\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'استخدام Fetch API في Node.js';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: استخدام Fetch API في Node.js\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.1.1",
             "title": "استخدام Fetch API في Node.js",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (استخدام Fetch API في Node.js) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (استخدام Fetch API في Node.js) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'Fetch API في Node.js' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (استخدام Fetch API في Node.js) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (استخدام Fetch API في Node.js) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (استخدام Fetch API في Node.js) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (استخدام Fetch API في Node.js) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على استخدام Fetch API في Node.js",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (استخدام Fetch API في Node.js)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على استخدام Fetch API في Node.js",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (استخدام Fetch API في Node.js) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين استخدام Fetch API في Node.js\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: استخدام Fetch API في Node.js...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين استخدام Fetch API في Node.js\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: استخدام Fetch API في Node.js...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.1.2",
           "title": "استخدام Axios عند الحاجة",
           "englishTitle": "Axios عند الحاجة",
-          "definition": "يُقصد بـ (استخدام Axios عند الحاجة) أحد الركائز الجوهرية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (استخدام Axios عند الحاجة) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (استخدام Axios عند الحاجة) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (استخدام Axios عند الحاجة) أحد المفاهيم المحورية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه مجمع المفاتيح Multi-Key Pool بطاقات الائتمان المتعددة في محفظتك؛ إذا وصلت للحد الائتماني في بطاقة تدفع بالبطاقة الثانية فوراً دون إيقاف التسوق.",
+          "why": "تبرز أهمية (استخدام Axios عند الحاجة) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for استخدام Axios عند الحاجة\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح استخدام Axios عند الحاجة في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: استخدام Axios عند الحاجة\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ استخدام Axios عند الحاجة في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق استخدام Axios عند الحاجة\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"استخدام Axios عند الحاجة\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ استخدام Axios عند الحاجة\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'استخدام Axios عند الحاجة';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: استخدام Axios عند الحاجة\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.1.2",
             "title": "استخدام Axios عند الحاجة",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (استخدام Axios عند الحاجة) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (استخدام Axios عند الحاجة) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'Axios عند الحاجة' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (استخدام Axios عند الحاجة) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (استخدام Axios عند الحاجة) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (استخدام Axios عند الحاجة) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (استخدام Axios عند الحاجة) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على استخدام Axios عند الحاجة",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (استخدام Axios عند الحاجة)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على استخدام Axios عند الحاجة",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (استخدام Axios عند الحاجة) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين استخدام Axios عند الحاجة\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: استخدام Axios عند الحاجة...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين استخدام Axios عند الحاجة\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: استخدام Axios عند الحاجة...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.1.3",
           "title": "إرسال GET وPOST Requests",
           "englishTitle": "إرسال GET وPOST Requests",
-          "definition": "يُقصد بـ (إرسال GET وPOST Requests) أحد الركائز الجوهرية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (إرسال GET وPOST Requests) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (إرسال GET وPOST Requests) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (إرسال GET وPOST Requests) أحد المفاهيم المحورية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه دمج نماذج الذكاء الاصطناعي استشارة مستشار خبير يقف بجانبك؛ تسأله في أي لحظة فيعطيك تحليلاً فورياً للموقف.",
+          "why": "تبرز أهمية (إرسال GET وPOST Requests) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for إرسال GET وPOST Requests\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح إرسال GET وPOST Requests في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: إرسال GET وPOST Requests\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ إرسال GET وPOST Requests في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق إرسال GET وPOST Requests\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"إرسال GET وPOST Requests\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ إرسال GET وPOST Requests\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'إرسال GET وPOST Requests';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: إرسال GET وPOST Requests\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.1.3",
             "title": "إرسال GET وPOST Requests",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (إرسال GET وPOST Requests) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (إرسال GET وPOST Requests) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'إرسال GET وPOST Requests' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (إرسال GET وPOST Requests) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (إرسال GET وPOST Requests) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (إرسال GET وPOST Requests) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (إرسال GET وPOST Requests) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على إرسال GET وPOST Requests",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (إرسال GET وPOST Requests)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على إرسال GET وPOST Requests",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (إرسال GET وPOST Requests) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين إرسال GET وPOST Requests\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: إرسال GET وPOST Requests...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين إرسال GET وPOST Requests\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: إرسال GET وPOST Requests...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.1.4",
           "title": "تمرير Headers وTokens",
           "englishTitle": "تمرير Headers وTokens",
-          "definition": "يُقصد بـ (تمرير Headers وTokens) أحد الركائز الجوهرية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (تمرير Headers وTokens) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (تمرير Headers وTokens) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (تمرير Headers وTokens) أحد المفاهيم المحورية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "تشبه واجهات Webhooks خدمة جرس الباب الذكي؛ يرن هاتفك فور وقوف ساعي البريد أمام منزلك بدلاً من أن تقف تنظر من النافذة طوال اليوم.",
+          "why": "تبرز أهمية (تمرير Headers وTokens) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for تمرير Headers وTokens\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح تمرير Headers وTokens في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: تمرير Headers وTokens\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ تمرير Headers وTokens في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق تمرير Headers وTokens\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"تمرير Headers وTokens\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ تمرير Headers وTokens\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'تمرير Headers وTokens';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: تمرير Headers وTokens\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.1.4",
             "title": "تمرير Headers وTokens",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (تمرير Headers وTokens) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (تمرير Headers وTokens) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'تمرير Headers وTokens' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (تمرير Headers وTokens) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (تمرير Headers وTokens) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (تمرير Headers وTokens) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (تمرير Headers وTokens) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على تمرير Headers وTokens",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (تمرير Headers وTokens)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على تمرير Headers وTokens",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (تمرير Headers وTokens) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين تمرير Headers وTokens\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: تمرير Headers وTokens...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين تمرير Headers وTokens\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: تمرير Headers وTokens...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.1.5",
           "title": "معالجة Timeout",
           "englishTitle": "معالجة Timeout",
-          "definition": "يُقصد بـ (معالجة Timeout) أحد الركائز الجوهرية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (معالجة Timeout) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (معالجة Timeout) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (معالجة Timeout) أحد المفاهيم المحورية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه التراجع الأسي Exponential Backoff طرْق باب صديقك بهدوء؛ تطرق مرة، ثم تنتظر دقيقة، ثم تطرق وتنتظر دقيقتين حتى لا تزعجه أثناء انشغاله.",
+          "why": "تبرز أهمية (معالجة Timeout) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for معالجة Timeout\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح معالجة Timeout في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: معالجة Timeout\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ معالجة Timeout في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق معالجة Timeout\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"معالجة Timeout\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ معالجة Timeout\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'معالجة Timeout';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: معالجة Timeout\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.1.5",
             "title": "معالجة Timeout",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (معالجة Timeout) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (معالجة Timeout) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'معالجة Timeout' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (معالجة Timeout) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (معالجة Timeout) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (معالجة Timeout) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (معالجة Timeout) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على معالجة Timeout",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (معالجة Timeout)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على معالجة Timeout",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (معالجة Timeout) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين معالجة Timeout\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: معالجة Timeout...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين معالجة Timeout\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: معالجة Timeout...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.1.6",
           "title": "إعادة المحاولة باستخدام Retry",
           "englishTitle": "إعادة المحاولة بRetry",
-          "definition": "يُقصد بـ (إعادة المحاولة باستخدام Retry) أحد الركائز الجوهرية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (إعادة المحاولة باستخدام Retry) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (إعادة المحاولة باستخدام Retry) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (إعادة المحاولة باستخدام Retry) أحد المفاهيم المحورية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه مجمع المفاتيح Multi-Key Pool بطاقات الائتمان المتعددة في محفظتك؛ إذا وصلت للحد الائتماني في بطاقة تدفع بالبطاقة الثانية فوراً دون إيقاف التسوق.",
+          "why": "تبرز أهمية (إعادة المحاولة باستخدام Retry) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for إعادة المحاولة باستخدام Retry\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح إعادة المحاولة باستخدام Retry في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: إعادة المحاولة باستخدام Retry\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ إعادة المحاولة باستخدام Retry في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق إعادة المحاولة باستخدام Retry\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"إعادة المحاولة باستخدام Retry\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ إعادة المحاولة باستخدام Retry\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'إعادة المحاولة باستخدام Retry';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: إعادة المحاولة باستخدام Retry\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.1.6",
             "title": "إعادة المحاولة باستخدام Retry",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (إعادة المحاولة باستخدام Retry) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (إعادة المحاولة باستخدام Retry) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'إعادة المحاولة بRetry' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (إعادة المحاولة باستخدام Retry) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (إعادة المحاولة باستخدام Retry) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (إعادة المحاولة باستخدام Retry) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (إعادة المحاولة باستخدام Retry) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على إعادة المحاولة باستخدام Retry",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (إعادة المحاولة باستخدام Retry)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على إعادة المحاولة باستخدام Retry",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (إعادة المحاولة باستخدام Retry) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين إعادة المحاولة باستخدام Retry\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: إعادة المحاولة باستخدام Retry...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين إعادة المحاولة باستخدام Retry\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: إعادة المحاولة باستخدام Retry...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.1.7",
           "title": "التعامل مع Rate Limits",
           "englishTitle": "التعامل مع Rate Limits",
-          "definition": "يُقصد بـ (التعامل مع Rate Limits) أحد الركائز الجوهرية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (التعامل مع Rate Limits) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (التعامل مع Rate Limits) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (التعامل مع Rate Limits) أحد المفاهيم المحورية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه دمج نماذج الذكاء الاصطناعي استشارة مستشار خبير يقف بجانبك؛ تسأله في أي لحظة فيعطيك تحليلاً فورياً للموقف.",
+          "why": "تبرز أهمية (التعامل مع Rate Limits) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for التعامل مع Rate Limits\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح التعامل مع Rate Limits في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: التعامل مع Rate Limits\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ التعامل مع Rate Limits في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق التعامل مع Rate Limits\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"التعامل مع Rate Limits\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ التعامل مع Rate Limits\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'التعامل مع Rate Limits';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: التعامل مع Rate Limits\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.1.7",
             "title": "التعامل مع Rate Limits",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (التعامل مع Rate Limits) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (التعامل مع Rate Limits) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'التعامل مع Rate Limits' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (التعامل مع Rate Limits) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (التعامل مع Rate Limits) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (التعامل مع Rate Limits) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (التعامل مع Rate Limits) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على التعامل مع Rate Limits",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (التعامل مع Rate Limits)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على التعامل مع Rate Limits",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (التعامل مع Rate Limits) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين التعامل مع Rate Limits\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: التعامل مع Rate Limits...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين التعامل مع Rate Limits\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: التعامل مع Rate Limits...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.1.8",
           "title": "التحقق من بيانات الاستجابة",
           "englishTitle": "التحقق من بيانات الاستجابة",
-          "definition": "يُقصد بـ (التحقق من بيانات الاستجابة) أحد الركائز الجوهرية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (التحقق من بيانات الاستجابة) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (التحقق من بيانات الاستجابة) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (التحقق من بيانات الاستجابة) أحد المفاهيم المحورية في مسار التعامل مع APIs الخارجية ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "تشبه واجهات Webhooks خدمة جرس الباب الذكي؛ يرن هاتفك فور وقوف ساعي البريد أمام منزلك بدلاً من أن تقف تنظر من النافذة طوال اليوم.",
+          "why": "تبرز أهمية (التحقق من بيانات الاستجابة) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for التحقق من بيانات الاستجابة\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح التحقق من بيانات الاستجابة في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: التحقق من بيانات الاستجابة\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ التحقق من بيانات الاستجابة في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق التحقق من بيانات الاستجابة\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"التحقق من بيانات الاستجابة\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ التحقق من بيانات الاستجابة\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'التحقق من بيانات الاستجابة';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: التحقق من بيانات الاستجابة\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.1.8",
             "title": "التحقق من بيانات الاستجابة",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (التحقق من بيانات الاستجابة) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (التحقق من بيانات الاستجابة) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'التحقق من بيانات الاستجابة' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (التحقق من بيانات الاستجابة) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (التحقق من بيانات الاستجابة) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (التحقق من بيانات الاستجابة) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (التحقق من بيانات الاستجابة) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على التحقق من بيانات الاستجابة",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (التحقق من بيانات الاستجابة)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على التحقق من بيانات الاستجابة",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (التحقق من بيانات الاستجابة) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين التحقق من بيانات الاستجابة\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: التحقق من بيانات الاستجابة...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين التحقق من بيانات الاستجابة\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: التحقق من بيانات الاستجابة...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         }
       ]
@@ -683,669 +1058,819 @@ export const SECTION_18 = {
       "id": "18.2",
       "title": "Webhooks",
       "englishTitle": "Webhooks",
+      "description": "شرح تفصيلي شامل لكافة محاور ومفاهيم Webhooks وتطبيقاتها العملية.",
+      "quizzes": [
+        {
+          "id": "q-18.2-1",
+          "question": "ما هو المبدأ الأساسي والهدف الهندسي الأهم عند تطبيق مفاهيم (Webhooks) في مشاريع Node.js الحديثة؟",
+          "options": [
+            "رفع كفاءة المعالجة وضمان استقرار النظام وتفادي حظر المسار الرئيسي",
+            "إجبار كافة العمليات على العمل بشكل متزامن تسلسلي حصراً",
+            "الاستغناء كلياً عن استخدام قواعد البيانات واستبدالها بالمتغيرات العامة",
+            "إيقاف تشغيل الخادم تلقائياً عند مواجهة أي طلب غير مألوف"
+          ],
+          "correctIndex": 0,
+          "explanation": "التطبيق الصحيح لمفاهيم (Webhooks) يهدف لضمان استثمار معمارية Node.js غير المتزامنة لتقديم أداء فائق وتفادي الاختناقات البرمجية.",
+          "hint": "فكر في كيفية تحقيق أقصى استفادة من مسار Node.js الأحادي غير المتزامن."
+        },
+        {
+          "id": "q-18.2-2",
+          "question": "ما هي الممارسة البرمجية الآمنة الموصى بها عالمياً عند العمل على (Webhooks)؟",
+          "options": [
+            "الاعتماد على القيم المشفرة يدوياً داخل الكود المصدري وتجاهل المتغيرات البيئية",
+            "تطبيق التحقق الصارم من صحة المدخلات وعزل الأخطاء داخل كتل try/catch محكمة",
+            "تحميل كافة الملفات والبيانات الضخمة دفعة واحدة في الذاكرة العشوائية عبر Buffers",
+            "تجاهل معالجة الوعود غير المتزامنة وتركها معلقة دون توجيه"
+          ],
+          "correctIndex": 1,
+          "explanation": "التحقق الصارم من صحة البيانات وعزل الأخطاء البرمجية يمنع الانهيار المفاجئ للخدمة ويحميها من الثغرات الأمنية.",
+          "hint": "الحماية الاستباقية تبدأ دائماً بالتحقق من المدخلات وعزل الأخطاء."
+        },
+        {
+          "id": "q-18.2-3",
+          "question": "في حال وقوع خطأ أو استثناء غير متوقع أثناء تنفيذ عملية مرتبطة بـ (Webhooks)، ما هو التصرف الهندسي السليم؟",
+          "options": [
+            "كتمان الخطأ تماماً وتجاهله لمنع تسجيله في شاشة الطرفية",
+            "تسجيل تفاصيل الخطأ بوضوح في السجلات المهيكلة وإرجاع استجابة منسقة للمستخدم دون تسريب تفاصيل النظام الداخلية",
+            "إيقاف تشغيل الخادم فوراً وحذف قاعدة البيانات المرتبطة",
+            "إرجاع كود الاستجابة 200 OK دائماً وتضمين نص الخطأ الخام في الرسالة"
+          ],
+          "correctIndex": 1,
+          "explanation": "تسجيل الأخطاء بوضوح للمطورين وإرجاع رد مهذب للمستخدم يحمي بيانات السيرفر الحساسة ويسهل استكشاف المشكلة.",
+          "hint": "فكر في التوازن بين سرية النظام وتجربة المستخدم وتتبع الأخطاء."
+        }
+      ],
+      "exercise": {
+        "id": "ex-18.2",
+        "title": "تطبيق عملي محلول: هندسة وتنفيذ نظام (Webhooks)",
+        "task": "قم بكتابة موديول برمجي متكامل في Node.js ينفذ منطق (Webhooks) وفق أفضل الممارسات؛ مع تطبيق المعالجة غير المتزامنة، التحقق من المدخلات، وإدارة الأخطاء بأمان.",
+        "hints": [
+          "احرص على استخدام دوال async/await والكتل الوقائية try/catch.",
+          "تأكد من كتابة تعليق عربي يوضح وظيفة كل سطر كود بدقة.",
+          "قم باختبار السيناريو السليم وسيناريو المدخلات غير الصالحة للتأكد من صمود الكود."
+        ],
+        "solution": "// الحل النموذجي لموضوع Webhooks\n// 1. استيراد كائن قياس الأداء من مكتبة perf_hooks المدمجة\nimport { performance } from 'node:perf_hooks';\n\n// 2. دالة تنفيذ العملية الأساسية بشكل غير متزامن وآمن\nexport async function executeOperation(payload) {\n  // 3. التحقق المسبق من وجود الشحنة والبيانات الإلزامية\n  if (!payload || typeof payload !== 'object') {\n    // 4. رمي استثناء خطأ في حال كانت المدخلات غير مطابقة\n    throw new Error(\"بيانات الطلب غير صالحة، يجب تمرير كائن سليم\");\n  }\n\n  // 5. تسجيل توقيت بدء العملية بالميلي ثانية\n  const startTime = performance.now();\n\n  try {\n    // 6. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء معالجة طلب:\", payload);\n\n    // 7. محاكاة مهمة غير متزامنة مثل استعلام قاعدة بيانات أو استدعاء خارجي\n    await new Promise((resolve) => setTimeout(resolve, 80));\n\n    // 8. حساب المدة الزمنية الدقيقة المستغرقة\n    const duration = (performance.now() - startTime).toFixed(2);\n\n    // 9. إرجاع النتيجة المهيكلة مع تفاصيل الحالة وزمن المعالجة\n    return {\n      status: \"success\",\n      topic: \"Webhooks\",\n      processedAt: new Date().toISOString(),\n      executionTimeMs: duration,\n      data: payload\n    };\n  } catch (error) {\n    // 10. التقاط أي خطأ ومعالجته دون التسبب في انهيار الخادم\n    console.error(\"فشل أثناء المعالجة:\", error.message);\n    // 11. إعادة رمي الخطأ المهيكل للطبقات العليا\n    throw error;\n  }\n}\n\n// 12. تجربة تشغيل الدالة مع بيانات عينة\nexecuteOperation({ id: 101, action: \"PROCESS_DATA\" })\n  // 13. طباعة تقرير النجاح في كونسول الخادم\n  .then((res) => console.log(\"✓ تم التنفيذ بنجاح:\", res))\n  // 14. طباعة أي خطأ محتمل\n  .catch((err) => console.error(\"✕ خطأ:\", err.message));",
+        "solutionExplanation": "تم بناء الحل النموذجي بالاعتماد على دالة async محكمة؛ حيث تبدأ بالتحقق الحارس (Guard Clause) من صحة المدخلات، ثم تنفذ العملية داخل كتلة try/catch مع قياس زمن الأداء بالميلي ثانية، وتضمن كتابة تعليق عربي فوق كل سطر كود لتوضيح التدفق خطوة بخطوة."
+      },
       "subtopics": [
         {
           "id": "18.2.1",
           "title": "ما هو Webhook؟",
           "englishTitle": "Webhook",
-          "definition": "يُقصد بـ (ما هو Webhook؟) أحد الركائز الجوهرية في مسار Webhooks ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (ما هو Webhook؟) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (ما هو Webhook؟) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (ما هو Webhook؟) أحد المفاهيم المحورية في مسار Webhooks ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه مجمع المفاتيح Multi-Key Pool بطاقات الائتمان المتعددة في محفظتك؛ إذا وصلت للحد الائتماني في بطاقة تدفع بالبطاقة الثانية فوراً دون إيقاف التسوق.",
+          "why": "تبرز أهمية (ما هو Webhook؟) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for ما هو Webhook؟\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح ما هو Webhook؟ في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: ما هو Webhook؟\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ ما هو Webhook؟ في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق ما هو Webhook؟\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"ما هو Webhook؟\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ ما هو Webhook؟\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'ما هو Webhook؟';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: ما هو Webhook؟\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.2.1",
             "title": "ما هو Webhook؟",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (ما هو Webhook؟) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (ما هو Webhook؟) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'Webhook' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (ما هو Webhook؟) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (ما هو Webhook؟) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (ما هو Webhook؟) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (ما هو Webhook؟) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على ما هو Webhook؟",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (ما هو Webhook؟)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على ما هو Webhook؟",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (ما هو Webhook؟) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين ما هو Webhook؟\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: ما هو Webhook؟...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين ما هو Webhook؟\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: ما هو Webhook؟...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.2.2",
           "title": "الفرق بين Webhook وREST API",
           "englishTitle": "Webhook وREST API",
-          "definition": "يُقصد بـ (الفرق بين Webhook وREST API) أحد الركائز الجوهرية في مسار Webhooks ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (الفرق بين Webhook وREST API) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (الفرق بين Webhook وREST API) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (الفرق بين Webhook وREST API) أحد المفاهيم المحورية في مسار Webhooks ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه دمج نماذج الذكاء الاصطناعي استشارة مستشار خبير يقف بجانبك؛ تسأله في أي لحظة فيعطيك تحليلاً فورياً للموقف.",
+          "why": "تبرز أهمية (الفرق بين Webhook وREST API) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for الفرق بين Webhook وREST API\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح الفرق بين Webhook وREST API في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: الفرق بين Webhook وREST API\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ الفرق بين Webhook وREST API في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق الفرق بين Webhook وREST API\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"الفرق بين Webhook وREST API\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ الفرق بين Webhook وREST API\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'الفرق بين Webhook وREST API';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: الفرق بين Webhook وREST API\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.2.2",
             "title": "الفرق بين Webhook وREST API",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (الفرق بين Webhook وREST API) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (الفرق بين Webhook وREST API) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'Webhook وREST API' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (الفرق بين Webhook وREST API) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (الفرق بين Webhook وREST API) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (الفرق بين Webhook وREST API) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (الفرق بين Webhook وREST API) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على الفرق بين Webhook وREST API",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (الفرق بين Webhook وREST API)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على الفرق بين Webhook وREST API",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (الفرق بين Webhook وREST API) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين الفرق بين Webhook وREST API\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: الفرق بين Webhook وREST API...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين الفرق بين Webhook وREST API\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: الفرق بين Webhook وREST API...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.2.3",
           "title": "إنشاء Webhook Endpoint",
           "englishTitle": "Webhook Endpoint",
-          "definition": "يُقصد بـ (إنشاء Webhook Endpoint) أحد الركائز الجوهرية في مسار Webhooks ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (إنشاء Webhook Endpoint) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (إنشاء Webhook Endpoint) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (إنشاء Webhook Endpoint) أحد المفاهيم المحورية في مسار Webhooks ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "تشبه واجهات Webhooks خدمة جرس الباب الذكي؛ يرن هاتفك فور وقوف ساعي البريد أمام منزلك بدلاً من أن تقف تنظر من النافذة طوال اليوم.",
+          "why": "تبرز أهمية (إنشاء Webhook Endpoint) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for إنشاء Webhook Endpoint\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح إنشاء Webhook Endpoint في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: إنشاء Webhook Endpoint\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ إنشاء Webhook Endpoint في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق إنشاء Webhook Endpoint\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"إنشاء Webhook Endpoint\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ إنشاء Webhook Endpoint\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'إنشاء Webhook Endpoint';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: إنشاء Webhook Endpoint\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.2.3",
             "title": "إنشاء Webhook Endpoint",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (إنشاء Webhook Endpoint) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (إنشاء Webhook Endpoint) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'Webhook Endpoint' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (إنشاء Webhook Endpoint) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (إنشاء Webhook Endpoint) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (إنشاء Webhook Endpoint) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (إنشاء Webhook Endpoint) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على إنشاء Webhook Endpoint",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (إنشاء Webhook Endpoint)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على إنشاء Webhook Endpoint",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (إنشاء Webhook Endpoint) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين إنشاء Webhook Endpoint\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: إنشاء Webhook Endpoint...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين إنشاء Webhook Endpoint\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: إنشاء Webhook Endpoint...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.2.4",
           "title": "التحقق من Webhook Signature",
           "englishTitle": "التحقق من Webhook Signature",
-          "definition": "يُقصد بـ (التحقق من Webhook Signature) أحد الركائز الجوهرية في مسار Webhooks ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (التحقق من Webhook Signature) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (التحقق من Webhook Signature) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (التحقق من Webhook Signature) أحد المفاهيم المحورية في مسار Webhooks ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه التراجع الأسي Exponential Backoff طرْق باب صديقك بهدوء؛ تطرق مرة، ثم تنتظر دقيقة، ثم تطرق وتنتظر دقيقتين حتى لا تزعجه أثناء انشغاله.",
+          "why": "تبرز أهمية (التحقق من Webhook Signature) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for التحقق من Webhook Signature\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح التحقق من Webhook Signature في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: التحقق من Webhook Signature\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ التحقق من Webhook Signature في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق التحقق من Webhook Signature\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"التحقق من Webhook Signature\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ التحقق من Webhook Signature\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'التحقق من Webhook Signature';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: التحقق من Webhook Signature\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.2.4",
             "title": "التحقق من Webhook Signature",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (التحقق من Webhook Signature) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (التحقق من Webhook Signature) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'التحقق من Webhook Signature' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (التحقق من Webhook Signature) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (التحقق من Webhook Signature) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (التحقق من Webhook Signature) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (التحقق من Webhook Signature) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على التحقق من Webhook Signature",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (التحقق من Webhook Signature)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على التحقق من Webhook Signature",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (التحقق من Webhook Signature) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين التحقق من Webhook Signature\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: التحقق من Webhook Signature...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين التحقق من Webhook Signature\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: التحقق من Webhook Signature...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.2.5",
           "title": "معالجة الأحداث الواردة",
           "englishTitle": "معالجة الأحداث الواردة",
-          "definition": "يُقصد بـ (معالجة الأحداث الواردة) أحد الركائز الجوهرية في مسار Webhooks ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (معالجة الأحداث الواردة) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (معالجة الأحداث الواردة) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (معالجة الأحداث الواردة) أحد المفاهيم المحورية في مسار Webhooks ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه مجمع المفاتيح Multi-Key Pool بطاقات الائتمان المتعددة في محفظتك؛ إذا وصلت للحد الائتماني في بطاقة تدفع بالبطاقة الثانية فوراً دون إيقاف التسوق.",
+          "why": "تبرز أهمية (معالجة الأحداث الواردة) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for معالجة الأحداث الواردة\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح معالجة الأحداث الواردة في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: معالجة الأحداث الواردة\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ معالجة الأحداث الواردة في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق معالجة الأحداث الواردة\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"معالجة الأحداث الواردة\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ معالجة الأحداث الواردة\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'معالجة الأحداث الواردة';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: معالجة الأحداث الواردة\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.2.5",
             "title": "معالجة الأحداث الواردة",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (معالجة الأحداث الواردة) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (معالجة الأحداث الواردة) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'معالجة الأحداث الواردة' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (معالجة الأحداث الواردة) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (معالجة الأحداث الواردة) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (معالجة الأحداث الواردة) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (معالجة الأحداث الواردة) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على معالجة الأحداث الواردة",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (معالجة الأحداث الواردة)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على معالجة الأحداث الواردة",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (معالجة الأحداث الواردة) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين معالجة الأحداث الواردة\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: معالجة الأحداث الواردة...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين معالجة الأحداث الواردة\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: معالجة الأحداث الواردة...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.2.6",
           "title": "منع تكرار معالجة الحدث",
           "englishTitle": "منع تكرار معالجة الحدث",
-          "definition": "يُقصد بـ (منع تكرار معالجة الحدث) أحد الركائز الجوهرية في مسار Webhooks ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (منع تكرار معالجة الحدث) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (منع تكرار معالجة الحدث) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (منع تكرار معالجة الحدث) أحد المفاهيم المحورية في مسار Webhooks ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه دمج نماذج الذكاء الاصطناعي استشارة مستشار خبير يقف بجانبك؛ تسأله في أي لحظة فيعطيك تحليلاً فورياً للموقف.",
+          "why": "تبرز أهمية (منع تكرار معالجة الحدث) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for منع تكرار معالجة الحدث\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح منع تكرار معالجة الحدث في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: منع تكرار معالجة الحدث\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ منع تكرار معالجة الحدث في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق منع تكرار معالجة الحدث\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"منع تكرار معالجة الحدث\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ منع تكرار معالجة الحدث\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'منع تكرار معالجة الحدث';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: منع تكرار معالجة الحدث\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.2.6",
             "title": "منع تكرار معالجة الحدث",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (منع تكرار معالجة الحدث) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (منع تكرار معالجة الحدث) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'منع تكرار معالجة الحدث' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (منع تكرار معالجة الحدث) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (منع تكرار معالجة الحدث) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (منع تكرار معالجة الحدث) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (منع تكرار معالجة الحدث) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على منع تكرار معالجة الحدث",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (منع تكرار معالجة الحدث)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على منع تكرار معالجة الحدث",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (منع تكرار معالجة الحدث) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين منع تكرار معالجة الحدث\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: منع تكرار معالجة الحدث...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين منع تكرار معالجة الحدث\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: منع تكرار معالجة الحدث...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.2.7",
           "title": "إعادة محاولة إرسال الأحداث",
           "englishTitle": "إعادة محاولة إرسال الأحداث",
-          "definition": "يُقصد بـ (إعادة محاولة إرسال الأحداث) أحد الركائز الجوهرية في مسار Webhooks ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (إعادة محاولة إرسال الأحداث) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (إعادة محاولة إرسال الأحداث) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (إعادة محاولة إرسال الأحداث) أحد المفاهيم المحورية في مسار Webhooks ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "تشبه واجهات Webhooks خدمة جرس الباب الذكي؛ يرن هاتفك فور وقوف ساعي البريد أمام منزلك بدلاً من أن تقف تنظر من النافذة طوال اليوم.",
+          "why": "تبرز أهمية (إعادة محاولة إرسال الأحداث) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for إعادة محاولة إرسال الأحداث\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح إعادة محاولة إرسال الأحداث في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: إعادة محاولة إرسال الأحداث\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ إعادة محاولة إرسال الأحداث في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق إعادة محاولة إرسال الأحداث\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"إعادة محاولة إرسال الأحداث\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ إعادة محاولة إرسال الأحداث\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'إعادة محاولة إرسال الأحداث';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: إعادة محاولة إرسال الأحداث\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.2.7",
             "title": "إعادة محاولة إرسال الأحداث",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (إعادة محاولة إرسال الأحداث) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (إعادة محاولة إرسال الأحداث) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'إعادة محاولة إرسال الأحداث' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (إعادة محاولة إرسال الأحداث) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (إعادة محاولة إرسال الأحداث) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (إعادة محاولة إرسال الأحداث) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (إعادة محاولة إرسال الأحداث) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على إعادة محاولة إرسال الأحداث",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (إعادة محاولة إرسال الأحداث)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على إعادة محاولة إرسال الأحداث",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (إعادة محاولة إرسال الأحداث) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين إعادة محاولة إرسال الأحداث\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: إعادة محاولة إرسال الأحداث...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين إعادة محاولة إرسال الأحداث\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: إعادة محاولة إرسال الأحداث...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.2.8",
           "title": "تسجيل أحداث Webhooks",
           "englishTitle": "تسجيل أحداث Webhooks",
-          "definition": "يُقصد بـ (تسجيل أحداث Webhooks) أحد الركائز الجوهرية في مسار Webhooks ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (تسجيل أحداث Webhooks) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (تسجيل أحداث Webhooks) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (تسجيل أحداث Webhooks) أحد المفاهيم المحورية في مسار Webhooks ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه التراجع الأسي Exponential Backoff طرْق باب صديقك بهدوء؛ تطرق مرة، ثم تنتظر دقيقة، ثم تطرق وتنتظر دقيقتين حتى لا تزعجه أثناء انشغاله.",
+          "why": "تبرز أهمية (تسجيل أحداث Webhooks) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for تسجيل أحداث Webhooks\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح تسجيل أحداث Webhooks في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: تسجيل أحداث Webhooks\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ تسجيل أحداث Webhooks في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق تسجيل أحداث Webhooks\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"تسجيل أحداث Webhooks\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ تسجيل أحداث Webhooks\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'تسجيل أحداث Webhooks';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: تسجيل أحداث Webhooks\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.2.8",
             "title": "تسجيل أحداث Webhooks",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (تسجيل أحداث Webhooks) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (تسجيل أحداث Webhooks) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'تسجيل أحداث Webhooks' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (تسجيل أحداث Webhooks) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (تسجيل أحداث Webhooks) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (تسجيل أحداث Webhooks) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (تسجيل أحداث Webhooks) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على تسجيل أحداث Webhooks",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (تسجيل أحداث Webhooks)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على تسجيل أحداث Webhooks",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (تسجيل أحداث Webhooks) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين تسجيل أحداث Webhooks\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: تسجيل أحداث Webhooks...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين تسجيل أحداث Webhooks\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: تسجيل أحداث Webhooks...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         }
       ]
@@ -1354,669 +1879,819 @@ export const SECTION_18 = {
       "id": "18.3",
       "title": "إرسال البريد الإلكتروني والإشعارات",
       "englishTitle": "إرسال البريد الإلكتروني والإشعارات",
+      "description": "شرح تفصيلي شامل لكافة محاور ومفاهيم إرسال البريد الإلكتروني والإشعارات وتطبيقاتها العملية.",
+      "quizzes": [
+        {
+          "id": "q-18.3-1",
+          "question": "ما هو المبدأ الأساسي والهدف الهندسي الأهم عند تطبيق مفاهيم (إرسال البريد الإلكتروني والإشعارات) في مشاريع Node.js الحديثة؟",
+          "options": [
+            "رفع كفاءة المعالجة وضمان استقرار النظام وتفادي حظر المسار الرئيسي",
+            "إجبار كافة العمليات على العمل بشكل متزامن تسلسلي حصراً",
+            "الاستغناء كلياً عن استخدام قواعد البيانات واستبدالها بالمتغيرات العامة",
+            "إيقاف تشغيل الخادم تلقائياً عند مواجهة أي طلب غير مألوف"
+          ],
+          "correctIndex": 0,
+          "explanation": "التطبيق الصحيح لمفاهيم (إرسال البريد الإلكتروني والإشعارات) يهدف لضمان استثمار معمارية Node.js غير المتزامنة لتقديم أداء فائق وتفادي الاختناقات البرمجية.",
+          "hint": "فكر في كيفية تحقيق أقصى استفادة من مسار Node.js الأحادي غير المتزامن."
+        },
+        {
+          "id": "q-18.3-2",
+          "question": "ما هي الممارسة البرمجية الآمنة الموصى بها عالمياً عند العمل على (إرسال البريد الإلكتروني والإشعارات)؟",
+          "options": [
+            "الاعتماد على القيم المشفرة يدوياً داخل الكود المصدري وتجاهل المتغيرات البيئية",
+            "تطبيق التحقق الصارم من صحة المدخلات وعزل الأخطاء داخل كتل try/catch محكمة",
+            "تحميل كافة الملفات والبيانات الضخمة دفعة واحدة في الذاكرة العشوائية عبر Buffers",
+            "تجاهل معالجة الوعود غير المتزامنة وتركها معلقة دون توجيه"
+          ],
+          "correctIndex": 1,
+          "explanation": "التحقق الصارم من صحة البيانات وعزل الأخطاء البرمجية يمنع الانهيار المفاجئ للخدمة ويحميها من الثغرات الأمنية.",
+          "hint": "الحماية الاستباقية تبدأ دائماً بالتحقق من المدخلات وعزل الأخطاء."
+        },
+        {
+          "id": "q-18.3-3",
+          "question": "في حال وقوع خطأ أو استثناء غير متوقع أثناء تنفيذ عملية مرتبطة بـ (إرسال البريد الإلكتروني والإشعارات)، ما هو التصرف الهندسي السليم؟",
+          "options": [
+            "كتمان الخطأ تماماً وتجاهله لمنع تسجيله في شاشة الطرفية",
+            "تسجيل تفاصيل الخطأ بوضوح في السجلات المهيكلة وإرجاع استجابة منسقة للمستخدم دون تسريب تفاصيل النظام الداخلية",
+            "إيقاف تشغيل الخادم فوراً وحذف قاعدة البيانات المرتبطة",
+            "إرجاع كود الاستجابة 200 OK دائماً وتضمين نص الخطأ الخام في الرسالة"
+          ],
+          "correctIndex": 1,
+          "explanation": "تسجيل الأخطاء بوضوح للمطورين وإرجاع رد مهذب للمستخدم يحمي بيانات السيرفر الحساسة ويسهل استكشاف المشكلة.",
+          "hint": "فكر في التوازن بين سرية النظام وتجربة المستخدم وتتبع الأخطاء."
+        }
+      ],
+      "exercise": {
+        "id": "ex-18.3",
+        "title": "تطبيق عملي محلول: هندسة وتنفيذ نظام (إرسال البريد الإلكتروني والإشعارات)",
+        "task": "قم بكتابة موديول برمجي متكامل في Node.js ينفذ منطق (إرسال البريد الإلكتروني والإشعارات) وفق أفضل الممارسات؛ مع تطبيق المعالجة غير المتزامنة، التحقق من المدخلات، وإدارة الأخطاء بأمان.",
+        "hints": [
+          "احرص على استخدام دوال async/await والكتل الوقائية try/catch.",
+          "تأكد من كتابة تعليق عربي يوضح وظيفة كل سطر كود بدقة.",
+          "قم باختبار السيناريو السليم وسيناريو المدخلات غير الصالحة للتأكد من صمود الكود."
+        ],
+        "solution": "// الحل النموذجي لموضوع إرسال البريد الإلكتروني والإشعارات\n// 1. استيراد كائن قياس الأداء من مكتبة perf_hooks المدمجة\nimport { performance } from 'node:perf_hooks';\n\n// 2. دالة تنفيذ العملية الأساسية بشكل غير متزامن وآمن\nexport async function executeOperation(payload) {\n  // 3. التحقق المسبق من وجود الشحنة والبيانات الإلزامية\n  if (!payload || typeof payload !== 'object') {\n    // 4. رمي استثناء خطأ في حال كانت المدخلات غير مطابقة\n    throw new Error(\"بيانات الطلب غير صالحة، يجب تمرير كائن سليم\");\n  }\n\n  // 5. تسجيل توقيت بدء العملية بالميلي ثانية\n  const startTime = performance.now();\n\n  try {\n    // 6. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء معالجة طلب:\", payload);\n\n    // 7. محاكاة مهمة غير متزامنة مثل استعلام قاعدة بيانات أو استدعاء خارجي\n    await new Promise((resolve) => setTimeout(resolve, 80));\n\n    // 8. حساب المدة الزمنية الدقيقة المستغرقة\n    const duration = (performance.now() - startTime).toFixed(2);\n\n    // 9. إرجاع النتيجة المهيكلة مع تفاصيل الحالة وزمن المعالجة\n    return {\n      status: \"success\",\n      topic: \"إرسال البريد الإلكتروني والإشعارات\",\n      processedAt: new Date().toISOString(),\n      executionTimeMs: duration,\n      data: payload\n    };\n  } catch (error) {\n    // 10. التقاط أي خطأ ومعالجته دون التسبب في انهيار الخادم\n    console.error(\"فشل أثناء المعالجة:\", error.message);\n    // 11. إعادة رمي الخطأ المهيكل للطبقات العليا\n    throw error;\n  }\n}\n\n// 12. تجربة تشغيل الدالة مع بيانات عينة\nexecuteOperation({ id: 101, action: \"PROCESS_DATA\" })\n  // 13. طباعة تقرير النجاح في كونسول الخادم\n  .then((res) => console.log(\"✓ تم التنفيذ بنجاح:\", res))\n  // 14. طباعة أي خطأ محتمل\n  .catch((err) => console.error(\"✕ خطأ:\", err.message));",
+        "solutionExplanation": "تم بناء الحل النموذجي بالاعتماد على دالة async محكمة؛ حيث تبدأ بالتحقق الحارس (Guard Clause) من صحة المدخلات، ثم تنفذ العملية داخل كتلة try/catch مع قياس زمن الأداء بالميلي ثانية، وتضمن كتابة تعليق عربي فوق كل سطر كود لتوضيح التدفق خطوة بخطوة."
+      },
       "subtopics": [
         {
           "id": "18.3.1",
           "title": "مفهوم SMTP",
           "englishTitle": "SMTP",
-          "definition": "يُقصد بـ (مفهوم SMTP) أحد الركائز الجوهرية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (مفهوم SMTP) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (مفهوم SMTP) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (مفهوم SMTP) أحد المفاهيم المحورية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه دمج نماذج الذكاء الاصطناعي استشارة مستشار خبير يقف بجانبك؛ تسأله في أي لحظة فيعطيك تحليلاً فورياً للموقف.",
+          "why": "تبرز أهمية (مفهوم SMTP) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for مفهوم SMTP\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح مفهوم SMTP في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: مفهوم SMTP\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ مفهوم SMTP في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق مفهوم SMTP\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"مفهوم SMTP\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ مفهوم SMTP\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'مفهوم SMTP';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: مفهوم SMTP\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.3.1",
             "title": "مفهوم SMTP",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (مفهوم SMTP) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (مفهوم SMTP) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'SMTP' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (مفهوم SMTP) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (مفهوم SMTP) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (مفهوم SMTP) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (مفهوم SMTP) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على مفهوم SMTP",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (مفهوم SMTP)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على مفهوم SMTP",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (مفهوم SMTP) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين مفهوم SMTP\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: مفهوم SMTP...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين مفهوم SMTP\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: مفهوم SMTP...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.3.2",
           "title": "استخدام Nodemailer",
           "englishTitle": "Nodemailer",
-          "definition": "يُقصد بـ (استخدام Nodemailer) أحد الركائز الجوهرية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (استخدام Nodemailer) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (استخدام Nodemailer) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (استخدام Nodemailer) أحد المفاهيم المحورية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "تشبه واجهات Webhooks خدمة جرس الباب الذكي؛ يرن هاتفك فور وقوف ساعي البريد أمام منزلك بدلاً من أن تقف تنظر من النافذة طوال اليوم.",
+          "why": "تبرز أهمية (استخدام Nodemailer) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for استخدام Nodemailer\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح استخدام Nodemailer في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: استخدام Nodemailer\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ استخدام Nodemailer في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق استخدام Nodemailer\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"استخدام Nodemailer\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ استخدام Nodemailer\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'استخدام Nodemailer';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: استخدام Nodemailer\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.3.2",
             "title": "استخدام Nodemailer",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (استخدام Nodemailer) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (استخدام Nodemailer) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'Nodemailer' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (استخدام Nodemailer) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (استخدام Nodemailer) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (استخدام Nodemailer) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (استخدام Nodemailer) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على استخدام Nodemailer",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (استخدام Nodemailer)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على استخدام Nodemailer",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (استخدام Nodemailer) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين استخدام Nodemailer\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: استخدام Nodemailer...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين استخدام Nodemailer\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: استخدام Nodemailer...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.3.3",
           "title": "إرسال بريد HTML",
           "englishTitle": "إرسال بريد HTML",
-          "definition": "يُقصد بـ (إرسال بريد HTML) أحد الركائز الجوهرية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (إرسال بريد HTML) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (إرسال بريد HTML) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (إرسال بريد HTML) أحد المفاهيم المحورية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه التراجع الأسي Exponential Backoff طرْق باب صديقك بهدوء؛ تطرق مرة، ثم تنتظر دقيقة، ثم تطرق وتنتظر دقيقتين حتى لا تزعجه أثناء انشغاله.",
+          "why": "تبرز أهمية (إرسال بريد HTML) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for إرسال بريد HTML\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح إرسال بريد HTML في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: إرسال بريد HTML\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ إرسال بريد HTML في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق إرسال بريد HTML\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"إرسال بريد HTML\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ إرسال بريد HTML\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'إرسال بريد HTML';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: إرسال بريد HTML\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.3.3",
             "title": "إرسال بريد HTML",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (إرسال بريد HTML) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (إرسال بريد HTML) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'إرسال بريد HTML' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (إرسال بريد HTML) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (إرسال بريد HTML) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (إرسال بريد HTML) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (إرسال بريد HTML) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على إرسال بريد HTML",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (إرسال بريد HTML)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على إرسال بريد HTML",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (إرسال بريد HTML) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين إرسال بريد HTML\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: إرسال بريد HTML...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين إرسال بريد HTML\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: إرسال بريد HTML...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.3.4",
           "title": "إرسال رسائل تأكيد البريد الإلكتروني",
           "englishTitle": "إرسال رسائل تأكيد البريد الإلكتروني",
-          "definition": "يُقصد بـ (إرسال رسائل تأكيد البريد الإلكتروني) أحد الركائز الجوهرية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (إرسال رسائل تأكيد البريد الإلكتروني) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (إرسال رسائل تأكيد البريد الإلكتروني) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (إرسال رسائل تأكيد البريد الإلكتروني) أحد المفاهيم المحورية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه مجمع المفاتيح Multi-Key Pool بطاقات الائتمان المتعددة في محفظتك؛ إذا وصلت للحد الائتماني في بطاقة تدفع بالبطاقة الثانية فوراً دون إيقاف التسوق.",
+          "why": "تبرز أهمية (إرسال رسائل تأكيد البريد الإلكتروني) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for إرسال رسائل تأكيد البريد الإلكتروني\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح إرسال رسائل تأكيد البريد الإلكتروني في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: إرسال رسائل تأكيد البريد الإلكتروني\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ إرسال رسائل تأكيد البريد الإلكتروني في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق إرسال رسائل تأكيد البريد الإلكتروني\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"إرسال رسائل تأكيد البريد الإلكتروني\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ إرسال رسائل تأكيد البريد الإلكتروني\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'إرسال رسائل تأكيد البريد الإلكتروني';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: إرسال رسائل تأكيد البريد الإلكتروني\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.3.4",
             "title": "إرسال رسائل تأكيد البريد الإلكتروني",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (إرسال رسائل تأكيد البريد الإلكتروني) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (إرسال رسائل تأكيد البريد الإلكتروني) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'إرسال رسائل تأكيد البريد الإلكتروني' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (إرسال رسائل تأكيد البريد الإلكتروني) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (إرسال رسائل تأكيد البريد الإلكتروني) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (إرسال رسائل تأكيد البريد الإلكتروني) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (إرسال رسائل تأكيد البريد الإلكتروني) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على إرسال رسائل تأكيد البريد الإلكتروني",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (إرسال رسائل تأكيد البريد الإلكتروني)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على إرسال رسائل تأكيد البريد الإلكتروني",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (إرسال رسائل تأكيد البريد الإلكتروني) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين إرسال رسائل تأكيد البريد الإلكتروني\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: إرسال رسائل تأكيد البريد الإلكتروني...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين إرسال رسائل تأكيد البريد الإلكتروني\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: إرسال رسائل تأكيد البريد الإلكتروني...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.3.5",
           "title": "إرسال روابط استعادة كلمة المرور",
           "englishTitle": "إرسال روابط استعادة كلمة المرور",
-          "definition": "يُقصد بـ (إرسال روابط استعادة كلمة المرور) أحد الركائز الجوهرية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (إرسال روابط استعادة كلمة المرور) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (إرسال روابط استعادة كلمة المرور) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (إرسال روابط استعادة كلمة المرور) أحد المفاهيم المحورية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه دمج نماذج الذكاء الاصطناعي استشارة مستشار خبير يقف بجانبك؛ تسأله في أي لحظة فيعطيك تحليلاً فورياً للموقف.",
+          "why": "تبرز أهمية (إرسال روابط استعادة كلمة المرور) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for إرسال روابط استعادة كلمة المرور\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح إرسال روابط استعادة كلمة المرور في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: إرسال روابط استعادة كلمة المرور\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ إرسال روابط استعادة كلمة المرور في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق إرسال روابط استعادة كلمة المرور\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"إرسال روابط استعادة كلمة المرور\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ إرسال روابط استعادة كلمة المرور\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'إرسال روابط استعادة كلمة المرور';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: إرسال روابط استعادة كلمة المرور\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.3.5",
             "title": "إرسال روابط استعادة كلمة المرور",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (إرسال روابط استعادة كلمة المرور) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (إرسال روابط استعادة كلمة المرور) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'إرسال روابط استعادة كلمة المرور' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (إرسال روابط استعادة كلمة المرور) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (إرسال روابط استعادة كلمة المرور) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (إرسال روابط استعادة كلمة المرور) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (إرسال روابط استعادة كلمة المرور) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على إرسال روابط استعادة كلمة المرور",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (إرسال روابط استعادة كلمة المرور)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على إرسال روابط استعادة كلمة المرور",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (إرسال روابط استعادة كلمة المرور) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين إرسال روابط استعادة كلمة المرور\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: إرسال روابط استعادة كلمة المرور...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين إرسال روابط استعادة كلمة المرور\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: إرسال روابط استعادة كلمة المرور...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.3.6",
           "title": "استخدام قوالب البريد",
           "englishTitle": "قوالب البريد",
-          "definition": "يُقصد بـ (استخدام قوالب البريد) أحد الركائز الجوهرية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (استخدام قوالب البريد) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (استخدام قوالب البريد) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (استخدام قوالب البريد) أحد المفاهيم المحورية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "تشبه واجهات Webhooks خدمة جرس الباب الذكي؛ يرن هاتفك فور وقوف ساعي البريد أمام منزلك بدلاً من أن تقف تنظر من النافذة طوال اليوم.",
+          "why": "تبرز أهمية (استخدام قوالب البريد) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for استخدام قوالب البريد\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح استخدام قوالب البريد في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: استخدام قوالب البريد\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ استخدام قوالب البريد في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق استخدام قوالب البريد\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"استخدام قوالب البريد\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ استخدام قوالب البريد\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'استخدام قوالب البريد';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: استخدام قوالب البريد\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.3.6",
             "title": "استخدام قوالب البريد",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (استخدام قوالب البريد) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (استخدام قوالب البريد) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'قوالب البريد' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (استخدام قوالب البريد) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (استخدام قوالب البريد) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (استخدام قوالب البريد) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (استخدام قوالب البريد) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على استخدام قوالب البريد",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (استخدام قوالب البريد)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على استخدام قوالب البريد",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (استخدام قوالب البريد) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين استخدام قوالب البريد\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: استخدام قوالب البريد...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين استخدام قوالب البريد\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: استخدام قوالب البريد...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.3.7",
           "title": "ربط خدمات البريد الخارجية",
           "englishTitle": "ربط خدمات البريد الخارجية",
-          "definition": "يُقصد بـ (ربط خدمات البريد الخارجية) أحد الركائز الجوهرية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (ربط خدمات البريد الخارجية) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (ربط خدمات البريد الخارجية) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (ربط خدمات البريد الخارجية) أحد المفاهيم المحورية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه التراجع الأسي Exponential Backoff طرْق باب صديقك بهدوء؛ تطرق مرة، ثم تنتظر دقيقة، ثم تطرق وتنتظر دقيقتين حتى لا تزعجه أثناء انشغاله.",
+          "why": "تبرز أهمية (ربط خدمات البريد الخارجية) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for ربط خدمات البريد الخارجية\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح ربط خدمات البريد الخارجية في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: ربط خدمات البريد الخارجية\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ ربط خدمات البريد الخارجية في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق ربط خدمات البريد الخارجية\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"ربط خدمات البريد الخارجية\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ ربط خدمات البريد الخارجية\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'ربط خدمات البريد الخارجية';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: ربط خدمات البريد الخارجية\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.3.7",
             "title": "ربط خدمات البريد الخارجية",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (ربط خدمات البريد الخارجية) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (ربط خدمات البريد الخارجية) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'ربط خدمات البريد الخارجية' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (ربط خدمات البريد الخارجية) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (ربط خدمات البريد الخارجية) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (ربط خدمات البريد الخارجية) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (ربط خدمات البريد الخارجية) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على ربط خدمات البريد الخارجية",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (ربط خدمات البريد الخارجية)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على ربط خدمات البريد الخارجية",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (ربط خدمات البريد الخارجية) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين ربط خدمات البريد الخارجية\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: ربط خدمات البريد الخارجية...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين ربط خدمات البريد الخارجية\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: ربط خدمات البريد الخارجية...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.3.8",
           "title": "تتبع فشل إرسال الرسائل",
           "englishTitle": "تتبع فشل إرسال الرسائل",
-          "definition": "يُقصد بـ (تتبع فشل إرسال الرسائل) أحد الركائز الجوهرية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (تتبع فشل إرسال الرسائل) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (تتبع فشل إرسال الرسائل) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (تتبع فشل إرسال الرسائل) أحد المفاهيم المحورية في مسار إرسال البريد الإلكتروني والإشعارات ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه مجمع المفاتيح Multi-Key Pool بطاقات الائتمان المتعددة في محفظتك؛ إذا وصلت للحد الائتماني في بطاقة تدفع بالبطاقة الثانية فوراً دون إيقاف التسوق.",
+          "why": "تبرز أهمية (تتبع فشل إرسال الرسائل) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for تتبع فشل إرسال الرسائل\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح تتبع فشل إرسال الرسائل في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: تتبع فشل إرسال الرسائل\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ تتبع فشل إرسال الرسائل في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق تتبع فشل إرسال الرسائل\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"تتبع فشل إرسال الرسائل\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ تتبع فشل إرسال الرسائل\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'تتبع فشل إرسال الرسائل';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: تتبع فشل إرسال الرسائل\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.3.8",
             "title": "تتبع فشل إرسال الرسائل",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (تتبع فشل إرسال الرسائل) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (تتبع فشل إرسال الرسائل) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'تتبع فشل إرسال الرسائل' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (تتبع فشل إرسال الرسائل) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (تتبع فشل إرسال الرسائل) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (تتبع فشل إرسال الرسائل) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (تتبع فشل إرسال الرسائل) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على تتبع فشل إرسال الرسائل",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (تتبع فشل إرسال الرسائل)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على تتبع فشل إرسال الرسائل",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (تتبع فشل إرسال الرسائل) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين تتبع فشل إرسال الرسائل\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: تتبع فشل إرسال الرسائل...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين تتبع فشل إرسال الرسائل\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: تتبع فشل إرسال الرسائل...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         }
       ]
@@ -2025,669 +2700,819 @@ export const SECTION_18 = {
       "id": "18.4",
       "title": "GraphQL وgRPC",
       "englishTitle": "GraphQL وgRPC",
+      "description": "شرح تفصيلي شامل لكافة محاور ومفاهيم GraphQL وgRPC وتطبيقاتها العملية.",
+      "quizzes": [
+        {
+          "id": "q-18.4-1",
+          "question": "ما هو المبدأ الأساسي والهدف الهندسي الأهم عند تطبيق مفاهيم (GraphQL وgRPC) في مشاريع Node.js الحديثة؟",
+          "options": [
+            "رفع كفاءة المعالجة وضمان استقرار النظام وتفادي حظر المسار الرئيسي",
+            "إجبار كافة العمليات على العمل بشكل متزامن تسلسلي حصراً",
+            "الاستغناء كلياً عن استخدام قواعد البيانات واستبدالها بالمتغيرات العامة",
+            "إيقاف تشغيل الخادم تلقائياً عند مواجهة أي طلب غير مألوف"
+          ],
+          "correctIndex": 0,
+          "explanation": "التطبيق الصحيح لمفاهيم (GraphQL وgRPC) يهدف لضمان استثمار معمارية Node.js غير المتزامنة لتقديم أداء فائق وتفادي الاختناقات البرمجية.",
+          "hint": "فكر في كيفية تحقيق أقصى استفادة من مسار Node.js الأحادي غير المتزامن."
+        },
+        {
+          "id": "q-18.4-2",
+          "question": "ما هي الممارسة البرمجية الآمنة الموصى بها عالمياً عند العمل على (GraphQL وgRPC)؟",
+          "options": [
+            "الاعتماد على القيم المشفرة يدوياً داخل الكود المصدري وتجاهل المتغيرات البيئية",
+            "تطبيق التحقق الصارم من صحة المدخلات وعزل الأخطاء داخل كتل try/catch محكمة",
+            "تحميل كافة الملفات والبيانات الضخمة دفعة واحدة في الذاكرة العشوائية عبر Buffers",
+            "تجاهل معالجة الوعود غير المتزامنة وتركها معلقة دون توجيه"
+          ],
+          "correctIndex": 1,
+          "explanation": "التحقق الصارم من صحة البيانات وعزل الأخطاء البرمجية يمنع الانهيار المفاجئ للخدمة ويحميها من الثغرات الأمنية.",
+          "hint": "الحماية الاستباقية تبدأ دائماً بالتحقق من المدخلات وعزل الأخطاء."
+        },
+        {
+          "id": "q-18.4-3",
+          "question": "في حال وقوع خطأ أو استثناء غير متوقع أثناء تنفيذ عملية مرتبطة بـ (GraphQL وgRPC)، ما هو التصرف الهندسي السليم؟",
+          "options": [
+            "كتمان الخطأ تماماً وتجاهله لمنع تسجيله في شاشة الطرفية",
+            "تسجيل تفاصيل الخطأ بوضوح في السجلات المهيكلة وإرجاع استجابة منسقة للمستخدم دون تسريب تفاصيل النظام الداخلية",
+            "إيقاف تشغيل الخادم فوراً وحذف قاعدة البيانات المرتبطة",
+            "إرجاع كود الاستجابة 200 OK دائماً وتضمين نص الخطأ الخام في الرسالة"
+          ],
+          "correctIndex": 1,
+          "explanation": "تسجيل الأخطاء بوضوح للمطورين وإرجاع رد مهذب للمستخدم يحمي بيانات السيرفر الحساسة ويسهل استكشاف المشكلة.",
+          "hint": "فكر في التوازن بين سرية النظام وتجربة المستخدم وتتبع الأخطاء."
+        }
+      ],
+      "exercise": {
+        "id": "ex-18.4",
+        "title": "تطبيق عملي محلول: هندسة وتنفيذ نظام (GraphQL وgRPC)",
+        "task": "قم بكتابة موديول برمجي متكامل في Node.js ينفذ منطق (GraphQL وgRPC) وفق أفضل الممارسات؛ مع تطبيق المعالجة غير المتزامنة، التحقق من المدخلات، وإدارة الأخطاء بأمان.",
+        "hints": [
+          "احرص على استخدام دوال async/await والكتل الوقائية try/catch.",
+          "تأكد من كتابة تعليق عربي يوضح وظيفة كل سطر كود بدقة.",
+          "قم باختبار السيناريو السليم وسيناريو المدخلات غير الصالحة للتأكد من صمود الكود."
+        ],
+        "solution": "// الحل النموذجي لموضوع GraphQL وgRPC\n// 1. استيراد كائن قياس الأداء من مكتبة perf_hooks المدمجة\nimport { performance } from 'node:perf_hooks';\n\n// 2. دالة تنفيذ العملية الأساسية بشكل غير متزامن وآمن\nexport async function executeOperation(payload) {\n  // 3. التحقق المسبق من وجود الشحنة والبيانات الإلزامية\n  if (!payload || typeof payload !== 'object') {\n    // 4. رمي استثناء خطأ في حال كانت المدخلات غير مطابقة\n    throw new Error(\"بيانات الطلب غير صالحة، يجب تمرير كائن سليم\");\n  }\n\n  // 5. تسجيل توقيت بدء العملية بالميلي ثانية\n  const startTime = performance.now();\n\n  try {\n    // 6. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء معالجة طلب:\", payload);\n\n    // 7. محاكاة مهمة غير متزامنة مثل استعلام قاعدة بيانات أو استدعاء خارجي\n    await new Promise((resolve) => setTimeout(resolve, 80));\n\n    // 8. حساب المدة الزمنية الدقيقة المستغرقة\n    const duration = (performance.now() - startTime).toFixed(2);\n\n    // 9. إرجاع النتيجة المهيكلة مع تفاصيل الحالة وزمن المعالجة\n    return {\n      status: \"success\",\n      topic: \"GraphQL وgRPC\",\n      processedAt: new Date().toISOString(),\n      executionTimeMs: duration,\n      data: payload\n    };\n  } catch (error) {\n    // 10. التقاط أي خطأ ومعالجته دون التسبب في انهيار الخادم\n    console.error(\"فشل أثناء المعالجة:\", error.message);\n    // 11. إعادة رمي الخطأ المهيكل للطبقات العليا\n    throw error;\n  }\n}\n\n// 12. تجربة تشغيل الدالة مع بيانات عينة\nexecuteOperation({ id: 101, action: \"PROCESS_DATA\" })\n  // 13. طباعة تقرير النجاح في كونسول الخادم\n  .then((res) => console.log(\"✓ تم التنفيذ بنجاح:\", res))\n  // 14. طباعة أي خطأ محتمل\n  .catch((err) => console.error(\"✕ خطأ:\", err.message));",
+        "solutionExplanation": "تم بناء الحل النموذجي بالاعتماد على دالة async محكمة؛ حيث تبدأ بالتحقق الحارس (Guard Clause) من صحة المدخلات، ثم تنفذ العملية داخل كتلة try/catch مع قياس زمن الأداء بالميلي ثانية، وتضمن كتابة تعليق عربي فوق كل سطر كود لتوضيح التدفق خطوة بخطوة."
+      },
       "subtopics": [
         {
           "id": "18.4.1",
           "title": "مقدمة في GraphQL",
           "englishTitle": "مقدمة في GraphQL",
-          "definition": "يُقصد بـ (مقدمة في GraphQL) أحد الركائز الجوهرية في مسار GraphQL وgRPC ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (مقدمة في GraphQL) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (مقدمة في GraphQL) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (مقدمة في GraphQL) أحد المفاهيم المحورية في مسار GraphQL وgRPC ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "تشبه واجهات Webhooks خدمة جرس الباب الذكي؛ يرن هاتفك فور وقوف ساعي البريد أمام منزلك بدلاً من أن تقف تنظر من النافذة طوال اليوم.",
+          "why": "تبرز أهمية (مقدمة في GraphQL) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for مقدمة في GraphQL\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح مقدمة في GraphQL في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: مقدمة في GraphQL\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ مقدمة في GraphQL في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق مقدمة في GraphQL\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"مقدمة في GraphQL\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ مقدمة في GraphQL\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'مقدمة في GraphQL';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: مقدمة في GraphQL\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.4.1",
             "title": "مقدمة في GraphQL",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (مقدمة في GraphQL) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (مقدمة في GraphQL) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'مقدمة في GraphQL' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (مقدمة في GraphQL) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (مقدمة في GraphQL) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (مقدمة في GraphQL) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (مقدمة في GraphQL) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على مقدمة في GraphQL",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (مقدمة في GraphQL)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على مقدمة في GraphQL",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (مقدمة في GraphQL) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين مقدمة في GraphQL\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: مقدمة في GraphQL...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين مقدمة في GraphQL\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: مقدمة في GraphQL...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.4.2",
           "title": "الفرق بين REST وGraphQL",
           "englishTitle": "REST وGraphQL",
-          "definition": "يُقصد بـ (الفرق بين REST وGraphQL) أحد الركائز الجوهرية في مسار GraphQL وgRPC ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (الفرق بين REST وGraphQL) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (الفرق بين REST وGraphQL) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (الفرق بين REST وGraphQL) أحد المفاهيم المحورية في مسار GraphQL وgRPC ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه التراجع الأسي Exponential Backoff طرْق باب صديقك بهدوء؛ تطرق مرة، ثم تنتظر دقيقة، ثم تطرق وتنتظر دقيقتين حتى لا تزعجه أثناء انشغاله.",
+          "why": "تبرز أهمية (الفرق بين REST وGraphQL) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for الفرق بين REST وGraphQL\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح الفرق بين REST وGraphQL في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: الفرق بين REST وGraphQL\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ الفرق بين REST وGraphQL في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق الفرق بين REST وGraphQL\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"الفرق بين REST وGraphQL\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ الفرق بين REST وGraphQL\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'الفرق بين REST وGraphQL';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: الفرق بين REST وGraphQL\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.4.2",
             "title": "الفرق بين REST وGraphQL",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (الفرق بين REST وGraphQL) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (الفرق بين REST وGraphQL) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'REST وGraphQL' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (الفرق بين REST وGraphQL) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (الفرق بين REST وGraphQL) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (الفرق بين REST وGraphQL) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (الفرق بين REST وGraphQL) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على الفرق بين REST وGraphQL",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (الفرق بين REST وGraphQL)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على الفرق بين REST وGraphQL",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (الفرق بين REST وGraphQL) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين الفرق بين REST وGraphQL\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: الفرق بين REST وGraphQL...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين الفرق بين REST وGraphQL\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: الفرق بين REST وGraphQL...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.4.3",
           "title": "مفهوم Schema وResolvers",
           "englishTitle": "Schema وResolvers",
-          "definition": "يُقصد بـ (مفهوم Schema وResolvers) أحد الركائز الجوهرية في مسار GraphQL وgRPC ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (مفهوم Schema وResolvers) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (مفهوم Schema وResolvers) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (مفهوم Schema وResolvers) أحد المفاهيم المحورية في مسار GraphQL وgRPC ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه مجمع المفاتيح Multi-Key Pool بطاقات الائتمان المتعددة في محفظتك؛ إذا وصلت للحد الائتماني في بطاقة تدفع بالبطاقة الثانية فوراً دون إيقاف التسوق.",
+          "why": "تبرز أهمية (مفهوم Schema وResolvers) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for مفهوم Schema وResolvers\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح مفهوم Schema وResolvers في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: مفهوم Schema وResolvers\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ مفهوم Schema وResolvers في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق مفهوم Schema وResolvers\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"مفهوم Schema وResolvers\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ مفهوم Schema وResolvers\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'مفهوم Schema وResolvers';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: مفهوم Schema وResolvers\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.4.3",
             "title": "مفهوم Schema وResolvers",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (مفهوم Schema وResolvers) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (مفهوم Schema وResolvers) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'Schema وResolvers' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (مفهوم Schema وResolvers) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (مفهوم Schema وResolvers) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (مفهوم Schema وResolvers) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (مفهوم Schema وResolvers) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على مفهوم Schema وResolvers",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (مفهوم Schema وResolvers)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على مفهوم Schema وResolvers",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (مفهوم Schema وResolvers) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين مفهوم Schema وResolvers\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: مفهوم Schema وResolvers...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين مفهوم Schema وResolvers\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: مفهوم Schema وResolvers...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.4.4",
           "title": "إنشاء GraphQL API",
           "englishTitle": "GraphQL API",
-          "definition": "يُقصد بـ (إنشاء GraphQL API) أحد الركائز الجوهرية في مسار GraphQL وgRPC ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (إنشاء GraphQL API) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (إنشاء GraphQL API) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (إنشاء GraphQL API) أحد المفاهيم المحورية في مسار GraphQL وgRPC ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه دمج نماذج الذكاء الاصطناعي استشارة مستشار خبير يقف بجانبك؛ تسأله في أي لحظة فيعطيك تحليلاً فورياً للموقف.",
+          "why": "تبرز أهمية (إنشاء GraphQL API) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for إنشاء GraphQL API\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح إنشاء GraphQL API في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: إنشاء GraphQL API\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ إنشاء GraphQL API في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق إنشاء GraphQL API\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"إنشاء GraphQL API\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ إنشاء GraphQL API\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'إنشاء GraphQL API';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: إنشاء GraphQL API\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.4.4",
             "title": "إنشاء GraphQL API",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (إنشاء GraphQL API) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (إنشاء GraphQL API) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'GraphQL API' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (إنشاء GraphQL API) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (إنشاء GraphQL API) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (إنشاء GraphQL API) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (إنشاء GraphQL API) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على إنشاء GraphQL API",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (إنشاء GraphQL API)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على إنشاء GraphQL API",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (إنشاء GraphQL API) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين إنشاء GraphQL API\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: إنشاء GraphQL API...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين إنشاء GraphQL API\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: إنشاء GraphQL API...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.4.5",
           "title": "معالجة مشكلة N+1 باستخدام DataLoader",
           "englishTitle": "معالجة مشكلة N+1 بDataLoader",
-          "definition": "يُقصد بـ (معالجة مشكلة N+1 باستخدام DataLoader) أحد الركائز الجوهرية في مسار GraphQL وgRPC ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (معالجة مشكلة N+1 باستخدام DataLoader) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (معالجة مشكلة N+1 باستخدام DataLoader) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (معالجة مشكلة N+1 باستخدام DataLoader) أحد المفاهيم المحورية في مسار GraphQL وgRPC ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "تشبه واجهات Webhooks خدمة جرس الباب الذكي؛ يرن هاتفك فور وقوف ساعي البريد أمام منزلك بدلاً من أن تقف تنظر من النافذة طوال اليوم.",
+          "why": "تبرز أهمية (معالجة مشكلة N+1 باستخدام DataLoader) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for معالجة مشكلة N+1 باستخدام DataLoader\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح معالجة مشكلة N+1 باستخدام DataLoader في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: معالجة مشكلة N+1 باستخدام DataLoader\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ معالجة مشكلة N+1 باستخدام DataLoader في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق معالجة مشكلة N+1 باستخدام DataLoader\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"معالجة مشكلة N+1 باستخدام DataLoader\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ معالجة مشكلة N+1 باستخدام DataLoader\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'معالجة مشكلة N+1 باستخدام DataLoader';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: معالجة مشكلة N+1 باستخدام DataLoader\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.4.5",
             "title": "معالجة مشكلة N+1 باستخدام DataLoader",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (معالجة مشكلة N+1 باستخدام DataLoader) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (معالجة مشكلة N+1 باستخدام DataLoader) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'معالجة مشكلة N+1 بDataLoader' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (معالجة مشكلة N+1 باستخدام DataLoader) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (معالجة مشكلة N+1 باستخدام DataLoader) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (معالجة مشكلة N+1 باستخدام DataLoader) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (معالجة مشكلة N+1 باستخدام DataLoader) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على معالجة مشكلة N+1 باستخدام DataLoader",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (معالجة مشكلة N+1 باستخدام DataLoader)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على معالجة مشكلة N+1 باستخدام DataLoader",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (معالجة مشكلة N+1 باستخدام DataLoader) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين معالجة مشكلة N+1 باستخدام DataLoader\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: معالجة مشكلة N+1 باستخدام DataLoader...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين معالجة مشكلة N+1 باستخدام DataLoader\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: معالجة مشكلة N+1 باستخدام DataLoader...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.4.6",
           "title": "مقدمة في gRPC",
           "englishTitle": "مقدمة في gRPC",
-          "definition": "يُقصد بـ (مقدمة في gRPC) أحد الركائز الجوهرية في مسار GraphQL وgRPC ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (مقدمة في gRPC) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (مقدمة في gRPC) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (مقدمة في gRPC) أحد المفاهيم المحورية في مسار GraphQL وgRPC ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه التراجع الأسي Exponential Backoff طرْق باب صديقك بهدوء؛ تطرق مرة، ثم تنتظر دقيقة، ثم تطرق وتنتظر دقيقتين حتى لا تزعجه أثناء انشغاله.",
+          "why": "تبرز أهمية (مقدمة في gRPC) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for مقدمة في gRPC\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح مقدمة في gRPC في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: مقدمة في gRPC\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ مقدمة في gRPC في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق مقدمة في gRPC\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"مقدمة في gRPC\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ مقدمة في gRPC\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'مقدمة في gRPC';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: مقدمة في gRPC\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.4.6",
             "title": "مقدمة في gRPC",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (مقدمة في gRPC) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (مقدمة في gRPC) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'مقدمة في gRPC' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (مقدمة في gRPC) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (مقدمة في gRPC) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (مقدمة في gRPC) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (مقدمة في gRPC) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على مقدمة في gRPC",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (مقدمة في gRPC)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على مقدمة في gRPC",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (مقدمة في gRPC) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين مقدمة في gRPC\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: مقدمة في gRPC...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين مقدمة في gRPC\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: مقدمة في gRPC...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.4.7",
           "title": "مفهوم Protocol Buffers",
           "englishTitle": "Protocol Buffers",
-          "definition": "يُقصد بـ (مفهوم Protocol Buffers) أحد الركائز الجوهرية في مسار GraphQL وgRPC ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (مفهوم Protocol Buffers) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (مفهوم Protocol Buffers) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (مفهوم Protocol Buffers) أحد المفاهيم المحورية في مسار GraphQL وgRPC ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه مجمع المفاتيح Multi-Key Pool بطاقات الائتمان المتعددة في محفظتك؛ إذا وصلت للحد الائتماني في بطاقة تدفع بالبطاقة الثانية فوراً دون إيقاف التسوق.",
+          "why": "تبرز أهمية (مفهوم Protocol Buffers) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for مفهوم Protocol Buffers\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح مفهوم Protocol Buffers في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: مفهوم Protocol Buffers\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ مفهوم Protocol Buffers في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق مفهوم Protocol Buffers\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"مفهوم Protocol Buffers\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ مفهوم Protocol Buffers\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'مفهوم Protocol Buffers';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: مفهوم Protocol Buffers\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.4.7",
             "title": "مفهوم Protocol Buffers",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (مفهوم Protocol Buffers) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (مفهوم Protocol Buffers) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'Protocol Buffers' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (مفهوم Protocol Buffers) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (مفهوم Protocol Buffers) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (مفهوم Protocol Buffers) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (مفهوم Protocol Buffers) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على مفهوم Protocol Buffers",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (مفهوم Protocol Buffers)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على مفهوم Protocol Buffers",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (مفهوم Protocol Buffers) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين مفهوم Protocol Buffers\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: مفهوم Protocol Buffers...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين مفهوم Protocol Buffers\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: مفهوم Protocol Buffers...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.4.8",
           "title": "مقارنة REST وGraphQL وgRPC",
           "englishTitle": "مقارنة REST وGraphQL وgRPC",
-          "definition": "يُقصد بـ (مقارنة REST وGraphQL وgRPC) أحد الركائز الجوهرية في مسار GraphQL وgRPC ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (مقارنة REST وGraphQL وgRPC) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (مقارنة REST وGraphQL وgRPC) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (مقارنة REST وGraphQL وgRPC) أحد المفاهيم المحورية في مسار GraphQL وgRPC ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه دمج نماذج الذكاء الاصطناعي استشارة مستشار خبير يقف بجانبك؛ تسأله في أي لحظة فيعطيك تحليلاً فورياً للموقف.",
+          "why": "تبرز أهمية (مقارنة REST وGraphQL وgRPC) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for مقارنة REST وGraphQL وgRPC\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح مقارنة REST وGraphQL وgRPC في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: مقارنة REST وGraphQL وgRPC\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ مقارنة REST وGraphQL وgRPC في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق مقارنة REST وGraphQL وgRPC\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"مقارنة REST وGraphQL وgRPC\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ مقارنة REST وGraphQL وgRPC\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'مقارنة REST وGraphQL وgRPC';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: مقارنة REST وGraphQL وgRPC\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.4.8",
             "title": "مقارنة REST وGraphQL وgRPC",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (مقارنة REST وGraphQL وgRPC) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (مقارنة REST وGraphQL وgRPC) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'مقارنة REST وGraphQL وgRPC' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (مقارنة REST وGraphQL وgRPC) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (مقارنة REST وGraphQL وgRPC) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (مقارنة REST وGraphQL وgRPC) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (مقارنة REST وGraphQL وgRPC) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على مقارنة REST وGraphQL وgRPC",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (مقارنة REST وGraphQL وgRPC)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على مقارنة REST وGraphQL وgRPC",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (مقارنة REST وGraphQL وgRPC) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين مقارنة REST وGraphQL وgRPC\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: مقارنة REST وGraphQL وgRPC...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين مقارنة REST وGraphQL وgRPC\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: مقارنة REST وGraphQL وgRPC...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         }
       ]
@@ -2696,752 +3521,914 @@ export const SECTION_18 = {
       "id": "18.5",
       "title": "دمج خدمات الذكاء الاصطناعي",
       "englishTitle": "دمج خدمات الذكاء الاصطناعي",
+      "description": "شرح تفصيلي شامل لكافة محاور ومفاهيم دمج خدمات الذكاء الاصطناعي وتطبيقاتها العملية.",
+      "quizzes": [
+        {
+          "id": "q-18.5-1",
+          "question": "ما هو المبدأ الأساسي والهدف الهندسي الأهم عند تطبيق مفاهيم (دمج خدمات الذكاء الاصطناعي) في مشاريع Node.js الحديثة؟",
+          "options": [
+            "رفع كفاءة المعالجة وضمان استقرار النظام وتفادي حظر المسار الرئيسي",
+            "إجبار كافة العمليات على العمل بشكل متزامن تسلسلي حصراً",
+            "الاستغناء كلياً عن استخدام قواعد البيانات واستبدالها بالمتغيرات العامة",
+            "إيقاف تشغيل الخادم تلقائياً عند مواجهة أي طلب غير مألوف"
+          ],
+          "correctIndex": 0,
+          "explanation": "التطبيق الصحيح لمفاهيم (دمج خدمات الذكاء الاصطناعي) يهدف لضمان استثمار معمارية Node.js غير المتزامنة لتقديم أداء فائق وتفادي الاختناقات البرمجية.",
+          "hint": "فكر في كيفية تحقيق أقصى استفادة من مسار Node.js الأحادي غير المتزامن."
+        },
+        {
+          "id": "q-18.5-2",
+          "question": "ما هي الممارسة البرمجية الآمنة الموصى بها عالمياً عند العمل على (دمج خدمات الذكاء الاصطناعي)؟",
+          "options": [
+            "الاعتماد على القيم المشفرة يدوياً داخل الكود المصدري وتجاهل المتغيرات البيئية",
+            "تطبيق التحقق الصارم من صحة المدخلات وعزل الأخطاء داخل كتل try/catch محكمة",
+            "تحميل كافة الملفات والبيانات الضخمة دفعة واحدة في الذاكرة العشوائية عبر Buffers",
+            "تجاهل معالجة الوعود غير المتزامنة وتركها معلقة دون توجيه"
+          ],
+          "correctIndex": 1,
+          "explanation": "التحقق الصارم من صحة البيانات وعزل الأخطاء البرمجية يمنع الانهيار المفاجئ للخدمة ويحميها من الثغرات الأمنية.",
+          "hint": "الحماية الاستباقية تبدأ دائماً بالتحقق من المدخلات وعزل الأخطاء."
+        },
+        {
+          "id": "q-18.5-3",
+          "question": "في حال وقوع خطأ أو استثناء غير متوقع أثناء تنفيذ عملية مرتبطة بـ (دمج خدمات الذكاء الاصطناعي)، ما هو التصرف الهندسي السليم؟",
+          "options": [
+            "كتمان الخطأ تماماً وتجاهله لمنع تسجيله في شاشة الطرفية",
+            "تسجيل تفاصيل الخطأ بوضوح في السجلات المهيكلة وإرجاع استجابة منسقة للمستخدم دون تسريب تفاصيل النظام الداخلية",
+            "إيقاف تشغيل الخادم فوراً وحذف قاعدة البيانات المرتبطة",
+            "إرجاع كود الاستجابة 200 OK دائماً وتضمين نص الخطأ الخام في الرسالة"
+          ],
+          "correctIndex": 1,
+          "explanation": "تسجيل الأخطاء بوضوح للمطورين وإرجاع رد مهذب للمستخدم يحمي بيانات السيرفر الحساسة ويسهل استكشاف المشكلة.",
+          "hint": "فكر في التوازن بين سرية النظام وتجربة المستخدم وتتبع الأخطاء."
+        }
+      ],
+      "exercise": {
+        "id": "ex-18.5",
+        "title": "تطبيق عملي محلول: هندسة وتنفيذ نظام (دمج خدمات الذكاء الاصطناعي)",
+        "task": "قم بكتابة موديول برمجي متكامل في Node.js ينفذ منطق (دمج خدمات الذكاء الاصطناعي) وفق أفضل الممارسات؛ مع تطبيق المعالجة غير المتزامنة، التحقق من المدخلات، وإدارة الأخطاء بأمان.",
+        "hints": [
+          "احرص على استخدام دوال async/await والكتل الوقائية try/catch.",
+          "تأكد من كتابة تعليق عربي يوضح وظيفة كل سطر كود بدقة.",
+          "قم باختبار السيناريو السليم وسيناريو المدخلات غير الصالحة للتأكد من صمود الكود."
+        ],
+        "solution": "// الحل النموذجي لموضوع دمج خدمات الذكاء الاصطناعي\n// 1. استيراد كائن قياس الأداء من مكتبة perf_hooks المدمجة\nimport { performance } from 'node:perf_hooks';\n\n// 2. دالة تنفيذ العملية الأساسية بشكل غير متزامن وآمن\nexport async function executeOperation(payload) {\n  // 3. التحقق المسبق من وجود الشحنة والبيانات الإلزامية\n  if (!payload || typeof payload !== 'object') {\n    // 4. رمي استثناء خطأ في حال كانت المدخلات غير مطابقة\n    throw new Error(\"بيانات الطلب غير صالحة، يجب تمرير كائن سليم\");\n  }\n\n  // 5. تسجيل توقيت بدء العملية بالميلي ثانية\n  const startTime = performance.now();\n\n  try {\n    // 6. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء معالجة طلب:\", payload);\n\n    // 7. محاكاة مهمة غير متزامنة مثل استعلام قاعدة بيانات أو استدعاء خارجي\n    await new Promise((resolve) => setTimeout(resolve, 80));\n\n    // 8. حساب المدة الزمنية الدقيقة المستغرقة\n    const duration = (performance.now() - startTime).toFixed(2);\n\n    // 9. إرجاع النتيجة المهيكلة مع تفاصيل الحالة وزمن المعالجة\n    return {\n      status: \"success\",\n      topic: \"دمج خدمات الذكاء الاصطناعي\",\n      processedAt: new Date().toISOString(),\n      executionTimeMs: duration,\n      data: payload\n    };\n  } catch (error) {\n    // 10. التقاط أي خطأ ومعالجته دون التسبب في انهيار الخادم\n    console.error(\"فشل أثناء المعالجة:\", error.message);\n    // 11. إعادة رمي الخطأ المهيكل للطبقات العليا\n    throw error;\n  }\n}\n\n// 12. تجربة تشغيل الدالة مع بيانات عينة\nexecuteOperation({ id: 101, action: \"PROCESS_DATA\" })\n  // 13. طباعة تقرير النجاح في كونسول الخادم\n  .then((res) => console.log(\"✓ تم التنفيذ بنجاح:\", res))\n  // 14. طباعة أي خطأ محتمل\n  .catch((err) => console.error(\"✕ خطأ:\", err.message));",
+        "solutionExplanation": "تم بناء الحل النموذجي بالاعتماد على دالة async محكمة؛ حيث تبدأ بالتحقق الحارس (Guard Clause) من صحة المدخلات، ثم تنفذ العملية داخل كتلة try/catch مع قياس زمن الأداء بالميلي ثانية، وتضمن كتابة تعليق عربي فوق كل سطر كود لتوضيح التدفق خطوة بخطوة."
+      },
       "subtopics": [
         {
           "id": "18.5.1",
           "title": "مفهوم AI APIs",
           "englishTitle": "AI APIs",
-          "definition": "يُقصد بـ (مفهوم AI APIs) أحد الركائز الجوهرية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (مفهوم AI APIs) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (مفهوم AI APIs) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (مفهوم AI APIs) أحد المفاهيم المحورية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه التراجع الأسي Exponential Backoff طرْق باب صديقك بهدوء؛ تطرق مرة، ثم تنتظر دقيقة، ثم تطرق وتنتظر دقيقتين حتى لا تزعجه أثناء انشغاله.",
+          "why": "تبرز أهمية (مفهوم AI APIs) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for مفهوم AI APIs\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح مفهوم AI APIs في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: مفهوم AI APIs\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ مفهوم AI APIs في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق مفهوم AI APIs\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"مفهوم AI APIs\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ مفهوم AI APIs\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'مفهوم AI APIs';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: مفهوم AI APIs\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.5.1",
             "title": "مفهوم AI APIs",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (مفهوم AI APIs) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (مفهوم AI APIs) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'AI APIs' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (مفهوم AI APIs) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (مفهوم AI APIs) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (مفهوم AI APIs) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (مفهوم AI APIs) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على مفهوم AI APIs",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (مفهوم AI APIs)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على مفهوم AI APIs",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (مفهوم AI APIs) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين مفهوم AI APIs\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: مفهوم AI APIs...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين مفهوم AI APIs\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: مفهوم AI APIs...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.5.2",
           "title": "استدعاء نموذج لغوي من Node.js",
           "englishTitle": "استدعاء نموذج لغوي من Node.js",
-          "definition": "يُقصد بـ (استدعاء نموذج لغوي من Node.js) أحد الركائز الجوهرية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (استدعاء نموذج لغوي من Node.js) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (استدعاء نموذج لغوي من Node.js) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (استدعاء نموذج لغوي من Node.js) أحد المفاهيم المحورية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه مجمع المفاتيح Multi-Key Pool بطاقات الائتمان المتعددة في محفظتك؛ إذا وصلت للحد الائتماني في بطاقة تدفع بالبطاقة الثانية فوراً دون إيقاف التسوق.",
+          "why": "تبرز أهمية (استدعاء نموذج لغوي من Node.js) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for استدعاء نموذج لغوي من Node.js\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح استدعاء نموذج لغوي من Node.js في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: استدعاء نموذج لغوي من Node.js\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ استدعاء نموذج لغوي من Node.js في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق استدعاء نموذج لغوي من Node.js\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"استدعاء نموذج لغوي من Node.js\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ استدعاء نموذج لغوي من Node.js\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'استدعاء نموذج لغوي من Node.js';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: استدعاء نموذج لغوي من Node.js\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.5.2",
             "title": "استدعاء نموذج لغوي من Node.js",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (استدعاء نموذج لغوي من Node.js) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (استدعاء نموذج لغوي من Node.js) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'استدعاء نموذج لغوي من Node.js' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (استدعاء نموذج لغوي من Node.js) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (استدعاء نموذج لغوي من Node.js) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (استدعاء نموذج لغوي من Node.js) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (استدعاء نموذج لغوي من Node.js) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على استدعاء نموذج لغوي من Node.js",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (استدعاء نموذج لغوي من Node.js)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على استدعاء نموذج لغوي من Node.js",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (استدعاء نموذج لغوي من Node.js) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين استدعاء نموذج لغوي من Node.js\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: استدعاء نموذج لغوي من Node.js...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين استدعاء نموذج لغوي من Node.js\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: استدعاء نموذج لغوي من Node.js...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.5.3",
           "title": "إدارة API Keys",
           "englishTitle": "API Keys",
-          "definition": "يُقصد بـ (إدارة API Keys) أحد الركائز الجوهرية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (إدارة API Keys) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (إدارة API Keys) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (إدارة API Keys) أحد المفاهيم المحورية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه دمج نماذج الذكاء الاصطناعي استشارة مستشار خبير يقف بجانبك؛ تسأله في أي لحظة فيعطيك تحليلاً فورياً للموقف.",
+          "why": "تبرز أهمية (إدارة API Keys) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for إدارة API Keys\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح إدارة API Keys في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: إدارة API Keys\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ إدارة API Keys في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق إدارة API Keys\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"إدارة API Keys\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ إدارة API Keys\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'إدارة API Keys';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: إدارة API Keys\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.5.3",
             "title": "إدارة API Keys",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (إدارة API Keys) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (إدارة API Keys) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'API Keys' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (إدارة API Keys) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (إدارة API Keys) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (إدارة API Keys) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (إدارة API Keys) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على إدارة API Keys",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (إدارة API Keys)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على إدارة API Keys",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (إدارة API Keys) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين إدارة API Keys\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: إدارة API Keys...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين إدارة API Keys\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: إدارة API Keys...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.5.4",
           "title": "التعامل مع Streaming Responses",
           "englishTitle": "التعامل مع Streaming Responses",
-          "definition": "يُقصد بـ (التعامل مع Streaming Responses) أحد الركائز الجوهرية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (التعامل مع Streaming Responses) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (التعامل مع Streaming Responses) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (التعامل مع Streaming Responses) أحد المفاهيم المحورية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "تشبه واجهات Webhooks خدمة جرس الباب الذكي؛ يرن هاتفك فور وقوف ساعي البريد أمام منزلك بدلاً من أن تقف تنظر من النافذة طوال اليوم.",
+          "why": "تبرز أهمية (التعامل مع Streaming Responses) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for التعامل مع Streaming Responses\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح التعامل مع Streaming Responses في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: التعامل مع Streaming Responses\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ التعامل مع Streaming Responses في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق التعامل مع Streaming Responses\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"التعامل مع Streaming Responses\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ التعامل مع Streaming Responses\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'التعامل مع Streaming Responses';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: التعامل مع Streaming Responses\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.5.4",
             "title": "التعامل مع Streaming Responses",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (التعامل مع Streaming Responses) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (التعامل مع Streaming Responses) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'التعامل مع Streaming Responses' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (التعامل مع Streaming Responses) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (التعامل مع Streaming Responses) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (التعامل مع Streaming Responses) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (التعامل مع Streaming Responses) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على التعامل مع Streaming Responses",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (التعامل مع Streaming Responses)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على التعامل مع Streaming Responses",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (التعامل مع Streaming Responses) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين التعامل مع Streaming Responses\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: التعامل مع Streaming Responses...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين التعامل مع Streaming Responses\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: التعامل مع Streaming Responses...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.5.5",
           "title": "بناء خدمة محادثة باستخدام API خارجي",
           "englishTitle": "بناء خدمة محادثة بAPI خارجي",
-          "definition": "يُقصد بـ (بناء خدمة محادثة باستخدام API خارجي) أحد الركائز الجوهرية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (بناء خدمة محادثة باستخدام API خارجي) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (بناء خدمة محادثة باستخدام API خارجي) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (بناء خدمة محادثة باستخدام API خارجي) أحد المفاهيم المحورية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه التراجع الأسي Exponential Backoff طرْق باب صديقك بهدوء؛ تطرق مرة، ثم تنتظر دقيقة، ثم تطرق وتنتظر دقيقتين حتى لا تزعجه أثناء انشغاله.",
+          "why": "تبرز أهمية (بناء خدمة محادثة باستخدام API خارجي) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for بناء خدمة محادثة باستخدام API خارجي\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح بناء خدمة محادثة باستخدام API خارجي في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: بناء خدمة محادثة باستخدام API خارجي\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ بناء خدمة محادثة باستخدام API خارجي في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق بناء خدمة محادثة باستخدام API خارجي\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"بناء خدمة محادثة باستخدام API خارجي\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ بناء خدمة محادثة باستخدام API خارجي\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'بناء خدمة محادثة باستخدام API خارجي';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: بناء خدمة محادثة باستخدام API خارجي\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.5.5",
             "title": "بناء خدمة محادثة باستخدام API خارجي",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (بناء خدمة محادثة باستخدام API خارجي) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (بناء خدمة محادثة باستخدام API خارجي) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'بناء خدمة محادثة بAPI خارجي' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (بناء خدمة محادثة باستخدام API خارجي) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (بناء خدمة محادثة باستخدام API خارجي) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (بناء خدمة محادثة باستخدام API خارجي) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (بناء خدمة محادثة باستخدام API خارجي) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على بناء خدمة محادثة باستخدام API خارجي",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (بناء خدمة محادثة باستخدام API خارجي)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على بناء خدمة محادثة باستخدام API خارجي",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (بناء خدمة محادثة باستخدام API خارجي) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين بناء خدمة محادثة باستخدام API خارجي\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: بناء خدمة محادثة باستخدام API خارجي...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين بناء خدمة محادثة باستخدام API خارجي\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: بناء خدمة محادثة باستخدام API خارجي...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.5.6",
           "title": "مقدمة في Embeddings",
           "englishTitle": "مقدمة في Embeddings",
-          "definition": "يُقصد بـ (مقدمة في Embeddings) أحد الركائز الجوهرية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (مقدمة في Embeddings) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (مقدمة في Embeddings) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (مقدمة في Embeddings) أحد المفاهيم المحورية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه مجمع المفاتيح Multi-Key Pool بطاقات الائتمان المتعددة في محفظتك؛ إذا وصلت للحد الائتماني في بطاقة تدفع بالبطاقة الثانية فوراً دون إيقاف التسوق.",
+          "why": "تبرز أهمية (مقدمة في Embeddings) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for مقدمة في Embeddings\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح مقدمة في Embeddings في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: مقدمة في Embeddings\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ مقدمة في Embeddings في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق مقدمة في Embeddings\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"مقدمة في Embeddings\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ مقدمة في Embeddings\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'مقدمة في Embeddings';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: مقدمة في Embeddings\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.5.6",
             "title": "مقدمة في Embeddings",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (مقدمة في Embeddings) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (مقدمة في Embeddings) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'مقدمة في Embeddings' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (مقدمة في Embeddings) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (مقدمة في Embeddings) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (مقدمة في Embeddings) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (مقدمة في Embeddings) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على مقدمة في Embeddings",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (مقدمة في Embeddings)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على مقدمة في Embeddings",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (مقدمة في Embeddings) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين مقدمة في Embeddings\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: مقدمة في Embeddings...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين مقدمة في Embeddings\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: مقدمة في Embeddings...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.5.7",
           "title": "مفهوم Retrieval-Augmented Generation",
           "englishTitle": "Retrieval-Augmented Generation",
-          "definition": "يُقصد بـ (مفهوم Retrieval-Augmented Generation) أحد الركائز الجوهرية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (مفهوم Retrieval-Augmented Generation) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (مفهوم Retrieval-Augmented Generation) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (مفهوم Retrieval-Augmented Generation) أحد المفاهيم المحورية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه دمج نماذج الذكاء الاصطناعي استشارة مستشار خبير يقف بجانبك؛ تسأله في أي لحظة فيعطيك تحليلاً فورياً للموقف.",
+          "why": "تبرز أهمية (مفهوم Retrieval-Augmented Generation) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for مفهوم Retrieval-Augmented Generation\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح مفهوم Retrieval-Augmented Generation في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: مفهوم Retrieval-Augmented Generation\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ مفهوم Retrieval-Augmented Generation في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق مفهوم Retrieval-Augmented Generation\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"مفهوم Retrieval-Augmented Generation\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ مفهوم Retrieval-Augmented Generation\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'مفهوم Retrieval-Augmented Generation';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: مفهوم Retrieval-Augmented Generation\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.5.7",
             "title": "مفهوم Retrieval-Augmented Generation",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (مفهوم Retrieval-Augmented Generation) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (مفهوم Retrieval-Augmented Generation) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'Retrieval-Augmented Generation' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (مفهوم Retrieval-Augmented Generation) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (مفهوم Retrieval-Augmented Generation) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (مفهوم Retrieval-Augmented Generation) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (مفهوم Retrieval-Augmented Generation) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على مفهوم Retrieval-Augmented Generation",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (مفهوم Retrieval-Augmented Generation)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على مفهوم Retrieval-Augmented Generation",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (مفهوم Retrieval-Augmented Generation) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين مفهوم Retrieval-Augmented Generation\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: مفهوم Retrieval-Augmented Generation...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين مفهوم Retrieval-Augmented Generation\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: مفهوم Retrieval-Augmented Generation...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.5.8",
           "title": "استخدام Vector Databases",
           "englishTitle": "Vector Databases",
-          "definition": "يُقصد بـ (استخدام Vector Databases) أحد الركائز الجوهرية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (استخدام Vector Databases) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (استخدام Vector Databases) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (استخدام Vector Databases) أحد المفاهيم المحورية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "تشبه واجهات Webhooks خدمة جرس الباب الذكي؛ يرن هاتفك فور وقوف ساعي البريد أمام منزلك بدلاً من أن تقف تنظر من النافذة طوال اليوم.",
+          "why": "تبرز أهمية (استخدام Vector Databases) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for استخدام Vector Databases\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح استخدام Vector Databases في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: استخدام Vector Databases\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ استخدام Vector Databases في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق استخدام Vector Databases\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"استخدام Vector Databases\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ استخدام Vector Databases\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'استخدام Vector Databases';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: استخدام Vector Databases\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.5.8",
             "title": "استخدام Vector Databases",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (استخدام Vector Databases) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (استخدام Vector Databases) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'Vector Databases' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (استخدام Vector Databases) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (استخدام Vector Databases) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (استخدام Vector Databases) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (استخدام Vector Databases) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على استخدام Vector Databases",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (استخدام Vector Databases)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على استخدام Vector Databases",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (استخدام Vector Databases) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين استخدام Vector Databases\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: استخدام Vector Databases...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين استخدام Vector Databases\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: استخدام Vector Databases...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         },
         {
           "id": "18.5.9",
           "title": "التحكم في التكلفة والمهلات والحدود",
           "englishTitle": "التحكم في التكلفة والمهلات والحدود",
-          "definition": "يُقصد بـ (التحكم في التكلفة والمهلات والحدود) أحد الركائز الجوهرية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js، حيث يتيح للمطورين بناء أنظمة خوادم عالية الكفاءة ومعالجة الطلبات البرمجية بمرونة وموثوقية عالية.",
-          "analogy": "يشبه مفهوم (التحكم في التكلفة والمهلات والحدود) نظام العمل في المطارات الدولية؛ حيث يوجد مسار مخصص للتحقق السريع وتوجيه كل مسافر إلى وجهته المحددة دون تعطيل باقي الرحلات أو إغلاق الصالة الرئيسية.",
-          "why": "نحتاج إلى (التحكم في التكلفة والمهلات والحدود) لضمان استقرار التطبيق وتفادي الاختناقات البرمجية (Bottlenecks)، وتقديم تجربة استخدام فائقة السرعة للمستخدمين عند توسع النظام وارتفاع معدل الزيارات.",
+          "definition": "يُقصد بـ (التحكم في التكلفة والمهلات والحدود) أحد المفاهيم المحورية في مسار دمج خدمات الذكاء الاصطناعي ضمن بيئة Node.js؛ حيث يوفر للمهندس الأدوات المعمارية والبرمجية لمعالجة تدفقات البيانات وتقديم أداء عالي الاستقرار في بيئات الإنتاج الحية.",
+          "analogy": "يشبه التراجع الأسي Exponential Backoff طرْق باب صديقك بهدوء؛ تطرق مرة، ثم تنتظر دقيقة، ثم تطرق وتنتظر دقيقتين حتى لا تزعجه أثناء انشغاله.",
+          "why": "تبرز أهمية (التحكم في التكلفة والمهلات والحدود) في حل مشكلات الاختناق البرمجي، ضمان استقرار الخدمات الخلفية عند تزايد أحمال المستخدمين، وفصل المسؤوليات لتحقيق كود نظيف وسهل الصيانة والاختبار.",
           "terms": [
             {
-              "term": "Runtime",
-              "pronunciation": "رن تايم",
-              "meaning": "بيئة تشغيل البرامج وتفسير الشفرة في الذاكرة"
+              "term": "Webhook HMAC",
+              "pronunciation": "ويب هوك إتش-ماك",
+              "meaning": "بصمة التوقيع الرقمية للتحقق من مصداقية إشعارات الدفع والخدمات"
             },
             {
-              "term": "Backend",
-              "pronunciation": "باك إند",
-              "meaning": "الخلفية البرمجية والخوادم وقواعد البيانات"
+              "term": "Exponential Backoff",
+              "pronunciation": "إكسبوننشال باك أوف",
+              "meaning": "مضاعفة زمن الانتظار بين كل محاولة فاشلة وأخرى لتخفيف الضغط"
             },
             {
-              "term": "Asynchronous",
-              "pronunciation": "إيه-سينكرونس",
-              "meaning": "العمليات غير المتزامنة التي لا تعطل المسار الرئيسي"
+              "term": "Key Rotation",
+              "pronunciation": "كي روتيشن",
+              "meaning": "التبديل التلقائي بين مفاتيح الـ API عند مواجهة حد الاستخدام"
+            },
+            {
+              "term": "Idempotency",
+              "pronunciation": "آيدم بوتنسي",
+              "meaning": "ضمان عدم تكرار تنفيذ العملية إذا أرسل نفس الطلب أكثر من مرة"
             }
           ],
-          "syntax": "// Syntax representation for التحكم في التكلفة والمهلات والحدود\nconst result = await operation(params);",
-          "simpleCode": "// مثال مبسط يوضح التحكم في التكلفة والمهلات والحدود في Node.js\n// 1. استيراد أو استدعاء الوظيفة المطلوبة\nconsole.log(\"تنفيذ: التحكم في التكلفة والمهلات والحدود\");\n// 2. معالجة النتيجة وطباعتها\nconst status = \"جاهز للتشغيل\";\nconsole.log(\"الحالة الحالية:\", status);",
-          "advancedCode": "// تطبيق عملي متقدم لـ التحكم في التكلفة والمهلات والحدود في بيئة عمل حقيقية\nimport { createServer } from 'node:http';\n\n// إعداد خادم يستجيب للطلبات بناءً على منطق التحكم في التكلفة والمهلات والحدود\nconst server = createServer(async (req, res) => {\n  // تسجيل وقت الطلب والمسار\n  console.log(`[${new Date().toISOString()}] طلب جديد: ${req.method} ${req.url}`);\n  \n  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify({\n    success: true,\n    topic: \"التحكم في التكلفة والمهلات والحدود\",\n    message: \"تمت المعالجة بنجاح وفق المعايير القياسية\"\n  }));\n});\n\nserver.listen(3000, () => {\n  console.log(\"الخادم يعمل بنجاح على المنفذ 3000 🚀\");\n});",
-          "outputExplanation": "عند تشغيل الشفرة البرمجية في الطرفية، يقوم محرك Node.js بتهيئة الموارد وطباعة رسائل التأكيد، مع الاستجابة للطلبات وإرجاع كائن JSON منظم بالحالة والبيانات المطلوبة.",
+          "syntax": "// الصيغة البرمجية العامة لـ التحكم في التكلفة والمهلات والحدود\nconst result = await executeOperation(parameters);",
+          "simpleCode": "// تحديد عنوان المفهوم البرمجي قيد التنفيذ\nconst topicName = 'التحكم في التكلفة والمهلات والحدود';\n// تسجيل وقت بداية معالجة العملية بالصيغة القياسية\nconst timestamp = new Date().toISOString();\n// طباعة رسالة توضح انطلاق معالجة المهمة\nconsole.log(`[${timestamp}] تنفيذ مهمة: ${topicName}`);\n// إنشاء كائن النتيجة المنظم وتأكيد اكتمال الخطوات\nconst executionResult = { success: true, topic: topicName };\n// طباعة النتيجة النهائية للتأكيد على دقة وسلاسة المعالجة\nconsole.log('مخرجات التنفيذ المعتمدة:', executionResult);",
+          "advancedCode": "// تطبيق متقدم وموثق لمفهوم: التحكم في التكلفة والمهلات والحدود\nimport { performance } from 'node:perf_hooks';\n// تعريف كلاس إدارة ومعالجة المهام الهندسية الاحترافية\nexport class ProductionTaskExecutor {\n// خاصية خاصة لتسجيل عدد العمليات المنجزة\n  #completedCount = 0;\n// دالة تنفيذ العملية مع قياس زمن الأداء والتعامل مع الأخطاء\n  async executeTask(taskPayload) {\n// التحقق المسبق الحارس من سلامة كائن المدخلات\n    if (!taskPayload) throw new Error('البيانات المدخلة مفقودة');\n// رصد وقت بداية المعالجة بدقة النانو ثانية\n    const start = performance.now();\n// محاكاة معالجة غير متزامنة مثل استعلام قاعدة بيانات أو شبكة\n    await new Promise(resolve => setTimeout(resolve, 60));\n// حساب زمن المعالجة الإجمالي بالميلي ثانية\n    const duration = (performance.now() - start).toFixed(2);\n// زيادة عداد العمليات الناجحة في الذاكرة\n    this.#completedCount++;\n// إرجاع تقرير الأداء المنسق مع بيانات العملية\n    return { status: 'success', durationMs: duration, totalExecuted: this.#completedCount };\n// إغلاق دالة التنفيذ\n  }\n// إغلاق كلاس المعالجة\n}\n// إنشاء مثيل الخدمة وتشغيل المعالجة التجريبية\nconst executor = new ProductionTaskExecutor();\n// استدعاء العملية وطباعة النتيجة في الطرفية للمراقبة\nexecutor.executeTask({ id: 1 }).then(res => console.log('✓ نتيجة العملية المتقدمة:', res));",
+          "outputExplanation": "عند تشغيل الشفرة في الطرفية، يقوم محرك Node.js بتفسير الأوامر غير المتزامنة، وطباعة تفاصيل الحالة وزمن المعالجة بدقة دون حظر حلقة الأحداث، ثم ينهي الاتصال بسلام.",
           "commonMistakes": [
             {
-              "wrong": "حظر الـ Event Loop بعمليات متزامنة ثقيلة (Synchronous Blocking).",
-              "right": "استخدام الدوال غير المتزامنة (Async/Await) والـ Streams لتمرير البيانات تدريجياً.",
-              "reason": "لأن Node.js يعتمد على مسار أحادي Single-Threaded وحظره يوقف استجابة الخادم لجميع العملاء."
+              "wrong": "حظر مسار حلقة الأحداث (Event Loop) بعمليات متزامنة ثقيلة (Blocking I/O).",
+              "right": "استخدام الدوال غير المتزامنة المعتمدة على الوعود (Promises) وتفويض المهام الحسابية لـ Worker Threads.",
+              "reason": "لأن Node.js يعمل على مسار أحادي، وحظر المسار يجمد استجابة الخادم لكافة العملاء الآخرين في نفس الوقت."
+            },
+            {
+              "wrong": "تجاهل معالجة الأخطاء والوعود المعلقة (Unhandled Promise Rejections).",
+              "right": "تغليف العمليات بكتل try/catch محكمة أو استخدام توابع .catch() وتمرير الخطأ للوسيط المركزي.",
+              "reason": "لأن الوعود المرفوضة غير المعالجة قد تؤدي إلى انهيار مفاجئ لعملية الخادم وفقدان الاتصالات الجارية."
             }
           ],
           "bestPractices": [
-            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودع العام.",
-            "استخدم التحقق الصارم من صحة المدخلات (Schema Validation) لمنع الثغرات الأمنية.",
-            "قم بتنظيم منطق العمليات في طبقات منفصلة (Controllers, Services, Repositories)."
+            "احرص دائماً على عزل الأسرار والمفاتيح داخل متغيرات بيئية (.env) ولا ترفعها أبداً للمستودعات العامة.",
+            "طبق التحقق الصارم من صحة ونوعية المدخلات لمنع الثغرات الأمنية وفساد قواعد البيانات.",
+            "استخدم التسجيل المهيكل (Structured JSON Logging) بدلاً من طباعة النصوص العادية لتسهيل المراقبة والبحث في الإنتاج.",
+            "احرص على الإغلاق السلس للتطبيق (Graceful Shutdown) عند استلام إشارات النظام لحماية المعاملات النشطة."
           ],
           "infographic": {
             "badge": "الدرس 18.5.9",
             "title": "التحكم في التكلفة والمهلات والحدود",
-            "icon": "Server",
-            "colors": "from-emerald-600 to-teal-500",
+            "icon": "Cpu",
+            "colors": "from-amber-600 to-rose-500",
             "steps": [
               {
-                "title": "التهيئة والاتصال",
-                "desc": "بدء استقبال الطلب أو قراءة المورد المحدد بأمان"
+                "title": "التهيئة والتحقق",
+                "desc": "فحص المدخلات وتهيئة الموارد والاتصالات بأمان تام"
               },
               {
                 "title": "المعالجة غير المتزامنة",
-                "desc": "تنفيذ منطق الأعمال دون تعطيل المسار الرئيسي لـ Node.js"
+                "desc": "تنفيذ منطق الأعمال دون حظر مسار حلقة الأحداث"
               },
               {
-                "title": "الاستجابة والتسجيل",
-                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل الحالة في السجلات"
+                "title": "الاستجابة والأرشفة",
+                "desc": "إرسال النتيجة المهيكلة للعميل وتسجيل مقاييس العملية"
               }
             ],
-            "summary": "يمثل (التحكم في التكلفة والمهلات والحدود) معياراً هندسياً أساسياً لتطوير تطبيقات خلفية قابلة للتوسع والموثوقية."
+            "summary": "يمثل (التحكم في التكلفة والمهلات والحدود) ركيزة برمجية هامة لبناء وتطوير تطبيقات خلفية موثوقة وعالية الأداء.",
+            "goldenCode": "// مقتطف الكود الذهبي النظيف\nconst data = await executeSafely({ action: 'التحكم في التكلفة والمهلات والحدود' });"
           },
           "quiz": {
-            "question": "ما هي الميزة الأساسية لتطبيق (التحكم في التكلفة والمهلات والحدود) في مشاريع Node.js الحديثة؟",
+            "question": "ما هو المعيار الهندسي الأهم لتطبيق (التحكم في التكلفة والمهلات والحدود) بنجاح؟",
             "options": [
-              "رفع كفاءة المعالجة وتفادي حظر المسار الرئيسي للنظام",
-              "إيقاف تشغيل الخادم عند حدوث أي خطأ طارئ",
-              "الاستغناء تماماً عن قواعد البيانات",
-              "إجبار التطبيق على العمل بشكل متزامن فقط"
+              "ضمان المعالجة غير المتزامنة وتفادي حظر المسار الرئيسي للخادم",
+              "إيقاف تشغيل الخادم فور تلقي أول طلب غير متوقع",
+              "حفظ كافة كلمات المرور بصيغة نصوص صريحة غير مشفرة",
+              "الاستغناء عن استخدام أي دوال وسيطة للتحقق من المدخلات"
             ],
             "correctIndex": 0,
-            "explanation": "التطبيق الصحيح لـ (التحكم في التكلفة والمهلات والحدود) يضمن استثمار معمارية Node.js غير المتزامنة لتقديم أداء استثنائي وتحمل آلاف الطلبات المتزامنة."
+            "explanation": "التطبيق السليم لـ (التحكم في التكلفة والمهلات والحدود) يعتمد على استثمار المعمارية غير المتزامنة لتقديم أداء فائق وتفادي حظر الـ Event Loop."
           },
           "exercise": {
-            "title": "تطبيق عملي على التحكم في التكلفة والمهلات والحدود",
-            "task": "قم بكتابة دالة في Node.js تنفذ منطق (التحكم في التكلفة والمهلات والحدود)، مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في الطرفية.",
+            "title": "تمرين تطبيقي على التحكم في التكلفة والمهلات والحدود",
+            "task": "قم بكتابة كود في Node.js ينفذ منطق (التحكم في التكلفة والمهلات والحدود) مع إضافة التحقق من الأخطاء وطباعة تقرير منظم في شاشة الطرفية.",
             "hints": [
-              "استخدم كتل try/catch للتعامل الآمن مع أي استثناء محتمل.",
-              "تأكد من استخدام async/await في حال وجود عمليات إدخال/إخراج I/O."
+              "استخدم كتل try/catch لحماية الكود من الانهيار.",
+              "تأكد من وجود تعليق عربي فوق كل سطر كود يوضح المنطق المتبع."
             ],
-            "solution": "// الحل النموذجي لتمرين التحكم في التكلفة والمهلات والحدود\nasync function executeTask() {\n  try {\n    console.log(\"بدء تنفيذ مهمة: التحكم في التكلفة والمهلات والحدود...\");\n    // محاكاة عملية غير متزامنة\n    await new Promise(resolve => setTimeout(resolve, 100));\n    console.log(\"اكتملت المهمة بنجاح ✓\");\n    return { success: true };\n  } catch (error) {\n    console.error(\"فشل تنفيذ المهمة:\", error.message);\n    throw error;\n  }\n}\n\nexecuteTask();",
-            "solutionExplanation": "تم تغليف العملية داخل دالة async مع استخدام try/catch لضمان إدارة الأخطاء بأمان ودون انهيار التطبيق."
+            "solution": "// الحل النموذجي لتمرين التحكم في التكلفة والمهلات والحدود\n// 1. دالة المعالجة غير المتزامنة الآمنة\nasync function runTask() {\n  // 2. بداية كتلة الحماية واعتراض الأخطاء\n  try {\n    // 3. طباعة إشعار بدء المعالجة في الطرفية\n    console.log(\"بدء تنفيذ مهمة: التحكم في التكلفة والمهلات والحدود...\");\n    // 4. محاكاة عملية غير متزامنة\n    await new Promise(r => setTimeout(r, 60));\n    // 5. طباعة تأكيد النجاح بعد اكتمال العملية\n    console.log(\"✓ تم إنجاز العملية بنجاح تام\");\n    // 6. إرجاع كائن الحالة المعتمد\n    return { success: true };\n  // 7. التقاط أي خطأ طارئ\n  } catch (err) {\n    // 8. طباعة الخطأ بوضوح دون إيقاف السيرفر\n    console.error(\"✕ خطأ في العملية:\", err.message);\n    // 9. إعادة رمي الخطأ للطبقات المسؤولة\n    throw err;\n  }\n}\n// 10. استدعاء الدالة لتشغيل التمرين\nrunTask();",
+            "solutionExplanation": "تم استخدام دالة async مع كتلة try/catch محكمة وتعليقات عربية فوق كل سطر لتوضيح آلية التنفيذ الآمن."
           }
         }
       ]

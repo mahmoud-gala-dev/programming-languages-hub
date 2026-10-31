@@ -1,9 +1,15 @@
 // src/components/views/SummaryView.jsx
 import React from 'react';
-import { Award, CheckCircle, Sparkles, Compass, Lightbulb, BookOpen } from 'lucide-react';
+import { Award, CheckCircle, Sparkles, Lightbulb, BookOpen, HelpCircle } from 'lucide-react';
 
-export default function SummaryView({ sectionData, onBackToLessons }) {
-  if (!sectionData) return null;
+export default function SummaryView({ sectionData, currentSection, onBackToLessons }) {
+  const section = currentSection || sectionData;
+  if (!section) return null;
+
+  const summary = section.summary || {};
+  const overview = summary.overview || '';
+  const goldenRules = summary.goldenRules || [];
+  const keyTakeaways = summary.keyTakeaways || summary.keyConcepts || [];
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 animate-fadeIn text-slate-100" dir="rtl">
@@ -15,9 +21,9 @@ export default function SummaryView({ sectionData, onBackToLessons }) {
             ملخص ختامي شامل
           </span>
           <h1 className="text-2xl sm:text-3xl font-black text-white mt-2">
-            خلاصة وقواعد الذهب: {sectionData.title}
+            خلاصة وقواعد الذهب: {section.title}
           </h1>
-          <p className="text-xs text-slate-400 mt-1">{sectionData.englishTitle}</p>
+          <p className="text-xs text-slate-400 mt-1">{section.englishTitle}</p>
         </div>
 
         <button
@@ -28,56 +34,61 @@ export default function SummaryView({ sectionData, onBackToLessons }) {
         </button>
       </div>
 
-      {/* القواعد الذهبية للقسم */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        {[
-          {
-            title: "فهم دورة حياة Node.js وEvent Loop",
-            desc: "لا تقم أبداً بحظر المسار الرئيسي (Single Thread) بعمليات حسابية ثقيلة تستهلك الـ CPU، بل استخدم Worker Threads أو Streams."
-          },
-          {
-            title: "البرمجة غير المتزامنة الآمنة",
-            desc: "اعتمد دائماً على async/await مع كتل try/catch محكمة، وتجنب الوعود المعلقة (Unhandled Rejections)."
-          },
-          {
-            title: "الأمان أولاً (Security by Design)",
-            desc: "طهّر كافة المدخلات باستخدام مكتبات التحقق مثل Zod، واحمِ التطبيق من هجمات الحقن وXSS واستخدم Helmet."
-          },
-          {
-            title: "هيكلة المشروع وفصل المسؤوليات",
-            desc: "افصل طبقة المسارات (Routes) عن طبقة التحكم (Controllers) وعن منطق الأعمال (Services) وقواعد البيانات."
-          },
-          {
-            title: "التعامل الفعال مع الذاكرة وStreams",
-            desc: "عند التعامل مع ملفات كبيرة أو تدفق بيانات ضخم، استخدم Streams بدلاً من تحميل كامل الملف في الذاكرة عبر Buffers."
-          },
-          {
-            title: "التسجيل والمراقبة المهنية",
-            desc: "استخدم مكتبات تسجيل مهيكلة مثل Pino لإنتاج JSON logs وRequest IDs لتتبع الطلبات بسهولة في بيئة الإنتاج."
-          },
-          {
-            title: "إدارة الاتصالات وقواعد البيانات",
-            desc: "استخدم Connection Pooling دائماً، وتجنب مشكلة N+1 Queries، وطبق الفهارس (Indexes) على الحقول الأكثر بحثاً."
-          },
-          {
-            title: "الإغلاق السلس للتطبيق (Graceful Shutdown)",
-            desc: "استمع لإشارات SIGTERM وSIGINT لإغلاق اتصالات قاعدة البيانات والخوادم دون فقدان بيانات العملاء قيد المعالجة."
-          }
-        ].map((rule, idx) => (
-          <div
-            key={idx}
-            className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 transition-all flex items-start gap-3.5"
-          >
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center shrink-0 text-xs">
-              {idx + 1}
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-white mb-1.5">{rule.title}</h4>
-              <p className="text-xs text-slate-300 leading-relaxed font-sans">{rule.desc}</p>
-            </div>
+      {/* النظرة العامة للقسم */}
+      {overview && (
+        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 mb-8 shadow-lg">
+          <div className="flex items-center gap-2 mb-3 text-emerald-400">
+            <BookOpen className="w-5 h-5" />
+            <h3 className="text-sm font-bold text-white">نظرة عامة على القسم</h3>
           </div>
-        ))}
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+            {overview}
+          </p>
+        </div>
+      )}
+
+      {/* القواعد الذهبية للقسم */}
+      <div className="mb-8">
+        <div className="flex items-center gap-2 mb-4 text-emerald-400">
+          <Sparkles className="w-5 h-5" />
+          <h3 className="text-sm font-bold text-white">القواعد الذهبية للقسم ({goldenRules.length})</h3>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {goldenRules.map((rule, idx) => (
+            <div
+              key={idx}
+              className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 transition-all flex items-start gap-3.5"
+            >
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center shrink-0 text-xs">
+                {idx + 1}
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-white mb-1.5">{rule.title}</h4>
+                <p className="text-xs text-slate-300 leading-relaxed font-sans">{rule.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* المفاهيم المحورية ومخرجات التعلم */}
+      {keyTakeaways.length > 0 && (
+        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 mb-8 shadow-lg">
+          <div className="flex items-center gap-2 mb-4 text-emerald-400">
+            <Lightbulb className="w-5 h-5" />
+            <h3 className="text-sm font-bold text-white">المفاهيم المحورية ومخرجات التعلم</h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {keyTakeaways.map((takeaway, idx) => (
+              <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
+                <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <span className="text-xs text-slate-300 font-sans leading-relaxed">{takeaway}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* بطاقة التهنئة */}
       <div className="bg-gradient-to-r from-emerald-950/60 to-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 text-center space-y-3">
