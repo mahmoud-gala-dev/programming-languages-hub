@@ -68,20 +68,25 @@ export default function LessonMotionPlayer({
         </div>
       </div>
 
-      {/* حاوية المشغل الفعلي لـ Remotion في الوضع العادي (متجاوبة تماماً مع العرض 16/9) */}
-      <div className="w-full bg-slate-950 relative overflow-hidden flex items-center justify-center aspect-video">
+      {/* حاوية المشغل الفعلي لـ Remotion في الوضع العادي (متجاوبة تماماً مع العرض 16/9 وتمركز مثالي LTR) */}
+      <div 
+        className="w-full bg-slate-950 relative overflow-hidden flex items-center justify-center aspect-video"
+        dir="ltr"
+        style={{ direction: 'ltr' }}
+      >
         <Player
           key={playerKey}
           component={ReactLessonComposition}
           inputProps={{ subtopic, topicTitle }}
-          durationInFrames={180}
+          durationInFrames={360}
           compositionWidth={1280}
           compositionHeight={720}
           fps={30}
           style={{
             width: '100%',
             height: '100%',
-            aspectRatio: '16/9'
+            aspectRatio: '16/9',
+            margin: '0 auto'
           }}
           controls={true}
           autoPlay={false}
@@ -136,21 +141,26 @@ export default function LessonMotionPlayer({
             </div>
           </div>
 
-          {/* مسرح المشغل السينمائي المتجاوب */}
+          {/* مسرح المشغل السينمائي المتجاوب والمتمركز هندسياً */}
           <div className="flex-1 w-full max-w-6xl mx-auto flex items-center justify-center p-2 sm:p-4 min-h-0">
-            <div className="w-full aspect-video rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-black relative flex items-center justify-center">
+            <div 
+              className="w-full aspect-video rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-black relative flex items-center justify-center"
+              dir="ltr"
+              style={{ direction: 'ltr' }}
+            >
               <Player
                 key={`cinema-${playerKey}`}
                 component={ReactLessonComposition}
                 inputProps={{ subtopic, topicTitle }}
-                durationInFrames={180}
+                durationInFrames={360}
                 compositionWidth={1280}
                 compositionHeight={720}
                 fps={30}
                 style={{
                   width: '100%',
                   height: '100%',
-                  aspectRatio: '16/9'
+                  aspectRatio: '16/9',
+                  margin: '0 auto'
                 }}
                 controls={true}
                 autoPlay={true}

@@ -17,14 +17,14 @@ export default function ReactLessonComposition({
   const frame = useCurrentFrame();
   const { fps, width, height, durationInFrames } = useVideoConfig();
 
-  // انتقال الدخول بالزنبرك (Spring Physics)
+  // انتقال الدخول بالزنبرك المهدئ والناعم (Smooth Calm Spring Physics)
   const titleSpring = spring({
     frame,
     fps,
-    config: { damping: 12, stiffness: 100 }
+    config: { damping: 18, stiffness: 60 }
   });
 
-  const opacityFade = interpolate(frame, [0, 20], [0, 1], {
+  const opacityFade = interpolate(frame, [0, 25], [0, 1], {
     extrapolateRight: 'clamp'
   });
 
@@ -41,19 +41,19 @@ export default function ReactLessonComposition({
 
   return (
     <div 
-      className="w-full h-full flex flex-col justify-between p-8 sm:p-12 text-white overflow-hidden relative font-sans"
+      className="w-full h-full flex flex-col justify-between p-6 sm:p-8 text-white overflow-hidden relative font-sans select-none"
       style={{
         background: 'linear-gradient(135deg, #07090e 0%, #0d1527 50%, #050b14 100%)',
         direction: 'rtl'
       }}
     >
-      {/* شبكة هندسية خلفية متحركة */}
+      {/* شبكة هندسية خلفية متحركة ببطء وانسيابية */}
       <div 
         className="absolute inset-0 opacity-15 pointer-events-none"
         style={{
           backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(56, 189, 248, 0.4) 1px, transparent 0)',
           backgroundSize: '32px 32px',
-          transform: `translateY(${interpolate(frame, [0, durationInFrames], [0, -32])}px)`
+          transform: `translateY(${interpolate(frame, [0, durationInFrames], [0, -24])}px)`
         }}
       />
 
@@ -91,19 +91,20 @@ export default function ReactLessonComposition({
         </div>
       </div>
 
-      {/* شريط خطوات المفهوم الحركية المتتابعة التابع لمحتوى الدرس الحالي */}
+      {/* شريط خطوات المفهوم الحركية المتتابعة التابع لمحتوى الدرس الحالي بتوقيت مهدئ ومريح */}
       {subtopic?.infographic?.steps && subtopic.infographic.steps.length > 0 && (
         <div className="relative z-10 flex items-center justify-between gap-2 sm:gap-3 mt-2 sm:mt-3 px-1">
           {subtopic.infographic.steps.slice(0, 3).map((step, idx) => {
-            const stepStart = idx * 45;
-            const stepActive = frame >= stepStart && frame < (stepStart + 55);
-            const isCompleted = frame >= (stepStart + 45);
+            // كل خطوة تأخذ 85 إطاراً كاملاً (قرابة 3 ثوانٍ لكل خطوة) لتركيز المتعلم
+            const stepStart = idx * 85;
+            const stepActive = frame >= stepStart && frame < (stepStart + 85);
+            const isCompleted = frame >= (stepStart + 85);
             return (
               <div 
                 key={idx}
-                className={`flex-1 flex items-center gap-2 p-1.5 sm:p-2 rounded-xl border transition-all duration-300 ${
+                className={`flex-1 flex items-center gap-2 p-1.5 sm:p-2 rounded-xl border transition-all duration-500 ${
                   stepActive 
-                    ? 'bg-cyan-500/20 border-cyan-400 text-white shadow-lg shadow-cyan-500/20' 
+                    ? 'bg-cyan-500/20 border-cyan-400 text-white shadow-lg shadow-cyan-500/20 scale-[1.02]' 
                     : isCompleted
                     ? 'bg-slate-900/60 border-slate-700/60 text-slate-300'
                     : 'bg-slate-950/40 border-slate-800/40 text-slate-500'
@@ -124,8 +125,8 @@ export default function ReactLessonComposition({
         </div>
       )}
 
-      {/* المنتصف: مشهد المخطط المعماري الحركي SVG المربوط بمحتوى الدرس الحقيقي */}
-      <div className="relative z-10 flex-1 flex items-center justify-center my-2 sm:my-4 max-h-[55%] overflow-hidden">
+      {/* المنتصف: مشهد المخطط المعماري الحركي SVG متمركز تماماً ومتجاوب بنسبة 100% */}
+      <div className="relative z-10 flex-1 w-full flex items-center justify-center my-1 sm:my-2 overflow-hidden mx-auto">
         <SvgMotionDiagram 
           type={diagramType}
           subtopic={subtopic}
@@ -134,14 +135,14 @@ export default function ReactLessonComposition({
         />
       </div>
 
-      {/* الشريط السفلي: الكود الذهبي + النتيجة أو الملاحظة الذهبية */}
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-800/80 pt-4">
+      {/* الشريط السفلي: الكود الذهبي + النتيجة أو الملاحظة الذهبية (ظهور هادئ بتوقيت مريح) */}
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-800/80 pt-3">
         {/* صندوق كود تفاعلي متحرك */}
         <div 
           className="bg-slate-950/80 border border-slate-800 rounded-xl p-3 shadow-inner"
           style={{
-            opacity: interpolate(frame, [25, 45], [0, 1], { extrapolateRight: 'clamp' }),
-            transform: `translateY(${interpolate(frame, [25, 45], [20, 0], { extrapolateRight: 'clamp' })}px)`
+            opacity: interpolate(frame, [50, 90], [0, 1], { extrapolateRight: 'clamp' }),
+            transform: `translateY(${interpolate(frame, [50, 90], [20, 0], { extrapolateRight: 'clamp' })}px)`
           }}
         >
           <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1 border-b border-slate-800/60 pb-1">
@@ -161,8 +162,8 @@ export default function ReactLessonComposition({
         <div 
           className="bg-cyan-950/20 border border-cyan-500/30 rounded-xl p-3 flex flex-col justify-between"
           style={{
-            opacity: interpolate(frame, [40, 60], [0, 1], { extrapolateRight: 'clamp' }),
-            transform: `translateY(${interpolate(frame, [40, 60], [20, 0], { extrapolateRight: 'clamp' })}px)`
+            opacity: interpolate(frame, [80, 120], [0, 1], { extrapolateRight: 'clamp' }),
+            transform: `translateY(${interpolate(frame, [80, 120], [20, 0], { extrapolateRight: 'clamp' })}px)`
           }}
         >
           <div className="flex items-center gap-2 text-xs font-bold text-cyan-300">

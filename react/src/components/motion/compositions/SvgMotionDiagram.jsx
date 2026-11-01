@@ -45,10 +45,10 @@ export function detectDiagramType(subtopic) {
 }
 
 export default function SvgMotionDiagram({ type = 'architecture', subtopic, frame, fps }) {
-  // نبضات حركية مستمرة
-  const pulse = interpolate(Math.sin((frame / fps) * Math.PI * 2), [-1, 1], [0.85, 1.15]);
-  const progress = interpolate(frame % (fps * 3), [0, fps * 3], [0, 100]);
-  const wave = Math.sin((frame / 15)) * 12;
+  // نبضات حركية هادئة ومريحة للمتعلم (دورة تنفس هادئة كل 4 ثوانٍ)
+  const pulse = interpolate(Math.sin((frame / (fps * 2)) * Math.PI), [-1, 1], [0.95, 1.05]);
+  const progress = interpolate(frame % (fps * 5), [0, fps * 5], [0, 100]);
+  const wave = Math.sin((frame / 30)) * 8;
 
   // استخراج الخطوات الديناميكية التابعة للدرس الحالي
   const steps = subtopic?.infographic?.steps || [];
@@ -62,12 +62,20 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
 
   // 1. مخطط تدفق العميل والخادم (Frontend vs Backend & Client-Server Flow)
   if (type === 'client-server') {
-    const packetProgress = (frame % (fps * 2)) / (fps * 2);
-    const packetX = interpolate(packetProgress, [0, 0.5, 1], [270, 520, 270]);
+    // دورة حركة هادئة ومريحة للمتعلم: 6 ثوانٍ كاملة للطلب والاستجابة
+    const cycleFrames = fps * 6;
+    const packetProgress = (frame % cycleFrames) / cycleFrames;
+    // حركة متدرجة سلسة عبر دالة جيب التمام المهدئة (Cosine Easing)
+    const easeProgress = 0.5 - 0.5 * Math.cos(packetProgress * Math.PI * 2);
+    const packetX = interpolate(easeProgress, [0, 1], [270, 520]);
     const isGoingRight = packetProgress <= 0.5;
 
     return (
-      <svg viewBox="0 0 800 450" className="w-full h-full drop-shadow-2xl font-sans">
+      <svg 
+        viewBox="0 0 800 450" 
+        preserveAspectRatio="xMidYMid meet" 
+        className="w-full h-full max-h-[380px] drop-shadow-2xl font-sans mx-auto block"
+      >
         <defs>
           <linearGradient id="clientGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#38bdf8" />
@@ -164,7 +172,11 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
   // 2. مخطط ثلاثي الويب (HTML + CSS + JavaScript)
   if (type === 'html-css-js') {
     return (
-      <svg viewBox="0 0 800 450" className="w-full h-full drop-shadow-2xl font-sans">
+      <svg 
+        viewBox="0 0 800 450" 
+        preserveAspectRatio="xMidYMid meet" 
+        className="w-full h-full max-h-[380px] drop-shadow-2xl font-sans mx-auto block"
+      >
         {/* العمود 1: HTML الهيكل */}
         <g transform="translate(50, 60)">
           <rect width="210" height="320" rx="20" fill="#0f172a" stroke="#ea580c" strokeWidth="2.5" />
@@ -233,9 +245,14 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
 
   // 3. مخطط شجرة الـ Virtual DOM ومطابقة الـ Diffing
   if (type === 'vdom') {
-    const diffHighlight = Math.floor(frame / 20) % 2 === 0;
+    // تبديل هادئ كل ثانيتين بدلاً من الوميض السريع
+    const diffHighlight = Math.floor(frame / (fps * 2)) % 2 === 0;
     return (
-      <svg viewBox="0 0 800 450" className="w-full h-full drop-shadow-2xl">
+      <svg 
+        viewBox="0 0 800 450" 
+        preserveAspectRatio="xMidYMid meet" 
+        className="w-full h-full max-h-[380px] drop-shadow-2xl mx-auto block"
+      >
         <defs>
           <linearGradient id="vdomGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#38bdf8" />
@@ -340,8 +357,14 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
 
   // 2. مخطط تدفق البيانات أحادي الاتجاه (State & Props Unidirectional Flow)
   if (type === 'state-props') {
+    // حركة انسيابية هادئة للبيانات كل 5 ثوانٍ
+    const flowProgress = interpolate(frame % (fps * 5), [0, fps * 5], [0, 120]);
     return (
-      <svg viewBox="0 0 800 450" className="w-full h-full drop-shadow-2xl">
+      <svg 
+        viewBox="0 0 800 450" 
+        preserveAspectRatio="xMidYMid meet" 
+        className="w-full h-full max-h-[380px] drop-shadow-2xl mx-auto block"
+      >
         <defs>
           <linearGradient id="flowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#38bdf8" />
@@ -363,7 +386,7 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
         {/* سهم تدفق الـ Props لأسفل */}
         <g transform="translate(400, 160)">
           <line x1="0" y1="0" x2="0" y2="120" stroke="#38bdf8" strokeWidth="5" strokeDasharray="8 6" />
-          <circle cx="0" cy={progress * 1.2} r="10" fill="#38bdf8" />
+          <circle cx="0" cy={flowProgress} r="10" fill="#38bdf8" />
           <rect x="-80" y="45" width="160" height="30" rx="8" fill="#0284c7" />
           <text x="0" y="65" fill="#fff" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
             Props تتدفق للأسفل ⬇️
@@ -398,9 +421,14 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
 
   // 3. مخطط دورة حياة الـ Hooks والتأثيرات الجانبية
   if (type === 'hooks') {
-    const activeStep = Math.floor((frame / 30) % 3);
+    // حركة متأنية: كل مرحلة تبقى لـ 3 ثوانٍ كاملة
+    const activeStep = Math.floor((frame / (fps * 3)) % 3);
     return (
-      <svg viewBox="0 0 800 450" className="w-full h-full drop-shadow-2xl">
+      <svg 
+        viewBox="0 0 800 450" 
+        preserveAspectRatio="xMidYMid meet" 
+        className="w-full h-full max-h-[380px] drop-shadow-2xl mx-auto block"
+      >
         <text x="400" y="45" fill="#f8fafc" fontSize="22" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
           دورة حياة React Hooks &amp; Component Lifecycle
         </text>
@@ -471,9 +499,13 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
     );
   }
 
-  // 4. المخطط العام الافتراضي (معمارية React Fiber ومحرك الأداء)
+  // 4. المخطط العام الافتراضي (معمارية React Fiber ومحرك الأداء بحركة دوران هادئة)
   return (
-    <svg viewBox="0 0 800 450" className="w-full h-full drop-shadow-2xl">
+    <svg 
+      viewBox="0 0 800 450" 
+      preserveAspectRatio="xMidYMid meet" 
+      className="w-full h-full max-h-[380px] drop-shadow-2xl mx-auto block"
+    >
       <defs>
         <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.3" />
@@ -484,11 +516,11 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
       {/* خلفية الإشعاع التفاعلية */}
       <circle cx="400" cy="225" r="200" fill="url(#centerGlow)" />
 
-      {/* قلب محرك React 19 التفاعلي المعنون باسم الدرس */}
+      {/* قلب محرك React 19 التفاعلي المعنون باسم الدرس بحركة دوران هادئة وغير متسارعة */}
       <g transform="translate(320, 145)">
-        <ellipse cx="80" cy="80" rx="100" ry="40" fill="none" stroke="#38bdf8" strokeWidth="4" strokeDasharray="12 8" transform={`rotate(${frame * 2} 80 80)`} />
-        <ellipse cx="80" cy="80" rx="100" ry="40" fill="none" stroke="#a855f7" strokeWidth="4" strokeDasharray="12 8" transform={`rotate(${-frame * 1.5} 80 80)`} />
-        <ellipse cx="80" cy="80" rx="100" ry="40" fill="none" stroke="#10b981" strokeWidth="4" strokeDasharray="12 8" transform={`rotate(${frame * 2.5 + 60} 80 80)`} />
+        <ellipse cx="80" cy="80" rx="100" ry="40" fill="none" stroke="#38bdf8" strokeWidth="4" strokeDasharray="12 8" transform={`rotate(${frame * 0.4} 80 80)`} />
+        <ellipse cx="80" cy="80" rx="100" ry="40" fill="none" stroke="#a855f7" strokeWidth="4" strokeDasharray="12 8" transform={`rotate(${-frame * 0.3} 80 80)`} />
+        <ellipse cx="80" cy="80" rx="100" ry="40" fill="none" stroke="#10b981" strokeWidth="4" strokeDasharray="12 8" transform={`rotate(${frame * 0.5 + 60} 80 80)`} />
         <circle cx="80" cy="80" r={32 * pulse} fill="#0284c7" />
         <text x="80" y="85" fill="#fff" fontSize="12" fontWeight="black" textAnchor="middle" fontFamily="Cairo">{centerTitle}</text>
       </g>
