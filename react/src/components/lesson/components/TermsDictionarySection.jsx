@@ -135,21 +135,28 @@ export default function TermsDictionarySection({ subtopic, readingFontSize = 15,
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span 
-                        className="text-base sm:text-lg font-black font-mono tracking-tight text-white group-hover:text-cyan-300 transition-colors"
+                        className="font-black font-mono tracking-tight text-white group-hover:text-cyan-300 transition-colors"
                         dir="ltr"
+                        style={{ fontSize: `${Math.max(readingFontSize + 2, 16)}px` }}
                       >
                         {item.term}
                       </span>
                       {item.isCore && (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-sans">
+                        <span 
+                          className="font-bold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-sans"
+                          style={{ fontSize: `${Math.max(readingFontSize - 5, 10)}px` }}
+                        >
                           جوهر الدرس
                         </span>
                       )}
                     </div>
 
                     {/* النطق الصوتي بالعربية */}
-                    <div className="flex items-center gap-2 mt-1.5 text-xs text-amber-300">
-                      <span className="bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 rounded-lg font-medium inline-flex items-center gap-1 font-sans">
+                    <div className="flex items-center gap-2 mt-1.5 text-amber-300">
+                      <span 
+                        className="bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 rounded-lg font-medium inline-flex items-center gap-1 font-sans"
+                        style={{ fontSize: `${Math.max(readingFontSize - 3, 12)}px` }}
+                      >
                         <span>🎙️ النطق:</span>
                         <strong className="text-amber-200">{item.pronunciation || "انقر للاستماع"}</strong>
                       </span>
@@ -184,8 +191,11 @@ export default function TermsDictionarySection({ subtopic, readingFontSize = 15,
 
                 {/* المعنى العربي الدقيق وتطبيقه العملي */}
                 <p 
-                  className="text-slate-300 font-sans leading-relaxed text-pretty mt-2 pt-2 border-t border-slate-900"
-                  style={{ fontSize: `${Math.max(readingFontSize - 1, 13)}px` }}
+                  className="text-slate-200 font-sans leading-relaxed text-pretty mt-2 pt-2 border-t border-slate-900 transition-all duration-150"
+                  style={{ 
+                    fontSize: `${readingFontSize}px`,
+                    lineHeight: `${Math.round(readingFontSize * 1.6)}px`
+                  }}
                 >
                   <strong className="text-blue-400 ml-1">📖 المعنى:</strong>
                   {item.meaning}
@@ -193,7 +203,10 @@ export default function TermsDictionarySection({ subtopic, readingFontSize = 15,
               </div>
 
               {/* شريط توجيهي مصغر في قاع الكرت */}
-              <div className="mt-3 pt-2 flex items-center justify-between text-[11px] text-slate-500 font-sans border-t border-slate-900/60">
+              <div 
+                className="mt-3 pt-2 flex items-center justify-between text-slate-500 font-sans border-t border-slate-900/60"
+                style={{ fontSize: `${Math.max(readingFontSize - 4, 11)}px` }}
+              >
                 <span className="flex items-center gap-1">
                   <span>💡</span>
                   <span>متداول في المقابلات وسوق العمل</span>
