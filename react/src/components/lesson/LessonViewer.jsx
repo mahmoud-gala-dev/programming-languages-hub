@@ -35,6 +35,11 @@ import {
   Code2,
   Trophy,
   Scale,
+  Workflow,
+  Play,
+  Code,
+  ArrowLeftRight,
+  MessageSquare,
 } from 'lucide-react';
 import LessonMap from './LessonMap.jsx';
 import CodeBlock from './CodeBlock.jsx';
@@ -47,6 +52,7 @@ import ProBestPracticesSection from './components/ProBestPracticesSection.jsx';
 import OutputExplanationSection from './components/OutputExplanationSection.jsx';
 import MentalModelSection from './components/MentalModelSection.jsx';
 import BlockToolbar from './components/BlockToolbar.jsx';
+import BlockFocusStudio from './components/BlockFocusStudio.jsx';
 import { exportLessonToPptx } from '../../utils/exportPptx.js';
 import PresentationModeModal from '../presentation/PresentationModeModal.jsx';
 import AiLessonQuizModal from '../ai/AiLessonQuizModal.jsx';
@@ -124,18 +130,7 @@ export default function LessonViewer({
   };
 
   const handleToggleBlockFocus = (blockId) => {
-    setFocusedBlockId(prev => {
-      const next = prev === blockId ? null : blockId;
-      if (next) {
-        setTimeout(() => {
-          const el = document.getElementById(`lesson-section-${blockId}`);
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-        }, 50);
-      }
-      return next;
-    });
+    setFocusedBlockId(prev => (prev === blockId ? null : blockId));
   };
 
   const handleExitBlockFocus = () => {
@@ -145,7 +140,7 @@ export default function LessonViewer({
   const handleBlockZoomIn = (blockId) => {
     setBlockFontSizes(prev => {
       const current = prev[blockId] || readingFontSize;
-      const next = Math.min(current + 2, 32);
+      const next = Math.min(current + 2, 34);
       return { ...prev, [blockId]: next };
     });
   };
@@ -164,9 +159,6 @@ export default function LessonViewer({
       delete next[blockId];
       return next;
     });
-    if (focusedBlockId === blockId) {
-      setFocusedBlockId(null);
-    }
   };
 
   // مستمع للوحة المفاتيح لإلغاء التركيز عبر ESC
@@ -186,16 +178,442 @@ export default function LessonViewer({
   }, [subtopic?.id]);
 
   const getBlockCardClasses = (blockId, baseClasses = '') => {
-    const isThisFocused = focusedBlockId === blockId;
-    const isAnyFocused = focusedBlockId !== null;
-    
-    if (isThisFocused) {
-      return `${baseClasses} relative z-40 ring-4 ring-cyan-400 shadow-2xl shadow-cyan-500/30 scale-[1.01] bg-slate-900/98 transition-all duration-300`;
-    }
-    if (isAnyFocused) {
-      return `${baseClasses} opacity-30 blur-[0.5px] pointer-events-none transition-all duration-300`;
-    }
     return `${baseClasses} transition-all duration-300`;
+  };
+
+  // البيانات الوصفية لكل قسم عند فتحه في استوديو التركيز المخصص
+  const BLOCK_FOCUS_META = {
+    'hero-visual': { title: 'المحاكاة البصرية الحركية للدرس (Remotion 60FPS)', icon: <Film className="size-4" /> },
+    'definition': { title: '1. التعريف المبسط للمفهوم (Simplified Definition)', icon: <Sparkles className="size-4" /> },
+    'analogy': { title: '2. مثال وتشبيه من الحياة اليومية (Everyday Analogy)', icon: <Lightbulb className="size-4" /> },
+    'why': { title: '3. لماذا نحتاجه وما المشكلة التي يحلها؟ (Why & Problem Solved)', icon: <HelpCircle className="size-4" /> },
+    'terms': { title: '4. المصطلحات الإنجليزية والنطق الصوتي المباشر والمعنى', icon: <Languages className="size-4" /> },
+    'syntax': { title: '5. الصيغة العامة والهيكل القياسي (General Syntax)', icon: <FileCode className="size-4" /> },
+    'execution-flow': { title: '6. مسار التدفق والتنفيذ (Execution Flow)', icon: <Workflow className="size-4" /> },
+    'simple-code': { title: '7.1. مثال الكود المبسط والشرح خطوة بخطوة', icon: <Code2 className="size-4" /> },
+    'advanced-code': { title: '7.2. الشفرة النموذجية المتقدمة (Golden Code)', icon: <Code className="size-4" /> },
+    'live-preview': { title: '7.3. المعاينة الحية والتجربة التفاعلية (Live Playground)', icon: <Play className="size-4" /> },
+    'output': { title: '8. شرح المخرجات: ماذا يرى المستخدم ولماذا؟ (Output Explanation)', icon: <Eye className="size-4" /> },
+    'mistakes': { title: '9. أخطاء شائعة يقع فيها المبتدئون وكيف تتجنبها هندسياً', icon: <AlertTriangle className="size-4" /> },
+    'best-practices': { title: '10. نصائح ذهبية وأفضل الممارسات للمحترفين (Best Practices)', icon: <Award className="size-4" /> },
+    'mental-model': { title: '11. النموذج الذهني وخلف الكواليس (Mental Model & Under the Hood)', icon: <Cpu className="size-4" /> },
+    'pitfalls': { title: '12. فخاخ برمجية وحالات حافة يجب الحذر منها (Edge Cases)', icon: <ShieldAlert className="size-4" /> },
+    'performance': { title: '13. قياس وتحسين الأداء (Performance Engineering)', icon: <Zap className="size-4" /> },
+    'comparison': { title: '14. مقارنة المفهوم مع البدائل الهندسية (Comparison Matrix)', icon: <ArrowLeftRight className="size-4" /> },
+    'interview-prep': { title: '15. أسئلة المقابلات التقنية وكيف تجيب عليها كمهندس؟', icon: <Briefcase className="size-4" /> },
+    'enterprise-case': { title: '16. سيناريو واقعي من بيئات الإنتاج الضخمة (Enterprise Case)', icon: <Building2 className="size-4" /> },
+    'faqs': { title: '17. أسئلة شائعة وإجابات معمقة (Deep-Dive FAQs)', icon: <MessageSquare className="size-4" /> },
+    'challenge': { title: '18. تحدي تطبيقي للمتعلم (Coding Challenge)', icon: <Trophy className="size-4" /> },
+  };
+
+  // دالة تصيير المحتوى المخصص داخل استوديو التركيز بكامل الاتساع والراحة
+  const renderFocusedBlockContent = (blockId) => {
+    const fontSize = getBlockFontSize(blockId);
+
+    switch (blockId) {
+      case 'hero-visual':
+        return visualMode === 'motion' ? (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <span className="text-xs font-bold text-sky-400 font-sans">محاكاة Remotion 60FPS الحركية المباشرة</span>
+              <button
+                onClick={() => setVisualMode('infographic')}
+                className="text-xs font-bold text-purple-400 hover:text-purple-300 underline font-sans cursor-pointer"
+              >
+                التبديل إلى الإنفوجرافيك التفصيلي 📊
+              </button>
+            </div>
+            <LessonMotionPlayer 
+              subtopic={subtopic} 
+              topicTitle={subtopic.title}
+              onSwitchToInfographic={() => setVisualMode('infographic')} 
+            />
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <span className="text-xs font-bold text-purple-400 font-sans">الإنفوجرافيك المعماري التفصيلي للدرس</span>
+              <button
+                onClick={() => setVisualMode('motion')}
+                className="text-xs font-bold text-sky-400 hover:text-sky-300 underline font-sans cursor-pointer"
+              >
+                التبديل إلى الموشن جرافيك 🎬
+              </button>
+            </div>
+            <InfographicCard 
+              subtopic={subtopic} 
+              onOpenGallery={onOpenInfographicGallery} 
+              highlights={lessonHighlights}
+              onHighlightClick={handleHighlightClick}
+            />
+          </div>
+        );
+
+      case 'definition':
+        return (
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-cyan-400 flex items-center gap-2">
+              <span className="size-8 rounded-xl bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 flex items-center justify-center text-sm font-mono font-bold">1</span>
+              <span>التعريف المبسط للمفهوم (Simplified Definition)</span>
+            </h4>
+            <p 
+              className="text-slate-100 font-sans font-medium text-pretty leading-relaxed"
+              style={{ fontSize: `${fontSize}px`, lineHeight: `${Math.round(fontSize * 1.65)}px` }}
+            >
+              {renderHighlightedContent(subtopic.definition || subtopic.description)}
+            </p>
+          </div>
+        );
+
+      case 'analogy':
+        return (
+          <div className="bg-amber-950/20 border-r-4 border-amber-500 border-y border-l border-amber-500/20 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-amber-300 flex items-center gap-2">
+              <span className="size-8 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center justify-center text-sm font-mono font-bold">2</span>
+              <Sparkles className="size-5 text-amber-400" />
+              <span>مثال وتشبيه من الحياة اليومية (Everyday Analogy)</span>
+            </h4>
+            <p 
+              className="text-amber-100/95 font-sans leading-relaxed text-pretty"
+              style={{ fontSize: `${fontSize}px`, lineHeight: `${Math.round(fontSize * 1.65)}px` }}
+            >
+              {renderHighlightedContent(subtopic.analogy || subtopic.realLifeAnalogy)}
+            </p>
+          </div>
+        );
+
+      case 'why':
+        return (
+          <div className="bg-slate-900 border border-blue-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-blue-400 flex items-center gap-2">
+              <span className="size-8 rounded-xl bg-blue-500/10 text-blue-300 border border-blue-500/20 flex items-center justify-center text-sm font-mono font-bold">3</span>
+              <HelpCircle className="size-5 text-blue-400" />
+              <span>لماذا نحتاجه؟ وما المشكلة التي يحلها؟ (Why & Problem Solved)</span>
+            </h4>
+            <p 
+              className="text-slate-100 font-sans leading-relaxed text-pretty"
+              style={{ fontSize: `${fontSize}px`, lineHeight: `${Math.round(fontSize * 1.65)}px` }}
+            >
+              {renderHighlightedContent(subtopic.why || subtopic.whyItMatters)}
+            </p>
+          </div>
+        );
+
+      case 'terms':
+        return (
+          <TermsDictionarySection 
+            subtopic={subtopic} 
+            readingFontSize={fontSize} 
+            toolbar={null}
+            isFocused={true}
+          />
+        );
+
+      case 'syntax':
+        return (
+          <div className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-emerald-400 flex items-center gap-2">
+              <span className="size-8 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 flex items-center justify-center text-sm font-mono font-bold">5</span>
+              <FileCode className="size-5" />
+              <span>الصيغة العامة والهيكل القياسي (General Syntax)</span>
+            </h4>
+            <div 
+              className="bg-slate-950 p-5 rounded-2xl border border-slate-800 font-mono text-emerald-300 whitespace-pre-wrap leading-relaxed overflow-x-auto select-text shadow-inner" 
+              dir="ltr"
+              style={{ fontSize: `${fontSize}px` }}
+            >
+              {renderHighlightedContent(subtopic.syntax)}
+            </div>
+          </div>
+        );
+
+      case 'execution-flow':
+        return (
+          <div className="bg-slate-900 border border-sky-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-sky-400 flex items-center gap-2">
+              <span className="size-8 rounded-xl bg-sky-500/10 text-sky-300 border border-sky-500/20 flex items-center justify-center text-sm font-mono font-bold">6</span>
+              <Workflow className="size-5" />
+              <span>المخطط التدفقي المنطقي وتتبع التنفيذ (Execution Flow Trace)</span>
+            </h4>
+            <div 
+              className="p-5 bg-slate-950/80 rounded-2xl border border-sky-900/30 font-sans text-sky-200 leading-relaxed shadow-inner"
+              style={{ fontSize: `${fontSize}px`, lineHeight: `${Math.round(fontSize * 1.65)}px` }}
+            >
+              {subtopic.executionFlow || "المستخدم ينقر أو يحدث الإجراء ➔ إطلاق SyntheticEvent في React ➔ جدولة التحديث في Fiber Lane ➔ مقارنة الـ VDOM ➔ تطبيق التعديلات الصافية فقط في Commit Phase."}
+            </div>
+          </div>
+        );
+
+      case 'simple-code':
+        return (
+          <div className="space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-cyan-400 flex items-center gap-2">
+              <Terminal className="size-5 text-cyan-400" />
+              <span>مثال عملي مبسط (مع تعليق عربي فوق كل سطر كود)</span>
+            </h4>
+            <CodeBlock 
+              code={subtopic.simpleCode || subtopic.codeSimple || subtopic.simpleExample} 
+              title={`كود مبسط: ${subtopic.title}`} 
+              language="javascript" 
+              subtopicId={subtopic.id}
+              highlights={lessonHighlights}
+              onHighlightClick={handleHighlightClick}
+              fontSize={fontSize}
+            />
+          </div>
+        );
+
+      case 'advanced-code':
+        return (
+          <div className="space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-indigo-400 flex items-center gap-2">
+              <Code2 className="size-5 text-indigo-400" />
+              <span>مثال عملي متقدم وتطبيقي (مع تعليقات كاملة)</span>
+            </h4>
+            <CodeBlock 
+              code={subtopic.advancedCode || subtopic.codeAdvanced || subtopic.advancedExample} 
+              title={`تطبيق عملي متقدم: ${subtopic.title}`} 
+              language="javascript" 
+              subtopicId={subtopic.id}
+              highlights={lessonHighlights}
+              onHighlightClick={handleHighlightClick}
+              fontSize={fontSize}
+            />
+          </div>
+        );
+
+      case 'live-preview':
+        return (
+          <div className="space-y-4">
+            <LiveCodePreview 
+              initialCode={subtopic.advancedCode || subtopic.codeAdvanced || subtopic.advancedExample} 
+              title={`المعاينة المباشرة لتطبيق: ${subtopic.title}`} 
+            />
+          </div>
+        );
+
+      case 'output':
+        return (
+          <OutputExplanationSection 
+            subtopic={subtopic} 
+            readingFontSize={fontSize} 
+            renderHighlightedContent={renderHighlightedContent} 
+            toolbar={null}
+          />
+        );
+
+      case 'mistakes':
+        return (
+          <CommonMistakesLab 
+            commonMistakes={subtopic.commonMistakes || subtopic.mistakes || []} 
+            readingFontSize={fontSize} 
+            toolbar={null}
+          />
+        );
+
+      case 'best-practices':
+        return (
+          <ProBestPracticesSection 
+            bestPractices={subtopic.bestPractices || subtopic.tips || []} 
+            readingFontSize={fontSize} 
+            toolbar={null}
+          />
+        );
+
+      case 'mental-model':
+        return (
+          <MentalModelSection 
+            subtopic={subtopic} 
+            readingFontSize={fontSize} 
+            renderHighlightedContent={renderHighlightedContent} 
+            toolbar={null}
+          />
+        );
+
+      case 'pitfalls':
+        return (
+          <div className="bg-slate-900 border border-rose-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-rose-300 flex items-center gap-2">
+              <ShieldAlert className="size-5 text-rose-400" />
+              <span>فخاخ وأخطاء الإنتاج القاتلة (Production Pitfalls & Anti-Patterns)</span>
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-5 space-y-2">
+                <div className="font-bold text-rose-400 flex items-center gap-1.5" style={{ fontSize: `${Math.max(fontSize - 1, 14)}px` }}>
+                  <span>⚠️</span> فخ الإغلاق المتقادم (Stale Closures)
+                </div>
+                <p className="text-slate-300 leading-relaxed font-sans" style={{ fontSize: `${Math.max(fontSize - 2, 13)}px`, lineHeight: `${Math.round(fontSize * 1.55)}px` }}>
+                  الاعتماد على متغيرات قديمة داخل الدوال غير المحدثة أو الـ Event Listeners دون تمرير التبعيات في مصفوفة dependencies، مما يسبب قراءة بيانات قديمة وتصرفات عشوائية في الإنتاج.
+                </p>
+              </div>
+              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-5 space-y-2">
+                <div className="font-bold text-amber-400 flex items-center gap-1.5" style={{ fontSize: `${Math.max(fontSize - 1, 14)}px` }}>
+                  <span>🔁</span> شلالات إعادة الرسم المتتالية (Cascading Re-renders)
+                </div>
+                <p className="text-slate-300 leading-relaxed font-sans" style={{ fontSize: `${Math.max(fontSize - 2, 13)}px`, lineHeight: `${Math.round(fontSize * 1.55)}px` }}>
+                  تعديل الـ State داخل تأثيرات معتمدة على الـ State نفسها مما ينشئ حلقة مفرغة تسحق أداء المتصفح وتجمد واجهة المستخدم.
+                </p>
+              </div>
+              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-5 space-y-2">
+                <div className="font-bold text-rose-400 flex items-center gap-1.5" style={{ fontSize: `${Math.max(fontSize - 1, 14)}px` }}>
+                  <span>❌</span> التعديل المباشر على الكائنات والمصفوفات (State Mutation)
+                </div>
+                <p className="text-slate-300 leading-relaxed font-sans" style={{ fontSize: `${Math.max(fontSize - 2, 13)}px`, lineHeight: `${Math.round(fontSize * 1.55)}px` }}>
+                  استخدام دوال التعديل الحتمي مثل push/splice مباشرة بدلاً من استنساخ الكائن بتنسيق جديد (...spread)، مما يكسر تحقق التساوي المرجعي في React.
+                </p>
+              </div>
+              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-5 space-y-2">
+                <div className="font-bold text-sky-400 flex items-center gap-1.5" style={{ fontSize: `${Math.max(fontSize - 1, 14)}px` }}>
+                  <span>💧</span> تسريب الذاكرة (Memory Leaks in Subscriptions)
+                </div>
+                <p className="text-slate-300 leading-relaxed font-sans" style={{ fontSize: `${Math.max(fontSize - 2, 13)}px`, lineHeight: `${Math.round(fontSize * 1.55)}px` }}>
+                  عدم إرجاع دالة تنظيف (Cleanup Function) لإلغاء المؤقتات، واشتراكات الـ WebSockets، وطلبات AbortController عند تفكيك المكون (Unmount).
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'performance':
+        return (
+          <div className="bg-slate-900 border border-amber-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-amber-300 flex items-center gap-2">
+              <Zap className="size-5 text-amber-400" />
+              <span>أسرار الأداء العالي والتسريع (Performance & Optimization Rules)</span>
+            </h4>
+            <div className="space-y-3.5" style={{ fontSize: `${fontSize}px` }}>
+              <div className="flex items-start gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                <span className="text-amber-400 font-bold font-mono text-lg">1.</span>
+                <div className="text-slate-200 leading-relaxed font-sans">
+                  <strong className="text-cyan-300">التحميل الكسول وتقسيم الحزم (Code Splitting):</strong> استخدم <code className="text-sky-300 bg-slate-900 px-1 py-0.5 rounded font-mono">React.lazy</code> و <code className="text-sky-300 bg-slate-900 px-1 py-0.5 rounded font-mono">&lt;Suspense&gt;</code> لتحميل الشاشات الثقيلة عند الحاجة فقط، لخفض حجم الـ Initial Bundle بأكثر من 40%.
+                </div>
+              </div>
+              <div className="flex items-start gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                <span className="text-amber-400 font-bold font-mono text-lg">2.</span>
+                <div className="text-slate-200 leading-relaxed font-sans">
+                  <strong className="text-emerald-300">التزامن وانتقالات الأولوية (useTransition):</strong> ميز التحديثات غير الحرجة كبحث النصوص أو الفلاتر المعقدة عبر الانتقالات المتزامنة لتبقى الواجهة مستجيبة لنقرات المستخدم دون أي تأخير.
+                </div>
+              </div>
+              <div className="flex items-start gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                <span className="text-amber-400 font-bold font-mono text-lg">3.</span>
+                <div className="text-slate-200 leading-relaxed font-sans">
+                  <strong className="text-indigo-300">التخزين المؤقت الذكي (useMemo & useCallback):</strong> احرص على استخدامها فقط عند تمرير مراجع دوال أو حسابات كثيفة لمكونات محاطة بـ <code className="text-sky-300 bg-slate-900 px-1 py-0.5 rounded font-mono">React.memo</code> لتفادي تكلفة المقارنة الزائدة.
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'comparison':
+        return (
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-cyan-300 flex items-center gap-2">
+              <ArrowLeftRight className="size-5 text-cyan-400" />
+              <span>جدول المقارنة المعمارية المباشرة (Head-to-Head Comparison)</span>
+            </h4>
+            <div className="overflow-x-auto">
+              <table className="w-full text-right border-collapse" style={{ fontSize: `${fontSize}px` }}>
+                <thead>
+                  <tr className="border-b border-slate-800 text-xs font-mono text-cyan-400">
+                    <th className="p-3">وجه المقارنة</th>
+                    <th className="p-3">{subtopic.title}</th>
+                    <th className="p-3">الأنماط والحلول البديلة</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-200 font-sans">
+                  <tr>
+                    <td className="p-3 font-bold text-amber-300">طريقة العمل</td>
+                    <td className="p-3">تصريحي (Declarative) عبر Virtual DOM</td>
+                    <td className="p-3">إجرائي مباشر (Imperative DOM) أو معقد</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-amber-300">إدارة الذاكرة</td>
+                    <td className="p-3">تنظيف تلقائي مع دورة حياة Fiber</td>
+                    <td className="p-3">تتطلب تنظيف يدوي مستمر لمنع التسريب</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-amber-300">سرعة الاستجابة</td>
+                    <td className="p-3">تحديث ذري للفرق الصافي فقط 60FPS</td>
+                    <td className="p-3">إعادة رسم مكلفة للشاشة بأكملها</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+
+      case 'interview-prep':
+        return (
+          <div className="bg-slate-900 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-indigo-300 flex items-center gap-2">
+              <Briefcase className="size-5 text-indigo-400" />
+              <span>أسئلة المقابلات التقنية وكيف تجيب عليها كمهندس؟</span>
+            </h4>
+            <div className="space-y-4" style={{ fontSize: `${fontSize}px` }}>
+              <div className="bg-slate-950 p-5 rounded-2xl border border-indigo-900/40 space-y-2">
+                <span className="text-indigo-400 font-bold block">س: كيف يعمل هذا المفهوم تحت الغطاء أثناء الـ Reconciliation؟</span>
+                <p className="text-slate-300 leading-relaxed font-sans" style={{ fontSize: `${Math.max(fontSize - 1, 14)}px` }}>
+                  ج: يُبنى كـ Fiber Node في شجرة الذاكرة (WorkInProgress Tree)، ويقارن مع الـ Current Tree عبر خوارزمية خطية O(n)، ثم تدفع التغييرات في مرحلة Commit للـ Real DOM دفعة واحدة.
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'enterprise-case':
+        return (
+          <div className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-emerald-300 flex items-center gap-2">
+              <Building2 className="size-5 text-emerald-400" />
+              <span>سيناريو واقعي من بيئات الإنتاج الضخمة (Enterprise Case Study)</span>
+            </h4>
+            <div className="p-5 bg-slate-950 rounded-2xl border border-emerald-900/30 space-y-2 font-sans" style={{ fontSize: `${fontSize}px` }}>
+              <p className="text-slate-200 leading-relaxed">
+                في منصات التجارة الإلكترونية وأنظمة البنوك عالية الضغط، يتم تطبيق هذا المفهوم لضمان استقرار شاشات المعاملات المالية وعدم حدوث أي سباق بين الأحداث (Race Conditions) مع ضمان سرعة استجابة لا تتعدى 16ms للمستخدمين حول العالم.
+              </p>
+            </div>
+          </div>
+        );
+
+      case 'faqs':
+        return (
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-purple-300 flex items-center gap-2">
+              <MessageSquare className="size-5 text-purple-400" />
+              <span>أسئلة شائعة وإجابات معمقة (Deep-Dive FAQs)</span>
+            </h4>
+            <div className="space-y-3 font-sans" style={{ fontSize: `${fontSize}px` }}>
+              <div className="p-4 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1.5">
+                <div className="font-bold text-cyan-300">س: متى يجب علي تجنب استخدام هذا المفهوم؟</div>
+                <div className="text-slate-300 leading-relaxed" style={{ fontSize: `${Math.max(fontSize - 1, 14)}px` }}>
+                  ج: تجنب التعقيد المفرط إذا كانت الشاشة بسيطة وثابتة ولا تتطلب حالات تفاعلية متزامنة، فالكود الأبسط دائماً أسهل في الصيانة وأقل عرضة للثغرات.
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'challenge':
+        return (
+          <div className="bg-gradient-to-r from-slate-900 via-indigo-950/30 to-slate-900 border border-indigo-500/40 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+            <h4 className="text-base sm:text-lg font-black text-amber-300 flex items-center gap-2">
+              <Trophy className="size-5 text-amber-400" />
+              <span>تحدي تطبيقي للمتعلم (Hands-on Challenge)</span>
+            </h4>
+            <div className="p-5 bg-slate-950 rounded-2xl border border-indigo-900/30 space-y-3 font-sans" style={{ fontSize: `${fontSize}px` }}>
+              <p className="text-slate-200 leading-relaxed">
+                قم ببناء مكوّن تجريبي يطبق قواعد هذا الدرس، مع تفعيل معالجة الأخطاء وإظهار رسالة تفاعلية عند اكتمال العملية بنجاح.
+              </p>
+              <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
+                <span>🎯 الهدف: ترسيخ الفهم العملي وكتابة كود خالٍ من الثغرات.</span>
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
   };
 
   const renderBlockToolbar = (blockId) => (
@@ -748,13 +1166,22 @@ export default function LessonViewer({
 
       </div>
       
-      {/* خلفية التعتيم السينمائية عند تفعيل وضع التركيز الفردي (Spotlight Focus Backdrop) */}
+      {/* استوديو التركيز المعماري المخصص لكل بلوك (Pro Block Focus Studio Component) */}
       {focusedBlockId && (
-        <div 
-          onClick={handleExitBlockFocus}
-          className="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-30 transition-all duration-300 animate-fadeIn cursor-pointer"
-          title="انقر في أي مكان فارغ أو اضغط ESC للخروج من وضع التركيز"
-        />
+        <BlockFocusStudio
+          blockId={focusedBlockId}
+          blockTitle={BLOCK_FOCUS_META[focusedBlockId]?.title || "استوديو التركيز المعماري المخصص"}
+          blockIcon={BLOCK_FOCUS_META[focusedBlockId]?.icon}
+          subtopicTitle={subtopic?.title}
+          fontSize={getBlockFontSize(focusedBlockId)}
+          defaultFontSize={readingFontSize}
+          onZoomIn={() => handleBlockZoomIn(focusedBlockId)}
+          onZoomOut={() => handleBlockZoomOut(focusedBlockId)}
+          onReset={() => handleBlockReset(focusedBlockId)}
+          onClose={handleExitBlockFocus}
+        >
+          {renderFocusedBlockContent(focusedBlockId)}
+        </BlockFocusStudio>
       )}
 
       {/* تخطيط مساحة الدرس المزدوجة: محتوى الشرح الرحب + خريطة الدرس الجانبية */}
