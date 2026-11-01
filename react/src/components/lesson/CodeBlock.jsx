@@ -237,14 +237,14 @@ export default function CodeBlock({
           {/* عنوان الكود والأيقونات الزخرفية */}
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 pl-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500/80 inline-block"></span>
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 inline-block"></span>
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 inline-block"></span>
+              <span className="size-2.5 rounded-full bg-red-500/80 inline-block"></span>
+              <span className="size-2.5 rounded-full bg-amber-500/80 inline-block"></span>
+              <span className="size-2.5 rounded-full bg-emerald-500/80 inline-block"></span>
             </div>
-            <Code className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="text-xs font-semibold text-slate-300 font-sans">{title}</span>
+            <Code className="size-3.5 text-cyan-400" />
+            <span className="text-xs font-semibold text-slate-300 font-sans text-balance">{title}</span>
             {notes.length > 0 && (
-              <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-mono border border-amber-500/30">
+              <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-mono border border-amber-500/30 tabular-nums">
                 {notes.length} ملاحظات
               </span>
             )}
@@ -257,29 +257,32 @@ export default function CodeBlock({
               <button
                 onClick={handleZoomOut}
                 disabled={fontSize <= 11}
+                aria-label="تصغير خط الكود"
                 className="p-1 hover:text-white hover:bg-slate-700 rounded transition-colors disabled:opacity-40 cursor-pointer"
                 title="تصغير خط الكود"
               >
-                <ZoomOut className="w-3 h-3" />
+                <ZoomOut className="size-3" />
               </button>
-              <span className="px-1.5 text-[10px] font-mono text-cyan-300 select-none">
+              <span className="px-1.5 text-[10px] font-mono text-cyan-300 select-none tabular-nums">
                 {fontSize}px
               </span>
               <button
                 onClick={handleZoomIn}
                 disabled={fontSize >= 28}
+                aria-label="تكبير خط الكود"
                 className="p-1 hover:text-white hover:bg-slate-700 rounded transition-colors disabled:opacity-40 cursor-pointer"
                 title="تكبير خط الكود"
               >
-                <ZoomIn className="w-3 h-3" />
+                <ZoomIn className="size-3" />
               </button>
               {fontSize !== 13 && (
                 <button
                   onClick={handleResetZoom}
+                  aria-label="إعادة ضبط حجم خط الكود"
                   className="p-1 hover:text-amber-400 rounded transition-colors border-r border-slate-700 cursor-pointer"
                   title="إعادة ضبط حجم خط الكود"
                 >
-                  <RotateCcw className="w-2.5 h-2.5" />
+                  <RotateCcw className="size-2.5" />
                 </button>
               )}
             </div>
@@ -287,10 +290,11 @@ export default function CodeBlock({
             {/* زر اختيار وتخصيص خط الكود المباشر */}
             <button
               onClick={() => setIsFontModalOpen(true)}
+              aria-label={`تغيير خط الكود البرمجي (الخط الحالي: ${currentFont.name})`}
               className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-300 hover:text-cyan-300 bg-slate-800 hover:bg-slate-750 px-2 py-1 rounded-md border border-slate-700/80 transition-colors cursor-pointer font-sans"
               title={`تغيير خط الكود البرمجي (الخط الحالي: ${currentFont.name})`}
             >
-              <Type className="w-3 h-3 text-cyan-400" />
+              <Type className="size-3 text-cyan-400" />
               <span className="hidden sm:inline font-bold">{currentFont.name}</span>
             </button>
 
@@ -302,27 +306,29 @@ export default function CodeBlock({
             {/* زر فتح استوديو الكود بكامل الشاشة الفعلي (True Fullscreen Portal) */}
             <button
               onClick={() => setIsFullscreen(true)}
+              aria-label="تكبير الكود بكامل الشاشة"
               className="flex items-center gap-1.5 text-xs text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 font-bold px-3 py-1.5 rounded-lg shadow-md hover:shadow-cyan-500/20 transition-all cursor-pointer"
               title="تكبير الكود بكامل الشاشة الفعلي (100vw × 100vh) مع دفتر الملاحظات المتقدم"
             >
-              <Maximize2 className="w-3.5 h-3.5 text-amber-300" />
+              <Maximize2 className="size-3.5 text-amber-300" />
               <span>تكبير بكامل الشاشة</span>
             </button>
 
             {/* زر نسخ الكود */}
             <button
               onClick={handleCopy}
-              className="flex items-center gap-1 text-[11px] text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-md transition-colors cursor-pointer"
+              aria-label="نسخ الكود بالكامل"
+              className="flex items-center gap-1 text-[11px] text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-750 px-2.5 py-1 rounded-md transition-colors cursor-pointer"
               title="نسخ الكود بالكامل"
             >
               {copied ? (
                 <>
-                  <Check className="w-3 h-3 text-emerald-400" />
+                  <Check className="size-3 text-emerald-400" />
                   <span className="text-emerald-400 font-bold">تم النسخ ✓</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3 h-3" />
+                  <Copy className="size-3" />
                   <span>نسخ</span>
                 </>
               )}
@@ -339,7 +345,7 @@ export default function CodeBlock({
           <pre className="m-0 p-0 text-left font-mono select-text">
             {lines.map((line, idx) => (
               <div key={idx} className="table-row hover:bg-slate-800/40 transition-colors">
-                <span className="table-cell select-none pr-4 text-slate-600 text-right font-mono text-[11px] w-9">
+                <span className="table-cell select-none pr-4 text-slate-600 text-right font-mono text-[11px] w-9 tabular-nums">
                   {idx + 1}
                 </span>
                 <span className="table-cell whitespace-pre">
@@ -354,7 +360,7 @@ export default function CodeBlock({
       {/* 2. استوديو الأكواد الاحترافي الفعلي بكامل الشاشة (True 100vw × 100vh via React Portal) */}
       {isFullscreen && typeof document !== 'undefined' && createPortal(
         <div 
-          className="fixed inset-0 z-[99999] w-screen h-screen min-h-screen bg-[#080c14] text-slate-100 flex flex-col select-none overflow-hidden" 
+          className="fixed inset-0 z-50 w-screen h-dvh min-h-dvh bg-[#080c14] text-slate-100 flex flex-col select-none overflow-hidden" 
           dir="rtl"
         >
           
@@ -365,25 +371,25 @@ export default function CodeBlock({
             <div className="flex items-center gap-3">
               {/* أزرار النافذة الزخرفية */}
               <div className="flex items-center gap-1.5 pl-2 border-l border-slate-800 hidden sm:flex">
-                <span className="w-3 h-3 rounded-full bg-rose-500/90 inline-block"></span>
-                <span className="w-3 h-3 rounded-full bg-amber-500/90 inline-block"></span>
-                <span className="w-3 h-3 rounded-full bg-emerald-500/90 inline-block"></span>
+                <span className="size-3 rounded-full bg-rose-500/90 inline-block"></span>
+                <span className="size-3 rounded-full bg-amber-500/90 inline-block"></span>
+                <span className="size-3 rounded-full bg-emerald-500/90 inline-block"></span>
               </div>
 
-              <div className="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold shrink-0">
-                <Code className="w-4 h-4" />
+              <div className="size-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold shrink-0">
+                <Code className="size-4" />
               </div>
 
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-extrabold text-white font-sans truncate max-w-xs sm:max-w-md">
+                  <h3 className="text-sm font-extrabold text-white font-sans truncate max-w-xs sm:max-w-md text-balance">
                     {title}
                   </h3>
                   <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800/60">
                     {language}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 font-mono flex items-center gap-2">
+                <p className="text-[11px] text-slate-400 font-mono flex items-center gap-2 tabular-nums">
                   <span>{lines.length} سطراً</span>
                   <span>•</span>
                   <span>{code.length} حرفاً</span>
@@ -401,27 +407,30 @@ export default function CodeBlock({
                 <button 
                   onClick={handleZoomOut} 
                   disabled={fontSize <= 11}
+                  aria-label="تصغير خط الكود"
                   className="p-1.5 hover:text-white hover:bg-slate-800 rounded transition-colors disabled:opacity-40 cursor-pointer" 
                   title="تصغير خط الكود (-)"
                 >
-                  <ZoomOut className="w-3.5 h-3.5" />
+                  <ZoomOut className="size-3.5" />
                 </button>
-                <span className="px-2 text-xs font-mono text-cyan-300 select-none">{fontSize}px</span>
+                <span className="px-2 text-xs font-mono text-cyan-300 select-none tabular-nums">{fontSize}px</span>
                 <button 
                   onClick={handleZoomIn} 
                   disabled={fontSize >= 28}
+                  aria-label="تكبير خط الكود"
                   className="p-1.5 hover:text-white hover:bg-slate-800 rounded transition-colors disabled:opacity-40 cursor-pointer" 
                   title="تكبير خط الكود (+)"
                 >
-                  <ZoomIn className="w-3.5 h-3.5" />
+                  <ZoomIn className="size-3.5" />
                 </button>
                 {fontSize !== 13 && (
                   <button 
                     onClick={handleResetZoom} 
+                    aria-label="إعادة ضبط حجم الخط"
                     className="p-1.5 hover:text-amber-400 hover:bg-slate-800 rounded transition-colors border-r border-slate-800 cursor-pointer" 
                     title="إعادة ضبط حجم الخط"
                   >
-                    <RotateCcw className="w-3 h-3" />
+                    <RotateCcw className="size-3" />
                   </button>
                 )}
               </div>
@@ -429,6 +438,7 @@ export default function CodeBlock({
               {/* زر تفعيل/إلغاء التفاف الأسطر (Line Wrap) */}
               <button
                 onClick={() => setIsLineWrap(prev => !prev)}
+                aria-label="تفعيل أو إلغاء التفاف الأسطر"
                 className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg border transition-all cursor-pointer ${
                   isLineWrap
                     ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
@@ -436,13 +446,14 @@ export default function CodeBlock({
                 }`}
                 title="تفعيل/إلغاء التفاف الأسطر الطويلة (W)"
               >
-                <WrapText className="w-3.5 h-3.5" />
+                <WrapText className="size-3.5" />
                 <span className="hidden md:inline">التفاف الأسطر</span>
               </button>
 
               {/* تبديل إظهار لوحة دفتر الملاحظات */}
               <button
                 onClick={() => setShowNotesDrawer(prev => !prev)}
+                aria-label="إظهار أو إخفاء دفتر الملاحظات"
                 className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${
                   showNotesDrawer 
                     ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' 
@@ -450,9 +461,9 @@ export default function CodeBlock({
                 }`}
                 title="إظهار أو إخفاء دفتر الملاحظات المتقدم (N)"
               >
-                <StickyNote className="w-3.5 h-3.5 text-amber-400" />
+                <StickyNote className="size-3.5 text-amber-400" />
                 <span className="hidden sm:inline">دفتر الملاحظات</span>
-                <span className="bg-amber-500/20 text-amber-300 font-mono text-[10px] px-1.5 py-0.2 rounded-full border border-amber-500/30">
+                <span className="bg-amber-500/20 text-amber-300 font-mono text-[10px] px-1.5 py-0.2 rounded-full border border-amber-500/30 tabular-nums">
                   {notes.length}
                 </span>
               </button>
@@ -460,10 +471,11 @@ export default function CodeBlock({
               {/* زر اختيار وتغيير خط الكود في استوديو ملء الشاشة */}
               <button
                 onClick={() => setIsFontModalOpen(true)}
+                aria-label={`تغيير خط الكود البرمجي (الحالي: ${currentFont.name})`}
                 className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg border bg-slate-950 text-cyan-300 border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900 transition-all cursor-pointer font-sans"
                 title={`تغيير خط الكود البرمجي (الحالي: ${currentFont.name})`}
               >
-                <Type className="w-3.5 h-3.5 text-cyan-400" />
+                <Type className="size-3.5 text-cyan-400" />
                 <span className="hidden lg:inline">الخط:</span>
                 <span className="font-bold">{currentFont.name}</span>
               </button>
@@ -471,20 +483,22 @@ export default function CodeBlock({
               {/* زر نسخ الكود كاملاً */}
               <button
                 onClick={handleCopy}
+                aria-label="نسخ الشفرة البرمجية بالكامل"
                 className="flex items-center gap-1.5 text-xs bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-extrabold px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
                 title="نسخ الشفرة البرمجية بالكامل"
               >
-                {copied ? <Check className="w-3.5 h-3.5 text-slate-950" /> : <Copy className="w-3.5 h-3.5" />}
+                {copied ? <Check className="size-3.5 text-slate-950" /> : <Copy className="size-3.5" />}
                 <span>{copied ? "تم النسخ ✓" : "نسخ الكود"}</span>
               </button>
 
               {/* زر ملء شاشة المتصفح العتادية (F11 Fullscreen API) */}
               <button
                 onClick={toggleNativeFullscreen}
+                aria-label="ملء شاشة المتصفح"
                 className="p-1.5 text-slate-400 hover:text-white bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors cursor-pointer"
                 title={isNativeFullscreen ? "الخروج من ملء شاشة المتصفح (F)" : "ملء شاشة المتصفح بالكامل لإخفاء القوائم (F)"}
               >
-                {isNativeFullscreen ? <Minimize2 className="w-4 h-4 text-cyan-400" /> : <Monitor className="w-4 h-4 text-slate-300" />}
+                {isNativeFullscreen ? <Minimize2 className="size-4 text-cyan-400" /> : <Monitor className="size-4 text-slate-300" />}
               </button>
 
               {/* زر إغلاق الاستوديو والعودة */}
@@ -495,10 +509,11 @@ export default function CodeBlock({
                   }
                   setIsFullscreen(false);
                 }}
+                aria-label="إغلاق استوديو ملء الشاشة"
                 className="p-1.5 text-slate-400 hover:text-white bg-rose-950/40 hover:bg-rose-900/80 border border-rose-800/40 rounded-lg transition-colors cursor-pointer"
                 title="إغلاق استوديو ملء الشاشة (Esc)"
               >
-                <X className="w-4 h-4 text-rose-400" />
+                <X className="size-4 text-rose-400" />
               </button>
 
             </div>

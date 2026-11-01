@@ -110,25 +110,25 @@ export default function AiLessonQuizModal({
   if (!isOpen || !subtopic) return null;
 
   return typeof document !== 'undefined' ? createPortal(
-    <div className="fixed inset-0 z-[99998] w-screen h-screen min-h-screen bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-fadeIn" dir="rtl">
-      <div className="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-2xl p-6 shadow-2xl relative flex flex-col max-h-[90vh] overflow-hidden animate-slideUp">
+    <div className="fixed inset-0 z-50 w-screen h-dvh min-h-dvh bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-fadeIn" dir="rtl">
+      <div className="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-2xl p-6 shadow-2xl relative flex flex-col max-h-[90dvh] overflow-hidden animate-slideUp">
         
         {/* رأس النافذة */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white flex items-center justify-center shadow-lg font-bold">
+            <div className="size-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white flex items-center justify-center shadow-lg font-bold">
               🎯
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white font-sans">
+                <h3 className="text-base font-bold text-white font-sans text-balance">
                   الاختبار الذكي المخصص للدرس
                 </h3>
-                <span className="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-mono">
+                <span className="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-mono tabular-nums">
                   AI Quiz
                 </span>
               </div>
-              <p className="text-xs text-slate-400 font-sans truncate max-w-sm">
+              <p className="text-xs text-slate-400 font-sans truncate max-w-sm text-pretty">
                 الدرس: <span className="text-cyan-300 font-semibold">{subtopic.title}</span>
               </p>
             </div>
@@ -138,17 +138,19 @@ export default function AiLessonQuizModal({
             {!loading && (
               <button
                 onClick={loadQuiz}
+                aria-label="إعادة توليد أسئلة الاختبار"
                 className="p-1.5 text-slate-400 hover:text-white rounded-lg transition-colors cursor-pointer"
                 title="إعادة توليد أسئلة جديدة"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="size-4" />
               </button>
             )}
             <button
               onClick={onClose}
+              aria-label="إغلاق نافذة الاختبار"
               className="p-1.5 text-slate-400 hover:text-white rounded-lg transition-colors cursor-pointer"
             >
-              <X className="w-4 h-4" />
+              <X className="size-4" />
             </button>
           </div>
         </div>

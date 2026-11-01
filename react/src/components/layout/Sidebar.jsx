@@ -172,13 +172,13 @@ export default function Sidebar({
         aria-hidden="true"
       />
 
-      <aside className={`fixed inset-y-0 right-0 z-50 w-[88vw] max-w-sm sm:max-w-md h-full bg-slate-900 border-l border-slate-800 lg:relative lg:inset-auto lg:z-auto lg:h-[calc(100vh-65px)] lg:sticky lg:top-[65px] lg:border-0 ${currentWidthClass} flex flex-col overflow-hidden no-print transition-all duration-200 shrink-0 shadow-2xl`}>
+      <aside className={`fixed inset-y-0 right-0 z-40 w-[88vw] max-w-sm sm:max-w-md h-dvh min-h-dvh bg-slate-900 border-l border-slate-800 lg:relative lg:inset-auto lg:z-auto lg:h-[calc(100dvh-65px)] lg:sticky lg:top-[65px] lg:border-0 ${currentWidthClass} flex flex-col overflow-hidden no-print transition-all duration-200 shrink-0 shadow-2xl`}>
       
       {/* رأس الشريط الجانبي */}
       <div className="p-4 border-b border-slate-800/40 bg-slate-950/60 shrink-0">
         <div className="flex items-center justify-between gap-1 mb-2">
           <span className="text-xs font-extrabold text-cyan-400 flex items-center gap-1.5 font-sans">
-            <Layers className="w-4 h-4 text-cyan-400" />
+            <Layers className="size-4 text-cyan-400" />
             فهرس خريطة الطريق
           </span>
 
@@ -186,21 +186,23 @@ export default function Sidebar({
             {/* زر تبديل حجم خط القائمة */}
             <button
               onClick={toggleSidebarFontSize}
+              aria-label={`تبديل حجم خط القائمة: ${sidebarFontSize}`}
               className="text-xs text-slate-300 hover:text-cyan-300 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 px-2 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1 font-bold"
               title={`تبديل حجم خط القائمة (الحالي: ${sidebarFontSize === 'normal' ? 'عادي' : sidebarFontSize === 'large' ? 'كبير' : 'كبير جداً'})`}
             >
-              <Type className="w-3.5 h-3.5 text-cyan-400" />
+              <Type className="size-3.5 text-cyan-400" />
               <span>{sidebarFontSize === 'normal' ? 'A' : sidebarFontSize === 'large' ? 'A+' : 'A++'}</span>
             </button>
 
             {/* زر تبديل اتساع القائمة الجانبية */}
             <button
               onClick={toggleSidebarWidth}
+              aria-label={`تبديل اتساع القائمة الجانبية: ${sidebarWidth}`}
               className="text-xs text-slate-300 hover:text-cyan-300 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 px-2 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
               title={`تبديل اتساع القائمة الجانبية (الحالي: ${sidebarWidth === 'standard' ? 'قياسي 400px' : sidebarWidth === 'expanded' ? 'موسع 480px' : 'أقصى 550px'})`}
             >
               <span>↔️</span>
-              <span className="text-[11px] font-mono hidden sm:inline">
+              <span className="text-[11px] font-mono tabular-nums hidden sm:inline">
                 {sidebarWidth === 'standard' ? '400px' : sidebarWidth === 'expanded' ? '480px' : '550px'}
               </span>
             </button>
@@ -208,9 +210,10 @@ export default function Sidebar({
             {/* زر تبديل الأقسام الـ 34 */}
             <button
               onClick={() => setShowAllSections(!showAllSections)}
+              aria-label={showAllSections ? "إخفاء قائمة الأقسام" : "عرض قائمة الأقسام"}
               className="text-xs text-cyan-400 hover:text-cyan-300 font-bold cursor-pointer flex items-center gap-1 bg-cyan-950/60 hover:bg-cyan-900/80 border border-cyan-800/60 px-2.5 py-1 rounded-lg transition-colors"
             >
-              <ArrowRightLeft className="w-3.5 h-3.5" />
+              <ArrowRightLeft className="size-3.5" />
               <span>{showAllSections ? "إخفاء" : "الأقسام (34)"}</span>
             </button>
 
@@ -218,10 +221,11 @@ export default function Sidebar({
             {onCloseSidebar && (
               <button
                 onClick={onCloseSidebar}
+                aria-label="إغلاق القائمة الجانبية والدخول في وضع التركيز"
                 className="p-1 text-slate-400 hover:text-rose-400 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors cursor-pointer"
                 title="إخفاء القائمة الجانبية وتوسيع مساحة القراءة (وضع التركيز ⛶)"
               >
-                <X className="w-4 h-4" />
+                <X className="size-4" />
               </button>
             )}
           </div>
@@ -230,15 +234,15 @@ export default function Sidebar({
         {/* كارت القسم النشط حالياً مع خط كبير ومريح */}
         <div className="mt-2.5 p-3.5 rounded-2xl bg-gradient-to-r from-blue-950/80 via-slate-900 to-slate-950 border border-blue-800/50 shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold bg-cyan-500/20 text-cyan-300 px-2.5 py-0.5 rounded-full border border-cyan-500/30">
+            <span className="text-xs font-bold bg-cyan-500/20 text-cyan-300 px-2.5 py-0.5 rounded-full border border-cyan-500/30 tabular-nums">
               القسم {sectionData.id} من 34
             </span>
-            <span className="text-xs text-slate-400 font-medium">{totalSectionSubtopics} درساً متاحاً</span>
+            <span className="text-xs text-slate-400 font-medium tabular-nums">{totalSectionSubtopics} درساً متاحاً</span>
           </div>
-          <h2 className={`${currentFont.sectionTitle} text-white mt-2 leading-snug`}>
+          <h2 className={`${currentFont.sectionTitle} text-white mt-2 leading-snug text-balance`}>
             {sectionData.title}
           </h2>
-          <p className="text-xs text-slate-400 truncate mt-1">{sectionData.englishTitle}</p>
+          <p className="text-xs text-slate-400 truncate mt-1 text-pretty">{sectionData.englishTitle}</p>
         </div>
       </div>
 

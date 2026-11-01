@@ -57,25 +57,25 @@ export default function Navbar({
         {/* الشعار وعنوان المنصة */}
         <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto justify-between md:justify-start min-w-0">
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20 text-base sm:text-xl font-bold shrink-0">
+            <div className="size-8 sm:size-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20 text-base sm:text-xl font-bold shrink-0">
               ⚛️
             </div>
             <div className="min-w-0">
-              <h1 className="font-extrabold text-xs sm:text-base lg:text-lg text-white leading-tight flex items-center gap-1.5 font-sans truncate">
+              <h1 className="font-extrabold text-xs sm:text-base lg:text-lg text-white leading-tight flex items-center gap-1.5 font-sans truncate text-balance">
                 خريطة طريق React.js الاحترافية
                 <span className="hidden sm:inline-block text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-normal">
                   من الصفر للاحتراف
                 </span>
               </h1>
-              <p className="text-[11px] sm:text-xs text-slate-400 truncate max-w-[200px] sm:max-w-xs md:max-w-md font-sans">
-                {currentSection?.title || "34 قسماً تعليمياً متكاملاً"} • {completedCount} درس منجز
+              <p className="text-[11px] sm:text-xs text-slate-400 truncate max-w-[200px] sm:max-w-xs md:max-w-md font-sans text-pretty">
+                {currentSection?.title || "34 قسماً تعليمياً متكاملاً"} • <span className="tabular-nums">{completedCount}</span> درس منجز
               </p>
             </div>
           </div>
 
           {/* شريط الإنجاز للموبايل */}
           <div className="md:hidden flex items-center gap-1 text-[11px] sm:text-xs text-cyan-400 font-bold bg-slate-800/80 px-2 py-0.5 rounded-lg shrink-0">
-            <span>%{progressPercent}</span>
+            <span className="tabular-nums">%{progressPercent}</span>
           </div>
         </div>
 
@@ -88,10 +88,11 @@ export default function Navbar({
             placeholder="ابحث في دروس الخريطة والمفاهيم..."
             className="w-full bg-slate-950/80 border border-slate-700/80 text-slate-200 placeholder-slate-500 text-xs rounded-xl py-1.5 sm:py-2 pr-8 sm:pr-9 pl-4 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-sans"
           />
-          <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute right-2.5 sm:right-3 top-2 sm:top-2.5" />
+          <Search className="size-3.5 sm:size-4 text-slate-400 absolute right-2.5 sm:right-3 top-2 sm:top-2.5" />
           {searchQuery && (
             <button 
               onClick={() => setSearchQuery("")}
+              aria-label="مسح نص البحث"
               className="absolute left-2.5 top-1.5 sm:top-2 text-xs text-slate-400 hover:text-white cursor-pointer"
             >
               ✕
@@ -148,6 +149,7 @@ export default function Navbar({
           {onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
+              aria-label={isSidebarOpen ? "إخفاء القائمة الجانبية" : "إظهار القائمة الجانبية"}
               className={`p-1.5 sm:p-2 rounded-xl border transition-colors cursor-pointer ${
                 isSidebarOpen 
                   ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700' 
@@ -155,15 +157,15 @@ export default function Navbar({
               }`}
               title={isSidebarOpen ? "إخفاء القائمة الجانبية" : "إظهار القائمة الجانبية"}
             >
-              <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400" />
+              <Layers className="size-3.5 sm:size-4 text-cyan-400" />
             </button>
           )}
 
           {/* مؤشر الإنجاز للحاسوب */}
           <div className="hidden xl:flex items-center gap-2 bg-slate-800/60 border border-slate-700/60 px-3 py-1.5 rounded-xl text-xs">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <CheckCircle2 className="size-4 text-emerald-400" />
             <span className="text-slate-300">إنجازك:</span>
-            <span className="font-bold text-cyan-400 font-mono">{completedCount}/{totalSubtopics}</span>
+            <span className="font-bold text-cyan-400 font-mono tabular-nums">{completedCount}/{totalSubtopics}</span>
             <div className="w-14 h-1.5 bg-slate-700 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 transition-all duration-500"
@@ -175,38 +177,42 @@ export default function Navbar({
           {/* زر التظليلات والمقتطفات المحفوظة */}
           <button
             onClick={onOpenHighlights}
+            aria-label="دفتر التظليلات والمقتطفات المحفوظة"
             className="p-1.5 sm:p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl transition-colors cursor-pointer"
             title="دفتر التظليلات والمقتطفات المحفوظة (IndexedDB)"
           >
-            <Bookmark className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400" />
+            <Bookmark className="size-3.5 sm:size-4 text-cyan-400" />
           </button>
 
           {/* زر استوديو خطوط الكود البرمجي العالمي */}
           <button
             onClick={onOpenCodeFont}
+            aria-label="استوديو خطوط الكود البرمجي"
             className="p-1.5 sm:p-2 text-slate-400 hover:text-cyan-300 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl transition-colors cursor-pointer"
             title="استوديو خطوط الكود البرمجي (Fira Code, JetBrains Mono, Cascadia...)"
           >
-            <Type className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
+            <Type className="size-3.5 sm:size-4 text-emerald-400" />
           </button>
 
           {/* زر دليل وموسوعة الاختصارات بالعامية المصرية */}
           <button
             onClick={onOpenShortcuts}
+            aria-label="دليل وموسوعة الاختصارات وأوامر الذكاء الاصطناعي"
             className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-sky-500/20 to-blue-500/20 hover:from-sky-500/30 hover:to-blue-500/30 text-sky-300 border border-sky-500/40 text-[11px] sm:text-xs font-bold transition-all shadow-sm cursor-pointer"
             title="دليل وموسوعة الاختصارات وأوامر الذكاء الاصطناعي (Ctrl + /)"
           >
-            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-400 shrink-0" />
+            <Sparkles className="size-3.5 sm:size-4 text-sky-400 shrink-0" />
             <span>⚡ الاختصارات</span>
           </button>
 
           {/* زر إعدادات المفاتيح المتعددة Gemini API Pool */}
           <button
             onClick={onOpenKeyPool || handleOpenApiKeyModal}
+            aria-label="إدارة مجمع مفاتيح Gemini AI"
             className="p-1.5 sm:p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl transition-colors cursor-pointer"
             title="إدارة مجمع مفاتيح Gemini AI والفحص المتوازي"
           >
-            <Key className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
+            <Key className="size-3.5 sm:size-4 text-amber-400" />
           </button>
 
           {/* زر معرض الإنفوجرافيك الشامل لجميع الدروس */}
@@ -215,7 +221,7 @@ export default function Navbar({
             className="flex-1 sm:flex-none flex items-center justify-center gap-1 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl shadow-md transition-all cursor-pointer font-sans"
             title="فتح معرض الإنفوجرافيك الشامل لجميع الدروس وتصفحها بصرياً"
           >
-            <ImageIcon className="w-3.5 h-3.5" />
+            <ImageIcon className="size-3.5" />
             <span className="hidden xs:inline">الإنفوجرافيك</span>
             <span className="xs:hidden">معرض</span>
           </button>
@@ -226,7 +232,7 @@ export default function Navbar({
             className="flex-1 sm:flex-none flex items-center justify-center gap-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl shadow-md transition-all cursor-pointer font-sans"
             title="عرض وتحميل كتاب الـ PDF الكامل"
           >
-            <BookOpen className="w-3.5 h-3.5" />
+            <BookOpen className="size-3.5" />
             <span className="hidden xs:inline">كتاب PDF</span>
             <span className="xs:hidden">كتاب</span>
           </button>
@@ -237,7 +243,7 @@ export default function Navbar({
             className="flex-1 sm:flex-none flex items-center justify-center gap-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl shadow-md transition-all cursor-pointer font-sans"
             title="اسأل المعلم الذكي المدعوم بـ Gemini"
           >
-            <Sparkles className="w-3.5 h-3.5 animate-pulse text-amber-300" />
+            <Sparkles className="size-3.5 animate-pulse text-amber-300" />
             <span className="hidden xs:inline">المعلم الذكي</span>
             <span className="xs:hidden">ذكاء</span>
           </button>

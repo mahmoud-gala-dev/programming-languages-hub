@@ -113,25 +113,25 @@ export default function SavedHighlightsModal({ isOpen, onClose, currentSubtopicI
   });
 
   return createPortal(
-    <div className="fixed inset-0 z-[999998] w-screen h-screen min-h-screen bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-fadeIn" dir="rtl">
-      <div className="bg-slate-900 border border-slate-700/80 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-slideUp">
+    <div className="fixed inset-0 z-50 w-screen h-dvh min-h-dvh bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-fadeIn" dir="rtl">
+      <div className="bg-slate-900 border border-slate-700/80 rounded-3xl w-full max-w-4xl max-h-[90dvh] flex flex-col shadow-2xl overflow-hidden animate-slideUp">
         
         {/* رأس النافذة */}
         <div className="p-5 border-b border-slate-800 bg-slate-950/80 flex flex-wrap items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-cyan-500/20">
-              <Bookmark className="w-5 h-5 text-white" />
+            <div className="size-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-cyan-500/20">
+              <Bookmark className="size-5 text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-extrabold text-white font-sans">
+                <h3 className="text-base font-extrabold text-white font-sans text-balance">
                   دفتر التظليلات والمقتطفات المحفوظة
                 </h3>
-                <span className="text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-mono">
+                <span className="text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-mono tabular-nums">
                   {highlights.length} مقتطف
                 </span>
               </div>
-              <p className="text-xs text-slate-400 font-sans">
+              <p className="text-xs text-slate-400 font-sans text-pretty">
                 محفوظة محلياً في قاعدة بيانات المتصفح الدائمة (IndexedDB)
               </p>
             </div>
@@ -141,19 +141,21 @@ export default function SavedHighlightsModal({ isOpen, onClose, currentSubtopicI
             <button
               onClick={handleExportJson}
               disabled={highlights.length === 0}
+              aria-label="تصدير كافة المقتطفات كملف JSON"
               className="flex items-center gap-1.5 text-xs text-cyan-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-2 rounded-xl transition-all cursor-pointer disabled:opacity-40"
               title="تصدير كافة المقتطفات كملف JSON"
             >
-              <Download className="w-3.5 h-3.5" />
+              <Download className="size-3.5" />
               <span>تصدير JSON</span>
             </button>
 
             <button
               onClick={onClose}
+              aria-label="إغلاق النافذة"
               className="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors cursor-pointer"
               title="إغلاق"
             >
-              <X className="w-4 h-4" />
+              <X className="size-4" />
             </button>
           </div>
         </div>
@@ -169,13 +171,14 @@ export default function SavedHighlightsModal({ isOpen, onClose, currentSubtopicI
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث في نصوص المقتطفات، الشروحات، الأكواد، أو الملاحظات..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 pr-9 pl-3 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-all"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 pr-9 pl-3 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-all font-sans"
               />
-              <Search className="w-4 h-4 text-slate-500 absolute right-3 top-2.5" />
+              <Search className="size-4 text-slate-500 absolute right-3 top-2.5" />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute left-2.5 top-2 text-xs text-slate-400 hover:text-white"
+                  aria-label="مسح البحث"
+                  className="absolute left-2.5 top-2 text-xs text-slate-400 hover:text-white cursor-pointer"
                 >
                   ✕
                 </button>
@@ -199,7 +202,8 @@ export default function SavedHighlightsModal({ isOpen, onClose, currentSubtopicI
                 <button
                   key={key}
                   onClick={() => setFilterColor(filterColor === key ? 'all' : key)}
-                  className={`w-6 h-6 rounded-lg flex items-center justify-center border transition-all cursor-pointer ${
+                  aria-label={`تصفية بلون ${item.label}`}
+                  className={`size-6 rounded-lg flex items-center justify-center border transition-all cursor-pointer ${
                     filterColor === key 
                       ? 'border-white scale-110 shadow-md ring-1 ring-cyan-400' 
                       : 'border-transparent opacity-70 hover:opacity-100'
@@ -241,9 +245,9 @@ export default function SavedHighlightsModal({ isOpen, onClose, currentSubtopicI
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3.5">
           {filteredHighlights.length === 0 ? (
             <div className="text-center py-16 space-y-3 text-slate-500">
-              <Bookmark className="w-12 h-12 mx-auto opacity-30 text-slate-400" />
-              <p className="text-sm font-bold text-slate-300">لا توجد مقتطفات محفوظة هنا بعد.</p>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              <Bookmark className="size-12 mx-auto opacity-30 text-slate-400" />
+              <p className="text-sm font-bold text-slate-300 text-balance">لا توجد مقتطفات محفوظة هنا بعد.</p>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto text-pretty">
                 قم بتحديد أي نص من شرح الدرس أو من الكود البرمجي بالماوس، وستظهر لك أداة التظليل لحفظه فوراً في قاعدة بياناتك.
               </p>
             </div>
@@ -259,7 +263,7 @@ export default function SavedHighlightsModal({ isOpen, onClose, currentSubtopicI
                   {/* رأس بطاقة المقتطف */}
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-slate-300 font-sans">
+                      <span className="font-bold text-slate-300 font-sans text-balance">
                         {item.subtopicTitle || `درس ${item.subtopicId}`}
                       </span>
 
@@ -269,11 +273,11 @@ export default function SavedHighlightsModal({ isOpen, onClose, currentSubtopicI
                           ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-mono' 
                           : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                       }`}>
-                        {item.type === 'code' ? <Code2 className="w-3 h-3" /> : <BookOpen className="w-3 h-3" />}
+                        {item.type === 'code' ? <Code2 className="size-3" /> : <BookOpen className="size-3" />}
                         <span>{item.type === 'code' ? 'كود' : 'شرح'}</span>
                       </span>
 
-                      <span className="text-[10px] text-slate-500 font-mono">
+                      <span className="text-[10px] text-slate-500 font-mono tabular-nums">
                         {new Date(item.createdAt).toLocaleDateString('ar-EG', {
                           day: 'numeric',
                           month: 'short',
@@ -288,19 +292,21 @@ export default function SavedHighlightsModal({ isOpen, onClose, currentSubtopicI
                       {/* زر نسخ النص */}
                       <button
                         onClick={() => handleCopyText(item.id, item.text)}
+                        aria-label="نسخ المقتطف"
                         className="p-1.5 text-slate-400 hover:text-white rounded-lg transition-colors cursor-pointer"
                         title="نسخ المقتطف"
                       >
-                        {copiedId === item.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copiedId === item.id ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
                       </button>
 
                       {/* زر الحذف */}
                       <button
                         onClick={() => handleDelete(item.id)}
+                        aria-label="حذف هذا التظليل"
                         className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg transition-colors cursor-pointer"
                         title="حذف هذا التظليل"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="size-3.5" />
                       </button>
                     </div>
                   </div>
@@ -309,7 +315,7 @@ export default function SavedHighlightsModal({ isOpen, onClose, currentSubtopicI
                   <div className={`p-3 rounded-xl ${
                     item.type === 'code' 
                       ? 'bg-[#060a12] font-mono text-left text-xs text-cyan-300 border border-slate-800/80 overflow-x-auto whitespace-pre-wrap' 
-                      : 'bg-slate-900/60 font-sans text-xs text-slate-200 leading-relaxed border border-slate-800/40'
+                      : 'bg-slate-900/60 font-sans text-xs text-slate-200 leading-relaxed border border-slate-800/40 text-pretty'
                   }`} dir={item.type === 'code' ? 'ltr' : 'rtl'}>
                     {item.text}
                   </div>
@@ -318,7 +324,7 @@ export default function SavedHighlightsModal({ isOpen, onClose, currentSubtopicI
                   {item.note && (
                     <div className="bg-cyan-950/20 border border-cyan-800/30 rounded-xl p-2.5 text-xs text-cyan-200 flex items-start gap-2">
                       <span className="text-cyan-400 font-bold shrink-0">💡 ملاحظتك:</span>
-                      <p className="font-sans leading-relaxed">{item.note}</p>
+                      <p className="font-sans leading-relaxed text-pretty">{item.note}</p>
                     </div>
                   )}
 

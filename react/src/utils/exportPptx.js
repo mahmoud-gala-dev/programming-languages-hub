@@ -348,3 +348,4 @@ export async function exportLessonToPptx(subtopic, sectionData = null) {
   await pres.writeFile({ fileName });
   return fileName;
 }
+

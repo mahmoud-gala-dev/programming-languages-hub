@@ -93,26 +93,26 @@ export default function CodeFontModal({ isOpen, onClose }) {
       dir="rtl"
     >
       <div 
-        style={{ maxHeight: '90vh', height: '90vh' }}
+        style={{ maxHeight: '90dvh', height: '90dvh' }}
         className="relative w-full max-w-5xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-[0_25px_70px_-15px_rgba(6,182,212,0.3)] flex flex-col overflow-hidden text-slate-100 animate-scaleUp"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 1. شريط رأس الاستوديو */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-slate-800 bg-slate-950/70 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-slate-950 shadow-lg shadow-cyan-500/20">
-              <Type className="w-5 h-5 font-black text-slate-950" />
+            <div className="size-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-slate-950 shadow-lg shadow-cyan-500/20">
+              <Type className="size-5 font-black text-slate-950" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-black text-white font-sans">
+                <h3 className="text-base sm:text-lg font-black text-white font-sans text-balance">
                   استوديو خطوط الكود البرمجي
                 </h3>
-                <span className="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2.5 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2.5 py-0.5 rounded-full font-bold tabular-nums">
                   {CODE_FONTS.length} خطوط برمجية
                 </span>
               </div>
-              <p className="text-xs text-slate-400 font-sans mt-0.5">
+              <p className="text-xs text-slate-400 font-sans mt-0.5 text-pretty">
                 خصص الخط المفضل لقراءة وبرمجة الشفرات مع دعم الرموز المتصلة (Ligatures) وتمييز الحروف
               </p>
             </div>
@@ -122,20 +122,22 @@ export default function CodeFontModal({ isOpen, onClose }) {
             {activeFontId !== 'fira-code' && (
               <button
                 onClick={handleResetDefault}
+                aria-label="استعادة الخط الافتراضي"
                 className="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 hover:text-amber-300 bg-slate-800/80 hover:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 transition-colors cursor-pointer font-sans"
                 title="استعادة الخط الافتراضي (Fira Code)"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
+                <RotateCcw className="size-3.5" />
                 <span>الافتراضي</span>
               </button>
             )}
 
             <button
               onClick={onClose}
+              aria-label="إغلاق النافذة"
               className="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors cursor-pointer border border-slate-700"
               title="إغلاق النافذة (Esc)"
             >
-              <X className="w-4 h-4" />
+              <X className="size-4" />
             </button>
           </div>
         </div>

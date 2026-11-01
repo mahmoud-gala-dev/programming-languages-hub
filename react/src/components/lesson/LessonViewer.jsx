@@ -326,19 +326,21 @@ export default function LessonViewer({
             <div className="flex items-center bg-slate-950/90 rounded-xl p-0.5 sm:p-1 border border-slate-800 shadow-inner" title="التحكم بحجم خط الشرح والنصوص">
               <button
                 onClick={() => setReadingFontSize(prev => Math.max(prev - 1, 13))}
+                aria-label="تصغير خط الشرح"
                 className="px-1.5 sm:px-2 py-1 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer text-xs font-bold"
                 title="تصغير خط الشرح (A-)"
               >
                 A-
               </button>
               <div className="flex items-center gap-1 px-1.5 sm:px-2 border-x border-slate-800 select-none">
-                <Type className="w-3 h-3 text-cyan-400 opacity-80" />
-                <span className="text-cyan-300 font-mono text-[11px] sm:text-xs font-semibold">
+                <Type className="size-3 text-cyan-400 opacity-80" />
+                <span className="text-cyan-300 font-mono text-[11px] sm:text-xs font-semibold tabular-nums">
                   {readingFontSize}px
                 </span>
               </div>
               <button
                 onClick={() => setReadingFontSize(prev => Math.min(prev + 1, 24))}
+                aria-label="تكبير خط الشرح"
                 className="px-1.5 sm:px-2 py-1 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer text-xs font-bold"
                 title="تكبير خط الشرح (A+)"
               >
@@ -347,10 +349,11 @@ export default function LessonViewer({
               {readingFontSize !== 15 && (
                 <button
                   onClick={() => setReadingFontSize(15)}
+                  aria-label="إعادة ضبط حجم الخط الافتراضي"
                   className="p-1 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition-colors border-r border-slate-800 text-slate-500 cursor-pointer"
                   title="إعادة ضبط حجم الخط الافتراضي (15px)"
                 >
-                  <RotateCcw className="w-3 h-3" />
+                  <RotateCcw className="size-3" />
                 </button>
               )}
             </div>
@@ -358,7 +361,7 @@ export default function LessonViewer({
             {/* 2. التحكم في تباعد الأسطر */}
             <div className="flex items-center bg-slate-950/90 rounded-xl p-0.5 sm:p-1 border border-slate-800 shadow-inner gap-0.5" title="التحكم في تباعد الأسطر">
               <span className="p-1 text-slate-500 hidden xs:inline-block">
-                <AlignJustify className="w-3.5 h-3.5" />
+                <AlignJustify className="size-3.5" />
               </span>
               <button
                 onClick={() => setLineSpacing("compact")}
@@ -443,6 +446,7 @@ export default function LessonViewer({
             {onToggleSidebar && (
               <button
                 onClick={onToggleSidebar}
+                aria-label={isSidebarOpen ? "إخفاء القائمة الجانبية" : "إظهار القائمة الجانبية"}
                 className={`p-1.5 sm:p-2 rounded-xl border text-xs transition-all cursor-pointer shadow-sm ${
                   isSidebarOpen 
                     ? 'bg-slate-950/90 text-slate-400 hover:text-cyan-300 hover:bg-slate-800 border-slate-800' 
@@ -450,7 +454,7 @@ export default function LessonViewer({
                 }`}
                 title={isSidebarOpen ? "إخفاء القائمة الجانبية وتوسيع الشاشة" : "إظهار القائمة الجانبية"}
               >
-                <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400" />
+                <Layers className="size-3.5 sm:size-4 text-cyan-400" />
               </button>
             )}
 
@@ -469,12 +473,12 @@ export default function LessonViewer({
             className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition-all shadow-md hover:shadow-emerald-500/20 cursor-pointer text-xs shrink-0 whitespace-nowrap"
             title="نسخ برومبت هندسي دقيق وتحويلك فوراً إلى ChatGPT لشرح الدرس"
           >
-            <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-100 shrink-0" />
+            <Bot className="size-3.5 sm:size-4 text-emerald-100 shrink-0" />
             <span className="font-sans">شرح في ChatGPT</span>
             <span className="bg-emerald-950/60 text-emerald-200 text-[10px] font-mono px-1.5 py-0.5 rounded-md border border-emerald-400/30 shrink-0 hidden sm:inline-block">
               نسخ البرومبت
             </span>
-            <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80 shrink-0" />
+            <ExternalLink className="size-3 sm:size-3.5 opacity-80 shrink-0" />
           </button>
 
           {/* زر الاختبار الذكي للدرس */}
@@ -483,7 +487,7 @@ export default function LessonViewer({
             className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition-all shadow-md hover:shadow-purple-500/20 cursor-pointer text-xs shrink-0 whitespace-nowrap"
             title="توليد اختبار ذكي تفاعلي خاص بمحاور هذا الدرس (أكمل، صح/خطأ، كود ومخرجات)"
           >
-            <Target className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-200 shrink-0" />
+            <Target className="size-3.5 sm:size-4 text-purple-200 shrink-0" />
             <span className="font-sans">اختبار ذكي (Quiz)</span>
             <span className="bg-purple-950/60 text-purple-200 text-[10px] font-mono px-1.5 py-0.5 rounded-md border border-purple-400/30 shrink-0 hidden sm:inline-block">
               3 أنواع
@@ -496,7 +500,7 @@ export default function LessonViewer({
             className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-extrabold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition-all shadow-md hover:shadow-amber-500/20 cursor-pointer text-xs shrink-0 whitespace-nowrap"
             title="فتح هذا الدرس كعرض شرائح PowerPoint تفاعلي احترافي"
           >
-            <Tv className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 shrink-0" />
+            <Tv className="size-3.5 sm:size-4 text-slate-950 shrink-0" />
             <span className="font-sans">عرض الشرائح (PPT)</span>
             <span className="bg-amber-950/20 text-slate-900 text-[10px] font-mono px-1.5 sm:px-2 py-0.5 rounded-md border border-slate-900/30 shrink-0 font-bold hidden sm:inline-block">
               سلايدات
@@ -510,7 +514,7 @@ export default function LessonViewer({
             className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-orange-600 via-rose-600 to-amber-600 hover:from-orange-500 hover:to-rose-500 text-white font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition-all shadow-md hover:shadow-orange-500/20 cursor-pointer text-xs shrink-0 whitespace-nowrap disabled:opacity-50"
             title="تحميل هذا الدرس كملف PowerPoint رسمي جاهز (.pptx) بجودة 16:9"
           >
-            <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0" />
+            <Download className="size-3.5 sm:size-4 text-white shrink-0" />
             <span className="font-sans">تحميل PPTX</span>
             <span className="bg-orange-950/60 text-orange-200 text-[10px] font-mono px-1.5 py-0.5 rounded-md border border-orange-400/30 shrink-0 hidden sm:inline-block">
               {isExportingPptx ? "جاري التجهيز..." : ".pptx"}
@@ -523,10 +527,10 @@ export default function LessonViewer({
             className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-cyan-600 via-cyan-500 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition-all shadow-md hover:shadow-cyan-500/20 cursor-pointer text-xs shrink-0 whitespace-nowrap"
             title="عرض وإدارة التظليلات والمقتطفات المحفوظة لهذا الدرس"
           >
-            <Bookmark className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-100 shrink-0" />
+            <Bookmark className="size-3.5 sm:size-4 text-cyan-100 shrink-0" />
             <span className="font-sans">تظليلاتي وملاحظاتي</span>
             {lessonHighlights.length > 0 ? (
-              <span className="bg-cyan-950/80 text-cyan-200 text-[10px] font-mono px-2 py-0.5 rounded-full border border-cyan-400/40 shrink-0">
+              <span className="bg-cyan-950/80 text-cyan-200 text-[10px] font-mono tabular-nums px-2 py-0.5 rounded-full border border-cyan-400/40 shrink-0">
                 {lessonHighlights.length}
               </span>
             ) : (
@@ -550,14 +554,14 @@ export default function LessonViewer({
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5 mb-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2.5 py-0.5 rounded-full">
+              <span className="text-xs font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2.5 py-0.5 rounded-full tabular-nums">
                 الدرس {subtopic.id}
               </span>
               <span className="text-xs font-mono text-slate-400">
                 {subtopic.englishTitle || subtopic.technicalTerm?.english}
               </span>
             </div>
-            <h2 className="text-xl sm:text-3xl font-black text-white leading-tight">
+            <h2 className="text-xl sm:text-3xl font-black text-white leading-tight text-balance">
               {subtopic.title}
             </h2>
           </div>
@@ -565,6 +569,7 @@ export default function LessonViewer({
           {/* زر تمييز الدرس كمكتمل */}
           <button
             onClick={() => onToggleComplete(subtopic.id)}
+            aria-label={isCompleted ? "تم إتقان الدرس" : "تحديد الدرس كمكتمل"}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               isCompleted 
                 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm'
@@ -573,12 +578,12 @@ export default function LessonViewer({
           >
             {isCompleted ? (
               <>
-                <Check className="w-4 h-4 text-emerald-400" />
+                <Check className="size-4 text-emerald-400" />
                 <span>تم إتقان الدرس ✓</span>
               </>
             ) : (
               <>
-                <CheckCircle className="w-4 h-4 text-slate-400" />
+                <CheckCircle className="size-4 text-slate-400" />
                 <span>تحديد كمكتمل</span>
               </>
             )}
@@ -591,7 +596,7 @@ export default function LessonViewer({
             <span>📖</span> 1. التعريف المبسط (Simplified Definition):
           </h4>
           <p 
-            className={`text-slate-200 font-sans font-medium ${currentLeadingClass}`}
+            className={`text-slate-200 font-sans font-medium text-pretty ${currentLeadingClass}`}
             style={{ fontSize: `${readingFontSize}px` }}
           >
             {renderHighlightedContent(subtopic.definition)}
@@ -601,11 +606,11 @@ export default function LessonViewer({
         {/* 2. التشبيه من الحياة اليومية */}
         <div className="bg-amber-950/20 border-r-4 border-amber-500 rounded-2xl p-5 mb-6 shadow-inner">
           <h4 className="text-xs font-bold text-amber-300 flex items-center gap-1.5 mb-2">
-            <Sparkles className="w-4 h-4 text-amber-400" />
+            <Sparkles className="size-4 text-amber-400" />
             2. مثال وتشبيه من الحياة اليومية (Everyday Analogy):
           </h4>
           <p 
-            className={`text-amber-100/90 ${currentLeadingClass}`}
+            className={`text-amber-100/90 text-pretty ${currentLeadingClass}`}
             style={{ fontSize: `${Math.max(readingFontSize - 1, 13)}px` }}
           >
             {renderHighlightedContent(subtopic.analogy)}
@@ -615,11 +620,11 @@ export default function LessonViewer({
         {/* 3. لماذا نحتاجه والمشكلة التي يحلها */}
         <div className="space-y-2">
           <h4 className="text-xs font-bold text-blue-400 flex items-center gap-1.5">
-            <HelpCircle className="w-4 h-4 text-blue-400" />
+            <HelpCircle className="size-4 text-blue-400" />
             3. لماذا نحتاجه؟ وما المشكلة التي يحلها؟ (Why & Problem Solved):
           </h4>
           <p 
-            className={`text-slate-300 ${currentLeadingClass}`}
+            className={`text-slate-300 text-pretty ${currentLeadingClass}`}
             style={{ fontSize: `${readingFontSize}px` }}
           >
             {renderHighlightedContent(subtopic.why)}
@@ -632,7 +637,7 @@ export default function LessonViewer({
       {((subtopic.terms && subtopic.terms.length > 0) || subtopic.technicalTerm) && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
           <h4 className="text-xs font-bold text-cyan-400 mb-4 flex items-center gap-2">
-            <Languages className="w-4 h-4" />
+            <Languages className="size-4" />
             4. المصطلحات الإنجليزية والنطق الصوتي والمعنى (Terms & Meaning):
           </h4>
 
@@ -671,7 +676,7 @@ export default function LessonViewer({
       {/* 5. الصيغة العامة (Syntax) مع دعم التظليل المباشر */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
         <h4 className="text-xs font-bold text-emerald-400 mb-3 flex items-center gap-2">
-          <FileCode className="w-4 h-4" />
+          <FileCode className="size-4" />
           5. الصيغة العامة والهيكل القياسي (General Syntax):
         </h4>
         <div 
@@ -687,7 +692,7 @@ export default function LessonViewer({
       {/* 6. المثال العملي البسيط مع تعليق على كل سطر وملاحظات وتظليلات تفاعلية */}
       <div className="space-y-2">
         <h4 className="text-xs font-bold text-slate-200 flex items-center gap-2">
-          <Terminal className="w-4 h-4 text-cyan-400" />
+          <Terminal className="size-4 text-cyan-400" />
           6. مثال عملي بسيط (مع تعليق عربي فوق كل سطر كود):
         </h4>
         <CodeBlock 
@@ -703,7 +708,7 @@ export default function LessonViewer({
       {/* 7. المثال العملي المتقدم والتطبيقي مع دعم التظليل والملاحظات */}
       <div className="space-y-2">
         <h4 className="text-xs font-bold text-slate-200 flex items-center gap-2">
-          <Terminal className="w-4 h-4 text-indigo-400" />
+          <Terminal className="size-4 text-indigo-400" />
           7. مثال عملي متقدم وتطبيقي (مع تعليقات كاملة):
         </h4>
         <CodeBlock 
@@ -725,11 +730,11 @@ export default function LessonViewer({
       {subtopic.outputExplanation && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
           <h4 className="text-xs font-bold text-cyan-400 mb-2 flex items-center gap-2">
-            <Eye className="w-4 h-4" />
+            <Eye className="size-4" />
             8. شرح المخرجات: ماذا يرى المستخدم ولماذا؟ (Output Explanation):
           </h4>
           <p 
-            className={`text-slate-300 font-sans ${currentLeadingClass}`}
+            className={`text-slate-300 font-sans text-pretty ${currentLeadingClass}`}
             style={{ fontSize: `${readingFontSize}px` }}
           >
             {renderHighlightedContent(subtopic.outputExplanation)}
@@ -741,7 +746,7 @@ export default function LessonViewer({
       {subtopic.commonMistakes && subtopic.commonMistakes.length > 0 && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <h4 className="text-xs font-bold text-red-400 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4" />
+            <AlertTriangle className="size-4" />
             9. أخطاء شائعة يقع فيها المبتدئون وكيف تتجنبها (Common Mistakes):
           </h4>
 
@@ -755,7 +760,7 @@ export default function LessonViewer({
                 <span className="font-bold text-emerald-400">✓ الصواب:</span>
                 <span className="font-mono">{m.right}</span>
               </div>
-              <div className="text-[11px] text-slate-400 bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+              <div className="text-[11px] text-slate-400 bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-pretty">
                 <span className="font-semibold text-slate-300">💡 السبب المعماري: </span>
                 {renderHighlightedContent(m.reason)}
               </div>
@@ -768,7 +773,7 @@ export default function LessonViewer({
       {subtopic.bestPractices && subtopic.bestPractices.length > 0 && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-3">
           <h4 className="text-xs font-bold text-amber-400 flex items-center gap-2">
-            <Lightbulb className="w-4 h-4" />
+            <Lightbulb className="size-4" />
             10. نصائح ذهبية وأفضل الممارسات للمحترفين (Best Practices):
           </h4>
 
@@ -971,10 +976,10 @@ export default function LessonViewer({
       {scrollProgress >= 95 && (
         <div className="bg-gradient-to-r from-emerald-950/70 via-slate-900 to-cyan-950/70 border border-emerald-500/50 rounded-2xl p-5 text-center shadow-xl animate-slideUp space-y-3">
           <div className="flex items-center justify-center gap-2 text-emerald-300 text-sm font-bold">
-            <Award className="w-5 h-5 text-amber-400" />
-            <span>🎉 رائع! لقد أتممت قراءة محاور هذا الدرس بالكامل بنسبة 100%</span>
+            <Award className="size-5 text-amber-400" />
+            <span>🎉 رائع! لقد أتممت قراءة محاور هذا الدرس بالكامل بنسبة <strong className="tabular-nums">100%</strong></span>
           </div>
-          <p className="text-xs text-slate-300 max-w-lg mx-auto">
+          <p className="text-xs text-slate-300 max-w-lg mx-auto text-pretty">
             اختبر فهمك السريع عبر الاختبار الذكي، أو ميز الدرس كمكتمل وانتقل مباشرة للمحطة التالية!
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
@@ -982,7 +987,7 @@ export default function LessonViewer({
               onClick={() => setIsAiQuizOpen(true)}
               className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition-colors cursor-pointer shadow-md"
             >
-              <Target className="w-4 h-4 text-amber-300" />
+              <Target className="size-4 text-amber-300" />
               <span>خوض الاختبار الذكي (3 أسئلة)</span>
             </button>
 
@@ -995,7 +1000,7 @@ export default function LessonViewer({
                 }}
                 className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition-colors cursor-pointer shadow-md"
               >
-                <Check className="w-4 h-4 font-black" />
+                <Check className="size-4 font-black" />
                 <span>تحديد كمكتمل والمتابعة للدرس التالي</span>
               </button>
             )}
@@ -1008,13 +1013,14 @@ export default function LessonViewer({
         <button
           onClick={onPrev}
           disabled={!hasPrev}
+          aria-label="الدرس السابق"
           className={`flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold transition-all w-full sm:w-auto justify-center cursor-pointer ${
             hasPrev 
               ? 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700' 
               : 'bg-slate-900 text-slate-600 border border-slate-800 opacity-50 cursor-not-allowed'
           }`}
         >
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="size-4" />
           <span>الدرس السابق</span>
         </button>
 
@@ -1022,13 +1028,14 @@ export default function LessonViewer({
           onClick={onOpenTutor}
           className="flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg transition-all w-full sm:w-auto justify-center cursor-pointer"
         >
-          <Sparkles className="w-4 h-4 text-amber-300" />
+          <Sparkles className="size-4 text-amber-300" />
           <span>اسأل المعلم الذكي عن هذا الدرس</span>
         </button>
 
         <button
           onClick={onNext}
           disabled={!hasNext}
+          aria-label="الدرس التالي"
           className={`flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-bold transition-all w-full sm:w-auto justify-center cursor-pointer ${
             hasNext 
               ? 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-lg' 
@@ -1036,7 +1043,7 @@ export default function LessonViewer({
           }`}
         >
           <span>الدرس التالي</span>
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="size-4" />
         </button>
       </div>
       </div>

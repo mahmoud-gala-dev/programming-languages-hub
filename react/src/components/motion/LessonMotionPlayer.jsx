@@ -18,7 +18,7 @@ export default function LessonMotionPlayer({
       <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900/90 border-b border-slate-800/80 flex-wrap gap-2 text-xs">
         <div className="flex items-center gap-2">
           <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30 font-bold">
-            <Film className="w-3.5 h-3.5 text-sky-400" />
+            <Film className="size-3.5 text-sky-400" />
             <span>Remotion Motion Engine</span>
           </span>
           <span className="text-[11px] text-slate-400 hidden sm:inline">
@@ -31,10 +31,11 @@ export default function LessonMotionPlayer({
           {onSwitchToInfographic && (
             <button
               onClick={onSwitchToInfographic}
+              aria-label="التبديل إلى بطاقة الإنفوجرافيك الثابتة"
               className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition text-[11px] font-semibold cursor-pointer"
               title="التبديل إلى بطاقة الإنفوجرافيك الثابتة"
             >
-              <ImageIcon className="w-3.5 h-3.5 text-purple-400" />
+              <ImageIcon className="size-3.5 text-purple-400" />
               <span>الإنفوجرافيك الثابت</span>
             </button>
           )}
@@ -66,3 +67,4 @@ export default function LessonMotionPlayer({
     </div>
   );
 }
+

@@ -325,3 +325,4 @@ export default function SvgMotionDiagram({ type = 'architecture', frame, fps }) 
     </svg>
   );
 }
+

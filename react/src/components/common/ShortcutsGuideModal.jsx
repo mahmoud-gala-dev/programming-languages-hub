@@ -401,39 +401,40 @@ export default function ShortcutsGuideModal({ isOpen, onClose }) {
 
   return (
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md transition-opacity duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md transition-opacity duration-200 h-dvh min-h-dvh"
       onClick={onClose}
     >
       <div 
         className="w-full max-w-5xl bg-slate-900/95 border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-right"
-        style={{ maxHeight: '90vh', height: '90vh' }}
+        style={{ maxHeight: '90dvh', height: '90dvh' }}
         onClick={(e) => e.stopPropagation()}
         dir="rtl"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-slate-800 bg-slate-950/60 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
-              <Sparkles className="w-5 h-5" />
+            <div className="size-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
+              <Sparkles className="size-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2 text-balance">
                 <span>موسوعة الاختصارات وأوامر الذكاء الاصطناعي</span>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30 font-mono">
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30 font-mono tabular-nums">
                   بالعامية المصرية
                 </span>
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-400 mt-0.5 text-pretty">
                 كل الـ Slash Commands واختصارات التطوير مشروحة بالبلدي مع كود عملي وبرومبت جاهز للنسخ
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition"
+            aria-label="إغلاق نافذة موسوعة الاختصارات"
+            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition cursor-pointer"
             title="إغلاق (ESC)"
           >
-            <X className="w-5 h-5" />
+            <X className="size-5" />
           </button>
         </div>
 
@@ -441,7 +442,7 @@ export default function ShortcutsGuideModal({ isOpen, onClose }) {
         <div className="p-4 border-b border-slate-800/80 bg-slate-900/40 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between flex-shrink-0">
           {/* Search Box */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="size-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
@@ -452,7 +453,8 @@ export default function ShortcutsGuideModal({ isOpen, onClose }) {
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-white"
+                aria-label="مسح نص البحث"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-white cursor-pointer"
               >
                 مسح
               </button>
@@ -484,11 +486,11 @@ export default function ShortcutsGuideModal({ isOpen, onClose }) {
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
           {filteredShortcuts.length === 0 ? (
             <div className="py-16 text-center text-slate-400 space-y-3">
-              <Search className="w-12 h-12 mx-auto text-slate-600 opacity-60" />
+              <Search className="size-12 mx-auto text-slate-600 opacity-60" />
               <p className="text-base font-semibold">لم يتم العثور على أي اختصار يطابق "{searchQuery}"</p>
               <button
                 onClick={() => { setSearchQuery(''); setActiveCategory('all'); }}
-                className="text-xs text-sky-400 hover:underline"
+                className="text-xs text-sky-400 hover:underline cursor-pointer"
               >
                 إعادة ضبط البحث والفلاتر
               </button>
@@ -505,19 +507,19 @@ export default function ShortcutsGuideModal({ isOpen, onClose }) {
                   {/* Top Bar of Card */}
                   <div className="flex items-start justify-between gap-3 flex-wrap sm:flex-nowrap">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-slate-300">
-                        <Icon className="w-4 h-4" />
+                      <div className="size-9 rounded-xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-slate-300">
+                        <Icon className="size-4" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
                           <span 
-                            className={`font-mono text-xs sm:text-sm font-bold px-2.5 py-0.5 rounded-md border ${item.badgeColor}`}
+                            className={`font-mono text-xs sm:text-sm font-bold px-2.5 py-0.5 rounded-md border tabular-nums ${item.badgeColor}`}
                             dir="ltr"
                             style={{ direction: 'ltr' }}
                           >
                             {item.command}
                           </span>
-                          <h3 className="text-base font-bold text-white">
+                          <h3 className="text-base font-bold text-white text-balance">
                             {item.title}
                           </h3>
                         </div>
@@ -530,17 +532,18 @@ export default function ShortcutsGuideModal({ isOpen, onClose }) {
                     {/* Copy Button */}
                     <button
                       onClick={() => copyToClipboard(item.promptExample, item.id)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
+                      aria-label={`نسخ برومبت ${item.command}`}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer"
                       title="نسخ صيغة البرومبت للـ AI"
                     >
                       {isCopied ? (
                         <>
-                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <Check className="size-3.5 text-emerald-400" />
                           <span className="text-emerald-400">تم النسخ!</span>
                         </>
                       ) : (
                         <>
-                          <Copy className="w-3.5 h-3.5 text-slate-400 group-hover:text-white" />
+                          <Copy className="size-3.5 text-slate-400 group-hover:text-white" />
                           <span>نسخ البرومبت</span>
                         </>
                       )}

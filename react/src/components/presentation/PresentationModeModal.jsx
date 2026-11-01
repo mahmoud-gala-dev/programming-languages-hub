@@ -172,26 +172,26 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full items-center max-w-4xl mx-auto animate-fadeIn">
           {/* التعريف */}
           <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xl">
-            <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl font-bold">
+            <div className="size-12 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl font-bold">
               📖
             </div>
-            <h3 className="font-bold text-cyan-300" style={{ fontSize: `${slideFontSize + 3}px` }}>
+            <h3 className="font-bold text-cyan-300 text-balance" style={{ fontSize: `${slideFontSize + 3}px` }}>
               1. ما هو هذا المفهوم من الصفر؟
             </h3>
-            <p className="text-slate-200 font-sans" style={getTextStyle('normal')}>
+            <p className="text-slate-200 font-sans text-pretty" style={getTextStyle('normal')}>
               {safeSubtopic.definition}
             </p>
           </div>
 
           {/* التشبيه */}
           <div className="bg-amber-950/20 border-r-4 border-amber-500 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xl">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-              <Sparkles className="w-6 h-6" />
+            <div className="size-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+              <Sparkles className="size-6" />
             </div>
-            <h3 className="font-bold text-amber-300" style={{ fontSize: `${slideFontSize + 3}px` }}>
+            <h3 className="font-bold text-amber-300 text-balance" style={{ fontSize: `${slideFontSize + 3}px` }}>
               2. التشبيه من الحياة اليومية
             </h3>
-            <p className="text-amber-100/90 font-sans" style={getTextStyle('normal')}>
+            <p className="text-amber-100/90 font-sans text-pretty" style={getTextStyle('normal')}>
               {safeSubtopic.analogy}
             </p>
           </div>
@@ -206,16 +206,16 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
       badge: 'الأهمية الهندسية',
       render: () => (
         <div className="flex flex-col items-center justify-center h-full max-w-3xl mx-auto space-y-6 text-center animate-fadeIn">
-          <div className="w-16 h-16 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 mb-2">
-            <HelpCircle className="w-8 h-8" />
+          <div className="size-16 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 mb-2">
+            <HelpCircle className="size-8" />
           </div>
 
-          <h2 className="font-black text-white font-sans" style={{ fontSize: `${slideFontSize + 8}px` }}>
+          <h2 className="font-black text-white font-sans text-balance" style={{ fontSize: `${slideFontSize + 8}px` }}>
             لماذا ابتكر مطورو React هذا المفهوم؟
           </h2>
 
           <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-start">
-            <p className="text-slate-200 font-medium font-sans" style={getTextStyle('normal')}>
+            <p className="text-slate-200 font-medium font-sans text-pretty" style={getTextStyle('normal')}>
               {safeSubtopic.why}
             </p>
           </div>
@@ -233,7 +233,7 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
           {safeSubtopic.syntax && (
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
               <span className="text-xs font-bold text-emerald-400 block mb-1 flex items-center gap-1.5">
-                <FileCode className="w-4 h-4" /> الصيغة القياسية (Syntax):
+                <FileCode className="size-4" /> الصيغة القياسية (Syntax):
               </span>
               <pre 
                 className="text-emerald-300 font-mono overflow-x-auto whitespace-pre-wrap" 
@@ -247,7 +247,7 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
 
           <div className="flex-1">
             <span className="text-xs font-bold text-slate-300 block mb-1 flex items-center gap-1.5">
-              <Terminal className="w-4 h-4 text-cyan-400" /> كود مبسط مع تعليق على كل سطر:
+              <Terminal className="size-4 text-cyan-400" /> كود مبسط مع تعليق على كل سطر:
             </span>
             <CodeBlock code={safeSubtopic.simpleCode} title={`كود مبسط: ${safeSubtopic.title}`} language="javascript" />
           </div>
@@ -264,7 +264,7 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
         <div className="flex flex-col h-full max-w-4xl mx-auto space-y-4 animate-fadeIn overflow-y-auto">
           <div className="flex-1">
             <span className="text-xs font-bold text-slate-300 block mb-1 flex items-center gap-1.5">
-              <Terminal className="w-4 h-4 text-indigo-400" /> التطبيق العملي المتقدم:
+              <Terminal className="size-4 text-indigo-400" /> التطبيق العملي المتقدم:
             </span>
             <CodeBlock code={safeSubtopic.advancedCode} title={`تطبيق متقدم: ${safeSubtopic.title}`} language="javascript" />
           </div>
@@ -293,7 +293,7 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
           {/* الأخطاء الشائعة */}
           <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 space-y-3">
             <h4 className="text-sm font-bold text-rose-400 flex items-center gap-2 border-b border-slate-800 pb-2">
-              <AlertTriangle className="w-4 h-4" /> احذر هذه الأخطاء:
+              <AlertTriangle className="size-4" /> احذر هذه الأخطاء:
             </h4>
             {safeSubtopic.commonMistakes && safeSubtopic.commonMistakes.length > 0 ? (
               safeSubtopic.commonMistakes.map((m, idx) => (
@@ -313,7 +313,7 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
           {/* أفضل الممارسات */}
           <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 space-y-3">
             <h4 className="text-sm font-bold text-amber-400 flex items-center gap-2 border-b border-slate-800 pb-2">
-              <Lightbulb className="w-4 h-4" /> نصائح ذهبية للمحترفين:
+              <Lightbulb className="size-4" /> نصائح ذهبية للمحترفين:
             </h4>
             {safeSubtopic.bestPractices && safeSubtopic.bestPractices.length > 0 ? (
               <ul className="space-y-2.5">
@@ -427,7 +427,7 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
   if (!isOpen || !subtopic) return null;
 
   return typeof document !== 'undefined' ? createPortal(
-    <div className="fixed inset-0 z-[99998] w-screen h-screen min-h-screen bg-[#070b13] text-slate-100 flex flex-col overflow-hidden animate-fadeIn select-none" dir="rtl">
+    <div className="fixed inset-0 z-50 w-screen h-dvh min-h-dvh bg-[#070b13] text-slate-100 flex flex-col overflow-hidden animate-fadeIn select-none" dir="rtl">
       
       {/* شريط تقدم الشرائح العلوي */}
       <div className="w-full bg-slate-900 h-1.5 flex">
@@ -445,7 +445,7 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
           <span className="text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 px-2.5 py-1 rounded-lg border border-cyan-500/30">
             PPT MODE • {slides[currentSlide].badge}
           </span>
-          <h2 className="text-sm font-bold text-white font-sans truncate max-w-xs sm:max-w-md">
+          <h2 className="text-sm font-bold text-white font-sans text-balance truncate max-w-xs sm:max-w-md">
             {slides[currentSlide].title}
           </h2>
         </div>
@@ -455,22 +455,24 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
           
           {/* التحكم بحجم الخط */}
           <div className="flex items-center gap-1 border-l border-slate-800 pl-2">
-            <Type className="w-3.5 h-3.5 text-cyan-400" />
+            <Type className="size-3.5 text-cyan-400" />
             <button
               onClick={() => setSlideFontSize(prev => Math.max(prev - 1, 13))}
               disabled={slideFontSize <= 13}
-              className="w-6 h-6 flex items-center justify-center text-xs font-bold text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 rounded disabled:opacity-40 cursor-pointer transition-colors"
+              aria-label="تصغير خط الشريحة"
+              className="size-6 flex items-center justify-center text-xs font-bold text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 rounded disabled:opacity-40 cursor-pointer transition-colors"
               title="تصغير خط الشريحة (A- أو -)"
             >
               A-
             </button>
-            <span className="text-xs font-mono text-cyan-300 px-1 select-none min-w-[36px] text-center">
+            <span className="text-xs font-mono tabular-nums text-cyan-300 px-1 select-none min-w-[36px] text-center">
               {slideFontSize}px
             </span>
             <button
               onClick={() => setSlideFontSize(prev => Math.min(prev + 1, 28))}
               disabled={slideFontSize >= 28}
-              className="w-6 h-6 flex items-center justify-center text-xs font-bold text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 rounded disabled:opacity-40 cursor-pointer transition-colors"
+              aria-label="تكبير خط الشريحة"
+              className="size-6 flex items-center justify-center text-xs font-bold text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 rounded disabled:opacity-40 cursor-pointer transition-colors"
               title="تكبير خط الشريحة (A+ أو +)"
             >
               A+
@@ -478,17 +480,18 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
             {slideFontSize !== 17 && (
               <button
                 onClick={() => setSlideFontSize(17)}
+                aria-label="إعادة ضبط حجم الخط الافتراضي"
                 className="p-1 text-slate-400 hover:text-amber-400 rounded transition-colors cursor-pointer"
                 title="إعادة ضبط حجم الخط الافتراضي (17px)"
               >
-                <RotateCcw className="w-3 h-3" />
+                <RotateCcw className="size-3" />
               </button>
             )}
           </div>
 
           {/* التحكم في التباعد بين الأسطر */}
           <div className="flex items-center gap-1">
-            <AlignJustify className="w-3.5 h-3.5 text-slate-400 ml-1 hidden sm:inline" />
+            <AlignJustify className="size-3.5 text-slate-400 ml-1 hidden sm:inline" />
             {[
               { key: 'compact', label: 'متقارب', title: 'تباعد أسطر متقارب (1.45)' },
               { key: 'normal', label: 'عادي', title: 'تباعد أسطر عادي (1.75)' },
@@ -527,41 +530,45 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
               }
             }}
             disabled={isExportingPptx}
+            aria-label="تنزيل عرض PowerPoint حقيقي لهذا الدرس"
             className="p-2 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-bold disabled:opacity-50"
             title="تنزيل عرض PowerPoint حقيقي (.pptx) لهذا الدرس بجودة 16:9"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="size-3.5" />
             <span className="hidden sm:inline">{isExportingPptx ? "جاري التجهيز..." : "تنزيل PPTX"}</span>
           </button>
 
           {/* زر التشغيل التلقائي */}
           <button
             onClick={() => setIsAutoPlaying(prev => !prev)}
+            aria-label={isAutoPlaying ? "إيقاف التشغيل التلقائي للشرائح" : "بدء التشغيل التلقائي للشرائح"}
             className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
               isAutoPlaying ? 'bg-amber-500 text-slate-950 font-bold' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
             }`}
             title="تشغيل تلقائي للشرائح كل 7 ثوانٍ"
           >
-            {isAutoPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+            {isAutoPlaying ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
             <span className="hidden sm:inline">{isAutoPlaying ? "إيقاف مؤقت" : "تشغيل تلقائي"}</span>
           </button>
 
           {/* زر ملء الشاشة */}
           <button
             onClick={toggleFullscreen}
+            aria-label={isFullscreen ? "الخروج من ملء الشاشة" : "عرض بملء الشاشة"}
             className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors cursor-pointer"
             title="ملء الشاشة (F)"
           >
-            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            {isFullscreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
           </button>
 
           {/* زر الخروج */}
           <button
             onClick={onClose}
+            aria-label="إنهاء وإغلاق العرض التقديمي"
             className="p-2 bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white rounded-lg transition-colors cursor-pointer"
             title="إنهاء العرض (Esc)"
           >
-            <X className="w-4 h-4" />
+            <X className="size-4" />
           </button>
         </div>
       </header>
@@ -577,10 +584,10 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
       <footer className="flex items-center justify-between px-6 py-3.5 bg-slate-900/90 border-t border-slate-800">
         <div className="flex items-center gap-4 text-xs text-slate-400 font-mono">
           <div>
-            شريحة <span className="text-cyan-400 font-bold">{currentSlide + 1}</span> من <span className="text-white">{slides.length}</span>
+            شريحة <span className="text-cyan-400 font-bold tabular-nums">{currentSlide + 1}</span> من <span className="text-white tabular-nums">{slides.length}</span>
           </div>
           <div className="hidden md:flex items-center gap-2 text-[11px] text-slate-500 font-sans border-r border-slate-800 pr-3">
-            <span>خط الشريحة: <strong className="text-slate-300">{slideFontSize}px</strong></span>
+            <span>خط الشريحة: <strong className="text-slate-300 tabular-nums">{slideFontSize}px</strong></span>
             <span>•</span>
             <span>التباعد: <strong className="text-slate-300">{lineSpacing === 'compact' ? 'متقارب' : lineSpacing === 'normal' ? 'عادي' : lineSpacing === 'relaxed' ? 'مريح' : 'متباعد'}</strong></span>
             <span>•</span>
@@ -592,18 +599,20 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
           <button
             onClick={handlePrev}
             disabled={currentSlide === 0}
+            aria-label="الانتقال إلى الشريحة السابقة"
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-md"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="size-4" />
             <span>السابق</span>
           </button>
 
-          {/* مؤشرات الشرائح السبع */}
+          {/* مؤشرات الشرائح */}
           <div className="flex items-center gap-1.5">
             {slides.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentSlide(idx)}
+                aria-label={`الانتقال إلى شريحة ${idx + 1}`}
                 className={`h-2 rounded-full transition-all cursor-pointer ${
                   currentSlide === idx ? 'w-6 bg-cyan-400' : 'w-2 bg-slate-700 hover:bg-slate-500'
                 }`}
@@ -615,10 +624,11 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
           <button
             onClick={handleNext}
             disabled={currentSlide === slides.length - 1}
+            aria-label="الانتقال إلى الشريحة التالية"
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-md"
           >
             <span>التالي</span>
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="size-4" />
           </button>
         </div>
       </footer>

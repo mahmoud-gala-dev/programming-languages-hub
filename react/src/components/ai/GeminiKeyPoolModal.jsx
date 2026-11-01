@@ -103,23 +103,23 @@ export default function GeminiKeyPoolModal({ isOpen, onClose }) {
   };
 
   return typeof document !== 'undefined' ? createPortal(
-    <div className="fixed inset-0 z-[99998] w-screen h-screen min-h-screen bg-black/80 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-4 animate-fadeIn" dir="rtl">
-      <div className="bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl w-full max-w-xl p-3.5 sm:p-6 shadow-2xl relative flex flex-col max-h-[92vh] sm:max-h-[88vh] animate-slideUp">
+    <div className="fixed inset-0 z-50 w-screen h-dvh min-h-dvh bg-black/80 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-4 animate-fadeIn" dir="rtl">
+      <div className="bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl w-full max-w-xl p-3.5 sm:p-6 shadow-2xl relative flex flex-col max-h-[92dvh] sm:max-h-[88dvh] animate-slideUp">
         
         {/* رأس النافذة */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-3 sm:pb-4 mb-3 sm:mb-4">
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center shadow-md shrink-0">
-              <Key className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="size-9 sm:size-10 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center shadow-md shrink-0">
+              <Key className="size-4 sm:size-5" />
             </div>
             <div>
-              <h3 className="text-sm sm:text-base font-bold text-white font-sans flex items-center gap-1.5 sm:gap-2">
+              <h3 className="text-sm sm:text-base font-bold text-white font-sans flex items-center gap-1.5 sm:gap-2 text-balance">
                 مجمع مفاتيح Gemini API
-                <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full font-mono border border-cyan-500/30">
+                <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full font-mono tabular-nums border border-cyan-500/30">
                   {keys.length} مفاتيح
                 </span>
               </h3>
-              <p className="text-[11px] sm:text-xs text-slate-400 font-sans">
+              <p className="text-[11px] sm:text-xs text-slate-400 font-sans text-pretty">
                 يعمل المجمع بالتبديل التلقائي (Auto-Failover) عند انتهاء حصة أي مفتاح
               </p>
             </div>
@@ -127,10 +127,11 @@ export default function GeminiKeyPoolModal({ isOpen, onClose }) {
 
           <button
             onClick={onClose}
+            aria-label="إغلاق نافذة مجمع المفاتيح"
             className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
             title="إغلاق النافذة"
           >
-            <X className="w-4 h-4" />
+            <X className="size-4" />
           </button>
         </div>
 
