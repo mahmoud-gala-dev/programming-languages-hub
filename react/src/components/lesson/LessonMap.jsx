@@ -95,7 +95,7 @@ export default function LessonMap({
       {isVisible ? (
         <aside 
           aria-label="خريطة محتويات الدرس"
-          className="hidden xl:block w-[280px] shrink-0 sticky top-20 self-start transition-all duration-200 z-20"
+          className="hidden xl:block w-[230px] xl:w-[240px] shrink-0 sticky top-20 self-start transition-all duration-200 z-20"
           dir="rtl"
         >
           <div className="bg-slate-900/95 border border-slate-800/90 rounded-2xl shadow-2xl backdrop-blur-md overflow-hidden flex flex-col max-h-[calc(100dvh-100px)]">

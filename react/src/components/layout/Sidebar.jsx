@@ -45,9 +45,9 @@ export default function Sidebar({
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     try {
       const saved = localStorage.getItem("react_roadmap_sidebar_width");
-      return saved || "expanded"; // القيمة الافتراضية موسعة ومريحة
+      return saved || "standard"; // القيمة الافتراضية رشيقة لتوفير مساحة رحبة للشرح
     } catch {
-      return "expanded";
+      return "standard";
     }
   });
 
@@ -94,12 +94,12 @@ export default function Sidebar({
   };
 
   const widthClasses = {
-    standard: "w-full lg:w-96 xl:w-[400px]",
-    expanded: "w-full lg:w-[440px] xl:w-[480px]",
-    ultra: "w-full lg:w-[500px] xl:w-[550px]"
+    standard: "w-full lg:w-72 xl:w-80",
+    expanded: "w-full lg:w-80 xl:w-96",
+    ultra: "w-full lg:w-96 xl:w-[440px]"
   };
 
-  const currentWidthClass = widthClasses[sidebarWidth] || widthClasses.expanded;
+  const currentWidthClass = widthClasses[sidebarWidth] || widthClasses.standard;
 
   // خريطة أحجام الخطوط في القائمة الجانبية
   const fontClasses = {

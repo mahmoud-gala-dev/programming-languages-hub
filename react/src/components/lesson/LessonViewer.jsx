@@ -844,13 +844,13 @@ export default function LessonViewer({
 
   const currentLeadingClass = lineSpacingClasses[lineSpacing] || "leading-relaxed";
 
-  // فئات اتساع الحاوية وفق نمط العرض المختار
+  // فئات اتساع الحاوية وفق نمط العرض المختار (اتساع رحب يمنح المكونات مساحة كافية ومريحة)
   const containerClasses = {
-    default: "max-w-7xl mx-auto px-1 sm:px-3",
-    wide: "w-full max-w-none px-1 sm:px-4",
+    default: "w-full max-w-[1750px] mx-auto px-1 sm:px-2 lg:px-4",
+    wide: "w-full max-w-none px-1 sm:px-3 lg:px-4",
     focus: "w-full max-w-6xl mx-auto px-2 sm:px-6"
   };
-  const currentContainerClass = containerClasses[layoutMode] || "max-w-5xl mx-auto";
+  const currentContainerClass = containerClasses[layoutMode] || containerClasses.default;
 
   
   // قائمة أقسام الدرس المتوفرة ديناميكياً
@@ -1184,8 +1184,8 @@ export default function LessonViewer({
         </BlockFocusStudio>
       )}
 
-      {/* تخطيط مساحة الدرس المزدوجة: محتوى الشرح الرحب + خريطة الدرس الجانبية */}
-      <div className="flex flex-col xl:flex-row xl:items-start gap-8 relative">
+      {/* تخطيط مساحة الدرس المزدوجة: محتوى الشرح الرحب المتسع + خريطة الدرس الجانبية */}
+      <div className="flex flex-col xl:flex-row xl:items-start gap-4 lg:gap-6 relative">
         
         {/* مساحة محتوى الدرس والشروحات الرئيسية مع تباعد رحب ومريح يمنع التكدس */}
         <div data-lesson-script="true" className="lesson-script-content flex-1 min-w-0 space-y-12 sm:space-y-14">

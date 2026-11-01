@@ -322,8 +322,8 @@ export default function App() {
           scrollProgress={scrollProgress}
         />
 
-        {/* 2. منطقة التخطيط الرئيسية (شريط جانبي + مسرح المحتوى) */}
-        <div className="flex-1 flex flex-col lg:flex-row max-w-[1750px] w-full mx-auto px-1 sm:px-3 lg:px-6">
+        {/* 2. منطقة التخطيط الرئيسية (شريط جانبي + مسرح المحتوى المتسع) */}
+        <div className="flex-1 flex flex-col lg:flex-row w-full max-w-full mx-auto px-1 sm:px-2 lg:px-4">
           
           {/* الشريط الجانبي لفهرس الدروس */}
           {isSidebarOpen && (
@@ -365,8 +365,8 @@ export default function App() {
             />
           )}
 
-          {/* مساحة العرض الرئيسية للدرس أو الإطلالة الخاصة */}
-          <main className="flex-1 p-2.5 sm:p-5 lg:p-8 min-w-0 max-w-full overflow-x-hidden">
+          {/* مساحة العرض الرئيسية للدرس أو الإطلالة الخاصة المتسعة بأقصى أريحية */}
+          <main className="flex-1 p-2 sm:p-3 lg:p-5 min-w-0 max-w-full overflow-x-hidden">
             
             {/* عرض السكيلتون المتحرك أثناء التنقل */}
             {isLoadingTransition ? (
