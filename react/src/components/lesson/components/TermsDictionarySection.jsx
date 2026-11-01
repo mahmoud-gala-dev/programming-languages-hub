@@ -18,6 +18,13 @@ export default function TermsDictionarySection({ subtopic, readingFontSize = 15 
       meaning: subtopic.technicalTerm.arabicMeaning,
       isCore: true
     });
+  } else if (subtopic?.englishTerm) {
+    termsList.push({
+      term: subtopic.englishTerm,
+      pronunciation: "",
+      meaning: subtopic.title || "",
+      isCore: true
+    });
   }
   if (subtopic?.terms && Array.isArray(subtopic.terms)) {
     subtopic.terms.forEach(t => {

@@ -552,7 +552,7 @@ export default function LessonViewer({
                 الدرس {subtopic.id}
               </span>
               <span className="text-xs font-mono text-slate-400">
-                {subtopic.englishTitle || subtopic.technicalTerm?.english}
+                {subtopic.englishTitle || subtopic.englishTerm || subtopic.technicalTerm?.english}
               </span>
             </div>
             <h2 className="text-xl sm:text-3xl font-black text-white leading-tight text-balance">
@@ -660,7 +660,7 @@ export default function LessonViewer({
             className={`text-slate-200 font-sans font-medium text-pretty ${currentLeadingClass}`}
             style={{ fontSize: `${readingFontSize}px` }}
           >
-            {renderHighlightedContent(subtopic.definition)}
+            {renderHighlightedContent(subtopic.definition || subtopic.description)}
           </p>
         </div>
 
@@ -674,7 +674,7 @@ export default function LessonViewer({
             className={`text-amber-100/90 text-pretty ${currentLeadingClass}`}
             style={{ fontSize: `${Math.max(readingFontSize - 1, 13)}px` }}
           >
-            {renderHighlightedContent(subtopic.analogy)}
+            {renderHighlightedContent(subtopic.analogy || subtopic.realLifeAnalogy)}
           </p>
         </div>
 
@@ -688,7 +688,7 @@ export default function LessonViewer({
             className={`text-slate-300 text-pretty ${currentLeadingClass}`}
             style={{ fontSize: `${readingFontSize}px` }}
           >
-            {renderHighlightedContent(subtopic.why)}
+            {renderHighlightedContent(subtopic.why || subtopic.whyItMatters)}
           </p>
         </div>
 
@@ -730,7 +730,7 @@ export default function LessonViewer({
           6. مثال عملي بسيط (مع تعليق عربي فوق كل سطر كود):
         </h4>
         <CodeBlock 
-          code={subtopic.simpleCode || subtopic.codeSimple} 
+          code={subtopic.simpleCode || subtopic.codeSimple || subtopic.simpleExample} 
           title={`كود مبسط: ${subtopic.title}`} 
           language="javascript" 
           subtopicId={subtopic.id}
@@ -746,7 +746,7 @@ export default function LessonViewer({
           7. مثال عملي متقدم وتطبيقي (مع تعليقات كاملة):
         </h4>
         <CodeBlock 
-          code={subtopic.advancedCode || subtopic.codeAdvanced} 
+          code={subtopic.advancedCode || subtopic.codeAdvanced || subtopic.advancedExample} 
           title={`تطبيق عملي متقدم: ${subtopic.title}`} 
           language="javascript" 
           subtopicId={subtopic.id}
@@ -756,8 +756,8 @@ export default function LessonViewer({
       </div>
 
       {/* المعاينة المباشرة للكود المتقدم */}
-      {(subtopic.advancedCode || subtopic.codeAdvanced) && (
-        <LiveCodePreview initialCode={subtopic.advancedCode || subtopic.codeAdvanced} title={`المعاينة المباشرة لتطبيق: ${subtopic.title}`} />
+      {(subtopic.advancedCode || subtopic.codeAdvanced || subtopic.advancedExample) && (
+        <LiveCodePreview initialCode={subtopic.advancedCode || subtopic.codeAdvanced || subtopic.advancedExample} title={`المعاينة المباشرة لتطبيق: ${subtopic.title}`} />
       )}
 
       {/* 8. شرح المخرجات */}

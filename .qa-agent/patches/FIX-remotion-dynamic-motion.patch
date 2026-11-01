@@ -1,0 +1,1119 @@
+﻿diff --git a/react/src/components/motion/compositions/SvgMotionDiagram.jsx b/react/src/components/motion/compositions/SvgMotionDiagram.jsx
+index dfb2c14..88f841f 100644
+--- a/react/src/components/motion/compositions/SvgMotionDiagram.jsx
++++ b/react/src/components/motion/compositions/SvgMotionDiagram.jsx
+@@ -1,75 +1,391 @@
+ // src/components/motion/compositions/SvgMotionDiagram.jsx
+ // ┘à╪ص╪▒┘â ╪د┘╪▒╪│┘ê┘à ╪د┘╪ز┘ê╪╢┘è╪ص┘è╪ر ┘ê╪د┘┘à╪╣┘à╪د╪▒┘è╪ر SVG ╪د┘╪ص╪▒┘â┘è╪ر ╪د┘┘à╪ز┘ê╪د┘┘é╪ر ┘à╪╣ Remotion
++// ╪»┘è┘╪د┘à┘è┘â┘è 100% ┘ê┘à╪ص╪ز┘ê┘ë ┘à┘ê╪ش┘ّ┘ç (Content-Driven) ┘è╪ز╪║┘è╪▒ ┘┘â┘ ╪»╪▒╪│ ╪ز┘┘é╪د╪خ┘è╪د┘ï
+ import React from 'react';
+ import { interpolate, spring } from 'remotion';
+ 
+ /**
+- * ╪ز╪ص╪»┘è╪» ┘┘ê╪╣ ╪د┘┘à╪«╪╖╪╖ ╪د┘┘à╪╣┘à╪د╪▒┘è ╪د┘┘à┘╪د╪│╪ذ ╪ز┘┘é╪د╪خ┘è╪د┘ï ╪ذ┘╪د╪ة┘ï ╪╣┘┘ë ┘à╪ص╪ز┘ê┘ë ┘ê╪╣┘┘ê╪د┘ ╪د┘╪»╪▒╪│
++ * ╪ز╪ص╪»┘è╪» ┘┘ê╪╣ ╪د┘┘à╪«╪╖╪╖ ╪د┘┘à╪╣┘à╪د╪▒┘è ╪د┘┘à┘╪د╪│╪ذ ╪ز┘┘é╪د╪خ┘è╪د┘ï ┘ê╪ذ╪»┘é╪ر ╪ذ┘╪د╪ة┘ï ╪╣┘┘ë ╪╣┘┘ê╪د┘ ┘ê┘ç┘ê┘è╪ر ╪د┘╪»╪▒╪│
+  */
+ export function detectDiagramType(subtopic) {
+-  const text = `${subtopic?.id || ''} ${subtopic?.title || ''} ${subtopic?.englishTitle || ''} ${subtopic?.definition || ''} ${subtopic?.description || ''} ${subtopic?.concept || ''}`.toLowerCase();
++  if (!subtopic) return 'universal-engine';
++
++  const id = (subtopic.id || '').toLowerCase();
++  const title = (subtopic.title || '').toLowerCase();
++  const eng = (subtopic.englishTitle || '').toLowerCase();
++
++  // 1. ╪د┘┘à┘é╪د╪▒┘╪د╪ز ╪د┘╪س┘╪د╪خ┘è╪ر ╪د┘╪╡╪▒┘è╪ص╪ر (Comparison Diagrams)
++  // ╪»╪▒┘ê╪│ ╪د┘┘à┘é╪د╪▒┘╪ر ┘ê╪د┘┘╪▒┘é ╪ذ┘è┘ ┘à┘┘ç┘ê┘à┘è┘ (╪ز╪│╪ز╪س┘┘è VS Code ┘â╪ث╪»╪د╪ر ╪ز╪╖┘ê┘è╪▒)
++  if (
++    !title.includes('vs code') && !eng.includes('vs code') &&
++    (
++      title.includes('╪د┘┘╪▒┘é ╪ذ┘è┘') || 
++      title.includes('┘à┘é╪د╪▒┘╪ر') || 
++      /\bvs\b/i.test(eng) || 
++      eng.includes('difference between') ||
++      (title.includes('frontend') && title.includes('backend')) ||
++      (title.includes('http') && title.includes('https')) ||
++      (title.includes('csr') && title.includes('ssr'))
++    )
++  ) {
++    return 'comparison';
++  }
+ 
+-  // 1. ╪ث╪│╪د╪│┘è╪د╪ز ╪د┘┘ê┘è╪ذ: ╪د┘┘ê╪د╪ش┘ç╪ر ┘ê╪د┘╪«╪د╪»┘à ┘ê╪د┘╪┤╪ذ┘â╪ر
+-  if (text.includes('frontend') || text.includes('backend') || text.includes('client') || text.includes('server') || text.includes('http') || text.includes('╪«╪د╪»┘à') || text.includes('╪╣┘à┘è┘') || text.includes('┘ê╪د╪ش┘ç╪ر')) {
++  // 2. ╪┤╪ذ┘â╪ر ╪د┘╪د╪ز╪╡╪د┘ ┘ê╪د┘╪«╪د╪»┘à ┘ê╪د┘╪╣┘à┘è┘ (Client-Server & Network Protocols)
++  // ┘à╪«╪╡╪╡╪ر ╪ص╪╡╪▒╪د┘ï ┘╪»╪▒┘ê╪│ ╪د┘┘à╪ز╪╡┘╪ص ┘ê╪د┘╪«╪د╪»┘à╪î ╪ذ╪▒┘ê╪ز┘ê┘â┘ê┘╪د╪ز ╪د┘╪┤╪ذ┘â╪ر╪î ┘ê╪د╪│╪ز╪»╪╣╪د╪ة╪د╪ز API
++  if (
++    id === '1.1.c' || id === '1.1.d' ||
++    title.includes('╪╣┘à┘ ╪د┘┘à╪ز╪╡┘╪ص ┘ê╪د┘╪«╪د╪»┘à') || 
++    title.includes('http ┘êhttps') ||
++    title.includes('╪ذ╪▒┘ê╪ز┘ê┘â┘ê┘') ||
++    (eng.includes('browser and server') || eng.includes('http protocol'))
++  ) {
+     return 'client-server';
+   }
+-  // 2. ╪س┘╪د╪س┘è ╪د┘┘ê┘è╪ذ: HTML, CSS, JavaScript
+-  if (text.includes('html') || text.includes('css') || text.includes('javascript') || text.includes('js') || text.includes('┘ç┘è┘â┘') || text.includes('╪ز┘╪│┘è┘é')) {
+-    return 'html-css-js';
+-  }
+-  // 3. Virtual DOM ┘ê╪د┘┘ Diffing
+-  if (text.includes('vdom') || text.includes('virtual dom') || text.includes('dom') || text.includes('reconciliation') || text.includes('diffing')) {
+-    return 'vdom';
+-  }
+-  // 4. Hooks ┘ê╪»┘ê╪▒╪ر ╪د┘╪ص┘è╪د╪ر
+-  if (text.includes('hook') || text.includes('useeffect') || text.includes('usestate') || text.includes('lifecycle') || text.includes('╪»┘ê╪▒╪ر ╪ص┘è╪د╪ر')) {
+-    return 'hooks';
++
++  // 3. ╪س┘╪د╪س┘è ╪د┘┘ê┘è╪ذ (HTML / CSS / JavaScript)
++  // ╪»╪▒┘ê╪│ HTML (1.2.*) ┘ê╪»╪▒┘ê╪│ CSS (1.3.*) ┘ê┘à┘╪د┘ç┘è┘à ╪د┘╪ز╪╡┘à┘è┘à ┘ê╪د┘╪ز┘╪│┘è┘é
++  if (
++    id.startsWith('1.2.') || 
++    id.startsWith('1.3.') || 
++    title.includes('html') || 
++    title.includes('css') || 
++    title.includes('javascript') || 
++    title.includes('┘┘à┘ê╪░╪ش ╪د┘╪╡┘╪»┘ê┘é') || 
++    title.includes('flexbox') || 
++    title.includes('grid') || 
++    title.includes('╪د┘╪╣┘╪د╪╡╪▒ ╪د┘╪»┘╪د┘┘è╪ر') ||
++    title.includes('╪د┘┘à╪ص╪»╪»╪د╪ز') ||
++    title.includes('╪د┘╪ز┘à┘ê╪╢╪╣')
++  ) {
++    return 'web-trio';
+   }
+-  // 5. ╪ح╪»╪د╪▒╪ر ╪د┘╪ص╪د┘╪ر ┘êContext
+-  if (text.includes('context') || text.includes('redux') || text.includes('zustand') || text.includes('state') || text.includes('╪ص╪د┘╪ر')) {
+-    return 'context';
++
++  // 4. ╪┤╪ش╪▒╪ر ╪د┘┘ DOM ┘ê╪د┘┘ Virtual DOM ┘ê┘à╪╖╪د╪ذ┘é╪ر ╪د┘┘ Diffing
++  if (
++    title.includes('virtual dom') || 
++    title.includes('vdom') || 
++    title.includes('diffing') || 
++    title.includes('reconciliation') || 
++    title.includes('╪┤╪ش╪▒╪ر dom') ||
++    eng.includes('dom')
++  ) {
++    return 'dom-tree';
+   }
+-  // 6. ╪د┘╪ز┘ê╪ش┘è┘ç ┘ê┘à╪│╪د╪▒╪د╪ز SPA
+-  if (text.includes('router') || text.includes('route') || text.includes('spa') || text.includes('╪ز┘ê╪ش┘è┘ç') || text.includes('┘à╪│╪د╪▒')) {
+-    return 'routing';
++
++  // 5. ╪د┘┘à┘â┘ê┘╪د╪ز╪î JSX╪î ┘ê╪ز╪»┘┘é ╪د┘╪ذ┘è╪د┘╪د╪ز ╪ث╪ص╪د╪»┘è ╪د┘╪د╪ز╪ش╪د┘ç (Props & State Flow)
++  if (
++    title.includes('props') || 
++    title.includes('┘à┘â┘ê┘') || 
++    title.includes('jsx') || 
++    eng.includes('component') || 
++    eng.includes('props') ||
++    eng.includes('jsx')
++  ) {
++    return 'component-flow';
+   }
+-  // 7. ╪د┘╪ث╪»╪د╪ة ┘ê╪د┘╪ز╪│╪▒┘è╪╣
+-  if (text.includes('memo') || text.includes('callback') || text.includes('performance') || text.includes('╪ث╪»╪د╪ة') || text.includes('╪ز╪│╪▒┘è╪╣')) {
+-    return 'performance';
++
++  // 6. ╪«╪╖╪د┘╪د╪ز React ┘ê╪»┘ê╪▒╪ر ╪د┘╪ص┘è╪د╪ر (Hooks, useState, useEffect, Lifecycle)
++  if (
++    title.includes('hook') || 
++    title.includes('useeffect') || 
++    title.includes('usestate') || 
++    title.includes('╪»┘ê╪▒╪ر ╪ص┘è╪د╪ر') || 
++    title.includes('╪ص╪د┘╪ر') || 
++    eng.includes('hook') || 
++    eng.includes('lifecycle') || 
++    eng.includes('state')
++  ) {
++    return 'hooks-lifecycle';
+   }
+-  // 8. ╪د┘┘à┘â┘ê┘╪د╪ز ┘ê╪د┘┘ Props
+-  if (text.includes('props') || text.includes('component') || text.includes('┘à┘â┘ê┘') || text.includes('╪ذ┘è╪د┘╪د╪ز')) {
+-    return 'state-props';
++
++  // 7. ┘à╪│╪د╪▒ ╪د┘╪ز╪»┘┘é ┘ê╪د┘╪ز┘┘┘è╪░ ╪د┘┘à╪ز╪│┘╪│┘ (Pipeline Execution Flow)
++  if (
++    subtopic.executionFlow && 
++    (title.includes('┘à╪│╪د╪▒') || title.includes('╪ز╪»┘┘é') || title.includes('┘â┘è┘┘è╪ر') || title.includes('rendering') || title.includes('csr') || title.includes('spa'))
++  ) {
++    return 'pipeline-flow';
+   }
+-  return 'architecture';
+-}
+ 
+-export default function SvgMotionDiagram({ type = 'architecture', subtopic, frame, fps }) {
+-  // ┘╪ذ╪╢╪د╪ز ╪ص╪▒┘â┘è╪ر ┘ç╪د╪»╪خ╪ر ┘ê┘à╪▒┘è╪ص╪ر ┘┘┘à╪ز╪╣┘┘à (╪»┘ê╪▒╪ر ╪ز┘┘╪│ ┘ç╪د╪»╪خ╪ر ┘â┘ 4 ╪س┘ê╪د┘┘)
+-  const pulse = interpolate(Math.sin((frame / (fps * 2)) * Math.PI), [-1, 1], [0.95, 1.05]);
+-  const progress = interpolate(frame % (fps * 5), [0, fps * 5], [0, 100]);
+-  const wave = Math.sin((frame / 30)) * 8;
++  // 8. ╪د┘┘à╪ص╪▒┘â ╪د┘┘à┘┘ç┘ê┘à┘è ╪د┘┘à╪»╪د╪▒┘è ╪د┘╪»┘è┘╪د┘à┘è┘â┘è ╪د┘╪┤╪د┘à┘ ┘╪ش┘à┘è╪╣ ╪د┘╪»╪▒┘ê╪│ ╪د┘╪ث╪«╪▒┘ë
++  return 'universal-engine';
++}
+ 
+-  // ╪د╪│╪ز╪«╪▒╪د╪ش ╪د┘╪«╪╖┘ê╪د╪ز ╪د┘╪»┘è┘╪د┘à┘è┘â┘è╪ر ╪د┘╪ز╪د╪ذ╪╣╪ر ┘┘╪»╪▒╪│ ╪د┘╪ص╪د┘┘è
++export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, frame, fps = 30 }) {
++  // ╪»┘ê╪▒╪ر ┘╪ذ╪╢ ┘ê╪ز┘┘╪│ ┘ç╪د╪»╪خ╪ر ┘ê┘à╪▒┘è╪ص╪ر ┘┘┘à╪ز╪╣┘┘à (4 ╪س┘ê╪د┘┘ ┘â╪د┘à┘╪ر)
++  const pulse = interpolate(Math.sin((frame / (fps * 2)) * Math.PI), [-1, 1], [0.96, 1.04]);
++  
++  // ╪د╪│╪ز╪«╪▒╪د╪ش ╪ذ┘è╪د┘╪د╪ز ╪د┘╪»╪▒╪│ ╪د┘╪ص╪د┘┘è╪ر ╪ذ╪┤┘â┘ ╪»┘è┘╪د┘à┘è┘â┘è ┘â╪د┘à┘
+   const steps = subtopic?.infographic?.steps || [];
+-  const step1Title = steps[0]?.title || '╪د┘┘à┘â┘ê┘╪د╪ز ╪د┘╪░┘â┘è╪ر';
+-  const step1Desc = steps[0]?.desc ? (steps[0].desc.length > 28 ? steps[0].desc.slice(0, 26) + '...' : steps[0].desc) : 'Components & JSX';
+-  const step2Title = steps[1]?.title || '╪ح╪»╪د╪▒╪ر ╪د┘╪ص╪د┘╪ر';
+-  const step2Desc = steps[1]?.desc ? (steps[1].desc.length > 28 ? steps[1].desc.slice(0, 26) + '...' : steps[1].desc) : 'Reactive State Engine';
+-  const step3Title = steps[2]?.title || '╪د┘╪ز╪▓╪د┘à┘ ┘ê╪د┘╪ث╪»╪د╪ة';
+-  const step3Desc = steps[2]?.desc ? (steps[2].desc.length > 28 ? steps[2].desc.slice(0, 26) + '...' : steps[2].desc) : 'Zero Unneeded Renders';
+-  const centerTitle = subtopic?.title ? (subtopic.title.length > 16 ? subtopic.title.slice(0, 14) + '..' : subtopic.title) : 'ظأؤي╕ React';
+-
+-  // 1. ┘à╪«╪╖╪╖ ╪ز╪»┘┘é ╪د┘╪╣┘à┘è┘ ┘ê╪د┘╪«╪د╪»┘à (Frontend vs Backend & Client-Server Flow)
++  const terms = subtopic?.terms || [];
++
++  const step1Title = steps[0]?.title || terms[0]?.term || '1. ╪د┘╪«╪╖┘ê╪ر ╪د┘╪ث┘ê┘┘ë';
++  const step1Desc = steps[0]?.desc || terms[0]?.meaning || '╪د┘╪ز┘ç┘è╪خ╪ر ┘ê╪د┘╪ذ╪»╪ة';
++  const step2Title = steps[1]?.title || terms[1]?.term || '2. ╪د┘╪«╪╖┘ê╪ر ╪د┘╪س╪د┘┘è╪ر';
++  const step2Desc = steps[1]?.desc || terms[1]?.meaning || '╪د┘┘à╪╣╪د┘╪ش╪ر ┘ê╪د┘╪ز┘┘┘è╪░';
++  const step3Title = steps[2]?.title || terms[2]?.term || '3. ╪د┘╪«╪╖┘ê╪ر ╪د┘╪س╪د┘╪س╪ر';
++  const step3Desc = steps[2]?.desc || terms[2]?.meaning || '╪د┘┘╪ز┘è╪ش╪ر ┘ê╪د┘╪ز┘╪د╪╣┘';
++
++  const safeTitle = subtopic?.title || '┘à┘┘ç┘ê┘à ┘┘è ╪«╪▒┘è╪╖╪ر React';
++  const shortTitle = safeTitle.length > 22 ? safeTitle.slice(0, 20) + '..' : safeTitle;
++  const engTitle = subtopic?.englishTitle || 'React Concept';
++
++  // -------------------------------------------------------------
++  // 1. ┘à╪«╪╖╪╖ ╪د┘┘à┘é╪د╪▒┘╪ر ╪د┘╪س┘╪د╪خ┘è╪ر ╪د┘╪ص╪▒┘â┘è╪ر (Comparison & Contrast Motion)
++  // -------------------------------------------------------------
++  if (type === 'comparison') {
++    const termA = terms[0]?.term || steps[0]?.title || '╪د┘┘à┘┘ç┘ê┘à ╪د┘╪ث┘ê┘ (A)';
++    const descA = terms[0]?.meaning || steps[0]?.desc || '╪د┘╪«╪╡╪د╪خ╪╡ ┘ê╪د┘┘ê╪╕┘è┘╪ر ╪د┘╪ث╪│╪د╪│┘è╪ر';
++    const termB = terms[1]?.term || steps[1]?.title || '╪د┘┘à┘┘ç┘ê┘à ╪د┘╪س╪د┘┘è (B)';
++    const descB = terms[1]?.meaning || steps[1]?.desc || '╪د┘╪«╪╡╪د╪خ╪╡ ╪د┘┘à╪╣╪د┘â╪│╪ر ┘ê╪د┘┘à┘ç╪د┘à ╪د┘┘à┘â┘à┘╪ر';
++
++    // ╪ز╪ذ╪د╪»┘ ╪ز╪│┘┘è╪╖ ╪د┘╪╢┘ê╪ة ╪د┘┘ç╪د╪»╪خ ╪ذ┘è┘ ╪د┘╪ش╪د┘╪ذ┘è┘ (┘â┘ 6 ╪س┘ê╪د┘┘ ╪ش╪د┘╪ذ)
++    const isSideA = Math.floor(frame / (fps * 6)) % 2 === 0;
++
++    return (
++      <svg 
++        viewBox="0 0 800 450" 
++        preserveAspectRatio="xMidYMid meet" 
++        className="w-full h-full max-h-[380px] drop-shadow-2xl font-sans mx-auto block"
++      >
++        <defs>
++          <linearGradient id="compGradA" x1="0%" y1="0%" x2="100%" y2="100%">
++            <stop offset="0%" stopColor="#0284c7" />
++            <stop offset="100%" stopColor="#0369a1" />
++          </linearGradient>
++          <linearGradient id="compGradB" x1="0%" y1="0%" x2="100%" y2="100%">
++            <stop offset="0%" stopColor="#9333ea" />
++            <stop offset="100%" stopColor="#7e22ce" />
++          </linearGradient>
++          <filter id="compGlow">
++            <feGaussianBlur stdDeviation="6" result="blur" />
++            <feMerge>
++              <feMergeNode in="blur" />
++              <feMergeNode in="SourceGraphic" />
++            </feMerge>
++          </filter>
++        </defs>
++
++        {/* ╪╣┘┘ê╪د┘ ╪د┘┘à┘é╪د╪▒┘╪ر ╪د┘╪▒╪خ┘è╪│┘è */}
++        <text x="400" y="38" fill="#f8fafc" fontSize="20" fontWeight="900" textAnchor="middle" fontFamily="Cairo">
++          ظأûي╕ {safeTitle}
++        </text>
++        <text x="400" y="58" fill="#94a3b8" fontSize="12" fontWeight="bold" textAnchor="middle">
++          {engTitle}
++        </text>
++
++        {/* ╪د┘╪ش╪د┘╪ذ ╪د┘╪ث┘è┘à┘ / ╪د┘┘à┘┘ç┘ê┘à ╪د┘╪ث┘ê┘ (Side A) */}
++        <g transform="translate(40, 80)">
++          <rect 
++            width="320" 
++            height="270" 
++            rx="20" 
++            fill="#0b1329" 
++            stroke={isSideA ? "#38bdf8" : "#1e293b"} 
++            strokeWidth={isSideA ? "3.5" : "1.5"} 
++            filter={isSideA ? "url(#compGlow)" : ""}
++          />
++          <rect x="0" y="0" width="320" height="48" rx="20" fill="url(#compGradA)" />
++          <text x="160" y="30" fill="#fff" fontSize="15" fontWeight="900" textAnchor="middle" fontFamily="Cairo">
++            1. {termA}
++          </text>
++
++          {/* ┘à╪ص╪ز┘ê┘è╪د╪ز ┘ê╪«╪╡╪د╪خ╪╡ ╪د┘╪ش╪د┘╪ذ ╪د┘╪ث┘ê┘ */}
++          <rect x="20" y="70" width="280" height="75" rx="12" fill="#0f172a" stroke="#0284c7" strokeWidth="1" />
++          <text x="160" y="100" fill="#38bdf8" fontSize="13" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            ╪د┘╪»┘ê╪▒ ┘ê╪د┘┘ê╪╕┘è┘╪ر ╪د┘╪ش┘ê┘ç╪▒┘è╪ر:
++          </text>
++          <text x="160" y="125" fill="#e2e8f0" fontSize="11" textAnchor="middle" fontFamily="Cairo">
++            {descA.length > 34 ? descA.slice(0, 32) + '..' : descA}
++          </text>
++
++          {/* ┘â╪ذ╪│┘ê┘╪ر ┘à┘è╪▓╪د╪ز ╪ز┘╪د╪╣┘┘è╪ر ╪»┘è┘╪د┘à┘è┘â┘è╪ر */}
++          <g transform="translate(20, 165)">
++            <rect width="280" height="75" rx="12" fill="#030712" stroke="#38bdf8" strokeWidth="1" strokeDasharray="4 3" />
++            <text x="140" y="28" fill="#7dd3fc" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++              ≡ا» {step1Title}
++            </text>
++            <text x="140" y="52" fill="#94a3b8" fontSize="10" textAnchor="middle" fontFamily="Cairo">
++              {step1Desc.length > 34 ? step1Desc.slice(0, 32) + '..' : step1Desc}
++            </text>
++          </g>
++        </g>
++
++        {/* ╪د┘┘╪د╪╡┘ ╪د┘┘à╪▒┘â╪▓┘è ┘ê╪╣┘╪د┘à╪ر VS ╪د┘╪ص╪▒┘â┘è╪ر */}
++        <g transform="translate(370, 175)">
++          <circle cx="30" cy="30" r={26 * pulse} fill="#0f172a" stroke="#f59e0b" strokeWidth="3" filter="url(#compGlow)" />
++          <text x="30" y="36" fill="#fbbf24" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="Cairo">
++            VS
++          </text>
++          {/* ╪ث╪│┘ç┘à ╪ز╪ذ╪د╪»┘ ╪د┘╪ذ┘è╪د┘╪د╪ز ╪ذ┘è┘ ╪د┘╪╖╪▒┘┘è┘ */}
++          <line x1="-30" y1="30" x2="0" y2="30" stroke="#38bdf8" strokeWidth="3" strokeDasharray="4 3" />
++          <line x1="60" y1="30" x2="90" y2="30" stroke="#c084fc" strokeWidth="3" strokeDasharray="4 3" />
++        </g>
++
++        {/* ╪د┘╪ش╪د┘╪ذ ╪د┘╪ث┘è╪│╪▒ / ╪د┘┘à┘┘ç┘ê┘à ╪د┘╪س╪د┘┘è (Side B) */}
++        <g transform="translate(440, 80)">
++          <rect 
++            width="320" 
++            height="270" 
++            rx="20" 
++            fill="#120c24" 
++            stroke={!isSideA ? "#c084fc" : "#1e293b"} 
++            strokeWidth={!isSideA ? "3.5" : "1.5"} 
++            filter={!isSideA ? "url(#compGlow)" : ""}
++          />
++          <rect x="0" y="0" width="320" height="48" rx="20" fill="url(#compGradB)" />
++          <text x="160" y="30" fill="#fff" fontSize="15" fontWeight="900" textAnchor="middle" fontFamily="Cairo">
++            2. {termB}
++          </text>
++
++          {/* ┘à╪ص╪ز┘ê┘è╪د╪ز ┘ê╪«╪╡╪د╪خ╪╡ ╪د┘╪ش╪د┘╪ذ ╪د┘╪س╪د┘┘è */}
++          <rect x="20" y="70" width="280" height="75" rx="12" fill="#1e113a" stroke="#7e22ce" strokeWidth="1" />
++          <text x="160" y="100" fill="#c084fc" fontSize="13" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            ╪د┘╪»┘ê╪▒ ┘ê╪د┘┘ê╪╕┘è┘╪ر ╪د┘┘à┘â┘à┘╪ر:
++          </text>
++          <text x="160" y="125" fill="#e2e8f0" fontSize="11" textAnchor="middle" fontFamily="Cairo">
++            {descB.length > 34 ? descB.slice(0, 32) + '..' : descB}
++          </text>
++
++          {/* ┘â╪ذ╪│┘ê┘╪ر ┘à┘è╪▓╪د╪ز ╪ز┘╪د╪╣┘┘è╪ر ╪»┘è┘╪د┘à┘è┘â┘è╪ر */}
++          <g transform="translate(20, 165)">
++            <rect width="280" height="75" rx="12" fill="#030712" stroke="#c084fc" strokeWidth="1" strokeDasharray="4 3" />
++            <text x="140" y="28" fill="#e9d5ff" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++              ≡اأ {step2Title}
++            </text>
++            <text x="140" y="52" fill="#94a3b8" fontSize="10" textAnchor="middle" fontFamily="Cairo">
++              {step2Desc.length > 34 ? step2Desc.slice(0, 32) + '..' : step2Desc}
++            </text>
++          </g>
++        </g>
++
++        {/* ╪د┘╪┤╪▒┘è╪╖ ╪د┘╪│┘┘┘è: ┘é╪د╪╣╪»╪ر ╪د┘╪ز┘ê╪د┘┘é ┘ê╪د┘╪ز┘â╪د┘à┘ ╪د┘┘à╪╣┘à╪د╪▒┘è */}
++        <g transform="translate(60, 375)">
++          <rect width="680" height="45" rx="12" fill="#0f172a" stroke="#334155" strokeWidth="1.5" />
++          <text x="340" y="27" fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            ≡اْة ╪د┘╪«┘╪د╪╡╪ر ╪د┘┘à╪╣┘à╪د╪▒┘è╪ر: {subtopic?.infographic?.summary || subtopic?.why || '╪ز┘â╪د┘à┘ ┘à╪ز┘╪د╪║┘à ┘╪ز╪ص┘é┘è┘é ╪ث┘╪╢┘ ╪ز╪ش╪▒╪ذ╪ر ┘ê╪ث╪╣┘┘ë ╪ث╪»╪د╪ة'}
++          </text>
++        </g>
++      </svg>
++    );
++  }
++
++  // -------------------------------------------------------------
++  // 2. ┘à╪«╪╖╪╖ ╪ز╪»┘┘é ┘à╪│╪د╪▒ ╪د┘╪ز┘┘┘è╪░ ╪د┘┘à╪ز╪│┘╪│┘ (Pipeline Execution Flow)
++  // -------------------------------------------------------------
++  if (type === 'pipeline-flow') {
++    const cycleFrames = fps * 6;
++    const progress = (frame % cycleFrames) / cycleFrames;
++    const activeIndex = Math.floor(progress * 3);
++    const tokenX = interpolate(progress, [0, 0.33, 0.66, 1], [150, 400, 650, 700]);
++
++    return (
++      <svg 
++        viewBox="0 0 800 450" 
++        preserveAspectRatio="xMidYMid meet" 
++        className="w-full h-full max-h-[380px] drop-shadow-2xl font-sans mx-auto block"
++      >
++        <text x="400" y="38" fill="#f8fafc" fontSize="20" fontWeight="900" textAnchor="middle" fontFamily="Cairo">
++          ≡ا¤ ┘à╪│╪د╪▒ ╪ز╪»┘┘é ┘ê╪ز┘┘┘è╪░: {shortTitle}
++        </text>
++        <text x="400" y="58" fill="#94a3b8" fontSize="12" fontWeight="bold" textAnchor="middle">
++          Execution Lifecycle &amp; Rendering Pipeline
++        </text>
++
++        {/* ╪«╪╖ ╪د┘╪ث┘╪ذ┘ê╪ذ ╪د┘┘à┘ê╪╡┘ ╪د┘╪ث╪│╪د╪│┘è */}
++        <line x1="120" y1="200" x2="680" y2="200" stroke="#1e293b" strokeWidth="10" strokeLinecap="round" />
++        <line x1="120" y1="200" x2={tokenX} y2="200" stroke="#0284c7" strokeWidth="6" strokeLinecap="round" />
++
++        {/* ╪ص╪▓┘à╪ر ╪د┘╪ذ┘è╪د┘╪د╪ز ╪د┘┘à╪ز╪ص╪▒┘â╪ر ╪╣┘┘ë ╪د┘┘à╪│╪د╪▒ */}
++        <circle cx={tokenX} cy="200" r={16 * pulse} fill="#38bdf8" filter="drop-shadow(0 0 8px #38bdf8)" />
++        <circle cx={tokenX} cy="200" r="6" fill="#fff" />
++
++        {/* ╪د┘┘à╪ص╪╖╪ر 1 */}
++        <g transform="translate(50, 110)">
++          <rect 
++            width="200" 
++            height="180" 
++            rx="16" 
++            fill="#0b1329" 
++            stroke={activeIndex === 0 ? "#38bdf8" : "#334155"} 
++            strokeWidth={activeIndex === 0 ? "3.5" : "1.5"} 
++          />
++          <circle cx="100" cy="40" r="22" fill={activeIndex === 0 ? "#0284c7" : "#1e293b"} />
++          <text x="100" y="46" fill="#fff" fontSize="14" fontWeight="bold" textAnchor="middle">1</text>
++          <text x="100" y="95" fill="#38bdf8" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            {step1Title}
++          </text>
++          <text x="100" y="125" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="Cairo">
++            {step1Desc.length > 24 ? step1Desc.slice(0, 22) + '..' : step1Desc}
++          </text>
++        </g>
++
++        {/* ╪د┘┘à╪ص╪╖╪ر 2 */}
++        <g transform="translate(300, 110)">
++          <rect 
++            width="200" 
++            height="180" 
++            rx="16" 
++            fill="#0f172a" 
++            stroke={activeIndex === 1 ? "#a855f7" : "#334155"} 
++            strokeWidth={activeIndex === 1 ? "3.5" : "1.5"} 
++          />
++          <circle cx="100" cy="40" r="22" fill={activeIndex === 1 ? "#7e22ce" : "#1e293b"} />
++          <text x="100" y="46" fill="#fff" fontSize="14" fontWeight="bold" textAnchor="middle">2</text>
++          <text x="100" y="95" fill="#c084fc" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            {step2Title}
++          </text>
++          <text x="100" y="125" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="Cairo">
++            {step2Desc.length > 24 ? step2Desc.slice(0, 22) + '..' : step2Desc}
++          </text>
++        </g>
++
++        {/* ╪د┘┘à╪ص╪╖╪ر 3 */}
++        <g transform="translate(550, 110)">
++          <rect 
++            width="200" 
++            height="180" 
++            rx="16" 
++            fill="#061c14" 
++            stroke={activeIndex === 2 ? "#10b981" : "#334155"} 
++            strokeWidth={activeIndex === 2 ? "3.5" : "1.5"} 
++          />
++          <circle cx="100" cy="40" r="22" fill={activeIndex === 2 ? "#059669" : "#1e293b"} />
++          <text x="100" y="46" fill="#fff" fontSize="14" fontWeight="bold" textAnchor="middle">3</text>
++          <text x="100" y="95" fill="#34d399" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            {step3Title}
++          </text>
++          <text x="100" y="125" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="Cairo">
++            {step3Desc.length > 24 ? step3Desc.slice(0, 22) + '..' : step3Desc}
++          </text>
++        </g>
++
++        {/* ╪د┘╪┤╪▒┘è╪╖ ╪د┘╪│┘┘┘è: ╪د┘┘à╪│╪د╪▒ ╪د┘╪ز┘┘┘è╪░┘è ╪د┘╪┤╪د┘à┘ ┘┘╪»╪▒╪│ */}
++        <g transform="translate(50, 360)">
++          <rect width="700" height="50" rx="12" fill="#020617" stroke="#1e293b" strokeWidth="1.5" />
++          <text x="350" y="30" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            ظأة {subtopic?.executionFlow || '╪د┘┘à╪ز╪╡┘╪ص ظئ¤ ╪ز╪ص┘┘è┘ ╪د┘┘â┘ê╪» ظئ¤ ╪ذ┘╪د╪ة ╪د┘╪┤╪ش╪▒╪ر ظئ¤ ╪د┘╪ز╪╡┘è┘è╪▒ ╪د┘┘╪╣┘┘è ┘ê╪د┘╪ز┘╪د╪╣┘ ╪د┘╪│┘╪│'}
++          </text>
++        </g>
++      </svg>
++    );
++  }
++
++  // -------------------------------------------------------------
++  // 3. ┘à╪«╪╖╪╖ ╪┤╪ذ┘â╪ر ╪د┘╪د╪ز╪╡╪د┘ ┘ê╪د┘╪«╪د╪»┘à ┘ê╪د┘╪╣┘à┘è┘ (Client-Server & Network Protocols)
++  // -------------------------------------------------------------
+   if (type === 'client-server') {
+-    // ╪»┘ê╪▒╪ر ╪ص╪▒┘â╪ر ┘ç╪د╪»╪خ╪ر ┘ê┘à╪▒┘è╪ص╪ر ┘┘┘à╪ز╪╣┘┘à: 6 ╪س┘ê╪د┘┘ ┘â╪د┘à┘╪ر ┘┘╪╖┘╪ذ ┘ê╪د┘╪د╪│╪ز╪ش╪د╪ذ╪ر
+     const cycleFrames = fps * 6;
+     const packetProgress = (frame % cycleFrames) / cycleFrames;
+-    // ╪ص╪▒┘â╪ر ┘à╪ز╪»╪▒╪ش╪ر ╪│┘╪│╪ر ╪╣╪ذ╪▒ ╪»╪د┘╪ر ╪ش┘è╪ذ ╪د┘╪ز┘à╪د┘à ╪د┘┘à┘ç╪»╪خ╪ر (Cosine Easing)
+     const easeProgress = 0.5 - 0.5 * Math.cos(packetProgress * Math.PI * 2);
+     const packetX = interpolate(easeProgress, [0, 1], [270, 520]);
+     const isGoingRight = packetProgress <= 0.5;
+ 
++    const clientTerm = terms[0]?.term || 'Client (╪د┘╪╣┘à┘è┘)';
++    const clientDesc = terms[0]?.meaning || '╪د┘┘à╪ز╪╡┘╪ص ┘ê╪ز┘╪د╪╣┘ ╪د┘┘à╪│╪ز╪«╪»┘à';
++    const serverTerm = terms[1]?.term || 'Server (╪د┘╪«╪د╪»┘à)';
++    const serverDesc = terms[1]?.meaning || '┘à╪╣╪د┘╪ش╪ر ╪د┘┘à┘╪╖┘é ┘ê╪د┘╪ذ┘è╪د┘╪د╪ز';
++
+     return (
+       <svg 
+         viewBox="0 0 800 450" 
+@@ -85,13 +401,6 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+             <stop offset="0%" stopColor="#a855f7" />
+             <stop offset="100%" stopColor="#7c3aed" />
+           </linearGradient>
+-          <filter id="neonPacket">
+-            <feGaussianBlur stdDeviation="5" result="glow"/>
+-            <feMerge>
+-              <feMergeNode in="glow"/>
+-              <feMergeNode in="SourceGraphic"/>
+-            </feMerge>
+-          </filter>
+         </defs>
+ 
+         {/* ╪ش╪د┘╪ذ ╪د┘╪╣┘à┘è┘ ┘ê╪د┘┘à╪ز╪╡┘╪ص (Frontend / Client) */}
+@@ -101,24 +410,31 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+           <circle cx="25" cy="21" r="5" fill="#f43f5e" />
+           <circle cx="42" cy="21" r="5" fill="#fbbf24" />
+           <circle cx="59" cy="21" r="5" fill="#10b981" />
+-          <text x="145" y="26" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">┘à╪ز╪╡┘╪ص ╪د┘┘à╪│╪ز╪«╪»┘à (Client)</text>
++          <text x="145" y="26" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">
++            {clientTerm}
++          </text>
+ 
+-          {/* ┘à╪ص╪ز┘ê┘è╪د╪ز ╪د┘┘à╪ز╪╡┘╪ص */}
++          {/* ┘à╪ص╪ز┘ê┘è╪د╪ز ╪د┘┘à╪ز╪╡┘╪ص ╪د┘┘à╪│╪ز╪«╪▒╪ش╪ر ┘à┘ ╪د┘╪»╪▒╪│ */}
+           <rect x="25" y="65" width="200" height="90" rx="12" fill="#0f172a" stroke="#38bdf8" strokeWidth="1" strokeDasharray="4 3" />
+-          <text x="125" y="98" fill="#38bdf8" fontSize="15" fontWeight="black" textAnchor="middle" fontFamily="Cairo">╪د┘┘ê╪د╪ش┘ç╪ر ╪د┘╪ث┘à╪د┘à┘è╪ر</text>
+-          <text x="125" y="125" fill="#7dd3fc" fontSize="12" fontWeight="bold" textAnchor="middle">Frontend (UI / UX)</text>
+-          <text x="125" y="143" fill="#64748b" fontSize="10" textAnchor="middle">React ظت HTML ظت CSS ظت JS</text>
++          <text x="125" y="98" fill="#38bdf8" fontSize="14" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
++            {step1Title}
++          </text>
++          <text x="125" y="125" fill="#7dd3fc" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            {clientDesc.length > 26 ? clientDesc.slice(0, 24) + '..' : clientDesc}
++          </text>
+ 
+           {/* ╪┤╪د╪┤╪ر ╪د┘╪╣╪▒╪╢ ╪د┘╪ز┘╪د╪╣┘┘è╪ر */}
+-          <rect x="25" y="175" width="200" height="110" rx="12" fill="#030712" border="1" />
++          <rect x="25" y="175" width="200" height="110" rx="12" fill="#030712" />
+           <rect x="40" y="195" width="80" height="14" rx="4" fill="#38bdf8" opacity="0.8" />
+           <rect x="40" y="218" width="140" height="8" rx="3" fill="#334155" />
+           <rect x="40" y="233" width="110" height="8" rx="3" fill="#334155" />
+-          <rect x="40" y="255" width="65" height="18" rx="6" fill="#10b981" />
+-          <text x="72" y="268" fill="#fff" fontSize="9" fontWeight="bold" textAnchor="middle">╪▓╪▒ ╪ح╪▒╪│╪د┘</text>
++          <rect x="40" y="255" width="85" height="20" rx="6" fill="#10b981" />
++          <text x="82" y="269" fill="#fff" fontSize="10" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪ح╪▒╪│╪د┘ ╪د┘╪╖┘╪ذ</text>
+ 
+           <rect x="25" y="300" width="200" height="24" rx="6" fill="#0284c7" opacity="0.2" />
+-          <text x="125" y="316" fill="#38bdf8" fontSize="10" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">┘â┘ ┘à╪د ┘è╪▒╪د┘ç ┘ê┘è╪ز┘╪د╪╣┘ ┘à╪╣┘ç ╪د┘┘à╪│╪ز╪«╪»┘à</text>
++          <text x="125" y="316" fill="#38bdf8" fontSize="10" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            {subtopic?.title || '┘ê╪د╪ش┘ç╪ر ╪د┘╪╣┘à┘è┘ ┘ê╪د┘╪ز┘╪د╪╣┘'}
++          </text>
+         </g>
+ 
+         {/* ╪«╪╖ ╪د╪ز╪╡╪د┘ ╪د┘╪┤╪ذ┘â╪ر ┘ê╪د┘┘ HTTP Protocols */}
+@@ -127,17 +443,17 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+           
+           {/* ╪ص╪▓┘à╪ر ╪د┘╪ذ┘è╪د┘╪د╪ز ╪د┘┘à╪ز╪ص╪▒┘â╪ر (HTTP Request / Response) */}
+           <g transform={`translate(${packetX - 300}, 0)`}>
+-            <rect x="-45" y="0" width="90" height="40" rx="10" fill={isGoingRight ? "#0284c7" : "#10b981"} filter="url(#neonPacket)" />
++            <rect x="-45" y="0" width="90" height="40" rx="10" fill={isGoingRight ? "#0284c7" : "#10b981"} />
+             <text x="0" y="18" fill="#fff" fontSize="10" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
+-              {isGoingRight ? "╪╖┘╪ذ HTTP ظئ¤" : "ظا╡ ╪د╪│╪ز╪ش╪د╪ذ╪ر JSON"}
++              {isGoingRight ? "╪╖┘╪ذ HTTP ظئ¤" : "ظا╡ ╪د╪│╪ز╪ش╪د╪ذ╪ر 200"}
+             </text>
+             <text x="0" y="32" fill="#e2e8f0" fontSize="8" textAnchor="middle" fontFamily="monospace">
+-              {isGoingRight ? "GET /api/data" : "Status: 200 OK"}
++              {isGoingRight ? "GET /resource" : "JSON Data"}
+             </text>
+           </g>
+ 
+           <text x="100" y="-12" fill="#cbd5e1" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+-            ╪┤╪ذ┘â╪ر ╪د┘╪ح┘╪ز╪▒┘╪ز (Internet / APIs)
++            ╪┤╪ذ┘â╪ر ╪د┘┘ê┘è╪ذ ┘ê╪د┘╪ذ╪▒┘ê╪ز┘ê┘â┘ê┘ (HTTP / APIs)
+           </text>
+         </g>
+ 
+@@ -145,13 +461,18 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+         <g transform="translate(510, 45)">
+           <rect width="250" height="340" rx="20" fill="#120c24" stroke="#a855f7" strokeWidth="2.5" />
+           <rect x="0" y="0" width="250" height="42" rx="20" fill="#2e1065" />
+-          <text x="125" y="26" fill="#c084fc" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪د┘╪«╪د╪»┘à ╪د┘╪│╪ص╪د╪ذ┘è (Backend Server)</text>
++          <text x="125" y="26" fill="#c084fc" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            {serverTerm}
++          </text>
+ 
+           {/* ┘à╪ص╪▒┘â ╪د┘┘à╪╣╪د┘╪ش╪ر ┘ê╪د┘╪ث┘à╪د┘ */}
+           <rect x="25" y="65" width="200" height="85" rx="12" fill="#1e113a" stroke="#a855f7" strokeWidth="1" strokeDasharray="4 3" />
+-          <text x="125" y="98" fill="#c084fc" fontSize="15" fontWeight="black" textAnchor="middle" fontFamily="Cairo">╪د┘┘ê╪د╪ش┘ç╪ر ╪د┘╪«┘┘┘è╪ر</text>
+-          <text x="125" y="122" fill="#e9d5ff" fontSize="12" fontWeight="bold" textAnchor="middle">Backend (Logic &amp; DB)</text>
+-          <text x="125" y="140" fill="#a855f7" fontSize="10" textAnchor="middle">Node.js ظت Python ظت APIs</text>
++          <text x="125" y="98" fill="#c084fc" fontSize="14" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
++            {step2Title}
++          </text>
++          <text x="125" y="122" fill="#e9d5ff" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            {serverDesc.length > 26 ? serverDesc.slice(0, 24) + '..' : serverDesc}
++          </text>
+ 
+           {/* ╪ث╪│╪╖┘ê╪د┘╪ر ┘é╪د╪╣╪»╪ر ╪د┘╪ذ┘è╪د┘╪د╪ز (Database) */}
+           <g transform="translate(55, 175)">
+@@ -163,14 +484,22 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+           </g>
+ 
+           <rect x="25" y="300" width="200" height="24" rx="6" fill="#7c3aed" opacity="0.2" />
+-          <text x="125" y="316" fill="#c084fc" fontSize="10" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">┘à╪╣╪د┘╪ش╪ر ╪د┘╪ص╪│╪د╪ذ╪د╪ز╪î ╪د┘╪ث┘à╪د┘╪î ┘ê╪ص┘╪╕ ╪د┘╪ذ┘è╪د┘╪د╪ز</text>
++          <text x="125" y="316" fill="#c084fc" fontSize="10" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            ┘à╪╣╪د┘╪ش╪ر ╪د┘╪ذ┘è╪د┘╪د╪ز ┘ê╪د┘╪ز╪ص┘é┘é ┘ê╪د┘╪ث┘à╪د┘
++          </text>
+         </g>
+       </svg>
+     );
+   }
+ 
+-  // 2. ┘à╪«╪╖╪╖ ╪س┘╪د╪س┘è ╪د┘┘ê┘è╪ذ (HTML + CSS + JavaScript)
+-  if (type === 'html-css-js') {
++  // -------------------------------------------------------------
++  // 4. ┘à╪«╪╖╪╖ ╪س┘╪د╪س┘è ╪د┘┘ê┘è╪ذ ┘à╪╣ ╪ح╪ذ╪▒╪د╪▓ ╪╣┘à┘ê╪» ╪د┘╪»╪▒╪│ (Web Trio: HTML, CSS, JS)
++  // -------------------------------------------------------------
++  if (type === 'web-trio') {
++    const isHtml = (subtopic?.id || '').startsWith('1.2.') || safeTitle.toLowerCase().includes('html');
++    const isCss = (subtopic?.id || '').startsWith('1.3.') || safeTitle.toLowerCase().includes('css') || safeTitle.includes('╪ز┘╪│┘è┘é') || safeTitle.includes('┘┘à┘ê╪░╪ش');
++    const isJs = safeTitle.toLowerCase().includes('javascript') || (!isHtml && !isCss);
++
+     return (
+       <svg 
+         viewBox="0 0 800 450" 
+@@ -178,20 +507,33 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+         className="w-full h-full max-h-[380px] drop-shadow-2xl font-sans mx-auto block"
+       >
+         {/* ╪د┘╪╣┘à┘ê╪» 1: HTML ╪د┘┘ç┘è┘â┘ */}
+-        <g transform="translate(50, 60)">
+-          <rect width="210" height="320" rx="20" fill="#0f172a" stroke="#ea580c" strokeWidth="2.5" />
+-          <rect x="0" y="0" width="210" height="50" rx="20" fill="#431407" />
+-          <text x="105" y="32" fill="#fb923c" fontSize="16" fontWeight="black" textAnchor="middle">1. HTML ≡اخ┤</text>
+-          <text x="105" y="95" fill="#f97316" fontSize="18" fontWeight="black" textAnchor="middle" fontFamily="Cairo">╪د┘┘ç┘è┘â┘ ╪د┘╪╣╪╕┘à┘è</text>
+-          <text x="105" y="125" fill="#cbd5e1" fontSize="12" textAnchor="middle">Structure &amp; Semantics</text>
++        <g transform="translate(40, 50)">
++          <rect 
++            width="220" 
++            height="340" 
++            rx="20" 
++            fill="#0f172a" 
++            stroke={isHtml ? "#ea580c" : "#334155"} 
++            strokeWidth={isHtml ? "4" : "1.5"} 
++          />
++          <rect x="0" y="0" width="220" height="50" rx="20" fill="#431407" />
++          <text x="110" y="32" fill="#fb923c" fontSize="16" fontWeight="black" textAnchor="middle">1. HTML ≡اخ┤</text>
++          <text x="110" y="95" fill="#f97316" fontSize="17" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
++            {isHtml ? shortTitle : '╪د┘┘ç┘è┘â┘ ╪د┘╪╣╪╕┘à┘è'}
++          </text>
++          <text x="110" y="125" fill="#cbd5e1" fontSize="11" textAnchor="middle">
++            Structure &amp; Semantics
++          </text>
+           
+-          <rect x="25" y="150" width="160" height="120" rx="10" fill="#1c1917" />
+-          <text x="35" y="175" fill="#ea580c" fontSize="11" fontFamily="monospace">&lt;header&gt;</text>
+-          <text x="45" y="200" fill="#fdba74" fontSize="11" fontFamily="monospace">&lt;h1&gt;╪د┘╪╣┘┘ê╪د┘&lt;/h1&gt;</text>
+-          <text x="45" y="225" fill="#fdba74" fontSize="11" fontFamily="monospace">&lt;button&gt;┘┘é╪▒╪ر&lt;/button&gt;</text>
+-          <text x="35" y="250" fill="#ea580c" fontSize="11" fontFamily="monospace">&lt;/header&gt;</text>
+-
+-          <text x="105" y="300" fill="#fdba74" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪ذ┘╪د╪ة ╪د┘╪╣╪╕╪د┘à ┘ê╪د┘┘┘é╪▒╪د╪ز</text>
++          <rect x="20" y="150" width="180" height="125" rx="10" fill="#1c1917" />
++          <text x="30" y="180" fill="#ea580c" fontSize="11" fontFamily="monospace">&lt;main role="app"&gt;</text>
++          <text x="40" y="205" fill="#fdba74" fontSize="11" fontFamily="monospace">&lt;h1&gt;{shortTitle}&lt;/h1&gt;</text>
++          <text x="40" y="230" fill="#fdba74" fontSize="11" fontFamily="monospace">&lt;section&gt;{step1Title}&lt;/section&gt;</text>
++          <text x="30" y="255" fill="#ea580c" fontSize="11" fontFamily="monospace">&lt;/main&gt;</text>
++
++          <text x="110" y="310" fill="#fdba74" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            {isHtml ? 'ظءà ┘à╪ص┘ê╪▒ ╪ز╪▒┘â┘è╪▓ ╪د┘╪»╪▒╪│ ╪د┘╪ص╪د┘┘è' : '╪ذ┘╪د╪ة ╪د┘╪╣┘╪د╪╡╪▒ ┘ê╪د┘┘à╪ص╪ز┘ê┘ë'}
++          </text>
+         </g>
+ 
+         {/* ╪│┘ç┘à ╪ز┘â╪د┘à┘┘è 1 */}
+@@ -201,20 +543,33 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+         </g>
+ 
+         {/* ╪د┘╪╣┘à┘ê╪» 2: CSS ╪د┘┘à╪╕┘ç╪▒ ┘ê╪د┘╪ز┘╪│┘è┘é */}
+-        <g transform="translate(300, 60)">
+-          <rect width="210" height="320" rx="20" fill="#0f172a" stroke="#0284c7" strokeWidth="2.5" />
+-          <rect x="0" y="0" width="210" height="50" rx="20" fill="#082f49" />
+-          <text x="105" y="32" fill="#38bdf8" fontSize="16" fontWeight="black" textAnchor="middle">2. CSS ≡اذ</text>
+-          <text x="105" y="95" fill="#0284c7" fontSize="18" fontWeight="black" textAnchor="middle" fontFamily="Cairo">╪د┘┘à╪╕┘ç╪▒ ┘ê╪د┘┘à┘╪د╪ذ╪│</text>
+-          <text x="105" y="125" fill="#cbd5e1" fontSize="12" textAnchor="middle">Styles, Layout &amp; Colors</text>
++        <g transform="translate(290, 50)">
++          <rect 
++            width="220" 
++            height="340" 
++            rx="20" 
++            fill="#0f172a" 
++            stroke={isCss ? "#0284c7" : "#334155"} 
++            strokeWidth={isCss ? "4" : "1.5"} 
++          />
++          <rect x="0" y="0" width="220" height="50" rx="20" fill="#082f49" />
++          <text x="110" y="32" fill="#38bdf8" fontSize="16" fontWeight="black" textAnchor="middle">2. CSS ≡اذ</text>
++          <text x="110" y="95" fill="#0284c7" fontSize="17" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
++            {isCss ? shortTitle : '╪د┘┘à╪╕┘ç╪▒ ┘ê╪د┘╪ز╪╡┘à┘è┘à'}
++          </text>
++          <text x="110" y="125" fill="#cbd5e1" fontSize="11" textAnchor="middle">
++            Styles &amp; Responsive Layout
++          </text>
+           
+-          <rect x="25" y="150" width="160" height="120" rx="10" fill="#0c2338" />
+-          <text x="35" y="175" fill="#38bdf8" fontSize="11" fontFamily="monospace">header &#123;</text>
+-          <text x="45" y="200" fill="#bae6fd" fontSize="11" fontFamily="monospace">background: #000;</text>
+-          <text x="45" y="225" fill="#bae6fd" fontSize="11" fontFamily="monospace">color: #cyan;</text>
+-          <text x="35" y="250" fill="#38bdf8" fontSize="11" fontFamily="monospace">&#125;</text>
+-
+-          <text x="105" y="300" fill="#7dd3fc" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪د┘╪ث┘┘ê╪د┘╪î ╪د┘╪╕┘╪د┘╪î ┘ê╪د┘╪ز╪ش╪د┘ê╪ذ</text>
++          <rect x="20" y="150" width="180" height="125" rx="10" fill="#0c2338" />
++          <text x="30" y="180" fill="#38bdf8" fontSize="11" fontFamily="monospace">.layout &#123;</text>
++          <text x="40" y="205" fill="#bae6fd" fontSize="11" fontFamily="monospace">display: flex;</text>
++          <text x="40" y="230" fill="#bae6fd" fontSize="11" fontFamily="monospace">gap: 16px; padding: 20px;</text>
++          <text x="30" y="255" fill="#38bdf8" fontSize="11" fontFamily="monospace">&#125;</text>
++
++          <text x="110" y="310" fill="#7dd3fc" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            {isCss ? 'ظءà ┘à╪ص┘ê╪▒ ╪ز╪▒┘â┘è╪▓ ╪د┘╪»╪▒╪│ ╪د┘╪ص╪د┘┘è' : '╪د┘╪ث┘┘ê╪د┘╪î ╪د┘┘à╪│╪د┘╪د╪ز╪î ┘ê╪د┘╪ز╪ش╪د┘ê╪ذ'}
++          </text>
+         </g>
+ 
+         {/* ╪│┘ç┘à ╪ز┘â╪د┘à┘┘è 2 */}
+@@ -224,28 +579,42 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+         </g>
+ 
+         {/* ╪د┘╪╣┘à┘ê╪» 3: JavaScript ╪د┘╪╣┘é┘ ┘ê╪د┘╪ز┘╪د╪╣┘ */}
+-        <g transform="translate(550, 60)">
+-          <rect width="210" height="320" rx="20" fill="#0f172a" stroke="#eab308" strokeWidth="2.5" />
+-          <rect x="0" y="0" width="210" height="50" rx="20" fill="#422006" />
+-          <text x="105" y="32" fill="#fde047" fontSize="16" fontWeight="black" textAnchor="middle">3. JavaScript ≡ادب</text>
+-          <text x="105" y="95" fill="#eab308" fontSize="18" fontWeight="black" textAnchor="middle" fontFamily="Cairo">╪د┘╪╣┘é┘ ┘ê╪د┘╪ز┘╪د╪╣┘</text>
+-          <text x="105" y="125" fill="#cbd5e1" fontSize="12" textAnchor="middle">Logic, Events &amp; API</text>
++        <g transform="translate(540, 50)">
++          <rect 
++            width="220" 
++            height="340" 
++            rx="20" 
++            fill="#0f172a" 
++            stroke={isJs ? "#eab308" : "#334155"} 
++            strokeWidth={isJs ? "4" : "1.5"} 
++          />
++          <rect x="0" y="0" width="220" height="50" rx="20" fill="#422006" />
++          <text x="110" y="32" fill="#fde047" fontSize="16" fontWeight="black" textAnchor="middle">3. JavaScript ≡ادب</text>
++          <text x="110" y="95" fill="#eab308" fontSize="17" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
++            {isJs ? shortTitle : '╪د┘╪╣┘é┘ ┘ê╪د┘╪ز┘╪د╪╣┘'}
++          </text>
++          <text x="110" y="125" fill="#cbd5e1" fontSize="11" textAnchor="middle">
++            Logic, Reactivity &amp; APIs
++          </text>
+           
+-          <rect x="25" y="150" width="160" height="120" rx="10" fill="#291e0a" />
+-          <text x="35" y="175" fill="#facc15" fontSize="11" fontFamily="monospace">btn.onclick = () =&gt; &#123;</text>
+-          <text x="45" y="200" fill="#fef08a" fontSize="11" fontFamily="monospace">fetch('/api/user')</text>
+-          <text x="45" y="225" fill="#fef08a" fontSize="11" fontFamily="monospace">.then(renderUI);</text>
+-          <text x="35" y="250" fill="#facc15" fontSize="11" fontFamily="monospace">&#125;</text>
+-
+-          <text x="105" y="300" fill="#fde047" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪د┘╪ص╪▒┘â╪ر╪î ╪د┘╪ز┘┘â┘è╪▒╪î ┘ê╪د┘╪د╪ز╪╡╪د┘</text>
++          <rect x="20" y="150" width="180" height="125" rx="10" fill="#291e0a" />
++          <text x="30" y="180" fill="#facc15" fontSize="11" fontFamily="monospace">const render = () =&gt; &#123;</text>
++          <text x="40" y="205" fill="#fef08a" fontSize="11" fontFamily="monospace">updateUI('{shortTitle}');</text>
++          <text x="40" y="230" fill="#fef08a" fontSize="11" fontFamily="monospace">listenEvents();</text>
++          <text x="30" y="255" fill="#facc15" fontSize="11" fontFamily="monospace">&#125;</text>
++
++          <text x="110" y="310" fill="#fde047" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            {isJs ? 'ظءà ┘à╪ص┘ê╪▒ ╪ز╪▒┘â┘è╪▓ ╪د┘╪»╪▒╪│ ╪د┘╪ص╪د┘┘è' : '╪د┘┘à┘╪╖┘é ┘ê╪د┘╪ز┘╪د╪╣┘ ╪د┘╪ص┘è'}
++          </text>
+         </g>
+       </svg>
+     );
+   }
+ 
+-  // 3. ┘à╪«╪╖╪╖ ╪┤╪ش╪▒╪ر ╪د┘┘ Virtual DOM ┘ê┘à╪╖╪د╪ذ┘é╪ر ╪د┘┘ Diffing
+-  if (type === 'vdom') {
+-    // ╪ز╪ذ╪»┘è┘ ┘ç╪د╪»╪خ ┘â┘ ╪س╪د┘┘è╪ز┘è┘ ╪ذ╪»┘╪د┘ï ┘à┘ ╪د┘┘ê┘à┘è╪╢ ╪د┘╪│╪▒┘è╪╣
++  // -------------------------------------------------------------
++  // 5. ┘à╪«╪╖╪╖ ╪┤╪ش╪▒╪ر ╪د┘┘ Virtual DOM ┘ê┘à╪╖╪د╪ذ┘é╪ر ╪د┘┘ Diffing
++  // -------------------------------------------------------------
++  if (type === 'dom-tree') {
+     const diffHighlight = Math.floor(frame / (fps * 2)) % 2 === 0;
+     return (
+       <svg 
+@@ -262,33 +631,27 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+             <stop offset="0%" stopColor="#10b981" />
+             <stop offset="100%" stopColor="#059669" />
+           </linearGradient>
+-          <filter id="neonGlow">
+-            <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+-            <feMerge>
+-              <feMergeNode in="coloredBlur"/>
+-              <feMergeNode in="SourceGraphic"/>
+-            </feMerge>
+-          </filter>
+         </defs>
+ 
+         {/* ╪ش╪د┘╪ذ Virtual DOM */}
+         <g transform="translate(40, 30)">
+           <rect width="320" height="380" rx="20" fill="#0f172a" stroke="#38bdf8" strokeWidth="2" strokeDasharray="6 4" opacity="0.8" />
+-          <text x="160" y="45" fill="#38bdf8" fontSize="18" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪┤╪ش╪▒╪ر Virtual DOM ╪د┘╪د┘╪ز╪▒╪د╪╢┘è╪ر</text>
++          <text x="160" y="45" fill="#38bdf8" fontSize="17" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            ╪┤╪ش╪▒╪ر Virtual DOM ╪د┘╪د┘╪ز╪▒╪د╪╢┘è╪ر
++          </text>
+           
+-          {/* ╪╣┘é╪» ╪د┘╪┤╪ش╪▒╪ر */}
+           <line x1="160" y1="100" x2="100" y2="180" stroke="#38bdf8" strokeWidth="3" opacity="0.7" />
+           <line x1="160" y1="100" x2="220" y2="180" stroke="#38bdf8" strokeWidth="3" opacity="0.7" />
+           <line x1="100" y1="180" x2="70" y2="270" stroke="#38bdf8" strokeWidth="3" opacity="0.7" />
+           <line x1="100" y1="180" x2="130" y2="270" stroke="#38bdf8" strokeWidth="3" opacity="0.7" />
+ 
+           {/* Root Component */}
+-          <circle cx="160" cy="100" r={26 * pulse} fill="url(#vdomGrad)" filter="url(#neonGlow)" />
+-          <text x="160" y="106" fill="#fff" fontSize="13" fontWeight="bold" textAnchor="middle">&lt;App /&gt;</text>
++          <circle cx="160" cy="100" r={26 * pulse} fill="url(#vdomGrad)" />
++          <text x="160" y="106" fill="#fff" fontSize="12" fontWeight="bold" textAnchor="middle">&lt;App /&gt;</text>
+ 
+           {/* Child 1 */}
+           <circle cx="100" cy="180" r="22" fill="#0284c7" />
+-          <text x="100" y="185" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">&lt;Header&gt;</text>
++          <text x="100" y="185" fill="#fff" fontSize="10" fontWeight="bold" textAnchor="middle">&lt;Header&gt;</text>
+ 
+           {/* Child 2 (╪د┘╪╣┘é╪»╪ر ╪د┘╪ز┘è ╪ز╪ز╪║┘è╪▒ - Diff) */}
+           <circle 
+@@ -298,21 +661,22 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+             fill={diffHighlight ? "#f43f5e" : "#0284c7"} 
+             stroke="#fff" 
+             strokeWidth={diffHighlight ? 3 : 1}
+-            filter={diffHighlight ? "url(#neonGlow)" : ""}
+           />
+-          <text x="220" y="185" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">&lt;Count /&gt;</text>
++          <text x="220" y="185" fill="#fff" fontSize="10" fontWeight="bold" textAnchor="middle">
++            &lt;{shortTitle.slice(0, 8)} /&gt;
++          </text>
+ 
+           {/* Leafs */}
+           <circle cx="70" cy="270" r="18" fill="#1e293b" stroke="#38bdf8" strokeWidth="2" />
+-          <text x="70" y="275" fill="#94a3b8" fontSize="10" textAnchor="middle">Logo</text>
++          <text x="70" y="275" fill="#94a3b8" fontSize="10" textAnchor="middle">{step1Title.slice(0, 6)}</text>
+ 
+           <circle cx="130" cy="270" r="18" fill="#1e293b" stroke="#38bdf8" strokeWidth="2" />
+-          <text x="130" y="275" fill="#94a3b8" fontSize="10" textAnchor="middle">Nav</text>
++          <text x="130" y="275" fill="#94a3b8" fontSize="10" textAnchor="middle">{step2Title.slice(0, 6)}</text>
+         </g>
+ 
+-        {/* ╪│┘ç┘à ┘à╪ص╪▒┘â ╪د┘┘à┘é╪د╪▒┘╪ر ╪د┘╪│╪▒┘è╪╣╪ر Diffing Engine */}
++        {/* ┘à╪ص╪▒┘â ╪د┘┘à┘é╪د╪▒┘╪ر Diffing Engine */}
+         <g transform="translate(370, 200)">
+-          <circle cx="30" cy="20" r="32" fill="#1e293b" stroke="#a855f7" strokeWidth="3" filter="url(#neonGlow)" />
++          <circle cx="30" cy="20" r="32" fill="#1e293b" stroke="#a855f7" strokeWidth="3" />
+           <text x="30" y="20" fill="#c084fc" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">Diffing</text>
+           <text x="30" y="34" fill="#cbd5e1" fontSize="9" textAnchor="middle">O(n)</text>
+           <path d="M 68 20 L 95 20 M 85 10 L 95 20 L 85 30" stroke="#a855f7" strokeWidth="4" strokeLinecap="round" fill="none" />
+@@ -321,7 +685,9 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+         {/* ╪ش╪د┘╪ذ Real DOM ┘┘è ╪د┘┘à╪ز╪╡┘╪ص */}
+         <g transform="translate(440, 30)">
+           <rect width="320" height="380" rx="20" fill="#0f172a" stroke="#10b981" strokeWidth="2" opacity="0.8" />
+-          <text x="160" y="45" fill="#10b981" fontSize="18" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪┤╪ش╪▒╪ر ╪د┘┘à╪ز╪╡┘╪ص Real DOM</text>
++          <text x="160" y="45" fill="#10b981" fontSize="17" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            ╪┤╪ش╪▒╪ر ╪د┘┘à╪ز╪╡┘╪ص Real DOM
++          </text>
+           
+           <line x1="160" y1="100" x2="100" y2="180" stroke="#10b981" strokeWidth="3" opacity="0.6" />
+           <line x1="160" y1="100" x2="220" y2="180" stroke="#10b981" strokeWidth="3" opacity="0.6" />
+@@ -341,13 +707,12 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+             fill={diffHighlight ? "#10b981" : "#059669"} 
+             stroke="#34d399" 
+             strokeWidth={diffHighlight ? 4 : 1}
+-            filter={diffHighlight ? "url(#neonGlow)" : ""}
+           />
+-          <text x="220" y="185" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">span#val</text>
++          <text x="220" y="185" fill="#fff" fontSize="10" fontWeight="bold" textAnchor="middle">span#val</text>
+ 
+           {/* ╪د┘╪ز╪ص╪»┘è╪س ╪د┘┘╪╣┘┘è ┘┘é╪╖ */}
+           <rect x="50" y="320" width="220" height="38" rx="10" fill="#064e3b" stroke="#34d399" strokeWidth="1" />
+-          <text x="160" y="344" fill="#34d399" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++          <text x="160" y="344" fill="#34d399" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+             ظ£ô ╪ز╪ص╪»┘è╪س ╪د┘╪╣┘é╪»╪ر ╪د┘┘à╪╣╪»┘╪ر ┘┘é╪╖!
+           </text>
+         </g>
+@@ -355,9 +720,10 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+     );
+   }
+ 
+-  // 2. ┘à╪«╪╖╪╖ ╪ز╪»┘┘é ╪د┘╪ذ┘è╪د┘╪د╪ز ╪ث╪ص╪د╪»┘è ╪د┘╪د╪ز╪ش╪د┘ç (State & Props Unidirectional Flow)
+-  if (type === 'state-props') {
+-    // ╪ص╪▒┘â╪ر ╪د┘╪│┘è╪د╪ذ┘è╪ر ┘ç╪د╪»╪خ╪ر ┘┘╪ذ┘è╪د┘╪د╪ز ┘â┘ 5 ╪س┘ê╪د┘┘
++  // -------------------------------------------------------------
++  // 6. ┘à╪«╪╖╪╖ ╪ز╪»┘┘é ╪د┘┘à┘â┘ê┘╪د╪ز ┘ê╪د┘╪ذ┘è╪د┘╪د╪ز (Component Props & Data Flow)
++  // -------------------------------------------------------------
++  if (type === 'component-flow') {
+     const flowProgress = interpolate(frame % (fps * 5), [0, fps * 5], [0, 120]);
+     return (
+       <svg 
+@@ -365,20 +731,15 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+         preserveAspectRatio="xMidYMid meet" 
+         className="w-full h-full max-h-[380px] drop-shadow-2xl mx-auto block"
+       >
+-        <defs>
+-          <linearGradient id="flowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+-            <stop offset="0%" stopColor="#38bdf8" />
+-            <stop offset="100%" stopColor="#a855f7" />
+-          </linearGradient>
+-        </defs>
+-
+         {/* Parent Component */}
+         <g transform="translate(250, 40)">
+           <rect width="300" height="110" rx="18" fill="#1e293b" stroke="#38bdf8" strokeWidth="3" />
+-          <text x="150" y="40" fill="#38bdf8" fontSize="18" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪د┘┘à┘â┘ê┘ ╪د┘╪ث╪ذ (Parent Component)</text>
++          <text x="150" y="38" fill="#38bdf8" fontSize="16" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            ╪د┘┘à┘â┘ê┘ ╪د┘╪ث╪ذ: {shortTitle}
++          </text>
+           
+-          <rect x="40" y="60" width="220" height="34" rx="8" fill="#0f172a" stroke="#0284c7" strokeWidth="1" />
+-          <text x="150" y="82" fill="#f8fafc" fontSize="13" textAnchor="middle" fontFamily="JetBrains Mono">
++          <rect x="30" y="55" width="240" height="38" rx="8" fill="#0f172a" stroke="#0284c7" strokeWidth="1" />
++          <text x="150" y="78" fill="#f8fafc" fontSize="12" textAnchor="middle" fontFamily="JetBrains Mono">
+             const [data, setData] = useState(...)
+           </text>
+         </g>
+@@ -396,14 +757,22 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+         {/* Child Components */}
+         <g transform="translate(100, 290)">
+           <rect width="260" height="100" rx="16" fill="#1e293b" stroke="#a855f7" strokeWidth="2" />
+-          <text x="130" y="38" fill="#c084fc" fontSize="16" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪د┘┘à┘â┘ê┘ ╪د┘╪د╪ذ┘ (Child A)</text>
+-          <text x="130" y="72" fill="#cbd5e1" fontSize="12" textAnchor="middle" fontFamily="JetBrains Mono">&lt;Child user={'{user}'} /&gt;</text>
++          <text x="130" y="38" fill="#c084fc" fontSize="15" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            {step1Title}
++          </text>
++          <text x="130" y="72" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="JetBrains Mono">
++            &lt;Child data={'{value}'} /&gt;
++          </text>
+         </g>
+ 
+         <g transform="translate(440, 290)">
+           <rect width="260" height="100" rx="16" fill="#1e293b" stroke="#10b981" strokeWidth="2" />
+-          <text x="130" y="38" fill="#34d399" fontSize="16" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪د┘┘à┘â┘ê┘ ╪د┘╪د╪ذ┘ (Child B)</text>
+-          <text x="130" y="72" fill="#cbd5e1" fontSize="12" textAnchor="middle" fontFamily="JetBrains Mono">&lt;Action onSave={'{handleSave}'} /&gt;</text>
++          <text x="130" y="38" fill="#34d399" fontSize="15" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++            {step2Title}
++          </text>
++          <text x="130" y="72" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="JetBrains Mono">
++            &lt;Action onSave={'{handleSave}'} /&gt;
++          </text>
+         </g>
+ 
+         {/* ╪│┘ç┘à ╪▒┘╪╣ ╪د┘╪ص╪»╪س Event Callback ┘┘╪ث╪╣┘┘ë */}
+@@ -419,9 +788,10 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+     );
+   }
+ 
+-  // 3. ┘à╪«╪╖╪╖ ╪»┘ê╪▒╪ر ╪ص┘è╪د╪ر ╪د┘┘ Hooks ┘ê╪د┘╪ز╪ث╪س┘è╪▒╪د╪ز ╪د┘╪ش╪د┘╪ذ┘è╪ر
+-  if (type === 'hooks') {
+-    // ╪ص╪▒┘â╪ر ┘à╪ز╪ث┘┘è╪ر: ┘â┘ ┘à╪▒╪ص┘╪ر ╪ز╪ذ┘é┘ë ┘┘ 3 ╪س┘ê╪د┘┘ ┘â╪د┘à┘╪ر
++  // -------------------------------------------------------------
++  // 7. ┘à╪«╪╖╪╖ ╪»┘ê╪▒╪ر ╪ص┘è╪د╪ر ╪د┘┘ Hooks ┘ê╪د┘╪ز╪ث╪س┘è╪▒╪د╪ز ╪د┘╪ش╪د┘╪ذ┘è╪ر
++  // -------------------------------------------------------------
++  if (type === 'hooks-lifecycle') {
+     const activeStep = Math.floor((frame / (fps * 3)) % 3);
+     return (
+       <svg 
+@@ -429,8 +799,8 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+         preserveAspectRatio="xMidYMid meet" 
+         className="w-full h-full max-h-[380px] drop-shadow-2xl mx-auto block"
+       >
+-        <text x="400" y="45" fill="#f8fafc" fontSize="22" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+-          ╪»┘ê╪▒╪ر ╪ص┘è╪د╪ر React Hooks &amp; Component Lifecycle
++        <text x="400" y="45" fill="#f8fafc" fontSize="20" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
++          ╪»┘ê╪▒╪ر ╪ص┘è╪د╪ر React Hooks &amp; Lifecycle: {shortTitle}
+         </text>
+ 
+         {/* 1. Mount Phase */}
+@@ -445,9 +815,9 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+           />
+           <circle cx="100" cy="50" r="28" fill="#0284c7" />
+           <text x="100" y="56" fill="#fff" fontSize="16" fontWeight="bold" textAnchor="middle">1</text>
+-          <text x="100" y="110" fill="#38bdf8" fontSize="17" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪د┘╪ز╪▒┘â┘è╪ذ (Mount)</text>
+-          <text x="100" y="145" fill="#94a3b8" fontSize="12" textAnchor="middle" fontFamily="Cairo">╪ز┘ç┘è╪خ╪ر ╪د┘╪ص╪د┘╪ر useState</text>
+-          <text x="100" y="175" fill="#94a3b8" fontSize="12" textAnchor="middle" fontFamily="Cairo">╪▒╪│┘à ╪د┘┘ JSX ╪د┘╪ث┘ê┘┘è</text>
++          <text x="100" y="110" fill="#38bdf8" fontSize="16" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪د┘╪ز╪▒┘â┘è╪ذ (Mount)</text>
++          <text x="100" y="145" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">{step1Title}</text>
++          <text x="100" y="175" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">╪▒╪│┘à ╪د┘┘ JSX ╪د┘╪ث┘ê┘┘è</text>
+           <rect x="25" y="205" width="150" height="30" rx="8" fill="#0369a1" />
+           <text x="100" y="225" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">useEffect(..., [])</text>
+         </g>
+@@ -467,9 +837,9 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+           />
+           <circle cx="100" cy="50" r="28" fill="#7e22ce" />
+           <text x="100" y="56" fill="#fff" fontSize="16" fontWeight="bold" textAnchor="middle">2</text>
+-          <text x="100" y="110" fill="#c084fc" fontSize="17" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪د┘╪ز╪ص╪»┘è╪س (Update)</text>
+-          <text x="100" y="145" fill="#94a3b8" fontSize="12" textAnchor="middle" fontFamily="Cairo">╪ز╪║┘è╪▒ State ╪ث┘ê Props</text>
+-          <text x="100" y="175" fill="#94a3b8" fontSize="12" textAnchor="middle" fontFamily="Cairo">╪ح╪╣╪د╪»╪ر ╪ز╪╡┘è┘è╪▒ Re-render</text>
++          <text x="100" y="110" fill="#c084fc" fontSize="16" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪د┘╪ز╪ص╪»┘è╪س (Update)</text>
++          <text x="100" y="145" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">{step2Title}</text>
++          <text x="100" y="175" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">╪ح╪╣╪د╪»╪ر ╪ز╪╡┘è┘è╪▒ Re-render</text>
+           <rect x="25" y="205" width="150" height="30" rx="8" fill="#6b21a8" />
+           <text x="100" y="225" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">useEffect(..., [deps])</text>
+         </g>
+@@ -489,9 +859,9 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+           />
+           <circle cx="85" cy="50" r="28" fill="#be123c" />
+           <text x="85" y="56" fill="#fff" fontSize="16" fontWeight="bold" textAnchor="middle">3</text>
+-          <text x="85" y="110" fill="#fb7185" fontSize="17" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪د┘╪ح╪▓╪د┘╪ر (Unmount)</text>
+-          <text x="85" y="145" fill="#94a3b8" fontSize="12" textAnchor="middle" fontFamily="Cairo">╪ص╪░┘ ╪د┘┘à┘â┘ê┘ ┘à┘ ╪د┘┘ DOM</text>
+-          <text x="85" y="175" fill="#94a3b8" fontSize="12" textAnchor="middle" fontFamily="Cairo">╪ز┘╪╕┘è┘ ╪د┘╪د╪┤╪ز╪▒╪د┘â╪د╪ز ┘ê╪د┘╪░╪د┘â╪▒╪ر</text>
++          <text x="85" y="110" fill="#fb7185" fontSize="16" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">╪د┘╪ح╪▓╪د┘╪ر (Unmount)</text>
++          <text x="85" y="145" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">{step3Title}</text>
++          <text x="85" y="175" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">╪ز┘╪╕┘è┘ ╪د┘╪د╪┤╪ز╪▒╪د┘â╪د╪ز ┘ê╪د┘╪░╪د┘â╪▒╪ر</text>
+           <rect x="20" y="205" width="130" height="30" rx="8" fill="#9f1239" />
+           <text x="85" y="225" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">return () =&gt; cleanup</text>
+         </g>
+@@ -499,7 +869,12 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+     );
+   }
+ 
+-  // 4. ╪د┘┘à╪«╪╖╪╖ ╪د┘╪╣╪د┘à ╪د┘╪د┘╪ز╪▒╪د╪╢┘è (┘à╪╣┘à╪د╪▒┘è╪ر React Fiber ┘ê┘à╪ص╪▒┘â ╪د┘╪ث╪»╪د╪ة ╪ذ╪ص╪▒┘â╪ر ╪»┘ê╪▒╪د┘ ┘ç╪د╪»╪خ╪ر)
++  // -------------------------------------------------------------
++  // 8. ╪د┘┘à╪ص╪▒┘â ╪د┘┘à┘┘ç┘ê┘à┘è ╪د┘┘à╪»╪د╪▒┘è ╪د┘╪»┘è┘╪د┘à┘è┘â┘è ╪د┘╪┤╪د┘à┘ (Universal Concept Engine)
++  // -------------------------------------------------------------
++  // ┘à╪│╪ز╪«╪»┘à ┘┘â┘ ╪»╪▒╪│ ╪ت╪«╪▒: ┘è┘é╪▒╪ث ╪«╪╖┘ê╪د╪ز ┘ê┘à╪╡╪╖┘╪ص╪د╪ز ╪د┘╪»╪▒╪│ ╪د┘┘╪╣┘┘è ┘┘è ┘â╪ذ╪│┘ê┘╪د╪ز ┘à╪»╪د╪▒┘è╪ر ┘à╪ز╪ص╪▒┘â╪ر
++  const focusPod = Math.floor(frame / (fps * 4)) % 4; // ┘â┘ 4 ╪س┘ê╪د┘┘ ╪ز╪▒┘â┘è╪▓ ╪╣┘┘ë ┘à╪ص╪╖╪ر
++
+   return (
+     <svg 
+       viewBox="0 0 800 450" 
+@@ -507,49 +882,127 @@ export default function SvgMotionDiagram({ type = 'architecture', subtopic, fram
+       className="w-full h-full max-h-[380px] drop-shadow-2xl mx-auto block"
+     >
+       <defs>
+-        <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+-          <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.3" />
++        <radialGradient id="univCenterGlow" cx="50%" cy="50%" r="50%">
++          <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.35" />
+           <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
+         </radialGradient>
+       </defs>
+ 
+       {/* ╪«┘┘┘è╪ر ╪د┘╪ح╪┤╪╣╪د╪╣ ╪د┘╪ز┘╪د╪╣┘┘è╪ر */}
+-      <circle cx="400" cy="225" r="200" fill="url(#centerGlow)" />
+-
+-      {/* ┘é┘╪ذ ┘à╪ص╪▒┘â React 19 ╪د┘╪ز┘╪د╪╣┘┘è ╪د┘┘à╪╣┘┘ê┘ ╪ذ╪د╪│┘à ╪د┘╪»╪▒╪│ ╪ذ╪ص╪▒┘â╪ر ╪»┘ê╪▒╪د┘ ┘ç╪د╪»╪خ╪ر ┘ê╪║┘è╪▒ ┘à╪ز╪│╪د╪▒╪╣╪ر */}
+-      <g transform="translate(320, 145)">
+-        <ellipse cx="80" cy="80" rx="100" ry="40" fill="none" stroke="#38bdf8" strokeWidth="4" strokeDasharray="12 8" transform={`rotate(${frame * 0.4} 80 80)`} />
+-        <ellipse cx="80" cy="80" rx="100" ry="40" fill="none" stroke="#a855f7" strokeWidth="4" strokeDasharray="12 8" transform={`rotate(${-frame * 0.3} 80 80)`} />
+-        <ellipse cx="80" cy="80" rx="100" ry="40" fill="none" stroke="#10b981" strokeWidth="4" strokeDasharray="12 8" transform={`rotate(${frame * 0.5 + 60} 80 80)`} />
+-        <circle cx="80" cy="80" r={32 * pulse} fill="#0284c7" />
+-        <text x="80" y="85" fill="#fff" fontSize="12" fontWeight="black" textAnchor="middle" fontFamily="Cairo">{centerTitle}</text>
++      <circle cx="400" cy="225" r="220" fill="url(#univCenterGlow)" />
++
++      {/* ┘é┘╪ذ ╪د┘┘à╪ص╪▒┘â ╪د┘┘à╪▒┘â╪▓┘è: ╪╣┘┘ê╪د┘ ┘ê┘ç┘ê┘è╪ر ╪د┘╪»╪▒╪│ ╪د┘┘╪╣┘┘è╪ر ┘à╪╣ ┘à╪│╪د╪▒╪د╪ز ┘à╪»╪د╪▒┘è╪ر ┘ç╪د╪»╪خ╪ر */}
++      <g transform="translate(300, 145)">
++        <ellipse 
++          cx="100" 
++          cy="80" 
++          rx="120" 
++          ry="50" 
++          fill="none" 
++          stroke="#38bdf8" 
++          strokeWidth="3.5" 
++          strokeDasharray="10 6" 
++          transform={`rotate(${frame * 0.3} 100 80)`} 
++        />
++        <ellipse 
++          cx="100" 
++          cy="80" 
++          rx="120" 
++          ry="50" 
++          fill="none" 
++          stroke="#a855f7" 
++          strokeWidth="3.5" 
++          strokeDasharray="10 6" 
++          transform={`rotate(${-frame * 0.25} 100 80)`} 
++        />
++        <circle cx="100" cy="80" r={42 * pulse} fill="#0284c7" stroke="#38bdf8" strokeWidth="2.5" />
++        <text x="100" y="78" fill="#fff" fontSize="13" fontWeight="900" textAnchor="middle" fontFamily="Cairo">
++          {shortTitle}
++        </text>
++        <text x="100" y="94" fill="#bae6fd" fontSize="9" fontWeight="bold" textAnchor="middle">
++          {engTitle.length > 20 ? engTitle.slice(0, 18) + '..' : engTitle}
++        </text>
+       </g>
+ 
+-      {/* ╪د┘╪ث╪╣┘à╪»╪ر ╪د┘┘à╪╣┘à╪د╪▒┘è╪ر ╪د┘╪ص╪▒┘â┘è╪ر ╪د┘┘à╪▒╪ز╪ذ╪╖╪ر ╪ذ╪«╪╖┘ê╪د╪ز ╪د┘╪»╪▒╪│ ╪د┘╪ص┘é┘è┘é┘è */}
+-      <g transform="translate(40, 50)">
+-        <rect width="210" height="95" rx="14" fill="#0b1329" stroke="#38bdf8" strokeWidth="2" />
+-        <text x="105" y="34" fill="#38bdf8" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">1. {step1Title}</text>
+-        <text x="105" y="65" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">{step1Desc}</text>
++      {/* ╪د┘┘à╪ص╪╖╪ر ╪د┘┘à╪»╪د╪▒┘è╪ر 1 (╪د┘╪▒┘â┘ ╪د┘╪ث┘è┘à┘ ╪د┘╪╣┘┘ê┘è) */}
++      <g transform="translate(40, 40)">
++        <rect 
++          width="230" 
++          height="100" 
++          rx="16" 
++          fill="#0b1329" 
++          stroke={focusPod === 0 ? "#38bdf8" : "#1e293b"} 
++          strokeWidth={focusPod === 0 ? "3.5" : "1.5"} 
++        />
++        <circle cx="28" cy="28" r="14" fill="#0284c7" />
++        <text x="28" y="32" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">1</text>
++        <text x="135" y="33" fill="#38bdf8" fontSize="13" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
++          {step1Title}
++        </text>
++        <text x="115" y="68" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="Cairo">
++          {step1Desc.length > 28 ? step1Desc.slice(0, 26) + '..' : step1Desc}
++        </text>
+       </g>
+ 
+-      <g transform="translate(550, 50)">
+-        <rect width="210" height="95" rx="14" fill="#061c14" stroke="#10b981" strokeWidth="2" />
+-        <text x="105" y="34" fill="#34d399" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">2. {step2Title}</text>
+-        <text x="105" y="65" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">{step2Desc}</text>
++      {/* ╪د┘┘à╪ص╪╖╪ر ╪د┘┘à╪»╪د╪▒┘è╪ر 2 (╪د┘╪▒┘â┘ ╪د┘╪ث┘è╪│╪▒ ╪د┘╪╣┘┘ê┘è) */}
++      <g transform="translate(530, 40)">
++        <rect 
++          width="230" 
++          height="100" 
++          rx="16" 
++          fill="#061c14" 
++          stroke={focusPod === 1 ? "#10b981" : "#1e293b"} 
++          strokeWidth={focusPod === 1 ? "3.5" : "1.5"} 
++        />
++        <circle cx="28" cy="28" r="14" fill="#059669" />
++        <text x="28" y="32" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">2</text>
++        <text x="135" y="33" fill="#34d399" fontSize="13" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
++          {step2Title}
++        </text>
++        <text x="115" y="68" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="Cairo">
++          {step2Desc.length > 28 ? step2Desc.slice(0, 26) + '..' : step2Desc}
++        </text>
+       </g>
+ 
+-      <g transform="translate(40, 290)">
+-        <rect width="210" height="95" rx="14" fill="#1b0e2b" stroke="#a855f7" strokeWidth="2" />
+-        <text x="105" y="34" fill="#c084fc" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">3. {step3Title}</text>
+-        <text x="105" y="65" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">{step3Desc}</text>
++      {/* ╪د┘┘à╪ص╪╖╪ر ╪د┘┘à╪»╪د╪▒┘è╪ر 3 (╪د┘╪▒┘â┘ ╪د┘╪ث┘è┘à┘ ╪د┘╪│┘┘┘è) */}
++      <g transform="translate(40, 280)">
++        <rect 
++          width="230" 
++          height="100" 
++          rx="16" 
++          fill="#1b0e2b" 
++          stroke={focusPod === 2 ? "#a855f7" : "#1e293b"} 
++          strokeWidth={focusPod === 2 ? "3.5" : "1.5"} 
++        />
++        <circle cx="28" cy="28" r="14" fill="#7e22ce" />
++        <text x="28" y="32" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">3</text>
++        <text x="135" y="33" fill="#c084fc" fontSize="13" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
++          {step3Title}
++        </text>
++        <text x="115" y="68" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="Cairo">
++          {step3Desc.length > 28 ? step3Desc.slice(0, 26) + '..' : step3Desc}
++        </text>
+       </g>
+ 
+-      <g transform="translate(550, 290)">
+-        <rect width="210" height="95" rx="14" fill="#241403" stroke="#f59e0b" strokeWidth="2" />
+-        <text x="105" y="34" fill="#fbbf24" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">4. ┘â┘╪د╪ة╪ر ╪د┘╪ث╪»╪د╪ة 60FPS</text>
+-        <text x="105" y="65" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">Zero Unneeded Renders</text>
++      {/* ╪د┘┘à╪ص╪╖╪ر ╪د┘┘à╪»╪د╪▒┘è╪ر 4 (╪د┘╪▒┘â┘ ╪د┘╪ث┘è╪│╪▒ ╪د┘╪│┘┘┘è): ┘à╪╡╪╖┘╪ص╪د╪ز ╪ث┘ê ┘à┘è╪▓╪د╪ز ╪د┘╪»╪▒╪│ */}
++      <g transform="translate(530, 280)">
++        <rect 
++          width="230" 
++          height="100" 
++          rx="16" 
++          fill="#241403" 
++          stroke={focusPod === 3 ? "#f59e0b" : "#1e293b"} 
++          strokeWidth={focusPod === 3 ? "3.5" : "1.5"} 
++        />
++        <circle cx="28" cy="28" r="14" fill="#d97706" />
++        <text x="28" y="32" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">ظءà</text>
++        <text x="135" y="33" fill="#fbbf24" fontSize="13" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
++          {terms[0]?.term ? terms[0].term : '╪د┘╪ث╪»╪د╪ة 60FPS'}
++        </text>
++        <text x="115" y="68" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="Cairo">
++          {terms[0]?.meaning ? (terms[0].meaning.length > 28 ? terms[0].meaning.slice(0, 26) + '..' : terms[0].meaning) : '┘â┘╪د╪ة╪ر ┘ê╪│┘╪د╪│╪ر ╪د┘╪╣╪▒╪╢'}
++        </text>
+       </g>
+     </svg>
+   );
+ }
+-
