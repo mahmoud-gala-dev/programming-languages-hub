@@ -62,6 +62,7 @@ export default function LessonMotionPlayer({
           loop={true}
           showVolumeControls={false}
           clickToPlay={true}
+          acknowledgeRemotionLicense={true}
         />
       </div>
     </div>

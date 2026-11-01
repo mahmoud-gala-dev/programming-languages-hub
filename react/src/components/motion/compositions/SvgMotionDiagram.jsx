@@ -7,23 +7,37 @@ import { interpolate, spring } from 'remotion';
  * تحديد نوع المخطط المعماري المناسب تلقائياً بناءً على محتوى وعنوان الدرس
  */
 export function detectDiagramType(subtopic) {
-  const text = `${subtopic?.id || ''} ${subtopic?.title || ''} ${subtopic?.description || ''} ${subtopic?.concept || ''}`.toLowerCase();
+  const text = `${subtopic?.id || ''} ${subtopic?.title || ''} ${subtopic?.englishTitle || ''} ${subtopic?.definition || ''} ${subtopic?.description || ''} ${subtopic?.concept || ''}`.toLowerCase();
 
+  // 1. أساسيات الويب: الواجهة والخادم والشبكة
+  if (text.includes('frontend') || text.includes('backend') || text.includes('client') || text.includes('server') || text.includes('http') || text.includes('خادم') || text.includes('عميل') || text.includes('واجهة')) {
+    return 'client-server';
+  }
+  // 2. ثلاثي الويب: HTML, CSS, JavaScript
+  if (text.includes('html') || text.includes('css') || text.includes('javascript') || text.includes('js') || text.includes('هيكل') || text.includes('تنسيق')) {
+    return 'html-css-js';
+  }
+  // 3. Virtual DOM والـ Diffing
   if (text.includes('vdom') || text.includes('virtual dom') || text.includes('dom') || text.includes('reconciliation') || text.includes('diffing')) {
     return 'vdom';
   }
+  // 4. Hooks ودورة الحياة
   if (text.includes('hook') || text.includes('useeffect') || text.includes('usestate') || text.includes('lifecycle') || text.includes('دورة حياة')) {
     return 'hooks';
   }
-  if (text.includes('context') || text.includes('redux') || text.includes('zustand') || text.includes('state management') || text.includes('حالة')) {
+  // 5. إدارة الحالة وContext
+  if (text.includes('context') || text.includes('redux') || text.includes('zustand') || text.includes('state') || text.includes('حالة')) {
     return 'context';
   }
+  // 6. التوجيه ومسارات SPA
   if (text.includes('router') || text.includes('route') || text.includes('spa') || text.includes('توجيه') || text.includes('مسار')) {
     return 'routing';
   }
+  // 7. الأداء والتسريع
   if (text.includes('memo') || text.includes('callback') || text.includes('performance') || text.includes('أداء') || text.includes('تسريع')) {
     return 'performance';
   }
+  // 8. المكونات والـ Props
   if (text.includes('props') || text.includes('component') || text.includes('مكون') || text.includes('بيانات')) {
     return 'state-props';
   }
@@ -36,7 +50,178 @@ export default function SvgMotionDiagram({ type = 'architecture', frame, fps }) 
   const progress = interpolate(frame % (fps * 3), [0, fps * 3], [0, 100]);
   const wave = Math.sin((frame / 15)) * 12;
 
-  // 1. مخطط شجرة الـ Virtual DOM ومطابقة الـ Diffing
+  // 1. مخطط تدفق العميل والخادم (Frontend vs Backend & Client-Server Flow)
+  if (type === 'client-server') {
+    const packetProgress = (frame % (fps * 2)) / (fps * 2);
+    const packetX = interpolate(packetProgress, [0, 0.5, 1], [270, 520, 270]);
+    const isGoingRight = packetProgress <= 0.5;
+
+    return (
+      <svg viewBox="0 0 800 450" className="w-full h-full drop-shadow-2xl font-sans">
+        <defs>
+          <linearGradient id="clientGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#38bdf8" />
+            <stop offset="100%" stopColor="#0284c7" />
+          </linearGradient>
+          <linearGradient id="serverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#a855f7" />
+            <stop offset="100%" stopColor="#7c3aed" />
+          </linearGradient>
+          <filter id="neonPacket">
+            <feGaussianBlur stdDeviation="5" result="glow"/>
+            <feMerge>
+              <feMergeNode in="glow"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* جانب العميل والمتصفح (Frontend / Client) */}
+        <g transform="translate(40, 45)">
+          <rect width="250" height="340" rx="20" fill="#0b1329" stroke="#38bdf8" strokeWidth="2.5" />
+          <rect x="0" y="0" width="250" height="42" rx="20" fill="#1e293b" />
+          <circle cx="25" cy="21" r="5" fill="#f43f5e" />
+          <circle cx="42" cy="21" r="5" fill="#fbbf24" />
+          <circle cx="59" cy="21" r="5" fill="#10b981" />
+          <text x="145" y="26" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">متصفح المستخدم (Client)</text>
+
+          {/* محتويات المتصفح */}
+          <rect x="25" y="65" width="200" height="90" rx="12" fill="#0f172a" stroke="#38bdf8" strokeWidth="1" strokeDasharray="4 3" />
+          <text x="125" y="98" fill="#38bdf8" fontSize="15" fontWeight="black" textAnchor="middle" fontFamily="Cairo">الواجهة الأمامية</text>
+          <text x="125" y="125" fill="#7dd3fc" fontSize="12" fontWeight="bold" textAnchor="middle">Frontend (UI / UX)</text>
+          <text x="125" y="143" fill="#64748b" fontSize="10" textAnchor="middle">React • HTML • CSS • JS</text>
+
+          {/* شاشة العرض التفاعلية */}
+          <rect x="25" y="175" width="200" height="110" rx="12" fill="#030712" border="1" />
+          <rect x="40" y="195" width="80" height="14" rx="4" fill="#38bdf8" opacity="0.8" />
+          <rect x="40" y="218" width="140" height="8" rx="3" fill="#334155" />
+          <rect x="40" y="233" width="110" height="8" rx="3" fill="#334155" />
+          <rect x="40" y="255" width="65" height="18" rx="6" fill="#10b981" />
+          <text x="72" y="268" fill="#fff" fontSize="9" fontWeight="bold" textAnchor="middle">زر إرسال</text>
+
+          <rect x="25" y="300" width="200" height="24" rx="6" fill="#0284c7" opacity="0.2" />
+          <text x="125" y="316" fill="#38bdf8" fontSize="10" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">كل ما يراه ويتفاعل معه المستخدم</text>
+        </g>
+
+        {/* خط اتصال الشبكة والـ HTTP Protocols */}
+        <g transform="translate(300, 190)">
+          <line x1="0" y1="20" x2="200" y2="20" stroke="#334155" strokeWidth="4" strokeDasharray="8 6" />
+          
+          {/* حزمة البيانات المتحركة (HTTP Request / Response) */}
+          <g transform={`translate(${packetX - 300}, 0)`}>
+            <rect x="-45" y="0" width="90" height="40" rx="10" fill={isGoingRight ? "#0284c7" : "#10b981"} filter="url(#neonPacket)" />
+            <text x="0" y="18" fill="#fff" fontSize="10" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
+              {isGoingRight ? "طلب HTTP ➔" : "⟵ استجابة JSON"}
+            </text>
+            <text x="0" y="32" fill="#e2e8f0" fontSize="8" textAnchor="middle" fontMono="true">
+              {isGoingRight ? "GET /api/data" : "Status: 200 OK"}
+            </text>
+          </g>
+
+          <text x="100" y="-12" fill="#cbd5e1" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+            شبكة الإنترنت (Internet / APIs)
+          </text>
+        </g>
+
+        {/* جانب الخادم وقواعد البيانات (Backend / Server) */}
+        <g transform="translate(510, 45)">
+          <rect width="250" height="340" rx="20" fill="#120c24" stroke="#a855f7" strokeWidth="2.5" />
+          <rect x="0" y="0" width="250" height="42" rx="20" fill="#2e1065" />
+          <text x="125" y="26" fill="#c084fc" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">الخادم السحابي (Backend Server)</text>
+
+          {/* محرك المعالجة والأمان */}
+          <rect x="25" y="65" width="200" height="85" rx="12" fill="#1e113a" stroke="#a855f7" strokeWidth="1" strokeDasharray="4 3" />
+          <text x="125" y="98" fill="#c084fc" fontSize="15" fontWeight="black" textAnchor="middle" fontFamily="Cairo">الواجهة الخلفية</text>
+          <text x="125" y="122" fill="#e9d5ff" fontSize="12" fontWeight="bold" textAnchor="middle">Backend (Logic &amp; DB)</text>
+          <text x="125" y="140" fill="#a855f7" fontSize="10" textAnchor="middle">Node.js • Python • APIs</text>
+
+          {/* أسطوانة قاعدة البيانات (Database) */}
+          <g transform="translate(55, 175)">
+            <rect x="0" y="15" width="140" height="80" rx="8" fill="#2e1065" stroke="#c084fc" strokeWidth="2" />
+            <ellipse cx="70" cy="15" rx="70" ry="18" fill="#581c87" stroke="#c084fc" strokeWidth="2" />
+            <ellipse cx="70" cy="50" rx="70" ry="16" fill="none" stroke="#7e22ce" strokeWidth="1.5" strokeDasharray="5 3" />
+            <ellipse cx="70" cy="95" rx="70" ry="18" fill="#3b0764" stroke="#c084fc" strokeWidth="2" />
+            <text x="70" y="60" fill="#f5d0fe" fontSize="13" fontWeight="bold" textAnchor="middle">Database 🗄️</text>
+          </g>
+
+          <rect x="25" y="300" width="200" height="24" rx="6" fill="#7c3aed" opacity="0.2" />
+          <text x="125" y="316" fill="#c084fc" fontSize="10" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">معالجة الحسابات، الأمان، وحفظ البيانات</text>
+        </g>
+      </svg>
+    );
+  }
+
+  // 2. مخطط ثلاثي الويب (HTML + CSS + JavaScript)
+  if (type === 'html-css-js') {
+    return (
+      <svg viewBox="0 0 800 450" className="w-full h-full drop-shadow-2xl font-sans">
+        {/* العمود 1: HTML الهيكل */}
+        <g transform="translate(50, 60)">
+          <rect width="210" height="320" rx="20" fill="#0f172a" stroke="#ea580c" strokeWidth="2.5" />
+          <rect x="0" y="0" width="210" height="50" rx="20" fill="#431407" />
+          <text x="105" y="32" fill="#fb923c" fontSize="16" fontWeight="black" textAnchor="middle">1. HTML 🦴</text>
+          <text x="105" y="95" fill="#f97316" fontSize="18" fontWeight="black" textAnchor="middle" fontFamily="Cairo">الهيكل العظمي</text>
+          <text x="105" y="125" fill="#cbd5e1" fontSize="12" textAnchor="middle">Structure &amp; Semantics</text>
+          
+          <rect x="25" y="150" width="160" height="120" rx="10" fill="#1c1917" />
+          <text x="35" y="175" fill="#ea580c" fontSize="11" fontMono="true">&lt;header&gt;</text>
+          <text x="45" y="200" fill="#fdba74" fontSize="11" fontMono="true">&lt;h1&gt;العنوان&lt;/h1&gt;</text>
+          <text x="45" y="225" fill="#fdba74" fontSize="11" fontMono="true">&lt;button&gt;نقرة&lt;/button&gt;</text>
+          <text x="35" y="250" fill="#ea580c" fontSize="11" fontMono="true">&lt;/header&gt;</text>
+
+          <text x="105" y="300" fill="#fdba74" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">بناء العظام والفقرات</text>
+        </g>
+
+        {/* سهم تكاملي 1 */}
+        <g transform="translate(268, 200)">
+          <circle cx="15" cy="15" r="16" fill="#1e293b" stroke="#64748b" strokeWidth="2" />
+          <text x="15" y="21" fill="#fff" fontSize="14" fontWeight="bold" textAnchor="middle">+</text>
+        </g>
+
+        {/* العمود 2: CSS المظهر والتنسيق */}
+        <g transform="translate(300, 60)">
+          <rect width="210" height="320" rx="20" fill="#0f172a" stroke="#0284c7" strokeWidth="2.5" />
+          <rect x="0" y="0" width="210" height="50" rx="20" fill="#082f49" />
+          <text x="105" y="32" fill="#38bdf8" fontSize="16" fontWeight="black" textAnchor="middle">2. CSS 🎨</text>
+          <text x="105" y="95" fill="#0284c7" fontSize="18" fontWeight="black" textAnchor="middle" fontFamily="Cairo">المظهر والملابس</text>
+          <text x="105" y="125" fill="#cbd5e1" fontSize="12" textAnchor="middle">Styles, Layout &amp; Colors</text>
+          
+          <rect x="25" y="150" width="160" height="120" rx="10" fill="#0c2338" />
+          <text x="35" y="175" fill="#38bdf8" fontSize="11" fontMono="true">header &#123;</text>
+          <text x="45" y="200" fill="#bae6fd" fontSize="11" fontMono="true">background: #000;</text>
+          <text x="45" y="225" fill="#bae6fd" fontSize="11" fontMono="true">color: #cyan;</text>
+          <text x="35" y="250" fill="#38bdf8" fontSize="11" fontMono="true">&#125;</text>
+
+          <text x="105" y="300" fill="#7dd3fc" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">الألوان، الظلال، والتجاوب</text>
+        </g>
+
+        {/* سهم تكاملي 2 */}
+        <g transform="translate(518, 200)">
+          <circle cx="15" cy="15" r="16" fill="#1e293b" stroke="#64748b" strokeWidth="2" />
+          <text x="15" y="21" fill="#fff" fontSize="14" fontWeight="bold" textAnchor="middle">+</text>
+        </g>
+
+        {/* العمود 3: JavaScript العقل والتفاعل */}
+        <g transform="translate(550, 60)">
+          <rect width="210" height="320" rx="20" fill="#0f172a" stroke="#eab308" strokeWidth="2.5" />
+          <rect x="0" y="0" width="210" height="50" rx="20" fill="#422006" />
+          <text x="105" y="32" fill="#fde047" fontSize="16" fontWeight="black" textAnchor="middle">3. JavaScript 🧠</text>
+          <text x="105" y="95" fill="#eab308" fontSize="18" fontWeight="black" textAnchor="middle" fontFamily="Cairo">العقل والتفاعل</text>
+          <text x="105" y="125" fill="#cbd5e1" fontSize="12" textAnchor="middle">Logic, Events &amp; API</text>
+          
+          <rect x="25" y="150" width="160" height="120" rx="10" fill="#291e0a" />
+          <text x="35" y="175" fill="#facc15" fontSize="11" fontMono="true">btn.onclick = () =&gt; &#123;</text>
+          <text x="45" y="200" fill="#fef08a" fontSize="11" fontMono="true">fetch('/api/user')</text>
+          <text x="45" y="225" fill="#fef08a" fontSize="11" fontMono="true">.then(renderUI);</text>
+          <text x="35" y="250" fill="#facc15" fontSize="11" fontMono="true">&#125;</text>
+
+          <text x="105" y="300" fill="#fde047" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">الحركة، التفكير، والاتصال</text>
+        </g>
+      </svg>
+    );
+  }
+
+  // 3. مخطط شجرة الـ Virtual DOM ومطابقة الـ Diffing
   if (type === 'vdom') {
     const diffHighlight = Math.floor(frame / 20) % 2 === 0;
     return (

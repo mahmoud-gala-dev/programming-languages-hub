@@ -163,7 +163,21 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
       )
     },
 
-    // شريحة 2: التعريف المبسط والتشبيه الواقعي
+    // شريحة 2: المحاكاة الحركية المعمارية (Remotion Motion Graphics)
+    {
+      id: 'motion-graphics',
+      title: 'المحاكاة البصرية الحركية (Remotion 60FPS)',
+      badge: 'المحاكاة الحركية 🎬',
+      render: () => (
+        <div className="flex flex-col items-center justify-center h-full max-w-4xl mx-auto space-y-3 animate-fadeIn overflow-y-auto w-full">
+          <div className="w-full max-w-3xl">
+            <LessonMotionPlayer subtopic={safeSubtopic} />
+          </div>
+        </div>
+      )
+    },
+
+    // شريحة 3: التعريف المبسط والتشبيه الواقعي
     {
       id: 'concept',
       title: 'المفهوم التأسيسي والتشبيه الواقعي',
@@ -345,20 +359,6 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
         <div className="flex flex-col items-center justify-center h-full max-w-4xl mx-auto space-y-4 animate-fadeIn overflow-y-auto">
           <div className="w-full">
             <InfographicCard subtopic={safeSubtopic} />
-          </div>
-        </div>
-      )
-    },
-
-    // شريحة 8: المحاكاة الحركية وموشن جرافيك Remotion
-    {
-      id: 'motion-graphics',
-      title: 'المحاكاة الحركية المعمارية (Remotion Motion Graphics)',
-      badge: 'المحاكاة الحركية',
-      render: () => (
-        <div className="flex flex-col items-center justify-center h-full max-w-4xl mx-auto space-y-3 animate-fadeIn overflow-y-auto w-full">
-          <div className="w-full max-w-3xl">
-            <LessonMotionPlayer subtopic={safeSubtopic} />
           </div>
         </div>
       )

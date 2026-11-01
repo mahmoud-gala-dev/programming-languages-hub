@@ -590,6 +590,72 @@ export default function LessonViewer({
           </button>
         </div>
 
+        {/* قسم المحاكاة الحركية الفوري للموشن جرافيك Remotion أو الإنفوجرافيك (Hero Visual Engine) */}
+        <div className="mb-8 bg-slate-950/90 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+            <div className="flex items-center gap-2.5">
+              <span className="size-9 rounded-2xl bg-gradient-to-tr from-sky-500 to-blue-600 text-white flex items-center justify-center shadow-lg shadow-sky-500/20">
+                <Film className="size-4" />
+              </span>
+              <div>
+                <h3 className="text-sm sm:text-base font-black text-white flex items-center gap-2">
+                  <span>المحاكاة البصرية الحركية للدرس (Remotion 60FPS)</span>
+                  <span className="text-[10px] bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-full font-mono">
+                    LIVE
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-400">
+                  شاهد تدفق البيانات ورسوم SVG المعمارية المتحركة المصاحبة لكود الدرس
+                </p>
+              </div>
+            </div>
+
+            {/* أزرار التبديل الفوري بين الموشن جرافيك والإنفوجرافيك */}
+            <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1 text-xs shrink-0 self-start sm:self-auto">
+              <button
+                onClick={() => setVisualMode('motion')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                  visualMode === 'motion'
+                    ? 'bg-gradient-to-r from-sky-600 to-blue-600 text-white shadow-md'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Film className="size-3.5" />
+                <span>موشن جرافيك Remotion 🎬</span>
+              </button>
+              <button
+                onClick={() => setVisualMode('infographic')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                  visualMode === 'infographic'
+                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Layers className="size-3.5" />
+                <span>إنفوجرافيك تفصيلي 📊</span>
+              </button>
+            </div>
+          </div>
+
+          {visualMode === 'motion' ? (
+            <div className="animate-fadeIn">
+              <LessonMotionPlayer 
+                subtopic={subtopic} 
+                onSwitchToInfographic={() => setVisualMode('infographic')} 
+              />
+            </div>
+          ) : (
+            <div className="animate-fadeIn">
+              <InfographicCard 
+                subtopic={subtopic} 
+                onOpenGallery={onOpenInfographicGallery} 
+                highlights={lessonHighlights}
+                onHighlightClick={handleHighlightClick}
+              />
+            </div>
+          )}
+        </div>
+
         {/* 1. التعريف المبسط */}
         <div className="space-y-2 mb-6">
           <h4 className="text-xs font-bold text-cyan-400 flex items-center gap-1.5 font-sans">
@@ -912,64 +978,6 @@ export default function LessonViewer({
             </div>
           </div>
         </div>
-      </div>
-
-      {/* 14. المحاكاة البصرية المعمارية التفاعلية: التبديل بين مشغل Remotion والإنفوجرافيك الثابت */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
-          <div>
-            <h4 className="text-xs font-bold text-sky-300 flex items-center gap-2">
-              <Film className="w-4 h-4 text-sky-400" />
-              14. المحاكاة البصرية المعمارية (Visual Simulation & Infographics):
-            </h4>
-            <p className="text-xs text-slate-400 mt-1">
-              اختر وضع العرض المناسب: موشن جرافيك كودي تفاعلي بمحرك Remotion، أو الإنفوجرافيك المعماري عالي الدقة.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-            <button
-              onClick={() => setVisualMode('motion')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                visualMode === 'motion'
-                  ? 'bg-gradient-to-r from-sky-600 to-blue-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Film className="w-3.5 h-3.5" />
-              <span>موشن جرافيك Remotion</span>
-            </button>
-            <button
-              onClick={() => setVisualMode('infographic')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                visualMode === 'infographic'
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5" />
-              <span>إنفوجرافيك تفصيلي</span>
-            </button>
-          </div>
-        </div>
-
-        {visualMode === 'motion' ? (
-          <div className="animate-fadeIn">
-            <LessonMotionPlayer 
-              subtopic={subtopic} 
-              onSwitchToInfographic={() => setVisualMode('infographic')} 
-            />
-          </div>
-        ) : (
-          <div className="animate-fadeIn">
-            <InfographicCard 
-              subtopic={subtopic} 
-              onOpenGallery={onOpenInfographicGallery} 
-              highlights={lessonHighlights}
-              onHighlightClick={handleHighlightClick}
-            />
-          </div>
-        )}
       </div>
 
       {/* بطاقة الاحتفال بإتمام قراءة محتوى الدرس عند التمرير لنهايته */}

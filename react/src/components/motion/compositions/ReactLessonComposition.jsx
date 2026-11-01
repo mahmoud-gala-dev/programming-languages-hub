@@ -30,10 +30,14 @@ export default function ReactLessonComposition({
 
   const diagramType = detectDiagramType(subtopic);
 
-  // الكود الذهبي المصغر للعرض داخل التايم لاين
-  const sampleCode = subtopic?.codeSnippet 
-    ? subtopic.codeSnippet.split('\n').slice(0, 5).join('\n')
-    : `function ${subtopic?.title?.replace(/[^a-zA-Z0-9]/g, '') || 'Component'}() {\n  return <div>⚛️ React 19 Engine</div>;\n}`;
+  // الكود الذهبي الفعلي المقتبس من الدرس
+  const rawCode = subtopic?.simpleCode || subtopic?.syntax || subtopic?.codeSnippet || '';
+  const sampleCode = rawCode
+    ? rawCode.trim().split('\n').slice(0, 5).join('\n')
+    : `// ${subtopic?.title || 'React Concept'}\nconsole.log("Ready!");`;
+
+  // الفهم العميق والتعريف المعماري الفعلي للدرس
+  const explanationText = subtopic?.definition || subtopic?.why || subtopic?.description || 'مفهوم جوهري في خريطة طريق React الاحترافية.';
 
   return (
     <div 
@@ -131,8 +135,8 @@ export default function ReactLessonComposition({
             <span>💡</span>
             <span>القاعدة المعمارية الذهبية:</span>
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed font-medium mt-1">
-            {subtopic?.description || 'يعتمد React على مقارنة الأشجار الافتراضية بدقة O(n) وتحديث العقد المتأثرة فقط بأعلى سرعة وأقل استهلاك لذاكرة المتصفح.'}
+          <p className="text-xs text-slate-300 leading-relaxed font-medium mt-1 line-clamp-3">
+            {explanationText}
           </p>
           <div className="flex items-center gap-2 mt-2 pt-1 border-t border-cyan-500/20 text-[10px] text-slate-400">
             <span className="text-emerald-400 font-bold">✓ Zero Overhead</span>
