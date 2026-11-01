@@ -23,7 +23,7 @@ export default function GeminiTutorModal({ currentSubtopic, isOpen, onClose, onO
 
   if (!isOpen) return null;
 
-  const currentContext = currentSubtopic 
+  const currentContext = currentSubtopic
     ? `${subtopicTitle(currentSubtopic)}: ${currentSubtopic.definition || ''}. التشبيه: ${currentSubtopic.analogy || ''}`
     : "أساسيات تطوير الويب";
 
@@ -77,7 +77,7 @@ export default function GeminiTutorModal({ currentSubtopic, isOpen, onClose, onO
   return typeof document !== 'undefined' ? createPortal(
     <div className="fixed inset-0 z-50 w-screen h-dvh min-h-dvh bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-hidden" dir="rtl">
       <div className="bg-slate-900 border border-purple-500/40 rounded-2xl w-full max-w-2xl h-[85dvh] flex flex-col shadow-2xl overflow-hidden animate-slideUp">
-        
+
         {/* رأس نافذة المعلم الذكي */}
         <div className="px-5 py-3.5 bg-gradient-to-r from-purple-950 via-slate-900 to-slate-950 border-b border-purple-500/30 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -131,11 +131,10 @@ export default function GeminiTutorModal({ currentSubtopic, isOpen, onClose, onO
               )}
 
               <div
-                className={`max-w-[85%] rounded-2xl p-3.5 leading-relaxed whitespace-pre-wrap text-pretty ${
-                  msg.sender === 'user'
-                    ? 'bg-blue-600/90 text-white rounded-tr-none'
-                    : 'bg-slate-800/90 text-slate-100 rounded-tl-none border border-slate-700/60 shadow-md'
-                }`}
+                className={`max-w-[85%] rounded-2xl p-3.5 leading-relaxed whitespace-pre-wrap text-pretty ${msg.sender === 'user'
+                  ? 'bg-blue-600/90 text-white rounded-tr-none'
+                  : 'bg-slate-800/90 text-slate-100 rounded-tl-none border border-slate-700/60 shadow-md'
+                  }`}
               >
                 {msg.text}
               </div>

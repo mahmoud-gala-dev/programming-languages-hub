@@ -40,3 +40,6 @@ Thumbs.db
 *.sw?
 
 .vercel
+.qa-agent/patches/FIX-iframe-sandbox-and-celebration.patch
+.qa-agent/backups/LessonViewer.jsx.bak
+.qa-agent/backups/LiveCodePreview.jsx.bak

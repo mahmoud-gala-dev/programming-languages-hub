@@ -2,17 +2,17 @@
 // استوديو تخصيص واختيار خطوط الكود البرمجي العالمي
 // يتيح الاختيار الحي والمعاينة الفورية لـ 7 من أقوى خطوط البرمجة عالمياً مع دعم الرموز المتصلة (Ligatures)
 import React, { useState, useEffect } from 'react';
-import { 
-  Code2, 
-  Check, 
-  X, 
-  Sparkles, 
-  Type, 
-  Layers, 
-  Palette, 
-  Laptop, 
-  CheckCircle2, 
-  Play, 
+import {
+  Code2,
+  Check,
+  X,
+  Sparkles,
+  Type,
+  Layers,
+  Palette,
+  Laptop,
+  CheckCircle2,
+  Play,
   RotateCcw,
   Zap,
   Star
@@ -87,12 +87,12 @@ export default function CodeFontModal({ isOpen, onClose }) {
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/85 backdrop-blur-md animate-fadeIn"
       onClick={onClose}
       dir="rtl"
     >
-      <div 
+      <div
         style={{ maxHeight: '90dvh', height: '90dvh' }}
         className="relative w-full max-w-5xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-[0_25px_70px_-15px_rgba(6,182,212,0.3)] flex flex-col overflow-hidden text-slate-100 animate-scaleUp"
         onClick={(e) => e.stopPropagation()}
@@ -169,10 +169,10 @@ export default function CodeFontModal({ isOpen, onClose }) {
             </div>
 
             {/* صندوق الكود الحي مع تطبيق عائلة الخط المباشرة */}
-            <div 
+            <div
               className="bg-[#060a12] rounded-xl border border-slate-800/90 p-4 overflow-x-auto shadow-inner select-text transition-all"
               dir="ltr"
-              style={{ 
+              style={{
                 fontFamily: currentPreviewFont.family,
                 fontFeatureSettings: '"liga" 1, "calt" 1'
               }}
@@ -218,20 +218,19 @@ export default function CodeFontModal({ isOpen, onClose }) {
                   <div
                     key={font.id}
                     onMouseEnter={() => setPreviewFontId(font.id)}
-                    className={`relative p-4 rounded-2xl border transition-all cursor-pointer text-right flex flex-col justify-between ${
-                      isActive
-                        ? 'bg-gradient-to-r from-cyan-950/40 via-slate-900 to-slate-900 border-cyan-500 shadow-lg shadow-cyan-500/10 ring-1 ring-cyan-500'
-                        : isHovered
-                          ? 'bg-slate-800/80 border-cyan-500/50 shadow-md'
-                          : 'bg-slate-950/70 border-slate-800 hover:border-slate-700 hover:bg-slate-900/90'
-                    }`}
+                    className={`relative p-4 rounded-2xl border transition-all cursor-pointer text-right flex flex-col justify-between ${isActive
+                      ? 'bg-gradient-to-r from-cyan-950/40 via-slate-900 to-slate-900 border-cyan-500 shadow-lg shadow-cyan-500/10 ring-1 ring-cyan-500'
+                      : isHovered
+                        ? 'bg-slate-800/80 border-cyan-500/50 shadow-md'
+                        : 'bg-slate-950/70 border-slate-800 hover:border-slate-700 hover:bg-slate-900/90'
+                      }`}
                     onClick={() => handleSelectFont(font)}
                   >
                     <div>
                       {/* رأس بطاقة الخط */}
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <h5 
+                          <h5
                             className="text-base font-bold text-white tracking-wide"
                             style={{ fontFamily: font.family }}
                           >
@@ -254,10 +253,10 @@ export default function CodeFontModal({ isOpen, onClose }) {
                       </p>
 
                       {/* مقتطف الكود التوضيحي بالخط الفعلي */}
-                      <div 
+                      <div
                         className="bg-slate-900/90 rounded-lg p-2.5 border border-slate-800 text-xs text-cyan-300 font-normal leading-normal overflow-x-auto select-none"
                         dir="ltr"
-                        style={{ 
+                        style={{
                           fontFamily: font.family,
                           fontFeatureSettings: '"liga" 1, "calt" 1'
                         }}
@@ -286,11 +285,10 @@ export default function CodeFontModal({ isOpen, onClose }) {
                           e.stopPropagation();
                           handleSelectFont(font);
                         }}
-                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 font-sans ${
-                          isActive
-                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-default'
-                            : 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-sm'
-                        }`}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 font-sans ${isActive
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-default'
+                          : 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-sm'
+                          }`}
                       >
                         {isActive ? (
                           <>

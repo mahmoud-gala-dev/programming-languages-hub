@@ -114,7 +114,7 @@ export default function CommonMistakesLab({ commonMistakes = [], readingFontSize
                     className="p-3.5 rounded-xl bg-slate-950 border border-emerald-900/40 font-mono text-emerald-300 text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap select-text"
                     dir="ltr"
                   >
-                    {m.right}
+                    {m.right || m.correct}
                   </div>
                 </div>
 
@@ -127,7 +127,7 @@ export default function CommonMistakesLab({ commonMistakes = [], readingFontSize
             </div>
 
             {/* سهم التحول والتفسير المعماري الجوهري */}
-            {m.reason && (
+            {(m.reason || m.explanation) && (
               <div className="bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 rounded-xl p-4 flex items-start gap-3">
                 <div className="size-8 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center justify-center shrink-0 mt-0.5">
                   <Lightbulb className="size-4" />
@@ -141,7 +141,7 @@ export default function CommonMistakesLab({ commonMistakes = [], readingFontSize
                     className="text-slate-300 font-sans leading-relaxed text-pretty text-xs"
                     style={{ fontSize: `${readingFontSize}px` }}
                   >
-                    {m.reason}
+                    {m.reason || m.explanation}
                   </p>
                 </div>
               </div>

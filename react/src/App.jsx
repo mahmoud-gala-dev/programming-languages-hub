@@ -35,11 +35,28 @@ export default function App() {
   const currentSection = getSectionById(currentSectionId);
 
   const [currentTopicId, setCurrentTopicId] = useState(() => {
-    return currentSection.topics[0]?.id || "1.1";
+    try {
+      const savedTopic = localStorage.getItem("react_roadmap_current_topic");
+      if (savedTopic && currentSection.topics.some(t => t.id === savedTopic)) {
+        return savedTopic;
+      }
+      return currentSection.topics[0]?.id || "1.1";
+    } catch {
+      return currentSection.topics[0]?.id || "1.1";
+    }
   });
 
   const [currentSubtopicId, setCurrentSubtopicId] = useState(() => {
-    return currentSection.topics[0]?.subtopics[0]?.id || "1.1.a";
+    try {
+      const savedSubtopic = localStorage.getItem("react_roadmap_current_subtopic");
+      const allSubs = currentSection.topics.flatMap(t => t.subtopics);
+      if (savedSubtopic && allSubs.some(s => s.id === savedSubtopic)) {
+        return savedSubtopic;
+      }
+      return currentSection.topics[0]?.subtopics[0]?.id || "1.1.a";
+    } catch {
+      return currentSection.topics[0]?.subtopics[0]?.id || "1.1.a";
+    }
   });
 
   const [specialView, setSpecialView] = useState(null);
@@ -147,10 +164,24 @@ export default function App() {
     }
   }, [currentSectionId]);
 
+  useEffect(() => {
+    try {
+      if (currentTopicId) {
+        localStorage.setItem("react_roadmap_current_topic", String(currentTopicId));
+      }
+      if (currentSubtopicId) {
+        localStorage.setItem("react_roadmap_current_subtopic", String(currentSubtopicId));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [currentTopicId, currentSubtopicId]);
+
   // إيجاد الموضوع الفرعي الحالي ضمن القسم النشط
   const allSubtopics = currentSection.topics.flatMap(t => t.subtopics);
-  const currentSubtopicIndex = allSubtopics.findIndex(s => s.id === currentSubtopicId);
-  const currentSubtopic = allSubtopics[currentSubtopicIndex] || allSubtopics[0] || {};
+  const foundIndex = allSubtopics.findIndex(s => s.id === currentSubtopicId);
+  const currentSubtopicIndex = foundIndex >= 0 ? foundIndex : 0;
+  const currentSubtopic = allSubtopics[currentSubtopicIndex] || {};
   const currentTopic = currentSection.topics.find(t => t.id === currentTopicId) || currentSection.topics[0];
 
   // شريط تقدم قراءة الدرس التفاعلي على مستوى الصفحة كاملة
@@ -194,7 +225,35 @@ export default function App() {
     });
   };
 
-  const handleSelectSubtopic = (topicId, subId) => {
+  const handleSelectSubtopic = (firstArg, secondArg) => {
+    let topicId;
+    let subId;
+
+    if (secondArg) {
+      // تم التمرير كـ (topicId, subId)
+      topicId = firstArg;
+      subId = secondArg;
+    } else {
+      // تم التمرير بوسيط واحد فقط
+      const allSubs = currentSection.topics.flatMap(t => t.subtopics);
+      const matchedSub = allSubs.find(s => s.id === firstArg);
+      if (matchedSub) {
+        subId = firstArg;
+        const parentTopic = currentSection.topics.find(t => t.subtopics.some(s => s.id === subId));
+        topicId = parentTopic ? parentTopic.id : currentTopicId;
+      } else {
+        // قد يكون تم تمرير topicId فقط كمعرف رئيسي
+        const topic = currentSection.topics.find(t => t.id === firstArg);
+        if (topic && topic.subtopics.length > 0) {
+          topicId = topic.id;
+          subId = topic.subtopics[0].id;
+        } else {
+          subId = firstArg;
+          topicId = currentTopicId;
+        }
+      }
+    }
+
     triggerSmoothTransition(() => {
       setCurrentTopicId(topicId);
       setCurrentSubtopicId(subId);
@@ -221,18 +280,20 @@ export default function App() {
   };
 
   const handleNext = () => {
-    if (currentSubtopicIndex < allSubtopics.length - 1) {
-      const nextSub = allSubtopics[currentSubtopicIndex + 1];
+    const activeIndex = allSubtopics.findIndex(s => s.id === (currentSubtopic?.id || currentSubtopicId));
+    if (activeIndex >= 0 && activeIndex < allSubtopics.length - 1) {
+      const nextSub = allSubtopics[activeIndex + 1];
       const parentTopic = currentSection.topics.find(t => t.subtopics.some(s => s.id === nextSub.id));
-      handleSelectSubtopic(parentTopic.id, nextSub.id);
+      handleSelectSubtopic(parentTopic?.id || currentTopicId, nextSub.id);
     }
   };
 
   const handlePrev = () => {
-    if (currentSubtopicIndex > 0) {
-      const prevSub = allSubtopics[currentSubtopicIndex - 1];
+    const activeIndex = allSubtopics.findIndex(s => s.id === (currentSubtopic?.id || currentSubtopicId));
+    if (activeIndex > 0) {
+      const prevSub = allSubtopics[activeIndex - 1];
       const parentTopic = currentSection.topics.find(t => t.subtopics.some(s => s.id === prevSub.id));
-      handleSelectSubtopic(parentTopic.id, prevSub.id);
+      handleSelectSubtopic(parentTopic?.id || currentTopicId, prevSub.id);
     }
   };
 
@@ -272,8 +333,8 @@ export default function App() {
               onSelectSection={handleSelectSection}
               currentTopicId={currentTopicId}
               currentSubtopicId={currentSubtopicId}
-              onSelectSubtopic={(subId) => {
-                handleSelectSubtopic(subId);
+              onSelectSubtopic={(topicId, subId) => {
+                handleSelectSubtopic(topicId, subId);
                 // على الشاشات الصغيرة (<1024px) إغلاق الدرج تلقائياً لرؤية محتوى الدرس مباشرة
                 if (typeof window !== 'undefined' && window.innerWidth < 1024) {
                   setIsSidebarOpen(false);

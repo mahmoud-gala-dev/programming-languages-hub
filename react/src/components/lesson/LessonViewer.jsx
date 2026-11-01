@@ -713,6 +713,16 @@ export default function LessonViewer({
         </div>
       </div>
 
+      {/* 5.5 المخطط التدفقي المنطقي للعملية (Execution Flow) */}
+      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-2">
+        <h4 className="text-xs font-bold text-sky-400 flex items-center gap-2">
+          <span>🔄</span> 5.ب. المخطط التدفقي المنطقي وتتبع التنفيذ (Execution Flow Trace):
+        </h4>
+        <div className="p-3.5 bg-slate-950/80 rounded-xl border border-sky-900/30 text-xs font-sans text-sky-200/90 leading-relaxed">
+          {subtopic.executionFlow || "المستخدم ينقر أو يحدث الإجراء ➔ إطلاق SyntheticEvent في React ➔ جدولة التحديث في Fiber Lane ➔ مقارنة الـ VDOM ➔ تطبيق التعديلات الصافية فقط في Commit Phase."}
+        </div>
+      </div>
+
       {/* 6. المثال العملي البسيط مع تعليق على كل سطر وملاحظات وتظليلات تفاعلية */}
       <div className="space-y-2">
         <h4 className="text-xs font-bold text-slate-200 flex items-center gap-2">
@@ -720,7 +730,7 @@ export default function LessonViewer({
           6. مثال عملي بسيط (مع تعليق عربي فوق كل سطر كود):
         </h4>
         <CodeBlock 
-          code={subtopic.simpleCode} 
+          code={subtopic.simpleCode || subtopic.codeSimple} 
           title={`كود مبسط: ${subtopic.title}`} 
           language="javascript" 
           subtopicId={subtopic.id}
@@ -736,7 +746,7 @@ export default function LessonViewer({
           7. مثال عملي متقدم وتطبيقي (مع تعليقات كاملة):
         </h4>
         <CodeBlock 
-          code={subtopic.advancedCode} 
+          code={subtopic.advancedCode || subtopic.codeAdvanced} 
           title={`تطبيق عملي متقدم: ${subtopic.title}`} 
           language="javascript" 
           subtopicId={subtopic.id}
@@ -746,12 +756,12 @@ export default function LessonViewer({
       </div>
 
       {/* المعاينة المباشرة للكود المتقدم */}
-      {subtopic.advancedCode && (
-        <LiveCodePreview initialCode={subtopic.advancedCode} title={`المعاينة المباشرة لتطبيق: ${subtopic.title}`} />
+      {(subtopic.advancedCode || subtopic.codeAdvanced) && (
+        <LiveCodePreview initialCode={subtopic.advancedCode || subtopic.codeAdvanced} title={`المعاينة المباشرة لتطبيق: ${subtopic.title}`} />
       )}
 
       {/* 8. شرح المخرجات */}
-      {subtopic.outputExplanation && (
+      {(subtopic.outputExplanation || subtopic.output) && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
           <h4 className="text-xs font-bold text-cyan-400 mb-2 flex items-center gap-2">
             <Eye className="size-4" />
@@ -761,16 +771,16 @@ export default function LessonViewer({
             className={`text-slate-300 font-sans text-pretty ${currentLeadingClass}`}
             style={{ fontSize: `${readingFontSize}px` }}
           >
-            {renderHighlightedContent(subtopic.outputExplanation)}
+            {renderHighlightedContent(subtopic.outputExplanation || subtopic.output)}
           </p>
         </div>
       )}
 
       {/* 9. أخطاء شائعة يقع فيها المبتدئون وكيف تتجنبها هندسياً */}
-      <CommonMistakesLab commonMistakes={subtopic.commonMistakes} readingFontSize={readingFontSize} />
+      <CommonMistakesLab commonMistakes={subtopic.commonMistakes || subtopic.mistakes || []} readingFontSize={readingFontSize} />
 
       {/* 10. نصائح ذهبية وأفضل الممارسات للمحترفين */}
-      <ProBestPracticesSection bestPractices={subtopic.bestPractices} readingFontSize={readingFontSize} />
+      <ProBestPracticesSection bestPractices={subtopic.bestPractices || subtopic.tips || []} readingFontSize={readingFontSize} />
 
       {/* 11. النموذج الذهني المعماري وخلف كواليس المحرك (Mental Model & Under the Hood) */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4 relative overflow-hidden">
@@ -896,6 +906,41 @@ export default function LessonViewer({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* 13.5 جدول المقارنة المعمارية المباشرة (Head-to-Head Architectural Comparison) */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <h4 className="text-xs font-bold text-indigo-300 flex items-center gap-2">
+            <span>⚖️</span> 13.ب. المقارنة المعمارية المباشرة (Head-to-Head Comparison):
+          </h4>
+          <span className="text-[10px] font-mono text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-800/50">
+            Modern vs Legacy
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div className="bg-slate-950/80 border border-rose-900/30 rounded-xl p-3.5 space-y-1.5">
+            <div className="text-xs font-bold text-rose-400 flex items-center gap-1.5">
+              <span>⏮️</span> الأسلوب التقليدي السابق (The Legacy Way):
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
+              {subtopic.headToHeadComparison?.oldWay || "تحديث يدوي لـ DOM، تشابك في مصادر الحقيقة، وصعوبة تتبع مسببات إعادة الرسم مما يسبب هبوطاً حاداً في الأداء مع تضخم المشروع."}
+            </p>
+          </div>
+          <div className="bg-slate-950/80 border border-emerald-900/30 rounded-xl p-3.5 space-y-1.5">
+            <div className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+              <span>⚡</span> أسلوب React 19 العصري (The Modern Way):
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
+              {subtopic.headToHeadComparison?.modernWay || "برمجة تصريحية معتمدة على مكونات نقية، جدولة أوتوماتيكية للأولويات، وحفظ مرجعي تلقائي عبر React Compiler."}
+            </p>
+          </div>
+        </div>
+        {subtopic.headToHeadComparison?.verdict && (
+          <div className="text-xs text-indigo-200/90 bg-indigo-950/40 p-2.5 rounded-xl border border-indigo-800/40">
+            <strong>الحكم المعماري:</strong> {subtopic.headToHeadComparison.verdict}
+          </div>
+        )}
       </div>
 
             {/* 14. كبسولة المقابلات التقنية وأسئلة شركات Big Tech (Senior Interview Prep) */}
