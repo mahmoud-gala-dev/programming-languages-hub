@@ -29,7 +29,11 @@ import {
   Film,
   Cpu,
   Zap,
-  ShieldAlert
+  ShieldAlert,
+  Briefcase,
+  Building2,
+  Code2,
+  Trophy,
 } from 'lucide-react';
 import CodeBlock from './CodeBlock.jsx';
 import LiveCodePreview from './LiveCodePreview.jsx';
@@ -894,41 +898,144 @@ export default function LessonViewer({
         </div>
       </div>
 
-      {/* بطاقة الاحتفال بإتمام قراءة محتوى الدرس عند التمرير لنهايته */}
-      {scrollProgress >= 95 && (
-        <div className="bg-gradient-to-r from-emerald-950/70 via-slate-900 to-cyan-950/70 border border-emerald-500/50 rounded-2xl p-5 text-center shadow-xl animate-slideUp space-y-3">
-          <div className="flex items-center justify-center gap-2 text-emerald-300 text-sm font-bold">
-            <Award className="size-5 text-amber-400" />
-            <span>🎉 رائع! لقد أتممت قراءة محاور هذا الدرس بالكامل بنسبة <strong className="tabular-nums">100%</strong></span>
+            {/* 14. كبسولة المقابلات التقنية وأسئلة شركات Big Tech (Senior Interview Prep) */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <h4 className="text-xs font-bold text-violet-300 flex items-center gap-2">
+            <Briefcase className="w-4 h-4 text-violet-400" />
+            14. كبسولة المقابلات التقنية لشركات التكنولوجيا الكبرى (FAANG & Senior Interview Gotchas):
+          </h4>
+          <span className="text-[10px] font-mono text-violet-400 bg-violet-950/60 px-2 py-0.5 rounded-full border border-violet-800/50">
+            Interview Ready
+          </span>
+        </div>
+        <p className="text-xs text-slate-300 leading-relaxed font-sans">
+          {subtopic.interviewPrep?.question 
+            ? subtopic.interviewPrep.question
+            : "سؤال المقابلات الشهير: \"كيف تؤثر هذه الجزئية على معمارية التطبيق ودورة تصيير المكونات؟ وما الفخ الذي يقع فيه المطور العادي؟\""}
+        </p>
+        <div className="bg-slate-950/80 border border-violet-900/30 rounded-2xl p-4 space-y-2">
+          <div className="text-[11px] font-bold text-violet-400 flex items-center gap-1.5">
+            <span>💡</span> الإجابة النموذجية التي يبحث عنها المقابل التقني (Senior Answer):
           </div>
-          <p className="text-xs text-slate-300 max-w-lg mx-auto text-pretty">
-            اختبر فهمك السريع عبر الاختبار الذكي، أو ميز الدرس كمكتمل وانتقل مباشرة للمحطة التالية!
+          <p className="text-xs text-slate-300 leading-relaxed font-sans">
+            {subtopic.interviewPrep?.answer || "يركز مهندس البرمجيات المحترف على سلامة التساوي المرجعي (Referential Equality)، وتجنب الآثار الجانبية غير المتوقعة، وفصل المنطق الحسابي الثقيل عن دورة التصيير لضمان استجابة الواجهة وسرعة التفاعل مع المستخدم."}
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
-            <button
-              onClick={() => setIsAiQuizOpen(true)}
-              className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition-colors cursor-pointer shadow-md"
-            >
-              <Target className="size-4 text-amber-300" />
-              <span>خوض الاختبار الذكي (3 أسئلة)</span>
-            </button>
+          {subtopic.interviewPrep?.insiderTip && (
+            <div className="text-[11px] text-amber-300/90 pt-1 border-t border-slate-800/80 flex items-center gap-1.5">
+              <span>⭐ نصيحة المقابل:</span> {subtopic.interviewPrep.insiderTip}
+            </div>
+          )}
+        </div>
+      </div>
 
-            {!isCompleted && (
-              <button
-                onClick={() => {
-                  onToggleComplete(subtopic.id);
-                  showToast("تم إتقان الدرس وتسجيل الإنجاز! 🌟", "success");
-                  if (hasNext && onNext) onNext();
-                }}
-                className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition-colors cursor-pointer shadow-md"
-              >
-                <Check className="size-4 font-black" />
-                <span>تحديد كمكتمل والمتابعة للدرس التالي</span>
-              </button>
-            )}
+      {/* 15. دراسة حالة واقعية في بيئات الإنتاج الضخمة (Real-World Enterprise Case Study) */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <h4 className="text-xs font-bold text-emerald-300 flex items-center gap-2">
+            <Building2 className="w-4 h-4 text-emerald-400" />
+            15. سيناريو من واقع مشاريع المليون مستخدم (1M+ Users Enterprise Case Study):
+          </h4>
+          <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/50">
+            Enterprise Scale
+          </span>
+        </div>
+        <div className="bg-slate-950/70 border border-emerald-900/30 rounded-2xl p-4 space-y-2">
+          <h5 className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+            <span>🏢</span> {subtopic.enterpriseCaseStudy?.company || "Meta & Netflix Scale Architecture"}
+          </h5>
+          <p className="text-xs text-slate-300 leading-relaxed font-sans">
+            {subtopic.enterpriseCaseStudy?.story || "في المنصات الضخمة التي تخدم ملايين المستخدمين يومياً، يؤدي الاستخدام غير المنضبط إلى تراكم استهلاك الذاكرة وبطء أجهزة المستخدمين الضعيفة. يتم استخدام هذا المفهوم لتقسيم عبء المعالجة، وتأخير المهام غير الحرجة، مما يضمن ثبات معدل الإطارات (60 FPS) حتى مع تضخم شجرة المكونات."}
+          </p>
+          {subtopic.enterpriseCaseStudy?.takeaway && (
+            <div className="text-[11px] text-emerald-300/90 pt-1 border-t border-slate-800/80">
+              <strong>الدرس المستفاد:</strong> {subtopic.enterpriseCaseStudy.takeaway}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 16. بنك الأسئلة الشائعة والأسرار الغامضة (Deep-Dive FAQs & Edge Cases) */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <h4 className="text-xs font-bold text-sky-300 flex items-center gap-2">
+            <HelpCircle className="w-4 h-4 text-sky-400" />
+            16. بنك الأسئلة الشائعة والحالات الاستثنائية (Deep-Dive FAQs & Edge Cases):
+          </h4>
+          <span className="text-[10px] font-mono text-sky-400 bg-sky-950/60 px-2 py-0.5 rounded-full border border-sky-800/50">
+            Curious Minds
+          </span>
+        </div>
+        <div className="space-y-3">
+          {(subtopic.deepDiveFaqs && subtopic.deepDiveFaqs.length > 0) ? (
+            subtopic.deepDiveFaqs.map((faq, idx) => (
+              <details key={idx} className="group bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 transition-all">
+                <summary className="text-xs font-bold text-slate-200 cursor-pointer flex items-center justify-between select-none">
+                  <span className="flex items-center gap-2">
+                    <span className="text-sky-400 font-mono">Q{idx + 1}:</span>
+                    <span>{faq.q}</span>
+                  </span>
+                  <span className="text-slate-500 group-open:rotate-90 transition-transform">▸</span>
+                </summary>
+                <div className="pt-2.5 mt-2 border-t border-slate-800/80 text-xs text-slate-300 leading-relaxed font-sans">
+                  {faq.a}
+                </div>
+              </details>
+            ))
+          ) : (
+            <>
+              <details className="group bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 transition-all" open>
+                <summary className="text-xs font-bold text-slate-200 cursor-pointer flex items-center justify-between select-none">
+                  <span className="flex items-center gap-2">
+                    <span className="text-sky-400 font-mono">س1:</span>
+                    <span>متى يكون استخدام هذا المفهوم حتمياً ومتى يعتبر زيادة تعقيد لا داعي لها؟</span>
+                  </span>
+                  <span className="text-slate-500 group-open:rotate-90 transition-transform">▸</span>
+                </summary>
+                <div className="pt-2.5 mt-2 border-t border-slate-800/80 text-xs text-slate-300 leading-relaxed font-sans">
+                  يُستخدم المفهوم عند وجود حاجة فعلية لحفظ الحالة، تحسين استجابة الواجهة، أو مشاركة منطق معقد عبر عدة مكونات. تجنب التجريد المبكر (Premature Abstraction) إذا كان كودك يؤدي الغرض ببساطة وبدون مشاكل في الأداء.
+                </div>
+              </details>
+              <details className="group bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 transition-all">
+                <summary className="text-xs font-bold text-slate-200 cursor-pointer flex items-center justify-between select-none">
+                  <span className="flex items-center gap-2">
+                    <span className="text-sky-400 font-mono">س2:</span>
+                    <span>كيف يتعامل React 19 والـ React Compiler مع هذا الجزء تلقائياً؟</span>
+                  </span>
+                  <span className="text-slate-500 group-open:rotate-90 transition-transform">▸</span>
+                </summary>
+                <div className="pt-2.5 mt-2 border-t border-slate-800/80 text-xs text-slate-300 leading-relaxed font-sans">
+                  في بيئات React 19 المزودة بالـ Compiler، يتم تحليل مخطط تدفق المتغيرات وقت البناء وحقن كود الحفظ المرجعي التلقائي، مما يوفر على المطور عناء كتابة الميموزيشن اليدوي ويمنع أخطاء نسيان التبعيات.
+                </div>
+              </details>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* 17. التحدي العملي ومختبر الاختبار الذاتي (Hands-on Challenge with Self-Test) */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <h4 className="text-xs font-bold text-amber-300 flex items-center gap-2">
+            <Trophy className="w-4 h-4 text-amber-400" />
+            17. التحدي البرمجي العملي ومختبر التطبيق الذاتي (Hands-on Challenge):
+          </h4>
+          <span className="text-[10px] font-mono text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-800/50">
+            Build It Yourself
+          </span>
+        </div>
+        <div className="bg-slate-950/80 border border-amber-900/30 rounded-2xl p-4 space-y-3">
+          <div className="text-xs font-bold text-slate-200">
+            🎯 المهمة المطلوبة:
+          </div>
+          <p className="text-xs text-slate-300 leading-relaxed font-sans">
+            {subtopic.handsOnChallenge?.task || "قم ببناء مكون React تفاعلي يطبق مفاهيم هذا الدرس بدقة، مع مراعاة التعامل السليم مع الحالات الفارغة (Empty States)، وتوفير تغذية راجعة بصرية فورية عند تفاعل المستخدم."}
+          </p>
+          <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl text-xs font-mono text-amber-300/90 whitespace-pre-wrap" dir="ltr">
+            {subtopic.handsOnChallenge?.hint || "// تلميح للتحدي:\n// 1. تأكد من تهيئة الحالة بقيمة أولية سليمة.\n// 2. استخدم الأسماء المعبرة والممارسات الصحيحة.\n// 3. اختبر المكون على شاشات الهواتف أيضاً."}
           </div>
         </div>
-      )}
+      </div>
 
       {/* 12. شريط التنقل السفلي بين الدروس (السابق / التالي / المعلم الذكي) */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-800">

@@ -158,7 +158,7 @@ export default function LiveCodePreview({ initialCode, title = "المعاينة
             onLoad={handleIframeLoad}
             srcDoc={`<!DOCTYPE html><html dir="rtl" class="dark"><head><meta charset="UTF-8"><style>${IFRAME_DARK_STYLES}</style></head><body>${code}</body></html>`}
             title="Live Preview"
-            sandbox="allow-scripts allow-modals allow-same-origin"
+            sandbox="allow-scripts allow-modals"
             style={{ height: `${iframeHeight}px` }}
             className="w-full border-none block transition-all duration-200"
           />
