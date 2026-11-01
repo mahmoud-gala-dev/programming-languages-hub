@@ -139,8 +139,8 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
     const termB = terms[1]?.term || steps[1]?.title || 'المفهوم الثاني (B)';
     const descB = terms[1]?.meaning || steps[1]?.desc || 'الخصائص المعاكسة والمهام المكملة';
 
-    // تبادل تسليط الضوء الهادئ بين الجانبين (كل 6 ثوانٍ جانب)
-    const isSideA = Math.floor(frame / (fps * 6)) % 2 === 0;
+    // تبادل تسليط الضوء الهادئ بين الجانبين (كل 10 ثوانٍ جانب ليناسب الـ 30 ثانية)
+    const isSideA = Math.floor(frame / (fps * 10)) % 2 === 0;
 
     return (
       <svg 
@@ -286,7 +286,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
   // 2. مخطط تدفق مسار التنفيذ المتسلسل (Pipeline Execution Flow)
   // -------------------------------------------------------------
   if (type === 'pipeline-flow') {
-    const cycleFrames = fps * 6;
+    const cycleFrames = fps * 10;
     const progress = (frame % cycleFrames) / cycleFrames;
     const activeIndex = Math.floor(progress * 3);
     const tokenX = interpolate(progress, [0, 0.33, 0.66, 1], [150, 400, 650, 700]);
@@ -390,7 +390,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
   // 3. مخطط شبكة الاتصال والخادم والعميل (Client-Server & Network Protocols)
   // -------------------------------------------------------------
   if (type === 'client-server') {
-    const cycleFrames = fps * 6;
+    const cycleFrames = fps * 10;
     const packetProgress = (frame % cycleFrames) / cycleFrames;
     const easeProgress = 0.5 - 0.5 * Math.cos(packetProgress * Math.PI * 2);
     const packetX = interpolate(easeProgress, [0, 1], [270, 520]);
@@ -630,7 +630,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
   // 5. مخطط شجرة الـ Virtual DOM ومطابقة الـ Diffing
   // -------------------------------------------------------------
   if (type === 'dom-tree') {
-    const diffHighlight = Math.floor(frame / (fps * 2)) % 2 === 0;
+    const diffHighlight = Math.floor(frame / (fps * 3.5)) % 2 === 0;
     return (
       <svg 
         viewBox="0 0 800 450" 
@@ -745,7 +745,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
   // 6. مخطط تدفق المكونات والبيانات (Component Props & Data Flow)
   // -------------------------------------------------------------
   if (type === 'component-flow') {
-    const flowProgress = interpolate(frame % (fps * 5), [0, fps * 5], [0, 120]);
+    const flowProgress = interpolate(frame % (fps * 7.5), [0, fps * 7.5], [0, 120]);
     return (
       <svg 
         viewBox="0 0 800 450" 
@@ -818,7 +818,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
   // 7. مخطط دورة حياة الـ Hooks والتأثيرات الجانبية
   // -------------------------------------------------------------
   if (type === 'hooks-lifecycle') {
-    const activeStep = Math.floor((frame / (fps * 3)) % 3);
+    const activeStep = Math.floor((frame / (fps * 10)) % 3);
     return (
       <svg 
         viewBox="0 0 800 450" 
@@ -899,7 +899,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
   // 8. المحرك المفهومي المداري الديناميكي الشامل (Universal Concept Engine)
   // -------------------------------------------------------------
   // مستخدم لكل درس آخر: يقرأ خطوات ومصطلحات الدرس الفعلي في كبسولات مدارية متحركة
-  const focusPod = Math.floor(frame / (fps * 4)) % 4; // كل 4 ثوانٍ تركيز على محطة
+  const focusPod = Math.floor(frame / (fps * 7.5)) % 4; // كل 7.5 ثانية تركيز على محطة على مدار الـ 30 ثانية
 
   return (
     <svg 
@@ -928,7 +928,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           stroke="#38bdf8" 
           strokeWidth="3.5" 
           strokeDasharray="10 6" 
-          transform={`rotate(${frame * 0.3} 100 80)`} 
+          transform={`rotate(${frame * 0.12} 100 80)`} 
         />
         <ellipse 
           cx="100" 
@@ -939,7 +939,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           stroke="#a855f7" 
           strokeWidth="3.5" 
           strokeDasharray="10 6" 
-          transform={`rotate(${-frame * 0.25} 100 80)`} 
+          transform={`rotate(${-frame * 0.1} 100 80)`} 
         />
         <circle cx="100" cy="80" r={42 * pulse} fill="#0284c7" stroke="#38bdf8" strokeWidth="2.5" />
         <text x="100" y="78" fill="#fff" fontSize="13" fontWeight="900" textAnchor="middle" fontFamily="Cairo">

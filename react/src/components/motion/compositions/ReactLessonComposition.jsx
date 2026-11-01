@@ -37,8 +37,69 @@ export default function ReactLessonComposition({
     ? rawCode.trim().split('\n').slice(0, 5).join('\n')
     : `// ${subtopic?.title || 'React Concept'}\nconsole.log("Ready!");`;
 
-  // الفهم العميق والتعريف المعماري الفعلي للدرس
-  const explanationText = subtopic?.definition || subtopic?.why || subtopic?.description || 'مفهوم جوهري في خريطة طريق React الاحترافية.';
+  // تقسيم زمن المحاكاة إلى 3 مراحل تعليمية سينمائية متتابعة (10 ثوانٍ / 300 إطار لكل مرحلة)
+  const totalFrames = durationInFrames || 900;
+  const phaseDuration = totalFrames / 3;
+  const currentPhaseIndex = Math.min(Math.floor(frame / phaseDuration), 2);
+  const phaseProgress = Math.min(Math.max(((frame % phaseDuration) / phaseDuration) * 100, 0), 100);
+
+  // استخراج المحتوى الغني الشامل لكل مرحلة من بيانات الدرس
+  const phases = [
+    {
+      id: 1,
+      badge: "المرحلة 1: المفهوم التأسيسي والنموذج الذهني",
+      enBadge: "Foundation & Mental Model",
+      icon: "💡",
+      color: "border-sky-500/40 bg-sky-500/10 text-sky-300",
+      activePillColor: "bg-sky-500 text-slate-950 font-black",
+      progressBg: "bg-sky-400",
+      title: subtopic?.infographic?.steps?.[0]?.title || "المفهوم الجوهري",
+      desc: subtopic?.infographic?.steps?.[0]?.desc || "تأسيس المفهوم والهدف منه",
+      primaryExplanation: subtopic?.definition || subtopic?.why || 'مفهوم جوهري في بنية وتطوير تطبيقات React الاحترافية.',
+      secondaryInsight: subtopic?.mentalModel 
+        ? `النموذج الذهني: ${subtopic.mentalModel}` 
+        : (subtopic?.analogy ? `تشبيه واقعي: ${subtopic.analogy}` : (subtopic?.why ? `الهدف المعماري: ${subtopic.why}` : 'معمارية تصريحية مرنة لبناء واجهات المستخدم السريعة.')),
+      tag: "UI = f(State)"
+    },
+    {
+      id: 2,
+      badge: "المرحلة 2: ما وراء الكواليس وآلية التنفيذ",
+      enBadge: "Under the Hood & Engine Execution",
+      icon: "⚙️",
+      color: "border-purple-500/40 bg-purple-500/10 text-purple-300",
+      activePillColor: "bg-purple-500 text-white font-black",
+      progressBg: "bg-purple-400",
+      title: subtopic?.infographic?.steps?.[1]?.title || "آلية العمل والكواليس",
+      desc: subtopic?.infographic?.steps?.[1]?.desc || "خوارزمية المعالجة والتنفيذ الداخلي",
+      primaryExplanation: subtopic?.executionFlow 
+        ? `مسار التنفيذ: ${subtopic.executionFlow}` 
+        : (subtopic?.why || 'يقوم محرك React بحساب التعديلات الصافية عبر الـ Virtual DOM لتحديث العناصر المتأثرة فقط بأقصى سرعة ممكنة.'),
+      secondaryInsight: subtopic?.deepDiveFaqs?.[0]
+        ? `سؤال معماري: ${subtopic.deepDiveFaqs[0].q} ➔ ${subtopic.deepDiveFaqs[0].a}`
+        : 'كفاءة الذاكرة: لا يتم لمس شجرة الـ DOM الحقيقية إلا في العقد المتغيرة لتجنب الـ Layout Thrashing.',
+      tag: "Virtual DOM Diffing"
+    },
+    {
+      id: 3,
+      badge: "المرحلة 3: نصائح المحترفين وأسرار الإنتاج",
+      enBadge: "Production Mastery & Best Practices",
+      icon: "🚀",
+      color: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
+      activePillColor: "bg-emerald-500 text-slate-950 font-black",
+      progressBg: "bg-emerald-400",
+      title: subtopic?.infographic?.steps?.[2]?.title || "أسرار الإنتاج والأداء",
+      desc: subtopic?.infographic?.steps?.[2]?.desc || "أفضل الممارسات وتفادي الفخاخ",
+      primaryExplanation: subtopic?.performanceSecrets?.[0]
+        ? `🚀 سر الأداء العالي: ${subtopic.performanceSecrets[0]}`
+        : (subtopic?.bestPractices?.[0] ? `أفضل ممارسة: ${subtopic.bestPractices[0]}` : 'احرص على عزل المكونات لتقليل إعادة التصيير الزائدة.'),
+      secondaryInsight: subtopic?.productionPitfalls?.[0]
+        ? `⚠️ فخ شائع تجنبه: ${subtopic.productionPitfalls[0]}`
+        : 'تجنب تعديل الـ DOM يدوياً واعتمد كلياً على الحالة التصريحية (Declarative State).',
+      tag: "Production Ready"
+    }
+  ];
+
+  const currentPhase = phases[currentPhaseIndex];
 
   return (
     <div 
@@ -92,39 +153,52 @@ export default function ReactLessonComposition({
         </div>
       </div>
 
-      {/* شريط خطوات المفهوم الحركية المتتابعة التابع لمحتوى الدرس الحالي بتوقيت مهدئ ومريح */}
-      {subtopic?.infographic?.steps && subtopic.infographic.steps.length > 0 && (
-        <div className="relative z-10 flex items-center justify-between gap-2 sm:gap-3 mt-2 sm:mt-3 px-1">
-          {subtopic.infographic.steps.slice(0, 3).map((step, idx) => {
-            // كل خطوة تأخذ 85 إطاراً كاملاً (قرابة 3 ثوانٍ لكل خطوة) لتركيز المتعلم
-            const stepStart = idx * 85;
-            const stepActive = frame >= stepStart && frame < (stepStart + 85);
-            const isCompleted = frame >= (stepStart + 85);
-            return (
-              <div 
-                key={idx}
-                className={`flex-1 flex items-center gap-2 p-1.5 sm:p-2 rounded-xl border transition-all duration-500 ${
-                  stepActive 
-                    ? 'bg-cyan-500/20 border-cyan-400 text-white shadow-lg shadow-cyan-500/20 scale-[1.02]' 
-                    : isCompleted
-                    ? 'bg-slate-900/60 border-slate-700/60 text-slate-300'
-                    : 'bg-slate-950/40 border-slate-800/40 text-slate-500'
-                }`}
-              >
-                <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center text-[10px] sm:text-xs font-bold font-mono ${
-                  stepActive ? 'bg-cyan-400 text-slate-950 font-black' : isCompleted ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'
-                }`}>
-                  {isCompleted ? '✓' : idx + 1}
+      {/* شريط المراحل التعليمية الثلاث السينمائية المتزامنة مع الـ 30 ثانية */}
+      <div className="relative z-10 grid grid-cols-3 gap-2 sm:gap-3 mt-2 sm:mt-3 px-1">
+        {phases.map((phase, idx) => {
+          const isPhaseActive = idx === currentPhaseIndex;
+          const isCompleted = idx < currentPhaseIndex;
+          return (
+            <div 
+              key={phase.id}
+              className={`flex flex-col p-2 sm:p-2.5 rounded-xl border transition-all duration-500 relative overflow-hidden ${
+                isPhaseActive 
+                  ? 'bg-slate-900/90 border-cyan-400/80 shadow-lg shadow-cyan-500/20 scale-[1.01]' 
+                  : isCompleted
+                  ? 'bg-slate-900/60 border-slate-700/60 text-slate-300'
+                  : 'bg-slate-950/40 border-slate-800/40 text-slate-500'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-1.5 mb-1">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <div className={`w-5 h-5 rounded-lg flex items-center justify-center text-[10px] font-bold font-mono ${
+                    isPhaseActive ? phase.activePillColor : isCompleted ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'
+                  }`}>
+                    {isCompleted ? '✓' : phase.id}
+                  </div>
+                  <span className={`text-[11px] sm:text-xs font-bold truncate ${isPhaseActive ? 'text-white' : isCompleted ? 'text-slate-300' : 'text-slate-500'}`}>
+                    {phase.title}
+                  </span>
                 </div>
-                <div className="truncate">
-                  <div className="text-[11px] sm:text-xs font-bold truncate">{step.title}</div>
-                  <div className="text-[9px] sm:text-[10px] text-slate-400 truncate">{step.desc}</div>
-                </div>
+                <span className="text-[10px] hidden md:inline font-mono text-slate-400">
+                  {idx === 0 ? '0s-10s' : idx === 1 ? '10s-20s' : '20s-30s'}
+                </span>
               </div>
-            );
-          })}
-        </div>
-      )}
+              <div className="text-[9px] sm:text-[10px] text-slate-400 truncate pr-6.5">
+                {phase.desc}
+              </div>
+              
+              {/* شريط تقدم ناعم يعرض الوقت المتبقي في المرحلة الحالية */}
+              <div className="w-full h-1 bg-slate-800/80 rounded-full overflow-hidden mt-1.5">
+                <div 
+                  className={`h-full ${phase.progressBg} transition-all duration-200`}
+                  style={{ width: `${isPhaseActive ? phaseProgress : isCompleted ? 100 : 0}%` }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
       {/* المنتصف: مشهد المخطط المعماري الحركي SVG متمركز تماماً ومتجاوب بنسبة 100% */}
       <div className="relative z-10 flex-1 w-full flex items-center justify-center my-1 sm:my-2 overflow-hidden mx-auto">
@@ -180,34 +254,45 @@ export default function ReactLessonComposition({
           </div>
         </div>
 
-        {/* كبسولة الفهم العميق والقاعدة المعمارية الذهبية */}
+        {/* كبسولة الشرح المعماري العميق المتجددة ديناميكياً مع مراحل الـ 30 ثانية */}
         <div 
-          className="bg-slate-900/90 border border-cyan-500/30 rounded-2xl p-3.5 flex flex-col justify-between shadow-2xl"
+          className="bg-slate-900/90 border border-cyan-500/30 rounded-2xl p-3.5 flex flex-col justify-between shadow-2xl transition-all duration-500"
           style={{
-            opacity: interpolate(frame, [80, 120], [0, 1], { extrapolateRight: 'clamp' }),
-            transform: `translateY(${interpolate(frame, [80, 120], [20, 0], { extrapolateRight: 'clamp' })}px)`
+            opacity: interpolate(frame, [20, 50], [0, 1], { extrapolateRight: 'clamp' }),
+            transform: `translateY(${interpolate(frame, [20, 50], [15, 0], { extrapolateRight: 'clamp' })}px)`
           }}
         >
+          {/* رأس البطاقة مع شارة المرحلة النشطة */}
           <div className="flex items-center justify-between border-b border-cyan-500/20 pb-2">
             <div className="flex items-center gap-2 text-xs font-black text-cyan-300 font-sans">
-              <span className="text-sm">💡</span>
-              <span>القاعدة المعمارية الذهبية (Architecture Rule):</span>
+              <span className="text-base">{currentPhase.icon}</span>
+              <span>{currentPhase.badge}</span>
             </div>
-            <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold font-mono">
-              BEST PRACTICE
+            <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-bold font-mono">
+              {currentPhase.enBadge}
             </span>
           </div>
           
-          <p className="text-xs text-slate-200 leading-relaxed font-medium mt-2.5 line-clamp-4 text-pretty">
-            {explanationText}
-          </p>
+          {/* الشرح الجوهري الرئيسي للمرحلة */}
+          <div className="my-2 space-y-2">
+            <p className="text-xs text-slate-100 leading-relaxed font-medium text-pretty line-clamp-3">
+              {currentPhase.primaryExplanation}
+            </p>
 
-          <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-800/80 text-[10px] text-slate-400 font-mono">
-            <span className="text-emerald-400 font-bold">✓ Zero Overhead</span>
+            {/* الإضاءة الإضافية والتحذير/النموذج الذهني */}
+            <div className="bg-slate-950/80 border border-slate-800 p-2 rounded-xl text-[11px] text-cyan-200/90 leading-relaxed flex items-start gap-1.5">
+              <span className="text-xs mt-0.5">🔹</span>
+              <span className="line-clamp-2 text-pretty">{currentPhase.secondaryInsight}</span>
+            </div>
+          </div>
+
+          {/* التذييل مع الشارات والمؤشرات */}
+          <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[10px] text-slate-400 font-mono">
+            <span className="text-emerald-400 font-bold">✓ {currentPhase.tag}</span>
             <span className="text-slate-600">•</span>
             <span className="text-sky-400 font-bold">Concurrent React 19</span>
             <span className="text-slate-600">•</span>
-            <span className="text-purple-400 font-bold">60FPS Motion</span>
+            <span className="text-purple-400 font-bold">30s • 60FPS</span>
           </div>
         </div>
       </div>

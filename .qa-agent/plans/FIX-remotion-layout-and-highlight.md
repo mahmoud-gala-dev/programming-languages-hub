@@ -20,3 +20,4 @@ BUG-REMOTION-LAYOUT-HIGHLIGHT-OVERFLOW
 - Fix comparison summary bar to fit neatly inside the card boundary, separate numbers into dedicated badge badges.
 - Integrate `tokenizeSnippet` in `ReactLessonComposition.jsx` with line numbers and IDE-style header.
 - Refine spacing and padding across Remotion player.
+

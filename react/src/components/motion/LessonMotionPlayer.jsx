@@ -36,8 +36,11 @@ export default function LessonMotionPlayer({
             <Film className="size-3.5 text-sky-400" />
             <span>Remotion Motion Engine</span>
           </span>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-bold">
+            30s • 60FPS
+          </span>
           <span className="text-[11px] text-slate-400 hidden sm:inline">
-            موشن جرافيك تفاعلي عالي الدقة ديناميكي لكل درس (SVG + Code)
+            موشن جرافيك تفاعلي سينمائي 30 ثانية لكل درس (SVG + Deep Explainer)
           </span>
         </div>
 
@@ -78,7 +81,7 @@ export default function LessonMotionPlayer({
           key={playerKey}
           component={ReactLessonComposition}
           inputProps={{ subtopic, topicTitle }}
-          durationInFrames={360}
+          durationInFrames={900}
           compositionWidth={1280}
           compositionHeight={720}
           fps={30}
@@ -152,7 +155,7 @@ export default function LessonMotionPlayer({
                 key={`cinema-${playerKey}`}
                 component={ReactLessonComposition}
                 inputProps={{ subtopic, topicTitle }}
-                durationInFrames={360}
+                durationInFrames={900}
                 compositionWidth={1280}
                 compositionHeight={720}
                 fps={30}
