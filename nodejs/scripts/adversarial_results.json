@@ -1,0 +1,194 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "results": {
+    "bundleAndChunking": {
+      "pass": true,
+      "details": {
+        "mainBundle": {
+          "filename": "index-DxH4GJ0q.js",
+          "sizeBytes": 117672,
+          "sizeKB": "114.91 kB",
+          "under200KB": true
+        },
+        "sectionChunks": [
+          {
+            "section": 1,
+            "filename": "section1-EiuHP5_I.js",
+            "sizeKB": "274.82"
+          },
+          {
+            "section": 2,
+            "filename": "section2-CaNltPY7.js",
+            "sizeKB": "341.16"
+          },
+          {
+            "section": 3,
+            "filename": "section3-CbVJIxZm.js",
+            "sizeKB": "579.18"
+          },
+          {
+            "section": 4,
+            "filename": "section4-lzmsVsDh.js",
+            "sizeKB": "385.96"
+          },
+          {
+            "section": 5,
+            "filename": "section5-CMZdISiP.js",
+            "sizeKB": "397.54"
+          },
+          {
+            "section": 6,
+            "filename": "section6-BAsoMX8m.js",
+            "sizeKB": "481.25"
+          },
+          {
+            "section": 7,
+            "filename": "section7-BV4mpS8r.js",
+            "sizeKB": "378.67"
+          },
+          {
+            "section": 8,
+            "filename": "section8-Dwc0CQ1N.js",
+            "sizeKB": "569.74"
+          },
+          {
+            "section": 9,
+            "filename": "section9-fJw8FYgB.js",
+            "sizeKB": "395.98"
+          },
+          {
+            "section": 10,
+            "filename": "section10-Dq2zbIVV.js",
+            "sizeKB": "530.25"
+          },
+          {
+            "section": 11,
+            "filename": "section11-PI7bjwAG.js",
+            "sizeKB": "382.27"
+          },
+          {
+            "section": 12,
+            "filename": "section12-DYHlEBx1.js",
+            "sizeKB": "502.03"
+          },
+          {
+            "section": 13,
+            "filename": "section13-DqMj13tX.js",
+            "sizeKB": "322.38"
+          },
+          {
+            "section": 14,
+            "filename": "section14-DfSsXr3Z.js",
+            "sizeKB": "493.32"
+          },
+          {
+            "section": 15,
+            "filename": "section15-LOhsVz92.js",
+            "sizeKB": "478.44"
+          },
+          {
+            "section": 16,
+            "filename": "section16-BWP-X4oc.js",
+            "sizeKB": "396.40"
+          },
+          {
+            "section": 17,
+            "filename": "section17-Cb8BV9RU.js",
+            "sizeKB": "406.11"
+          },
+          {
+            "section": 18,
+            "filename": "section18-BxXDWrh2.js",
+            "sizeKB": "447.98"
+          },
+          {
+            "section": 19,
+            "filename": "section19-DM9yVdcQ.js",
+            "sizeKB": "520.80"
+          },
+          {
+            "section": 20,
+            "filename": "section20-3Hp21pSl.js",
+            "sizeKB": "408.13"
+          },
+          {
+            "section": 21,
+            "filename": "section21-DIbeIxYS.js",
+            "sizeKB": "449.12"
+          },
+          {
+            "section": 22,
+            "filename": "section22-BYMMAtnO.js",
+            "sizeKB": "1047.90"
+          },
+          {
+            "section": 23,
+            "filename": "section23-DoeayNq4.js",
+            "sizeKB": "464.50"
+          }
+        ]
+      }
+    },
+    "dynamicLoader": {
+      "pass": false,
+      "details": {}
+    },
+    "subtopicsAudit": {
+      "pass": true,
+      "details": {
+        "totalSubtopics": 981,
+        "uniqueSubtopicIds": 981,
+        "totalMainTopics": 126
+      }
+    },
+    "placeholderAudit": {
+      "pass": true,
+      "details": {
+        "totalStringsInspected": 61457,
+        "emptyStringViolations": 0,
+        "placeholderViolations": 0
+      }
+    },
+    "quizAudit": {
+      "pass": true,
+      "details": {
+        "totalMainTopicQuizzes": 378,
+        "uniqueQuizIds": 378,
+        "quizDefects": 0
+      }
+    },
+    "exerciseAudit": {
+      "pass": true,
+      "details": {
+        "totalMainTopicExercises": 126,
+        "uniqueExerciseIds": 126,
+        "exercisesWithArabicComments": 126,
+        "exerciseDefects": 0
+      }
+    },
+    "miniProjectAudit": {
+      "pass": true,
+      "details": {
+        "totalMiniProjects": 23,
+        "uniqueProjectIds": 23,
+        "totalProjectCodeFiles": 46,
+        "projectDefects": 0
+      }
+    },
+    "pedagogicalPointsAudit": {
+      "pass": true,
+      "details": {
+        "subtopicPillarDefects": 0
+      }
+    },
+    "errors": [
+      "[Loader] BOUNDARY DEFECT: fetchSectionData(0) silently returned section 1 instead of throwing an error! (Cause: \"Number(sectionId) || 1\")",
+      "[Loader] BOUNDARY DEFECT: fetchSectionData('invalid') silently returned section 1 instead of throwing an error!"
+    ],
+    "warnings": [
+      "[SchemaCompatibility] 23/23 sections lack \"cheatSheet.items\" (using \"entries\" instead, causing E2E tests F5.2, MEM.28, and E2E.WORKLOAD.2 to fail).",
+      "[SchemaCompatibility] 23/23 sections lack top-level \"project\" property (using \"miniProject\" instead, causing E2E tests F5.3, MEM.21, MEM.29, and E2E.WORKLOAD.2 to fail)."
+    ]
+  },
+  "timestamp": "2026-10-30T18:45:00.713Z"
+}

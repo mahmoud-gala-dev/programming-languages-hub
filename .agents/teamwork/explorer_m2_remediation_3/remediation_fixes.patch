@@ -1,0 +1,175 @@
+diff --git a/src/utils/infographicRegistry.js b/src/utils/infographicRegistry.js
+--- a/src/utils/infographicRegistry.js
++++ b/src/utils/infographicRegistry.js
+@@ -134,8 +134,11 @@ export function getDefaultThemeForSection(sectionId, subtopic = null) {
+ export function renderSvgArchitectureDiagram(schemaType, theme = INFOGRAPHIC_THEMES.cyber, subtopicData = {}) {
+-  const primary = theme.primary || '#06b6d4';
+-  const secondary = theme.secondary || '#3b82f6';
+-  const accent = theme.accent || '#22d3ee';
+-  const bg = theme.bg || '#050811';
+-  const title = (subtopicData?.title || 'Node.js Architecture').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+-  const engTitle = (subtopicData?.englishTitle || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
++  const resolvedTheme = (typeof theme === 'string' ? INFOGRAPHIC_THEMES[theme] : theme) || INFOGRAPHIC_THEMES.cyber;
++  const primary = resolvedTheme.primary || '#06b6d4';
++  const secondary = resolvedTheme.secondary || '#3b82f6';
++  const accent = resolvedTheme.accent || '#22d3ee';
++  const bg = resolvedTheme.bg || '#050811';
++  const safeData = subtopicData || {};
++  const title = String(safeData.title || 'Node.js Architecture').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
++  const engTitle = String(safeData.englishTitle || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+diff --git a/src/utils/notesDb.js b/src/utils/notesDb.js
+--- a/src/utils/notesDb.js
++++ b/src/utils/notesDb.js
+@@ -77,6 +77,22 @@ function setLocalStorageArray(key, arr) {
+   }
+ }
+ 
++let fallbackIdSeq = 0;
++
++/**
++ * توليد معرف رقمي فريد وحتمي للتخزين الاحتياطي يمنع التصادم حتى عند الحفظ فائق السرعة
++ */
++function generateUniqueFallbackId(existingItems = []) {
++  fallbackIdSeq = (fallbackIdSeq + 1) % 1000;
++  const now = Date.now();
++  const maxExisting = existingItems.reduce((max, item) => {
++    const num = Number(item?.id);
++    return Number.isSafeInteger(num) && num > max ? num : max;
++  }, 0);
++  const baseId = now * 1000 + fallbackIdSeq;
++  return Math.max(baseId, maxExisting + 1);
++}
++
+ // =========================================================================
+ // 1. عمليات ملاحظات الكود (Code Notes CRUD)
+ // =========================================================================
+@@ -87,12 +103,14 @@ function setLocalStorageArray(key, arr) {
+ export async function saveCodeNote(note) {
+-  const noteData = {
+-    subtopicId: note.subtopicId || "general",
+-    lineNumber: note.lineNumber !== undefined && note.lineNumber !== null ? Number(note.lineNumber) : null,
+-    tag: note.tag || "💡 مفهوم",
+-    content: (note.content || "").trim(),
+-    codeTitle: note.codeTitle || "شفرة توضيحية",
+-    createdAt: note.createdAt || new Date().toISOString()
++  const safeNote = (typeof note === 'object' && note !== null) ? note : {};
++  const parsedLine = safeNote.lineNumber !== undefined && safeNote.lineNumber !== null ? Number(safeNote.lineNumber) : null;
++  const noteData = {
++    subtopicId: safeNote.subtopicId || "general",
++    lineNumber: Number.isFinite(parsedLine) ? parsedLine : null,
++    tag: safeNote.tag || "💡 مفهوم",
++    content: String(safeNote.content || "").trim(),
++    codeTitle: safeNote.codeTitle || "شفرة توضيحية",
++    createdAt: safeNote.createdAt || new Date().toISOString()
+   };
+ 
+   try {
+@@ -107,7 +125,7 @@ export async function saveCodeNote(note) {
+   } catch {
+     const all = getLocalStorageArray(STORAGE_KEY_NOTES);
+-    const id = Date.now() + Math.floor(Math.random() * 1000);
++    const id = generateUniqueFallbackId(all);
+     all.push({ id, ...noteData });
+     setLocalStorageArray(STORAGE_KEY_NOTES, all);
+     return id;
+@@ -120,6 +138,7 @@ export const addCodeNote = saveCodeNote;
+  */
+ export async function getCodeNotesBySubtopic(subtopicId) {
++  if (!subtopicId) return [];
+   try {
+     const db = await openDatabase();
+     return new Promise((resolve, reject) => {
+@@ -142,6 +161,9 @@ export const getNotesBySubtopic = getCodeNotesBySubtopic;
+ export async function deleteCodeNote(id) {
++  if (id === null || id === undefined || id === '') return;
+   const numId = Number(id);
++  const targetKey = Number.isFinite(numId) ? numId : id;
+   try {
+     const db = await openDatabase();
+     return new Promise((resolve, reject) => {
+       const tx = db.transaction(NOTES_STORE, "readwrite");
+       const store = tx.objectStore(NOTES_STORE);
+-      const req = store.delete(numId);
++      const req = store.delete(targetKey);
+       req.onsuccess = () => resolve();
+       req.onerror = () => reject(req.error);
+     });
+   } catch {
+     const all = getLocalStorageArray(STORAGE_KEY_NOTES);
+-    const filtered = all.filter(n => n.id !== numId);
++    const filtered = all.filter(n => {
++      if (n.id === id || n.id === targetKey) return false;
++      if (Number.isFinite(numId) && Number(n.id) === numId) return false;
++      if (String(n.id) === String(id)) return false;
++      return true;
++    });
+     setLocalStorageArray(STORAGE_KEY_NOTES, filtered);
+   }
+ }
+@@ -169,14 +191,15 @@ export async function deleteCodeNote(id) {
+ export async function saveHighlight(highlight) {
+-  const highlightData = {
+-    subtopicId: highlight.subtopicId || "general",
+-    title: highlight.title || highlight.subtopicTitle || "درس Node.js",
+-    text: (highlight.text || "").trim(),
+-    type: highlight.type || "explanation",
+-    color: highlight.color || "amber",
+-    note: (highlight.note || "").trim(),
+-    tag: highlight.tag || "💡 مفهوم",
+-    createdAt: highlight.createdAt || new Date().toISOString()
++  const safeHighlight = (typeof highlight === 'object' && highlight !== null) ? highlight : {};
++  const highlightData = {
++    subtopicId: safeHighlight.subtopicId || "general",
++    title: safeHighlight.title || safeHighlight.subtopicTitle || "درس Node.js",
++    text: String(safeHighlight.text || "").trim(),
++    type: safeHighlight.type || "explanation",
++    color: safeHighlight.color || "amber",
++    note: String(safeHighlight.note || "").trim(),
++    tag: safeHighlight.tag || "💡 مفهوم",
++    createdAt: safeHighlight.createdAt || new Date().toISOString()
+   };
+ 
+   try {
+@@ -191,7 +214,7 @@ export async function saveHighlight(highlight) {
+   } catch {
+     const all = getLocalStorageArray(STORAGE_KEY_HIGHLIGHTS);
+-    const id = Date.now() + Math.floor(Math.random() * 1000);
++    const id = generateUniqueFallbackId(all);
+     all.push({ id, ...highlightData });
+     setLocalStorageArray(STORAGE_KEY_HIGHLIGHTS, all);
+     return id;
+@@ -222,6 +245,7 @@ export async function getAllHighlights() {
+  */
+ export async function getHighlightsBySubtopic(subtopicId) {
++  if (!subtopicId) return [];
+   try {
+     const db = await openDatabase();
+     return new Promise((resolve, reject) => {
+@@ -242,6 +266,9 @@ export async function getHighlightsBySubtopic(subtopicId) {
+ export async function deleteHighlight(id) {
++  if (id === null || id === undefined || id === '') return;
+   const numId = Number(id);
++  const targetKey = Number.isFinite(numId) ? numId : id;
+   try {
+     const db = await openDatabase();
+     return new Promise((resolve, reject) => {
+       const tx = db.transaction(HIGHLIGHTS_STORE, "readwrite");
+       const store = tx.objectStore(HIGHLIGHTS_STORE);
+-      const req = store.delete(numId);
++      const req = store.delete(targetKey);
+       req.onsuccess = () => resolve();
+       req.onerror = () => reject(req.error);
+     });
+   } catch {
+     const all = getLocalStorageArray(STORAGE_KEY_HIGHLIGHTS);
+-    const filtered = all.filter(h => h.id !== numId);
++    const filtered = all.filter(h => {
++      if (h.id === id || h.id === targetKey) return false;
++      if (Number.isFinite(numId) && Number(h.id) === numId) return false;
++      if (String(h.id) === String(id)) return false;
++      return true;
++    });
+     setLocalStorageArray(STORAGE_KEY_HIGHLIGHTS, filtered);
+   }
+ }

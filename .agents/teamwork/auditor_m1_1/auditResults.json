@@ -1,0 +1,18 @@
+{
+  "sectionsFound": 23,
+  "mainTopicsCount": 126,
+  "subtopicsCount": 981,
+  "totalQuizzes": 378,
+  "totalExercises": 126,
+  "totalMiniProjects": 23,
+  "arabicCommentStats": {
+    "totalSimpleCodeLines": 4494,
+    "totalSimpleCommentLines": 4494,
+    "totalAdvancedCodeLines": 13734,
+    "totalAdvancedCommentLines": 13734,
+    "minCommentLength": 25,
+    "dummyCommentsFound": 0
+  },
+  "violations": [],
+  "adversarialFailures": []
+}

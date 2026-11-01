@@ -21,15 +21,19 @@ import {
   Download,
   Type,
   AlignJustify,
-  RotateCcw
+  RotateCcw,
+  Film
 } from 'lucide-react';
 import CodeBlock from '../lesson/CodeBlock.jsx';
 import InfographicCard from '../infographic/InfographicCard.jsx';
+import LessonMotionPlayer from '../motion/LessonMotionPlayer.jsx';
+import { exportLessonToPptx } from '../../utils/exportPptx.js';
 
 export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const [isExportingPptx, setIsExportingPptx] = useState(false);
 
   // تفضيلات حجم الخط في الشرائح مع الحفظ في LocalStorage
   const [slideFontSize, setSlideFontSize] = useState(() => {
@@ -344,6 +348,20 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
           </div>
         </div>
       )
+    },
+
+    // شريحة 8: المحاكاة الحركية وموشن جرافيك Remotion
+    {
+      id: 'motion-graphics',
+      title: 'المحاكاة الحركية المعمارية (Remotion Motion Graphics)',
+      badge: 'المحاكاة الحركية',
+      render: () => (
+        <div className="flex flex-col items-center justify-center h-full max-w-4xl mx-auto space-y-3 animate-fadeIn overflow-y-auto w-full">
+          <div className="w-full max-w-3xl">
+            <LessonMotionPlayer subtopic={safeSubtopic} />
+          </div>
+        </div>
+      )
     }
   ];
 
@@ -494,8 +512,28 @@ export default function PresentationModeModal({ subtopic, isOpen, onClose }) {
 
         </div>
 
-        {/* أزرار الإجراءات (تشغيل تلقائي، شاشة كاملة، إغلاق) */}
+        {/* أزرار الإجراءات (تصدير PPTX، تشغيل تلقائي، شاشة كاملة، إغلاق) */}
         <div className="flex items-center gap-2">
+          {/* زر تحميل وتصدير ملف PowerPoint الحقيقي .pptx */}
+          <button
+            onClick={async () => {
+              try {
+                setIsExportingPptx(true);
+                await exportLessonToPptx(safeSubtopic);
+              } catch (err) {
+                console.error("PPTX Export Error:", err);
+              } finally {
+                setIsExportingPptx(false);
+              }
+            }}
+            disabled={isExportingPptx}
+            className="p-2 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-bold disabled:opacity-50"
+            title="تنزيل عرض PowerPoint حقيقي (.pptx) لهذا الدرس بجودة 16:9"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{isExportingPptx ? "جاري التجهيز..." : "تنزيل PPTX"}</span>
+          </button>
+
           {/* زر التشغيل التلقائي */}
           <button
             onClick={() => setIsAutoPlaying(prev => !prev)}

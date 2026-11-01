@@ -1,0 +1,38 @@
+{
+  "curriculum": {
+    "pass": true,
+    "issues": []
+  },
+  "pedagogy": {
+    "pass": true,
+    "issues": []
+  },
+  "authenticity": {
+    "pass": true,
+    "issues": []
+  },
+  "masterFeatures": {
+    "pass": true,
+    "issues": []
+  },
+  "memoryAndChunking": {
+    "pass": true,
+    "issues": []
+  },
+  "stats": {
+    "rawSectionsCount": 23,
+    "rawTopicCount": 126,
+    "rawSubtopicCount": 981,
+    "section22SizeKB": 938.0419921875,
+    "totalDiskTopics": 126,
+    "totalDiskSubtopics": 981,
+    "totalSummaries": 23,
+    "totalCheatSheets": 23,
+    "totalMiniProjects": 23,
+    "totalQuizzes": 378,
+    "totalExercises": 126,
+    "subtopicsWithArabicComments": 981,
+    "subtopicsWithPedagogicalPillars": 981,
+    "dummyOccurrences": 0
+  }
+}

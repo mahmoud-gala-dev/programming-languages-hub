@@ -1,0 +1,102 @@
+diff --git a/src/components/lesson/LessonViewer.jsx b/src/components/lesson/LessonViewer.jsx
+--- a/src/components/lesson/LessonViewer.jsx
++++ b/src/components/lesson/LessonViewer.jsx
+@@ -1,5 +1,5 @@
+ // src/components/lesson/LessonViewer.jsx
+-import React from 'react';
++import React, { useState, useEffect } from 'react';
+ import { 
+   BookOpen, 
+   Sparkles, 
+@@ -25,6 +25,8 @@ import InfographicCard from '../infographic/InfographicCard.jsx';
+ import QuizCard from './QuizCard.jsx';
+ import ExerciseCard from './ExerciseCard.jsx';
++import TextHighlightPopover from '../common/TextHighlightPopover.jsx';
++import SavedHighlightsModal from '../common/SavedHighlightsModal.jsx';
+ 
+ export default function LessonViewer({
+   subtopic,
+@@ -38,6 +40,15 @@ export default function LessonViewer({
+   onOpenTutor
+ }) {
++  const [isHighlightsModalOpen, setIsHighlightsModalOpen] = useState(false);
++
++  // إيقاف أي قراءة صوتية مستمرة عند التنقل إلى درس جديد
++  useEffect(() => {
++    if (typeof window !== 'undefined' && window.speechSynthesis) {
++      window.speechSynthesis.cancel();
++    }
++  }, [subtopic?.id]);
++
+   if (!subtopic || !subtopic.title) {
+     return (
+       <div className="max-w-4xl mx-auto p-12 text-center text-slate-500 font-sans">
+@@ -47,7 +58,7 @@ export default function LessonViewer({
+   }
+ 
+   return (
+-    <article className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 animate-fadeIn text-slate-100" dir="rtl">
++    <article className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 animate-fadeIn text-slate-100" dir="rtl" data-lesson-script="true">
+       
+       {/* 1. الترويسة ومسار التنقل (Breadcrumb & Header) */}
+       <div className="mb-6">
+@@ -328,6 +339,21 @@ export default function LessonViewer({
+           </div>
+         )}
+       </div>
++
++      {/* أداة التظليل الذكية العائمة عند تحديد أي نص أو كود */}
++      <TextHighlightPopover 
++        subtopicId={subtopic.id} 
++        subtopicTitle={subtopic.title} 
++        onOpenTutor={onOpenTutor ? () => onOpenTutor(subtopic.title) : null}
++        onOpenHighlights={() => setIsHighlightsModalOpen(true)}
++      />
++
++      {/* نافذة استعراض التظليلات والمقتطفات المحفوظة لهذا الدرس */}
++      <SavedHighlightsModal
++        isOpen={isHighlightsModalOpen}
++        onClose={() => setIsHighlightsModalOpen(false)}
++        currentSubtopicId={subtopic.id}
++      />
+ 
+     </article>
+   );
+diff --git a/src/App.jsx b/src/App.jsx
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@ -16,6 +16,7 @@ import ShortcutsGuideModal from './components/common/ShortcutsGuideModal.jsx';
+ import ScrollToTopButton from './components/common/ScrollToTopButton.jsx';
+ import { UiFeedbackProvider } from './context/UiFeedbackContext.jsx';
+ import { SECTIONS_MAP, getSectionById, fetchSectionData } from './data/sections/index.js';
+ import { initCodeFont } from './utils/codeFonts.js';
++import SavedHighlightsModal from './components/common/SavedHighlightsModal.jsx';
+ 
+ export default function App() {
+@@ -88,6 +89,7 @@ export default function App() {
+   const [isCodeFontModalOpen, setIsCodeFontModalOpen] = useState(false);
+   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
++  const [isHighlightsModalOpen, setIsHighlightsModalOpen] = useState(false);
+   const [searchQuery, setSearchQuery] = useState("");
+   const [isLoadingTransition, setIsLoadingTransition] = useState(false);
+   const [scrollProgress, setScrollProgress] = useState(0);
+@@ -284,6 +286,7 @@ export default function App() {
+           onOpenCodeFont={() => setIsCodeFontModalOpen(true)}
+           onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
++          onOpenHighlights={() => setIsHighlightsModalOpen(true)}
+           searchQuery={searchQuery}
+           setSearchQuery={setSearchQuery}
+           completedCount={completedSubtopics.size}
+@@ -393,6 +396,12 @@ export default function App() {
+           isOpen={isShortcutsModalOpen}
+           onClose={() => setIsShortcutsModalOpen(false)}
+         />
++
++        <SavedHighlightsModal
++          isOpen={isHighlightsModalOpen}
++          onClose={() => setIsHighlightsModalOpen(false)}
++          currentSubtopicId={currentSubtopicId}
++        />
+ 
+       </div>
+     </UiFeedbackProvider>

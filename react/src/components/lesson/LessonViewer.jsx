@@ -24,12 +24,19 @@ import {
   Target,
   Award,
   Bookmark,
-  Layers
+  Layers,
+  Download,
+  Film,
+  Cpu,
+  Zap,
+  ShieldAlert
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import CodeBlock from './CodeBlock.jsx';
 import LiveCodePreview from './LiveCodePreview.jsx';
 import InfographicCard from '../infographic/InfographicCard.jsx';
+import LessonMotionPlayer from '../motion/LessonMotionPlayer.jsx';
+import { exportLessonToPptx } from '../../utils/exportPptx.js';
 import PresentationModeModal from '../presentation/PresentationModeModal.jsx';
 import AiLessonQuizModal from '../ai/AiLessonQuizModal.jsx';
 import TextHighlightPopover from '../common/TextHighlightPopover.jsx';
@@ -81,6 +88,24 @@ export default function LessonViewer({
   const [lessonHighlights, setLessonHighlights] = useState([]);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [hasCelebrated, setHasCelebrated] = useState(false);
+  const [visualMode, setVisualMode] = useState('motion'); // 'motion' | 'infographic'
+  const [isExportingPptx, setIsExportingPptx] = useState(false);
+
+  // تصدير الدرس إلى ملف عرض تقديمي PowerPoint حقيقي (.pptx)
+  const handleExportPptx = async () => {
+    if (!subtopic) return;
+    try {
+      setIsExportingPptx(true);
+      showToast("جاري تجهيز وتوليد عرض PowerPoint الاحترافي للدرس...", "info");
+      await exportLessonToPptx(subtopic);
+      showToast("تم تنزيل ملف PowerPoint بنجاح! 🚀", "success");
+    } catch (err) {
+      console.error("PPTX Generation Error:", err);
+      showToast("حدث خطأ أثناء تصدير العرض التقديمي", "error");
+    } finally {
+      setIsExportingPptx(false);
+    }
+  };
 
   // تحميل التظليلات المسجلة لهذا الدرس من IndexedDB
   const loadLessonHighlights = async () => {
@@ -478,6 +503,20 @@ export default function LessonViewer({
             </span>
           </button>
 
+          {/* زر تحميل عرض PowerPoint كملف .pptx رسمي */}
+          <button
+            onClick={handleExportPptx}
+            disabled={isExportingPptx}
+            className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-orange-600 via-rose-600 to-amber-600 hover:from-orange-500 hover:to-rose-500 text-white font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl transition-all shadow-md hover:shadow-orange-500/20 cursor-pointer text-xs shrink-0 whitespace-nowrap disabled:opacity-50"
+            title="تحميل هذا الدرس كملف PowerPoint رسمي جاهز (.pptx) بجودة 16:9"
+          >
+            <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0" />
+            <span className="font-sans">تحميل PPTX</span>
+            <span className="bg-orange-950/60 text-orange-200 text-[10px] font-mono px-1.5 py-0.5 rounded-md border border-orange-400/30 shrink-0 hidden sm:inline-block">
+              {isExportingPptx ? "جاري التجهيز..." : ".pptx"}
+            </span>
+          </button>
+
           {/* زر عرض التظليلات والمقتطفات المحفوظة */}
           <button
             onClick={() => setIsHighlightsModalOpen(true)}
@@ -744,13 +783,189 @@ export default function LessonViewer({
         </div>
       )}
 
-      {/* 11. بطاقة الإنفوجرافيك التفاعلية الشاملة القابلة للتنزيل والمعاينة مع دعم التظليلات */}
-      <InfographicCard 
-        subtopic={subtopic} 
-        onOpenGallery={onOpenInfographicGallery} 
-        highlights={lessonHighlights}
-        onHighlightClick={handleHighlightClick}
-      />
+      {/* 11. النموذج الذهني المعماري وخلف كواليس المحرك (Mental Model & Under the Hood) */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <h4 className="text-xs font-bold text-cyan-300 flex items-center gap-2">
+            <Cpu className="w-4 h-4 text-cyan-400" />
+            11. النموذج الذهني وخلف الكواليس (Mental Model & Under the Hood):
+          </h4>
+          <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-800/50">
+            React Engine Internals
+          </span>
+        </div>
+        <p 
+          className={`text-slate-300 font-sans ${currentLeadingClass}`}
+          style={{ fontSize: `${readingFontSize}px` }}
+        >
+          {subtopic.mentalModel || `عند تنفيذ هذا المفهوم في React، يقوم محرك التوفيق (Reconciliation Engine) بإنشاء عقد Fiber جديدة في الذاكرة ومقارنتها عبر خوارزمية Diffing عالية الكفاءة مع الشجرة السابقة. يتم حصر التغييرات الفعلية فقط ودفعها في مرحلة الالتزام (Commit Phase) إلى الـ Real DOM دفعة واحدة، مما يمنع إعادة رسم الشاشة غير الضروري ويحافظ على استجابة 60 إطاراً في الثانية.`}
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          <div className="bg-slate-950/70 border border-slate-800/85 p-3 rounded-xl space-y-1">
+            <div className="text-[11px] font-bold text-sky-400 flex items-center gap-1.5">
+              <span>⚡</span> مرحلة العرض (Render Phase)
+            </div>
+            <p className="text-[10px] text-slate-400">
+              دوال نقية (Pure Functions) تحسب الشجرة الافتراضية بدون أي تأثيرات جانبية على الـ DOM الفعلي.
+            </p>
+          </div>
+          <div className="bg-slate-950/70 border border-slate-800/85 p-3 rounded-xl space-y-1">
+            <div className="text-[11px] font-bold text-emerald-400 flex items-center gap-1.5">
+              <span>🔄</span> خوارزمية التوفيق (Diffing)
+            </div>
+            <p className="text-[10px] text-slate-400">
+              مقارنة العقد ذات الرتبة المتماثلة في زمن O(n) السريع لتحديد الاختلافات بدقة متناهية.
+            </p>
+          </div>
+          <div className="bg-slate-950/70 border border-slate-800/85 p-3 rounded-xl space-y-1">
+            <div className="text-[11px] font-bold text-indigo-400 flex items-center gap-1.5">
+              <span>🚀</span> مرحلة الالتزام (Commit Phase)
+            </div>
+            <p className="text-[10px] text-slate-400">
+              تطبيق التعديلات الحتمية في الـ DOM، وتشغيل الـ Effects وتنظيف الموارد السابقة في الذاكرة.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 12. فخاخ وأخطاء بيئة الإنتاج القاتلة (Production Pitfalls & Anti-Patterns) */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <h4 className="text-xs font-bold text-rose-300 flex items-center gap-2">
+            <ShieldAlert className="w-4 h-4 text-rose-400" />
+            12. فخاخ وأخطاء الإنتاج القاتلة (Production Pitfalls & Anti-Patterns):
+          </h4>
+          <span className="text-[10px] font-mono text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded-full border border-rose-800/50">
+            Critical Safe Guard
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div className="bg-slate-950/80 border border-rose-900/30 rounded-xl p-3.5 space-y-1.5">
+            <div className="text-xs font-bold text-rose-400 flex items-center gap-1.5">
+              <span>⚠️</span> فخ الإغلاق المتقادم (Stale Closures)
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              الاعتماد على متغيرات قديمة داخل الدوال غير المحدثة أو الـ Event Listeners دون تمرير التبعيات في مصفوفة dependencies، مما يسبب قراءة بيانات قديمة وتصرفات عشوائية في الإنتاج.
+            </p>
+          </div>
+          <div className="bg-slate-950/80 border border-rose-900/30 rounded-xl p-3.5 space-y-1.5">
+            <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+              <span>🔁</span> شلالات إعادة الرسم المتتالية (Cascading Re-renders)
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              تعديل الـ State داخل تأثيرات معتمدة على الـ State نفسها مما ينشئ حلقة مفرغة تسحق أداء المتصفح وتجمد واجهة المستخدم.
+            </p>
+          </div>
+          <div className="bg-slate-950/80 border border-rose-900/30 rounded-xl p-3.5 space-y-1.5">
+            <div className="text-xs font-bold text-rose-400 flex items-center gap-1.5">
+              <span>❌</span> التعديل المباشر على الكائنات والمصفوفات (State Mutation)
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              استخدام دوال التعديل الحتمي مثل push/splice مباشرة بدلاً من استنساخ الكائن بتنسيق جديد (...spread)، مما يكسر تحقق التساوي المرجعي في React.
+            </p>
+          </div>
+          <div className="bg-slate-950/80 border border-rose-900/30 rounded-xl p-3.5 space-y-1.5">
+            <div className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+              <span>💧</span> تسريب الذاكرة (Memory Leaks in Subscriptions)
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              عدم إرجاع دالة تنظيف (Cleanup Function) لإلغاء المؤقتات، واشتراكات الـ WebSockets، وطلبات AbortController عند تفكيك المكون (Unmount).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 13. قواعد الأداء العالي والتسريع المتقدم (Performance & Optimization Secrets) */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <h4 className="text-xs font-bold text-amber-300 flex items-center gap-2">
+            <Zap className="w-4 h-4 text-amber-400" />
+            13. أسرار الأداء العالي والتسريع (Performance & Optimization Rules):
+          </h4>
+          <span className="text-[10px] font-mono text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-800/50">
+            60 FPS Architecture
+          </span>
+        </div>
+        <div className="space-y-2.5">
+          <div className="flex items-start gap-2.5 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+            <span className="text-amber-400 font-bold">1.</span>
+            <div className="text-xs text-slate-200">
+              <strong className="text-cyan-300">التحميل الكسول وتقسيم الحزم (Code Splitting):</strong> استخدم <code className="text-sky-300 bg-slate-900 px-1 py-0.5 rounded font-mono">React.lazy</code> و <code className="text-sky-300 bg-slate-900 px-1 py-0.5 rounded font-mono">&lt;Suspense&gt;</code> لتحميل الشاشات الثقيلة عند الحاجة فقط، لخفض حجم الـ Initial Bundle بأكثر من 40%.
+            </div>
+          </div>
+          <div className="flex items-start gap-2.5 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+            <span className="text-amber-400 font-bold">2.</span>
+            <div className="text-xs text-slate-200">
+              <strong className="text-emerald-300">التزامن وانتقالات الأولوية (useTransition):</strong> ميز التحديثات غير الحرجة كبحث النصوص أو الفلاتر المعقدة عبر الانتقالات المتزامنة لتبقى الواجهة مستجيبة لنقرات المستخدم دون أي تأخير.
+            </div>
+          </div>
+          <div className="flex items-start gap-2.5 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+            <span className="text-amber-400 font-bold">3.</span>
+            <div className="text-xs text-slate-200">
+              <strong className="text-indigo-300">التخزين المؤقت الذكي (useMemo & useCallback):</strong> احرص على استخدامها فقط عند تمرير مراجع دوال أو حسابات كثيفة لمكونات محاطة بـ <code className="text-sky-300 bg-slate-900 px-1 py-0.5 rounded font-mono">React.memo</code> لتفادي تكلفة المقارنة الزائدة.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 14. المحاكاة البصرية المعمارية التفاعلية: التبديل بين مشغل Remotion والإنفوجرافيك الثابت */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+          <div>
+            <h4 className="text-xs font-bold text-sky-300 flex items-center gap-2">
+              <Film className="w-4 h-4 text-sky-400" />
+              14. المحاكاة البصرية المعمارية (Visual Simulation & Infographics):
+            </h4>
+            <p className="text-xs text-slate-400 mt-1">
+              اختر وضع العرض المناسب: موشن جرافيك كودي تفاعلي بمحرك Remotion، أو الإنفوجرافيك المعماري عالي الدقة.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
+            <button
+              onClick={() => setVisualMode('motion')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                visualMode === 'motion'
+                  ? 'bg-gradient-to-r from-sky-600 to-blue-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Film className="w-3.5 h-3.5" />
+              <span>موشن جرافيك Remotion</span>
+            </button>
+            <button
+              onClick={() => setVisualMode('infographic')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                visualMode === 'infographic'
+                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>إنفوجرافيك تفصيلي</span>
+            </button>
+          </div>
+        </div>
+
+        {visualMode === 'motion' ? (
+          <div className="animate-fadeIn">
+            <LessonMotionPlayer 
+              subtopic={subtopic} 
+              onSwitchToInfographic={() => setVisualMode('infographic')} 
+            />
+          </div>
+        ) : (
+          <div className="animate-fadeIn">
+            <InfographicCard 
+              subtopic={subtopic} 
+              onOpenGallery={onOpenInfographicGallery} 
+              highlights={lessonHighlights}
+              onHighlightClick={handleHighlightClick}
+            />
+          </div>
+        )}
+      </div>
 
       {/* بطاقة الاحتفال بإتمام قراءة محتوى الدرس عند التمرير لنهايته */}
       {scrollProgress >= 95 && (

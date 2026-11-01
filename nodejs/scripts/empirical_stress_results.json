@@ -1,0 +1,112 @@
+{
+  "timestamp": "2026-10-30T19:03:30.545Z",
+  "concurrency": {
+    "status": "PASS",
+    "totalDurationMs": 157.88,
+    "loadedCount": 23,
+    "averagePerSectionMs": 6.86,
+    "allSectionsReturned": true
+  },
+  "caching": {
+    "status": "PASS",
+    "totalWarmFetchMs": 0.06,
+    "minFetchMs": 0.001,
+    "maxFetchMs": 0.009,
+    "avgFetchMs": 0.002,
+    "cacheIdentitiesMatch": true,
+    "cacheSize": 23
+  },
+  "boundaries": {
+    "0 (Lower out of bounds)": {
+      "input": 0,
+      "shouldReject": true,
+      "threw": true,
+      "thrownError": "Section ID \"0\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)",
+      "behavior": "THREW_ERROR: \"Section ID \"0\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)\"",
+      "pass": true
+    },
+    "24 (Upper out of bounds)": {
+      "input": 24,
+      "shouldReject": true,
+      "threw": true,
+      "thrownError": "Section ID \"24\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)",
+      "behavior": "THREW_ERROR: \"Section ID \"24\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)\"",
+      "pass": true
+    },
+    "\"invalid\" (String NaN)": {
+      "input": "invalid",
+      "shouldReject": true,
+      "threw": true,
+      "thrownError": "Section ID \"invalid\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)",
+      "behavior": "THREW_ERROR: \"Section ID \"invalid\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)\"",
+      "pass": true
+    },
+    "-1 (Negative number)": {
+      "input": -1,
+      "shouldReject": true,
+      "threw": true,
+      "thrownError": "Section ID \"-1\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)",
+      "behavior": "THREW_ERROR: \"Section ID \"-1\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)\"",
+      "pass": true
+    },
+    "999999 (Extreme number)": {
+      "input": 999999,
+      "shouldReject": true,
+      "threw": true,
+      "thrownError": "Section ID \"999999\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)",
+      "behavior": "THREW_ERROR: \"Section ID \"999999\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)\"",
+      "pass": true
+    },
+    "null (Null input)": {
+      "input": null,
+      "shouldReject": true,
+      "threw": true,
+      "thrownError": "Section ID \"null\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)",
+      "behavior": "THREW_ERROR: \"Section ID \"null\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)\"",
+      "pass": true
+    },
+    "undefined (Undefined input)": {
+      "shouldReject": true,
+      "threw": true,
+      "thrownError": "Section ID \"undefined\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)",
+      "behavior": "THREW_ERROR: \"Section ID \"undefined\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)\"",
+      "pass": true
+    },
+    "1.5 (Float input)": {
+      "input": 1.5,
+      "shouldReject": true,
+      "threw": true,
+      "thrownError": "Section ID \"1.5\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)",
+      "behavior": "THREW_ERROR: \"Section ID \"1.5\" is invalid or not found in roadmap registry (Must be an integer between 1 and 23)\"",
+      "pass": true
+    },
+    "\"1\" (Valid numeric string)": {
+      "input": "1",
+      "shouldReject": false,
+      "threw": false,
+      "thrownError": null,
+      "returnedSectionId": 1,
+      "behavior": "RETURNED_DATA (Section ID: 1)",
+      "pass": true
+    }
+  },
+  "deepInspection": {
+    "totalSections": 23,
+    "totalMainTopics": 126,
+    "totalSubtopics": 981,
+    "subtopicsWithMissingFields": [],
+    "subtopicsWithoutArabicCommentsInSimpleCode": [],
+    "mainTopicsWithoutExactly3Quizzes": [],
+    "mainTopicsWithoutExercise": [],
+    "sectionsMissingSummary": [],
+    "sectionsMissingCheatSheet": [],
+    "sectionsMissingMiniProject": []
+  },
+  "schemaCompatibility": {
+    "cheatSheetHasItems": 23,
+    "cheatSheetHasEntries": 23,
+    "sectionHasProjectKey": 23,
+    "sectionHasMiniProjectKey": 23
+  },
+  "summaryMetrics": {}
+}

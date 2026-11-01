@@ -1,0 +1,62 @@
+﻿# Original User Request
+
+## Initial Request — 2026-10-30T13:30:15Z
+
+بناء وتطوير منصة تعليمية برمجية تفاعلية متكاملة وشاملة لخريطة طريق Node.js (23 قسماً، 126 موضوعاً رئيسياً، و981 موضوعاً فرعياً) باللغة العربية، تشمل لوحة تحكم تفاعلية (React Dashboard)، استوديو إنفوجرافيك قابل للتحميل لكل درس، وتوليد كتاب PDF شامل، مع تطبيق كافة المميزات المتقدمة المحددة في `e:\KD\lang\MASTER_FEATURES_PROMPT.md`.
+
+Working directory: e:\KD\lang\nodejs
+Integrity mode: development
+
+Reference material: e:\KD\lang\MASTER_FEATURES_PROMPT.md
+
+## Requirements
+
+### R1. تغطية وهيكلية محتوى خريطة طريق Node.js الشاملة (23 قسماً)
+تضمين كافة الأقسام الـ 23 و126 موضوعاً رئيسياً و981 موضوعاً فرعياً وفق الخريطة المحددة. لكل مفهوم أو موضوع فرعي: شرح تفصيلي موجه للمبتدئ باللغة العربية يشمل 10 نقاط جوهرية وأمثلة واقعية، توضيح المصطلحات الإنجليزية وترجمتها ومعناها، وأكواد برمجية عملية مع تعليقات توضيحية باللغة العربية فوق كل سطر كود. لكل موضوع رئيسي: 3 أسئلة كويز تفاعلية، وتمرين برمجي عملي مع الحل النموذجي. لكل قسم: ملخص شامل، جدول مقارنة/بطاقة مرجعية سريعة (Cheat-sheet)، ومشروع مصغر (Mini-project) عملي متكامل.
+
+### R2. لوحة التحكم التفاعلية للدروس (Interactive React.js Dashboard)
+تطوير وتحديث لوحة التحكم التفاعلية في تطبيق `e:\KD\lang\nodejs` المبني بـ React 19 و Vite و Tailwind CSS v4 بنظام واجهة Dark Cyberpunk / Glassmorphism بدعم RTL كامل وخط Cairo الموحد، مع شريط تتبع تقدم الدرس، زر صعود سريع (FAB)، قائمة تنقل وتصفح سريعة للأقسام والدروس، وتصميم متجاوب بالكامل لجميع الشاشات من 320px إلى 1920px مع درج انزلاقي للهواتف.
+
+### R3. استوديو وبطاقات الإنفوجرافيك البصرية (Infographic Studio & Cards)
+توليد بطاقات إنفوجرافيك عالية الدقة لكل درس، تتضمن المخطط المعماري البصري (SVG)، الكود الذهبي النظيف مع التعليقات العربية، القواعد الذهبية والمحاذير القاتلة، ودعم 5 ثيمات لونية قابلة للتبديل (cyber, emerald, sunset, cosmic, ruby)، مع إمكانية معاينة وتحميل البطاقات كصور عالية الدقة وربطها مباشرة بالداش بورد.
+
+### R4. كتاب الـ PDF الشامل للمنهاج (Complete Educational PDF Book)
+توليد وتوفير كتاب PDF متكامل وعالي الجودة يجمع كافة أقسام المنهاج الـ 23 مع بطاقات الإنفوجرافيك التوضيحية والشروحات التفصيلية والجداول المرجعية، مع تنسيق صفحات احترافي باللغة العربية ودعم فهرس المحتويات وإمكانية تنزيله بنقرة واحدة من لوحة التحكم.
+
+### R5. تطبيق منظومة المميزات المتقدمة وفق MASTER_FEATURES_PROMPT.md
+دمج كافة الأنظمة المحددة في الدليل المرجعي `e:\KD\lang\MASTER_FEATURES_PROMPT.md`، بما يشمل:
+1. مجمع مفاتيح Gemini API الذكي (Multi-Key Pool) مع تدوير المفاتيح التلقائي عند مواجهة حد الاستخدام (Rate limit 429) وفحص صحة المفاتيح ودعم المفتاح المعطى: `AI_PLACEHOLDER_KEY`.
+2. استوديو خطوط الكود البرمجي (7 خطوط عالمية مع Ligatures) وحفظ الخط المختار في `localStorage`.
+3. استوديو التظليل والملاحظات الذكي (Pro Highlight Studio) بـ 6 ألوان نيون وحفظ البيانات محلياً في IndexedDB مع الشرح الذكي (Inline AI Explainer) وقراءة الصوت (TTS).
+4. هندسة LTR الصارمة للكود مع عزل النصوص والتعليقات العربية بخط Cairo ومنع تفكك الحروف في الشارات والنصوص العربية.
+5. استوديو الأكواد بملء الشاشة الفعلي (100vw × 100vh) عبر React Portal وتكامل F11 Fullscreen API وملاحظات الأسطر وشريط الحالة.
+6. مشغل ومعاين الأكواد الحي الآمن (Sandbox Preview) مع تنسيق Dark للـ Iframe.
+
+## Acceptance Criteria
+
+### Build & Integrity Verification
+- [ ] `npm run build` في `e:\KD\lang\nodejs` ينجح تماماً بدون أي أخطاء برمجية أو أخطاء استيراد.
+- [ ] تطبيق Vite يعمل محلياً ويقدم واجهة لوحة التحكم التفاعلية لجميع الأقسام الـ 23 بدون شاشات بيضاء أو أخطاء runtime في الكونسول.
+
+### Curriculum & Pedagogical Coverage
+- [ ] تغطية كافة الأقسام الـ 23 والموضوعات الـ 126 مع شروحات عربية وافية وتعليقات عربية فوق كل سطر كود.
+- [ ] توفر 3 أسئلة كويز وتمرين عملي محلول لكل موضوع رئيسي، وملخص وجدول مرجعي ومشروع مصغر لكل قسم.
+
+### Infographics & PDF Generation
+- [ ] بطاقات الإنفوجرافيك لكل درس تعرض المخطط المعماري البصري والكود الذهبي والقواعد الذهبية مع الثيمات اللونية الـ 5 وإمكانية التحميل المباشر كصورة.
+- [ ] زر تصدير/تنزيل كتاب PDF يعمل وينتج ملف PDF منسق وشامل يضم الدروس والإنفوجرافيك بدون مشاكل تشويه النصوص العربية.
+
+### Master Features Implementation
+- [ ] واجهة إدارة مفاتيح Gemini API تعمل وتتحقق من صحة المفاتيح وتدعم تدوير المفاتيح الذكي وحفظها في localStorage.
+- [ ] استوديو خطوط الأكواد يدعم التبديل اللحظي بين الخطوط الـ 7 وحفظ الخط المختار.
+- [ ] نظام التظليل المتقدم (Highlight Studio) والملاحظات يعمل مع ألوان النيون الـ 6 والتخزين في IndexedDB.
+- [ ] استوديو الأكواد بملء الشاشة (Fullscreen Portal) يعمل بـ 100vw × 100vh دون تشويه الواجهة.
+- [ ] التصميم متجاوب بالكامل من 320px إلى 1920px مع درج جانبي انزلاقي على الهواتف والأجهزة اللوحية دون أي تمرير أفقي.
+
+## Follow-up — 2026-10-30T18:11:44Z
+
+The server restarted, which stopped active subagents and background tasks. The user requested to continue ("اكمل"). Please check the status of your current milestone workers and subagents, revive or restart any interrupted workers as needed, and continue executing the project to completion.
+
+## Follow-up — 2026-10-30T23:09:00Z
+
+The server restarted while the Victory Audit was in progress, and the user requested to continue ("كمل"). Please check the status of `teamwork_victory_auditor` (`33e25590-7a8b-4843-9c9d-efed3cacc5d1`), revive it if needed, and complete the Victory Audit and final run closure.
