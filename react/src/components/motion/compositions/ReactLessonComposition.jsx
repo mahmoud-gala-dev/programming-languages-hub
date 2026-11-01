@@ -91,10 +91,44 @@ export default function ReactLessonComposition({
         </div>
       </div>
 
-      {/* المنتصف: مشهد المخطط المعماري الحركي SVG */}
-      <div className="relative z-10 flex-1 flex items-center justify-center my-4 max-h-[58%] overflow-hidden">
+      {/* شريط خطوات المفهوم الحركية المتتابعة التابع لمحتوى الدرس الحالي */}
+      {subtopic?.infographic?.steps && subtopic.infographic.steps.length > 0 && (
+        <div className="relative z-10 flex items-center justify-between gap-2 sm:gap-3 mt-2 sm:mt-3 px-1">
+          {subtopic.infographic.steps.slice(0, 3).map((step, idx) => {
+            const stepStart = idx * 45;
+            const stepActive = frame >= stepStart && frame < (stepStart + 55);
+            const isCompleted = frame >= (stepStart + 45);
+            return (
+              <div 
+                key={idx}
+                className={`flex-1 flex items-center gap-2 p-1.5 sm:p-2 rounded-xl border transition-all duration-300 ${
+                  stepActive 
+                    ? 'bg-cyan-500/20 border-cyan-400 text-white shadow-lg shadow-cyan-500/20' 
+                    : isCompleted
+                    ? 'bg-slate-900/60 border-slate-700/60 text-slate-300'
+                    : 'bg-slate-950/40 border-slate-800/40 text-slate-500'
+                }`}
+              >
+                <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center text-[10px] sm:text-xs font-bold font-mono ${
+                  stepActive ? 'bg-cyan-400 text-slate-950 font-black' : isCompleted ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'
+                }`}>
+                  {isCompleted ? '✓' : idx + 1}
+                </div>
+                <div className="truncate">
+                  <div className="text-[11px] sm:text-xs font-bold truncate">{step.title}</div>
+                  <div className="text-[9px] sm:text-[10px] text-slate-400 truncate">{step.desc}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* المنتصف: مشهد المخطط المعماري الحركي SVG المربوط بمحتوى الدرس الحقيقي */}
+      <div className="relative z-10 flex-1 flex items-center justify-center my-2 sm:my-4 max-h-[55%] overflow-hidden">
         <SvgMotionDiagram 
-          type={diagramType} 
+          type={diagramType}
+          subtopic={subtopic}
           frame={frame} 
           fps={fps} 
         />

@@ -44,11 +44,21 @@ export function detectDiagramType(subtopic) {
   return 'architecture';
 }
 
-export default function SvgMotionDiagram({ type = 'architecture', frame, fps }) {
+export default function SvgMotionDiagram({ type = 'architecture', subtopic, frame, fps }) {
   // نبضات حركية مستمرة
   const pulse = interpolate(Math.sin((frame / fps) * Math.PI * 2), [-1, 1], [0.85, 1.15]);
   const progress = interpolate(frame % (fps * 3), [0, fps * 3], [0, 100]);
   const wave = Math.sin((frame / 15)) * 12;
+
+  // استخراج الخطوات الديناميكية التابعة للدرس الحالي
+  const steps = subtopic?.infographic?.steps || [];
+  const step1Title = steps[0]?.title || 'المكونات الذكية';
+  const step1Desc = steps[0]?.desc ? (steps[0].desc.length > 28 ? steps[0].desc.slice(0, 26) + '...' : steps[0].desc) : 'Components & JSX';
+  const step2Title = steps[1]?.title || 'إدارة الحالة';
+  const step2Desc = steps[1]?.desc ? (steps[1].desc.length > 28 ? steps[1].desc.slice(0, 26) + '...' : steps[1].desc) : 'Reactive State Engine';
+  const step3Title = steps[2]?.title || 'التزامن والأداء';
+  const step3Desc = steps[2]?.desc ? (steps[2].desc.length > 28 ? steps[2].desc.slice(0, 26) + '...' : steps[2].desc) : 'Zero Unneeded Renders';
+  const centerTitle = subtopic?.title ? (subtopic.title.length > 16 ? subtopic.title.slice(0, 14) + '..' : subtopic.title) : '⚛️ React';
 
   // 1. مخطط تدفق العميل والخادم (Frontend vs Backend & Client-Server Flow)
   if (type === 'client-server') {
@@ -113,7 +123,7 @@ export default function SvgMotionDiagram({ type = 'architecture', frame, fps }) 
             <text x="0" y="18" fill="#fff" fontSize="10" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
               {isGoingRight ? "طلب HTTP ➔" : "⟵ استجابة JSON"}
             </text>
-            <text x="0" y="32" fill="#e2e8f0" fontSize="8" textAnchor="middle" fontMono="true">
+            <text x="0" y="32" fill="#e2e8f0" fontSize="8" textAnchor="middle" fontFamily="monospace">
               {isGoingRight ? "GET /api/data" : "Status: 200 OK"}
             </text>
           </g>
@@ -164,10 +174,10 @@ export default function SvgMotionDiagram({ type = 'architecture', frame, fps }) 
           <text x="105" y="125" fill="#cbd5e1" fontSize="12" textAnchor="middle">Structure &amp; Semantics</text>
           
           <rect x="25" y="150" width="160" height="120" rx="10" fill="#1c1917" />
-          <text x="35" y="175" fill="#ea580c" fontSize="11" fontMono="true">&lt;header&gt;</text>
-          <text x="45" y="200" fill="#fdba74" fontSize="11" fontMono="true">&lt;h1&gt;العنوان&lt;/h1&gt;</text>
-          <text x="45" y="225" fill="#fdba74" fontSize="11" fontMono="true">&lt;button&gt;نقرة&lt;/button&gt;</text>
-          <text x="35" y="250" fill="#ea580c" fontSize="11" fontMono="true">&lt;/header&gt;</text>
+          <text x="35" y="175" fill="#ea580c" fontSize="11" fontFamily="monospace">&lt;header&gt;</text>
+          <text x="45" y="200" fill="#fdba74" fontSize="11" fontFamily="monospace">&lt;h1&gt;العنوان&lt;/h1&gt;</text>
+          <text x="45" y="225" fill="#fdba74" fontSize="11" fontFamily="monospace">&lt;button&gt;نقرة&lt;/button&gt;</text>
+          <text x="35" y="250" fill="#ea580c" fontSize="11" fontFamily="monospace">&lt;/header&gt;</text>
 
           <text x="105" y="300" fill="#fdba74" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">بناء العظام والفقرات</text>
         </g>
@@ -187,10 +197,10 @@ export default function SvgMotionDiagram({ type = 'architecture', frame, fps }) 
           <text x="105" y="125" fill="#cbd5e1" fontSize="12" textAnchor="middle">Styles, Layout &amp; Colors</text>
           
           <rect x="25" y="150" width="160" height="120" rx="10" fill="#0c2338" />
-          <text x="35" y="175" fill="#38bdf8" fontSize="11" fontMono="true">header &#123;</text>
-          <text x="45" y="200" fill="#bae6fd" fontSize="11" fontMono="true">background: #000;</text>
-          <text x="45" y="225" fill="#bae6fd" fontSize="11" fontMono="true">color: #cyan;</text>
-          <text x="35" y="250" fill="#38bdf8" fontSize="11" fontMono="true">&#125;</text>
+          <text x="35" y="175" fill="#38bdf8" fontSize="11" fontFamily="monospace">header &#123;</text>
+          <text x="45" y="200" fill="#bae6fd" fontSize="11" fontFamily="monospace">background: #000;</text>
+          <text x="45" y="225" fill="#bae6fd" fontSize="11" fontFamily="monospace">color: #cyan;</text>
+          <text x="35" y="250" fill="#38bdf8" fontSize="11" fontFamily="monospace">&#125;</text>
 
           <text x="105" y="300" fill="#7dd3fc" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">الألوان، الظلال، والتجاوب</text>
         </g>
@@ -210,10 +220,10 @@ export default function SvgMotionDiagram({ type = 'architecture', frame, fps }) 
           <text x="105" y="125" fill="#cbd5e1" fontSize="12" textAnchor="middle">Logic, Events &amp; API</text>
           
           <rect x="25" y="150" width="160" height="120" rx="10" fill="#291e0a" />
-          <text x="35" y="175" fill="#facc15" fontSize="11" fontMono="true">btn.onclick = () =&gt; &#123;</text>
-          <text x="45" y="200" fill="#fef08a" fontSize="11" fontMono="true">fetch('/api/user')</text>
-          <text x="45" y="225" fill="#fef08a" fontSize="11" fontMono="true">.then(renderUI);</text>
-          <text x="35" y="250" fill="#facc15" fontSize="11" fontMono="true">&#125;</text>
+          <text x="35" y="175" fill="#facc15" fontSize="11" fontFamily="monospace">btn.onclick = () =&gt; &#123;</text>
+          <text x="45" y="200" fill="#fef08a" fontSize="11" fontFamily="monospace">fetch('/api/user')</text>
+          <text x="45" y="225" fill="#fef08a" fontSize="11" fontFamily="monospace">.then(renderUI);</text>
+          <text x="35" y="250" fill="#facc15" fontSize="11" fontFamily="monospace">&#125;</text>
 
           <text x="105" y="300" fill="#fde047" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">الحركة، التفكير، والاتصال</text>
         </g>
@@ -474,38 +484,38 @@ export default function SvgMotionDiagram({ type = 'architecture', frame, fps }) 
       {/* خلفية الإشعاع التفاعلية */}
       <circle cx="400" cy="225" r="200" fill="url(#centerGlow)" />
 
-      {/* قلب محرك React 19 */}
+      {/* قلب محرك React 19 التفاعلي المعنون باسم الدرس */}
       <g transform="translate(320, 145)">
         <ellipse cx="80" cy="80" rx="100" ry="40" fill="none" stroke="#38bdf8" strokeWidth="4" strokeDasharray="12 8" transform={`rotate(${frame * 2} 80 80)`} />
         <ellipse cx="80" cy="80" rx="100" ry="40" fill="none" stroke="#a855f7" strokeWidth="4" strokeDasharray="12 8" transform={`rotate(${-frame * 1.5} 80 80)`} />
         <ellipse cx="80" cy="80" rx="100" ry="40" fill="none" stroke="#10b981" strokeWidth="4" strokeDasharray="12 8" transform={`rotate(${frame * 2.5 + 60} 80 80)`} />
-        <circle cx="80" cy="80" r={28 * pulse} fill="#0284c7" />
-        <text x="80" y="86" fill="#fff" fontSize="15" fontWeight="bold" textAnchor="middle">⚛️ React</text>
+        <circle cx="80" cy="80" r={32 * pulse} fill="#0284c7" />
+        <text x="80" y="85" fill="#fff" fontSize="12" fontWeight="black" textAnchor="middle" fontFamily="Cairo">{centerTitle}</text>
       </g>
 
-      {/* الأعمدة المعمارية الأربعة */}
-      <g transform="translate(60, 60)">
-        <rect width="180" height="90" rx="14" fill="#1e293b" stroke="#38bdf8" strokeWidth="2" />
-        <text x="90" y="38" fill="#38bdf8" fontSize="15" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">المكونات الذكية</text>
-        <text x="90" y="65" fill="#94a3b8" fontSize="12" textAnchor="middle">Components &amp; JSX</text>
+      {/* الأعمدة المعمارية الحركية المرتبطة بخطوات الدرس الحقيقي */}
+      <g transform="translate(40, 50)">
+        <rect width="210" height="95" rx="14" fill="#0b1329" stroke="#38bdf8" strokeWidth="2" />
+        <text x="105" y="34" fill="#38bdf8" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">1. {step1Title}</text>
+        <text x="105" y="65" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">{step1Desc}</text>
       </g>
 
-      <g transform="translate(560, 60)">
-        <rect width="180" height="90" rx="14" fill="#1e293b" stroke="#10b981" strokeWidth="2" />
-        <text x="90" y="38" fill="#34d399" fontSize="15" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">إدارة الحالة</text>
-        <text x="90" y="65" fill="#94a3b8" fontSize="12" textAnchor="middle">Reactive State Engine</text>
+      <g transform="translate(550, 50)">
+        <rect width="210" height="95" rx="14" fill="#061c14" stroke="#10b981" strokeWidth="2" />
+        <text x="105" y="34" fill="#34d399" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">2. {step2Title}</text>
+        <text x="105" y="65" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">{step2Desc}</text>
       </g>
 
-      <g transform="translate(60, 300)">
-        <rect width="180" height="90" rx="14" fill="#1e293b" stroke="#a855f7" strokeWidth="2" />
-        <text x="90" y="38" fill="#c084fc" fontSize="15" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">تزامن وتزاحم الـ Fiber</text>
-        <text x="90" y="65" fill="#94a3b8" fontSize="12" textAnchor="middle">Concurrent Rendering</text>
+      <g transform="translate(40, 290)">
+        <rect width="210" height="95" rx="14" fill="#1b0e2b" stroke="#a855f7" strokeWidth="2" />
+        <text x="105" y="34" fill="#c084fc" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">3. {step3Title}</text>
+        <text x="105" y="65" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">{step3Desc}</text>
       </g>
 
-      <g transform="translate(560, 300)">
-        <rect width="180" height="90" rx="14" fill="#1e293b" stroke="#f59e0b" strokeWidth="2" />
-        <text x="90" y="38" fill="#fbbf24" fontSize="15" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">كفاءة الأداء 60FPS</text>
-        <text x="90" y="65" fill="#94a3b8" fontSize="12" textAnchor="middle">Zero Unneeded Renders</text>
+      <g transform="translate(550, 290)">
+        <rect width="210" height="95" rx="14" fill="#241403" stroke="#f59e0b" strokeWidth="2" />
+        <text x="105" y="34" fill="#fbbf24" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">4. كفاءة الأداء 60FPS</text>
+        <text x="105" y="65" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">Zero Unneeded Renders</text>
       </g>
     </svg>
   );

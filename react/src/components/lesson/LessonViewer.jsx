@@ -31,11 +31,13 @@ import {
   Zap,
   ShieldAlert
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import CodeBlock from './CodeBlock.jsx';
 import LiveCodePreview from './LiveCodePreview.jsx';
 import InfographicCard from '../infographic/InfographicCard.jsx';
 import LessonMotionPlayer from '../motion/LessonMotionPlayer.jsx';
+import TermsDictionarySection from './components/TermsDictionarySection.jsx';
+import CommonMistakesLab from './components/CommonMistakesLab.jsx';
+import ProBestPracticesSection from './components/ProBestPracticesSection.jsx';
 import { exportLessonToPptx } from '../../utils/exportPptx.js';
 import PresentationModeModal from '../presentation/PresentationModeModal.jsx';
 import AiLessonQuizModal from '../ai/AiLessonQuizModal.jsx';
@@ -87,7 +89,6 @@ export default function LessonViewer({
   const [isHighlightsModalOpen, setIsHighlightsModalOpen] = useState(false);
   const [lessonHighlights, setLessonHighlights] = useState([]);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [hasCelebrated, setHasCelebrated] = useState(false);
   const [visualMode, setVisualMode] = useState('motion'); // 'motion' | 'infographic'
   const [isExportingPptx, setIsExportingPptx] = useState(false);
 
@@ -237,7 +238,6 @@ export default function LessonViewer({
   // حساب نسبة التمرير التفاعلية للدرس (Scroll Progress Engine)
   useEffect(() => {
     setScrollProgress(0);
-    setHasCelebrated(false);
 
     const handleScroll = () => {
       const scrollable = document.documentElement.scrollHeight - window.innerHeight;
@@ -245,16 +245,6 @@ export default function LessonViewer({
         const current = Math.min(Math.max((window.scrollY / scrollable) * 100, 0), 100);
         const rounded = Math.round(current);
         setScrollProgress(rounded);
-
-        // إطلاق الاحتفالية عند النزول لأسفل الدرس
-        if (rounded >= 95 && !hasCelebrated) {
-          setHasCelebrated(true);
-          confetti({
-            particleCount: 60,
-            spread: 70,
-            origin: { y: 0.85 }
-          });
-        }
       }
     };
 
@@ -641,6 +631,7 @@ export default function LessonViewer({
             <div className="animate-fadeIn">
               <LessonMotionPlayer 
                 subtopic={subtopic} 
+                topicTitle={subtopic.title}
                 onSwitchToInfographic={() => setVisualMode('infographic')} 
               />
             </div>
@@ -699,45 +690,8 @@ export default function LessonViewer({
 
       </div>
 
-      {/* 4. قاموس المصطلحات الإنجليزية مع النطق والترجمة */}
-      {((subtopic.terms && subtopic.terms.length > 0) || subtopic.technicalTerm) && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <h4 className="text-xs font-bold text-cyan-400 mb-4 flex items-center gap-2">
-            <Languages className="size-4" />
-            4. المصطلحات الإنجليزية والنطق الصوتي والمعنى (Terms & Meaning):
-          </h4>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {subtopic.technicalTerm && (
-              <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono font-bold text-xs text-blue-400" dir="ltr">{subtopic.technicalTerm.english}</span>
-                    <span className="text-[10px] text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-                      النطق: {subtopic.technicalTerm.pronunciation}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-300 mt-1">{subtopic.technicalTerm.arabicMeaning}</p>
-                </div>
-              </div>
-            )}
-
-            {subtopic.terms?.map((item, idx) => (
-              <div key={idx} className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono font-bold text-xs text-blue-400" dir="ltr">{item.term}</span>
-                    <span className="text-[10px] text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-                      النطق: {item.pronunciation}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-300 mt-1">{item.meaning}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* 4. قاموس المصطلحات الإنجليزية والنطق الصوتي التفاعلي المباشر والمعنى */}
+      <TermsDictionarySection subtopic={subtopic} readingFontSize={readingFontSize} />
 
       {/* 5. الصيغة العامة (Syntax) مع دعم التظليل المباشر */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
@@ -808,51 +762,11 @@ export default function LessonViewer({
         </div>
       )}
 
-      {/* 9. الأخطاء الشائعة وحلولها */}
-      {subtopic.commonMistakes && subtopic.commonMistakes.length > 0 && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-          <h4 className="text-xs font-bold text-red-400 flex items-center gap-2">
-            <AlertTriangle className="size-4" />
-            9. أخطاء شائعة يقع فيها المبتدئون وكيف تتجنبها (Common Mistakes):
-          </h4>
+      {/* 9. أخطاء شائعة يقع فيها المبتدئون وكيف تتجنبها هندسياً */}
+      <CommonMistakesLab commonMistakes={subtopic.commonMistakes} readingFontSize={readingFontSize} />
 
-          {subtopic.commonMistakes.map((m, idx) => (
-            <div key={idx} className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2">
-              <div className="text-xs text-red-300 flex items-start gap-1.5">
-                <span className="font-bold text-red-500">❌ الخطأ:</span>
-                <span className="font-mono">{m.wrong}</span>
-              </div>
-              <div className="text-xs text-emerald-300 flex items-start gap-1.5">
-                <span className="font-bold text-emerald-400">✓ الصواب:</span>
-                <span className="font-mono">{m.right}</span>
-              </div>
-              <div className="text-[11px] text-slate-400 bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-pretty">
-                <span className="font-semibold text-slate-300">💡 السبب المعماري: </span>
-                {renderHighlightedContent(m.reason)}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* 10. نصائح ذهبية للمحترفين */}
-      {subtopic.bestPractices && subtopic.bestPractices.length > 0 && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-3">
-          <h4 className="text-xs font-bold text-amber-400 flex items-center gap-2">
-            <Lightbulb className="size-4" />
-            10. نصائح ذهبية وأفضل الممارسات للمحترفين (Best Practices):
-          </h4>
-
-          <ul className="space-y-2.5">
-            {subtopic.bestPractices.map((tip, idx) => (
-              <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-200 leading-relaxed bg-slate-950/50 p-3 rounded-xl border border-slate-850">
-                <span className="text-amber-400 font-bold shrink-0">⭐</span>
-                <span>{renderHighlightedContent(tip)}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {/* 10. نصائح ذهبية وأفضل الممارسات للمحترفين */}
+      <ProBestPracticesSection bestPractices={subtopic.bestPractices} readingFontSize={readingFontSize} />
 
       {/* 11. النموذج الذهني المعماري وخلف كواليس المحرك (Mental Model & Under the Hood) */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4 relative overflow-hidden">
