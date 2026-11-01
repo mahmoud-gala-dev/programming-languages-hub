@@ -19,9 +19,9 @@ export function detectDiagramType(subtopic) {
   if (
     !title.includes('vs code') && !eng.includes('vs code') &&
     (
-      title.includes('الفرق بين') || 
-      title.includes('مقارنة') || 
-      /\bvs\b/i.test(eng) || 
+      title.includes('الفرق بين') ||
+      title.includes('مقارنة') ||
+      /\bvs\b/i.test(eng) ||
       eng.includes('difference between') ||
       (title.includes('frontend') && title.includes('backend')) ||
       (title.includes('http') && title.includes('https')) ||
@@ -35,7 +35,7 @@ export function detectDiagramType(subtopic) {
   // مخصصة حصراً لدروس المتصفح والخادم، بروتوكولات الشبكة، واستدعاءات API
   if (
     id === '1.1.c' || id === '1.1.d' ||
-    title.includes('عمل المتصفح والخادم') || 
+    title.includes('عمل المتصفح والخادم') ||
     title.includes('http وhttps') ||
     title.includes('بروتوكول') ||
     (eng.includes('browser and server') || eng.includes('http protocol'))
@@ -46,14 +46,14 @@ export function detectDiagramType(subtopic) {
   // 3. ثلاثي الويب (HTML / CSS / JavaScript)
   // دروس HTML (1.2.*) ودروس CSS (1.3.*) ومفاهيم التصميم والتنسيق
   if (
-    id.startsWith('1.2.') || 
-    id.startsWith('1.3.') || 
-    title.includes('html') || 
-    title.includes('css') || 
-    title.includes('javascript') || 
-    title.includes('نموذج الصندوق') || 
-    title.includes('flexbox') || 
-    title.includes('grid') || 
+    id.startsWith('1.2.') ||
+    id.startsWith('1.3.') ||
+    title.includes('html') ||
+    title.includes('css') ||
+    title.includes('javascript') ||
+    title.includes('نموذج الصندوق') ||
+    title.includes('flexbox') ||
+    title.includes('grid') ||
     title.includes('العناصر الدلالية') ||
     title.includes('المحددات') ||
     title.includes('التموضع')
@@ -63,10 +63,10 @@ export function detectDiagramType(subtopic) {
 
   // 4. شجرة الـ DOM والـ Virtual DOM ومطابقة الـ Diffing
   if (
-    title.includes('virtual dom') || 
-    title.includes('vdom') || 
-    title.includes('diffing') || 
-    title.includes('reconciliation') || 
+    title.includes('virtual dom') ||
+    title.includes('vdom') ||
+    title.includes('diffing') ||
+    title.includes('reconciliation') ||
     title.includes('شجرة dom') ||
     eng.includes('dom')
   ) {
@@ -75,10 +75,10 @@ export function detectDiagramType(subtopic) {
 
   // 5. المكونات، JSX، وتدفق البيانات أحادي الاتجاه (Props & State Flow)
   if (
-    title.includes('props') || 
-    title.includes('مكون') || 
-    title.includes('jsx') || 
-    eng.includes('component') || 
+    title.includes('props') ||
+    title.includes('مكون') ||
+    title.includes('jsx') ||
+    eng.includes('component') ||
     eng.includes('props') ||
     eng.includes('jsx')
   ) {
@@ -87,13 +87,13 @@ export function detectDiagramType(subtopic) {
 
   // 6. خطافات React ودورة الحياة (Hooks, useState, useEffect, Lifecycle)
   if (
-    title.includes('hook') || 
-    title.includes('useeffect') || 
-    title.includes('usestate') || 
-    title.includes('دورة حياة') || 
-    title.includes('حالة') || 
-    eng.includes('hook') || 
-    eng.includes('lifecycle') || 
+    title.includes('hook') ||
+    title.includes('useeffect') ||
+    title.includes('usestate') ||
+    title.includes('دورة حياة') ||
+    title.includes('حالة') ||
+    eng.includes('hook') ||
+    eng.includes('lifecycle') ||
     eng.includes('state')
   ) {
     return 'hooks-lifecycle';
@@ -101,7 +101,7 @@ export function detectDiagramType(subtopic) {
 
   // 7. مسار التدفق والتنفيذ المتسلسل (Pipeline Execution Flow)
   if (
-    subtopic.executionFlow && 
+    subtopic.executionFlow &&
     (title.includes('مسار') || title.includes('تدفق') || title.includes('كيفية') || title.includes('rendering') || title.includes('csr') || title.includes('spa'))
   ) {
     return 'pipeline-flow';
@@ -114,7 +114,7 @@ export function detectDiagramType(subtopic) {
 export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, frame, fps = 30 }) {
   // دورة نبض وتنفس هادئة ومريحة للمتعلم (4 ثوانٍ كاملة)
   const pulse = interpolate(Math.sin((frame / (fps * 2)) * Math.PI), [-1, 1], [0.96, 1.04]);
-  
+
   // استخراج بيانات الدرس الحالية بشكل ديناميكي كامل
   const steps = subtopic?.infographic?.steps || [];
   const terms = subtopic?.terms || [];
@@ -139,13 +139,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
     const termB = terms[1]?.term || steps[1]?.title || 'المفهوم الثاني (B)';
     const descB = terms[1]?.meaning || steps[1]?.desc || 'الخصائص المعاكسة والمهام المكملة';
 
-    // تبادل تسليط الضوء الهادئ بين الجانبين (كل 10 ثوانٍ جانب ليناسب الـ 30 ثانية)
-    const isSideA = Math.floor(frame / (fps * 10)) % 2 === 0;
+    // تبادل تسليط الضوء الهادئ بين الجانبين (كل 6 ثوانٍ جانب)
+    const isSideA = Math.floor(frame / (fps * 6)) % 2 === 0;
 
     return (
-      <svg 
-        viewBox="0 0 800 450" 
-        preserveAspectRatio="xMidYMid meet" 
+      <svg
+        viewBox="0 0 800 450"
+        preserveAspectRatio="xMidYMid meet"
         className="w-full h-full max-h-[380px] drop-shadow-2xl font-sans mx-auto block"
       >
         <defs>
@@ -176,13 +176,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
         {/* الجانب الأيمن / المفهوم الأول (Side A) */}
         <g transform="translate(40, 75)">
-          <rect 
-            width="320" 
-            height="275" 
-            rx="20" 
-            fill="#0b1329" 
-            stroke={isSideA ? "#38bdf8" : "#1e293b"} 
-            strokeWidth={isSideA ? "3.5" : "1.5"} 
+          <rect
+            width="320"
+            height="275"
+            rx="20"
+            fill="#0b1329"
+            stroke={isSideA ? "#38bdf8" : "#1e293b"}
+            strokeWidth={isSideA ? "3.5" : "1.5"}
             filter={isSideA ? "url(#compGlow)" : ""}
           />
           <rect x="0" y="0" width="320" height="50" rx="20" fill="url(#compGradA)" />
@@ -227,13 +227,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
         {/* الجانب الأيسر / المفهوم الثاني (Side B) */}
         <g transform="translate(440, 75)">
-          <rect 
-            width="320" 
-            height="275" 
-            rx="20" 
-            fill="#120c24" 
-            stroke={!isSideA ? "#c084fc" : "#1e293b"} 
-            strokeWidth={!isSideA ? "3.5" : "1.5"} 
+          <rect
+            width="320"
+            height="275"
+            rx="20"
+            fill="#120c24"
+            stroke={!isSideA ? "#c084fc" : "#1e293b"}
+            strokeWidth={!isSideA ? "3.5" : "1.5"}
             filter={!isSideA ? "url(#compGlow)" : ""}
           />
           <rect x="0" y="0" width="320" height="50" rx="20" fill="url(#compGradB)" />
@@ -286,15 +286,15 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
   // 2. مخطط تدفق مسار التنفيذ المتسلسل (Pipeline Execution Flow)
   // -------------------------------------------------------------
   if (type === 'pipeline-flow') {
-    const cycleFrames = fps * 10;
+    const cycleFrames = fps * 6;
     const progress = (frame % cycleFrames) / cycleFrames;
     const activeIndex = Math.floor(progress * 3);
     const tokenX = interpolate(progress, [0, 0.33, 0.66, 1], [150, 400, 650, 700]);
 
     return (
-      <svg 
-        viewBox="0 0 800 450" 
-        preserveAspectRatio="xMidYMid meet" 
+      <svg
+        viewBox="0 0 800 450"
+        preserveAspectRatio="xMidYMid meet"
         className="w-full h-full max-h-[380px] drop-shadow-2xl font-sans mx-auto block"
       >
         <text x="400" y="38" fill="#f8fafc" fontSize="20" fontWeight="900" textAnchor="middle" fontFamily="Cairo">
@@ -314,13 +314,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
         {/* المحطة 1 */}
         <g transform="translate(50, 110)">
-          <rect 
-            width="200" 
-            height="180" 
-            rx="16" 
-            fill="#0b1329" 
-            stroke={activeIndex === 0 ? "#38bdf8" : "#334155"} 
-            strokeWidth={activeIndex === 0 ? "3.5" : "1.5"} 
+          <rect
+            width="200"
+            height="180"
+            rx="16"
+            fill="#0b1329"
+            stroke={activeIndex === 0 ? "#38bdf8" : "#334155"}
+            strokeWidth={activeIndex === 0 ? "3.5" : "1.5"}
           />
           <circle cx="100" cy="40" r="22" fill={activeIndex === 0 ? "#0284c7" : "#1e293b"} />
           <text x="100" y="46" fill="#fff" fontSize="14" fontWeight="bold" textAnchor="middle">1</text>
@@ -334,13 +334,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
         {/* المحطة 2 */}
         <g transform="translate(300, 110)">
-          <rect 
-            width="200" 
-            height="180" 
-            rx="16" 
-            fill="#0f172a" 
-            stroke={activeIndex === 1 ? "#a855f7" : "#334155"} 
-            strokeWidth={activeIndex === 1 ? "3.5" : "1.5"} 
+          <rect
+            width="200"
+            height="180"
+            rx="16"
+            fill="#0f172a"
+            stroke={activeIndex === 1 ? "#a855f7" : "#334155"}
+            strokeWidth={activeIndex === 1 ? "3.5" : "1.5"}
           />
           <circle cx="100" cy="40" r="22" fill={activeIndex === 1 ? "#7e22ce" : "#1e293b"} />
           <text x="100" y="46" fill="#fff" fontSize="14" fontWeight="bold" textAnchor="middle">2</text>
@@ -354,13 +354,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
         {/* المحطة 3 */}
         <g transform="translate(550, 110)">
-          <rect 
-            width="200" 
-            height="180" 
-            rx="16" 
-            fill="#061c14" 
-            stroke={activeIndex === 2 ? "#10b981" : "#334155"} 
-            strokeWidth={activeIndex === 2 ? "3.5" : "1.5"} 
+          <rect
+            width="200"
+            height="180"
+            rx="16"
+            fill="#061c14"
+            stroke={activeIndex === 2 ? "#10b981" : "#334155"}
+            strokeWidth={activeIndex === 2 ? "3.5" : "1.5"}
           />
           <circle cx="100" cy="40" r="22" fill={activeIndex === 2 ? "#059669" : "#1e293b"} />
           <text x="100" y="46" fill="#fff" fontSize="14" fontWeight="bold" textAnchor="middle">3</text>
@@ -390,7 +390,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
   // 3. مخطط شبكة الاتصال والخادم والعميل (Client-Server & Network Protocols)
   // -------------------------------------------------------------
   if (type === 'client-server') {
-    const cycleFrames = fps * 10;
+    const cycleFrames = fps * 6;
     const packetProgress = (frame % cycleFrames) / cycleFrames;
     const easeProgress = 0.5 - 0.5 * Math.cos(packetProgress * Math.PI * 2);
     const packetX = interpolate(easeProgress, [0, 1], [270, 520]);
@@ -402,9 +402,9 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
     const serverDesc = terms[1]?.meaning || 'معالجة المنطق والبيانات';
 
     return (
-      <svg 
-        viewBox="0 0 800 450" 
-        preserveAspectRatio="xMidYMid meet" 
+      <svg
+        viewBox="0 0 800 450"
+        preserveAspectRatio="xMidYMid meet"
         className="w-full h-full max-h-[380px] drop-shadow-2xl font-sans mx-auto block"
       >
         <defs>
@@ -455,7 +455,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
         {/* خط اتصال الشبكة والـ HTTP Protocols */}
         <g transform="translate(300, 190)">
           <line x1="0" y1="20" x2="200" y2="20" stroke="#334155" strokeWidth="4" strokeDasharray="8 6" />
-          
+
           {/* حزمة البيانات المتحركة (HTTP Request / Response) */}
           <g transform={`translate(${packetX - 300}, 0)`}>
             <rect x="-45" y="0" width="90" height="40" rx="10" fill={isGoingRight ? "#0284c7" : "#10b981"} />
@@ -516,20 +516,20 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
     const isJs = safeTitle.toLowerCase().includes('javascript') || (!isHtml && !isCss);
 
     return (
-      <svg 
-        viewBox="0 0 800 450" 
-        preserveAspectRatio="xMidYMid meet" 
+      <svg
+        viewBox="0 0 800 450"
+        preserveAspectRatio="xMidYMid meet"
         className="w-full h-full max-h-[380px] drop-shadow-2xl font-sans mx-auto block"
       >
         {/* العمود 1: HTML الهيكل */}
         <g transform="translate(40, 50)">
-          <rect 
-            width="220" 
-            height="340" 
-            rx="20" 
-            fill="#0f172a" 
-            stroke={isHtml ? "#ea580c" : "#334155"} 
-            strokeWidth={isHtml ? "4" : "1.5"} 
+          <rect
+            width="220"
+            height="340"
+            rx="20"
+            fill="#0f172a"
+            stroke={isHtml ? "#ea580c" : "#334155"}
+            strokeWidth={isHtml ? "4" : "1.5"}
           />
           <rect x="0" y="0" width="220" height="50" rx="20" fill="#431407" />
           <text x="110" y="32" fill="#fb923c" fontSize="16" fontWeight="black" textAnchor="middle">1. HTML 🦴</text>
@@ -539,7 +539,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           <text x="110" y="125" fill="#cbd5e1" fontSize="11" textAnchor="middle">
             Structure &amp; Semantics
           </text>
-          
+
           <rect x="20" y="150" width="180" height="125" rx="10" fill="#1c1917" />
           <text x="30" y="180" fill="#ea580c" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">&lt;main role="app"&gt;</text>
           <text x="40" y="205" fill="#fdba74" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">&lt;h1&gt;{shortTitle.slice(0, 10)}&lt;/h1&gt;</text>
@@ -559,13 +559,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
         {/* العمود 2: CSS المظهر والتنسيق */}
         <g transform="translate(290, 50)">
-          <rect 
-            width="220" 
-            height="340" 
-            rx="20" 
-            fill="#0f172a" 
-            stroke={isCss ? "#0284c7" : "#334155"} 
-            strokeWidth={isCss ? "4" : "1.5"} 
+          <rect
+            width="220"
+            height="340"
+            rx="20"
+            fill="#0f172a"
+            stroke={isCss ? "#0284c7" : "#334155"}
+            strokeWidth={isCss ? "4" : "1.5"}
           />
           <rect x="0" y="0" width="220" height="50" rx="20" fill="#082f49" />
           <text x="110" y="32" fill="#38bdf8" fontSize="16" fontWeight="black" textAnchor="middle">2. CSS 🎨</text>
@@ -575,7 +575,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           <text x="110" y="125" fill="#cbd5e1" fontSize="11" textAnchor="middle">
             Styles &amp; Responsive Layout
           </text>
-          
+
           <rect x="20" y="150" width="180" height="125" rx="10" fill="#0c2338" />
           <text x="30" y="180" fill="#38bdf8" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">.layout &#123;</text>
           <text x="40" y="205" fill="#bae6fd" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">display: flex;</text>
@@ -595,13 +595,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
         {/* العمود 3: JavaScript العقل والتفاعل */}
         <g transform="translate(540, 50)">
-          <rect 
-            width="220" 
-            height="340" 
-            rx="20" 
-            fill="#0f172a" 
-            stroke={isJs ? "#eab308" : "#334155"} 
-            strokeWidth={isJs ? "4" : "1.5"} 
+          <rect
+            width="220"
+            height="340"
+            rx="20"
+            fill="#0f172a"
+            stroke={isJs ? "#eab308" : "#334155"}
+            strokeWidth={isJs ? "4" : "1.5"}
           />
           <rect x="0" y="0" width="220" height="50" rx="20" fill="#422006" />
           <text x="110" y="32" fill="#fde047" fontSize="16" fontWeight="black" textAnchor="middle">3. JavaScript 🧠</text>
@@ -611,7 +611,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           <text x="110" y="125" fill="#cbd5e1" fontSize="11" textAnchor="middle">
             Logic, Reactivity &amp; APIs
           </text>
-          
+
           <rect x="20" y="150" width="180" height="125" rx="10" fill="#291e0a" />
           <text x="30" y="180" fill="#facc15" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">const render = () =&gt; &#123;</text>
           <text x="40" y="205" fill="#fef08a" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">updateUI('{shortTitle.slice(0, 8)}');</text>
@@ -630,11 +630,11 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
   // 5. مخطط شجرة الـ Virtual DOM ومطابقة الـ Diffing
   // -------------------------------------------------------------
   if (type === 'dom-tree') {
-    const diffHighlight = Math.floor(frame / (fps * 3.5)) % 2 === 0;
+    const diffHighlight = Math.floor(frame / (fps * 2)) % 2 === 0;
     return (
-      <svg 
-        viewBox="0 0 800 450" 
-        preserveAspectRatio="xMidYMid meet" 
+      <svg
+        viewBox="0 0 800 450"
+        preserveAspectRatio="xMidYMid meet"
         className="w-full h-full max-h-[380px] drop-shadow-2xl mx-auto block"
       >
         <defs>
@@ -654,7 +654,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           <text x="160" y="45" fill="#38bdf8" fontSize="17" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
             شجرة Virtual DOM الافتراضية
           </text>
-          
+
           <line x1="160" y1="100" x2="100" y2="180" stroke="#38bdf8" strokeWidth="3" opacity="0.7" />
           <line x1="160" y1="100" x2="220" y2="180" stroke="#38bdf8" strokeWidth="3" opacity="0.7" />
           <line x1="100" y1="180" x2="70" y2="270" stroke="#38bdf8" strokeWidth="3" opacity="0.7" />
@@ -669,14 +669,14 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           <text x="100" y="184" fill="#fff" fontSize="10" fontWeight="bold" textAnchor="middle" direction="ltr">&lt;Header /&gt;</text>
 
           {/* Child 2 (العقدة التي تتغير - Diff) - كبسولة متسعة تحمي النص من الخروج */}
-          <rect 
-            x="165" 
-            y="162" 
-            width="100" 
-            height="36" 
-            rx="12" 
-            fill={diffHighlight ? "#f43f5e" : "#0284c7"} 
-            stroke="#fff" 
+          <rect
+            x="165"
+            y="162"
+            width="100"
+            height="36"
+            rx="12"
+            fill={diffHighlight ? "#f43f5e" : "#0284c7"}
+            stroke="#fff"
             strokeWidth={diffHighlight ? 3 : 1}
           />
           <text x="215" y="185" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle" direction="ltr">
@@ -705,7 +705,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           <text x="160" y="45" fill="#10b981" fontSize="17" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
             شجرة المتصفح Real DOM
           </text>
-          
+
           <line x1="160" y1="100" x2="100" y2="180" stroke="#10b981" strokeWidth="3" opacity="0.6" />
           <line x1="160" y1="100" x2="220" y2="180" stroke="#10b981" strokeWidth="3" opacity="0.6" />
 
@@ -717,14 +717,14 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           <text x="100" y="184" fill="#94a3b8" fontSize="10" textAnchor="middle" direction="ltr">header</text>
 
           {/* Only this node gets updated in Real DOM! */}
-          <rect 
-            x="165" 
-            y="162" 
-            width="100" 
-            height="36" 
-            rx="12" 
-            fill={diffHighlight ? "#10b981" : "#059669"} 
-            stroke="#34d399" 
+          <rect
+            x="165"
+            y="162"
+            width="100"
+            height="36"
+            rx="12"
+            fill={diffHighlight ? "#10b981" : "#059669"}
+            stroke="#34d399"
             strokeWidth={diffHighlight ? 4 : 1}
           />
           <text x="215" y="185" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle" direction="ltr">
@@ -745,11 +745,11 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
   // 6. مخطط تدفق المكونات والبيانات (Component Props & Data Flow)
   // -------------------------------------------------------------
   if (type === 'component-flow') {
-    const flowProgress = interpolate(frame % (fps * 7.5), [0, fps * 7.5], [0, 120]);
+    const flowProgress = interpolate(frame % (fps * 5), [0, fps * 5], [0, 120]);
     return (
-      <svg 
-        viewBox="0 0 800 450" 
-        preserveAspectRatio="xMidYMid meet" 
+      <svg
+        viewBox="0 0 800 450"
+        preserveAspectRatio="xMidYMid meet"
         className="w-full h-full max-h-[380px] drop-shadow-2xl mx-auto block"
       >
         {/* Parent Component */}
@@ -758,7 +758,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           <text x="160" y="38" fill="#38bdf8" fontSize="15" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
             المكون الأب: {shortTitle}
           </text>
-          
+
           <rect x="20" y="55" width="280" height="40" rx="8" fill="#0f172a" stroke="#0284c7" strokeWidth="1" />
           <text x="160" y="79" fill="#f8fafc" fontSize="12" textAnchor="middle" fontFamily="JetBrains Mono" direction="ltr" unicodeBidi="embed">
             const [data, setData] = useState(...)
@@ -797,12 +797,12 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
         </g>
 
         {/* مسار وشارة رفع الحدث Event Callback للأعلى */}
-        <path 
-          d="M 575 285 C 655 215, 655 145, 565 115" 
-          fill="none" 
-          stroke="#f59e0b" 
-          strokeWidth="3" 
-          strokeDasharray="6 4" 
+        <path
+          d="M 575 285 C 655 215, 655 145, 565 115"
+          fill="none"
+          stroke="#f59e0b"
+          strokeWidth="3"
+          strokeDasharray="6 4"
         />
         <g transform="translate(615, 195)">
           <rect width="80" height="26" rx="8" fill="#1e293b" stroke="#f59e0b" strokeWidth="1.5" />
@@ -818,11 +818,11 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
   // 7. مخطط دورة حياة الـ Hooks والتأثيرات الجانبية
   // -------------------------------------------------------------
   if (type === 'hooks-lifecycle') {
-    const activeStep = Math.floor((frame / (fps * 10)) % 3);
+    const activeStep = Math.floor((frame / (fps * 3)) % 3);
     return (
-      <svg 
-        viewBox="0 0 800 450" 
-        preserveAspectRatio="xMidYMid meet" 
+      <svg
+        viewBox="0 0 800 450"
+        preserveAspectRatio="xMidYMid meet"
         className="w-full h-full max-h-[380px] drop-shadow-2xl mx-auto block"
       >
         <text x="400" y="45" fill="#f8fafc" fontSize="20" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
@@ -831,13 +831,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
         {/* 1. Mount Phase */}
         <g transform="translate(60, 100)">
-          <rect 
-            width="200" 
-            height="260" 
-            rx="18" 
-            fill="#0f172a" 
-            stroke={activeStep === 0 ? "#38bdf8" : "#334155"} 
-            strokeWidth={activeStep === 0 ? "4" : "1.5"} 
+          <rect
+            width="200"
+            height="260"
+            rx="18"
+            fill="#0f172a"
+            stroke={activeStep === 0 ? "#38bdf8" : "#334155"}
+            strokeWidth={activeStep === 0 ? "4" : "1.5"}
           />
           <circle cx="100" cy="50" r="28" fill="#0284c7" />
           <text x="100" y="56" fill="#fff" fontSize="16" fontWeight="bold" textAnchor="middle">1</text>
@@ -853,13 +853,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
         {/* 2. Update Phase */}
         <g transform="translate(320, 100)">
-          <rect 
-            width="200" 
-            height="260" 
-            rx="18" 
-            fill="#0f172a" 
-            stroke={activeStep === 1 ? "#a855f7" : "#334155"} 
-            strokeWidth={activeStep === 1 ? "4" : "1.5"} 
+          <rect
+            width="200"
+            height="260"
+            rx="18"
+            fill="#0f172a"
+            stroke={activeStep === 1 ? "#a855f7" : "#334155"}
+            strokeWidth={activeStep === 1 ? "4" : "1.5"}
           />
           <circle cx="100" cy="50" r="28" fill="#7e22ce" />
           <text x="100" y="56" fill="#fff" fontSize="16" fontWeight="bold" textAnchor="middle">2</text>
@@ -875,13 +875,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
         {/* 3. Unmount Phase */}
         <g transform="translate(580, 100)">
-          <rect 
-            width="170" 
-            height="260" 
-            rx="18" 
-            fill="#0f172a" 
-            stroke={activeStep === 2 ? "#f43f5e" : "#334155"} 
-            strokeWidth={activeStep === 2 ? "4" : "1.5"} 
+          <rect
+            width="170"
+            height="260"
+            rx="18"
+            fill="#0f172a"
+            stroke={activeStep === 2 ? "#f43f5e" : "#334155"}
+            strokeWidth={activeStep === 2 ? "4" : "1.5"}
           />
           <circle cx="85" cy="50" r="28" fill="#be123c" />
           <text x="85" y="56" fill="#fff" fontSize="16" fontWeight="bold" textAnchor="middle">3</text>
@@ -899,12 +899,12 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
   // 8. المحرك المفهومي المداري الديناميكي الشامل (Universal Concept Engine)
   // -------------------------------------------------------------
   // مستخدم لكل درس آخر: يقرأ خطوات ومصطلحات الدرس الفعلي في كبسولات مدارية متحركة
-  const focusPod = Math.floor(frame / (fps * 7.5)) % 4; // كل 7.5 ثانية تركيز على محطة على مدار الـ 30 ثانية
+  const focusPod = Math.floor(frame / (fps * 4)) % 4; // كل 4 ثوانٍ تركيز على محطة
 
   return (
-    <svg 
-      viewBox="0 0 800 450" 
-      preserveAspectRatio="xMidYMid meet" 
+    <svg
+      viewBox="0 0 800 450"
+      preserveAspectRatio="xMidYMid meet"
       className="w-full h-full max-h-[380px] drop-shadow-2xl mx-auto block"
     >
       <defs>
@@ -919,27 +919,27 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
       {/* قلب المحرك المركزي: عنوان وهوية الدرس الفعلية مع مسارات مدارية هادئة */}
       <g transform="translate(300, 145)">
-        <ellipse 
-          cx="100" 
-          cy="80" 
-          rx="120" 
-          ry="50" 
-          fill="none" 
-          stroke="#38bdf8" 
-          strokeWidth="3.5" 
-          strokeDasharray="10 6" 
-          transform={`rotate(${frame * 0.12} 100 80)`} 
+        <ellipse
+          cx="100"
+          cy="80"
+          rx="120"
+          ry="50"
+          fill="none"
+          stroke="#38bdf8"
+          strokeWidth="3.5"
+          strokeDasharray="10 6"
+          transform={`rotate(${frame * 0.3} 100 80)`}
         />
-        <ellipse 
-          cx="100" 
-          cy="80" 
-          rx="120" 
-          ry="50" 
-          fill="none" 
-          stroke="#a855f7" 
-          strokeWidth="3.5" 
-          strokeDasharray="10 6" 
-          transform={`rotate(${-frame * 0.1} 100 80)`} 
+        <ellipse
+          cx="100"
+          cy="80"
+          rx="120"
+          ry="50"
+          fill="none"
+          stroke="#a855f7"
+          strokeWidth="3.5"
+          strokeDasharray="10 6"
+          transform={`rotate(${-frame * 0.25} 100 80)`}
         />
         <circle cx="100" cy="80" r={42 * pulse} fill="#0284c7" stroke="#38bdf8" strokeWidth="2.5" />
         <text x="100" y="78" fill="#fff" fontSize="13" fontWeight="900" textAnchor="middle" fontFamily="Cairo">
@@ -952,13 +952,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
       {/* المحطة المدارية 1 (الركن الأيمن العلوي) */}
       <g transform="translate(40, 40)">
-        <rect 
-          width="230" 
-          height="100" 
-          rx="16" 
-          fill="#0b1329" 
-          stroke={focusPod === 0 ? "#38bdf8" : "#1e293b"} 
-          strokeWidth={focusPod === 0 ? "3.5" : "1.5"} 
+        <rect
+          width="230"
+          height="100"
+          rx="16"
+          fill="#0b1329"
+          stroke={focusPod === 0 ? "#38bdf8" : "#1e293b"}
+          strokeWidth={focusPod === 0 ? "3.5" : "1.5"}
         />
         <circle cx="28" cy="28" r="14" fill="#0284c7" />
         <text x="28" y="32" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">1</text>
@@ -972,13 +972,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
       {/* المحطة المدارية 2 (الركن الأيسر العلوي) */}
       <g transform="translate(530, 40)">
-        <rect 
-          width="230" 
-          height="100" 
-          rx="16" 
-          fill="#061c14" 
-          stroke={focusPod === 1 ? "#10b981" : "#1e293b"} 
-          strokeWidth={focusPod === 1 ? "3.5" : "1.5"} 
+        <rect
+          width="230"
+          height="100"
+          rx="16"
+          fill="#061c14"
+          stroke={focusPod === 1 ? "#10b981" : "#1e293b"}
+          strokeWidth={focusPod === 1 ? "3.5" : "1.5"}
         />
         <circle cx="28" cy="28" r="14" fill="#059669" />
         <text x="28" y="32" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">2</text>
@@ -992,13 +992,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
       {/* المحطة المدارية 3 (الركن الأيمن السفلي) */}
       <g transform="translate(40, 280)">
-        <rect 
-          width="230" 
-          height="100" 
-          rx="16" 
-          fill="#1b0e2b" 
-          stroke={focusPod === 2 ? "#a855f7" : "#1e293b"} 
-          strokeWidth={focusPod === 2 ? "3.5" : "1.5"} 
+        <rect
+          width="230"
+          height="100"
+          rx="16"
+          fill="#1b0e2b"
+          stroke={focusPod === 2 ? "#a855f7" : "#1e293b"}
+          strokeWidth={focusPod === 2 ? "3.5" : "1.5"}
         />
         <circle cx="28" cy="28" r="14" fill="#7e22ce" />
         <text x="28" y="32" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">3</text>
@@ -1012,13 +1012,13 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
       {/* المحطة المدارية 4 (الركن الأيسر السفلي): مصطلحات أو ميزات الدرس */}
       <g transform="translate(530, 280)">
-        <rect 
-          width="230" 
-          height="100" 
-          rx="16" 
-          fill="#241403" 
-          stroke={focusPod === 3 ? "#f59e0b" : "#1e293b"} 
-          strokeWidth={focusPod === 3 ? "3.5" : "1.5"} 
+        <rect
+          width="230"
+          height="100"
+          rx="16"
+          fill="#241403"
+          stroke={focusPod === 3 ? "#f59e0b" : "#1e293b"}
+          strokeWidth={focusPod === 3 ? "3.5" : "1.5"}
         />
         <circle cx="28" cy="28" r="14" fill="#d97706" />
         <text x="28" y="32" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">★</text>

@@ -44,6 +44,8 @@ import LessonMotionPlayer from '../motion/LessonMotionPlayer.jsx';
 import TermsDictionarySection from './components/TermsDictionarySection.jsx';
 import CommonMistakesLab from './components/CommonMistakesLab.jsx';
 import ProBestPracticesSection from './components/ProBestPracticesSection.jsx';
+import OutputExplanationSection from './components/OutputExplanationSection.jsx';
+import MentalModelSection from './components/MentalModelSection.jsx';
 import { exportLessonToPptx } from '../../utils/exportPptx.js';
 import PresentationModeModal from '../presentation/PresentationModeModal.jsx';
 import AiLessonQuizModal from '../ai/AiLessonQuizModal.jsx';
@@ -71,13 +73,13 @@ export default function LessonViewer({
   const showToast = useToast();
   const showSwal = useSwal();
 
-  // تفضيلات القراءة والخط مع الحفظ في التخزين المحلي
+  // تفضيلات القراءة والخط مع الحفظ في التخزين المحلي (الافتراضي 17px لقراءة واضحة ومريحة)
   const [readingFontSize, setReadingFontSize] = useState(() => {
     try {
       const saved = localStorage.getItem("react_roadmap_text_size");
-      return saved ? Number(saved) : 15;
+      return saved && Number(saved) >= 16 ? Number(saved) : 17;
     } catch {
-      return 15;
+      return 17;
     }
   });
 
@@ -324,7 +326,7 @@ export default function LessonViewer({
       { id: 'advanced-code', title: '7. تطبيق عملي متقدم', shortTitle: 'تطبيق متقدم' },
       { id: 'live-preview', title: 'المعاينة التفاعلية المباشرة', shortTitle: 'المعاينة الحية' }
     ] : []),
-    ...((subtopic.outputExplanation || subtopic.output) ? [{ id: 'output', title: '8. شرح المخرجات', shortTitle: 'شرح المخرجات' }] : []),
+    ...((subtopic.outputExplanation || subtopic.output || subtopic.simpleCode || subtopic.codeSnippet) ? [{ id: 'output', title: '8. شرح المخرجات: ماذا يرى المستخدم ولماذا؟', shortTitle: 'شرح المخرجات' }] : []),
     { id: 'mistakes', title: '9. أخطاء شائعة وكيف تتجنبها', shortTitle: 'أخطاء وحلولها' },
     { id: 'best-practices', title: '10. نصائح وأفضل الممارسات', shortTitle: 'أفضل الممارسات' },
     { id: 'mental-model', title: '11. النموذج الذهني وخلف الكواليس', shortTitle: 'النموذج الذهني' },
@@ -425,12 +427,12 @@ export default function LessonViewer({
               >
                 A+
               </button>
-              {readingFontSize !== 15 && (
+              {readingFontSize !== 17 && (
                 <button
-                  onClick={() => setReadingFontSize(15)}
+                  onClick={() => setReadingFontSize(17)}
                   aria-label="إعادة ضبط حجم الخط الافتراضي"
                   className="p-1 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition-colors border-r border-slate-800 text-slate-500 cursor-pointer"
-                  title="إعادة ضبط حجم الخط الافتراضي (15px)"
+                  title="إعادة ضبط حجم الخط الافتراضي (17px)"
                 >
                   <RotateCcw className="size-3" />
                 </button>
@@ -965,32 +967,13 @@ export default function LessonViewer({
             </div>
           )}
 
-          {/* محطة 8: شرح المخرجات */}
-          {(subtopic.outputExplanation || subtopic.output) && (
-            <div 
-              id="lesson-section-output" 
-              data-lesson-section="output" 
-              className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-3 transition-all duration-300 ${
-                activeSectionId === 'output' ? 'border-cyan-500/50 ring-1 ring-cyan-500/20' : 'border-slate-800'
-              }`}
-            >
-              <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-                <h4 className="text-xs sm:text-sm font-bold text-cyan-400 flex items-center gap-2">
-                  <span className="size-6 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 flex items-center justify-center text-xs font-mono">8</span>
-                  <Eye className="size-4" />
-                  <span>شرح المخرجات: ماذا يرى المستخدم ولماذا؟ (Output Explanation):</span>
-                </h4>
-                <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-800/40">
-                  UX & Visual Feedback
-                </span>
-              </div>
-              <p 
-                className={`text-slate-300 font-sans text-pretty ${currentLeadingClass}`}
-                style={{ fontSize: `${readingFontSize}px` }}
-              >
-                {renderHighlightedContent(subtopic.outputExplanation || subtopic.output)}
-              </p>
-            </div>
+          {/* محطة 8: شرح المخرجات: ماذا يرى المستخدم ولماذا؟ */}
+          {(subtopic.outputExplanation || subtopic.output || subtopic.simpleCode || subtopic.codeSnippet) && (
+            <OutputExplanationSection 
+              subtopic={subtopic} 
+              readingFontSize={readingFontSize} 
+              renderHighlightedContent={renderHighlightedContent} 
+            />
           )}
 
           {/* محطة 9: أخطاء شائعة يقع فيها المبتدئون وكيف تتجنبها هندسياً */}
@@ -1016,57 +999,11 @@ export default function LessonViewer({
           </div>
 
           {/* محطة 11: النموذج الذهني المعماري وخلف كواليس المحرك (Mental Model & Under the Hood) */}
-          <div 
-            id="lesson-section-mental-model" 
-            data-lesson-section="mental-model" 
-            className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 relative overflow-hidden transition-all duration-300 ${
-              activeSectionId === 'mental-model' ? 'border-cyan-500/50 ring-1 ring-cyan-500/20' : 'border-slate-800'
-            }`}
-          >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-              <h4 className="text-xs sm:text-sm font-bold text-cyan-300 flex items-center gap-2">
-                <span className="size-6 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 flex items-center justify-center text-xs font-mono">11</span>
-                <Cpu className="w-4 h-4 text-cyan-400" />
-                <span>النموذج الذهني وخلف الكواليس (Mental Model & Under the Hood):</span>
-              </h4>
-              <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-800/50">
-                React Engine Internals
-              </span>
-            </div>
-            <p 
-              className={`text-slate-300 font-sans ${currentLeadingClass}`}
-              style={{ fontSize: `${readingFontSize}px` }}
-            >
-              {subtopic.mentalModel || `عند تنفيذ هذا المفهوم في React، يقوم محرك التوفيق (Reconciliation Engine) بإنشاء عقد Fiber جديدة في الذاكرة ومقارنتها عبر خوارزمية Diffing عالية الكفاءة مع الشجرة السابقة. يتم حصر التغييرات الفعلية فقط ودفعها في مرحلة الالتزام (Commit Phase) إلى الـ Real DOM دفعة واحدة، مما يمنع إعادة رسم الشاشة غير الضروري ويحافظ على استجابة 60 إطاراً في الثانية.`}
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-              <div className="bg-slate-950/70 border border-slate-800/85 p-3.5 rounded-2xl space-y-1">
-                <div className="text-[11px] font-bold text-sky-400 flex items-center gap-1.5">
-                  <span>⚡</span> مرحلة العرض (Render Phase)
-                </div>
-                <p className="text-[10px] text-slate-400">
-                  دوال نقية (Pure Functions) تحسب الشجرة الافتراضية بدون أي تأثيرات جانبية على الـ DOM الفعلي.
-                </p>
-              </div>
-              <div className="bg-slate-950/70 border border-slate-800/85 p-3.5 rounded-2xl space-y-1">
-                <div className="text-[11px] font-bold text-emerald-400 flex items-center gap-1.5">
-                  <span>🔄</span> خوارزمية التوفيق (Diffing)
-                </div>
-                <p className="text-[10px] text-slate-400">
-                  مقارنة العقد ذات الرتبة المتماثلة في زمن O(n) السريع لتحديد الاختلافات بدقة متناهية.
-                </p>
-              </div>
-              <div className="bg-slate-950/70 border border-slate-800/85 p-3.5 rounded-2xl space-y-1">
-                <div className="text-[11px] font-bold text-indigo-400 flex items-center gap-1.5">
-                  <span>🚀</span> مرحلة الالتزام (Commit Phase)
-                </div>
-                <p className="text-[10px] text-slate-400">
-                  تطبيق التعديلات الحتمية في الـ DOM، وتشغيل الـ Effects وتنظيف الموارد السابقة في الذاكرة.
-                </p>
-              </div>
-            </div>
-          </div>
+          <MentalModelSection 
+            subtopic={subtopic} 
+            readingFontSize={readingFontSize} 
+            renderHighlightedContent={renderHighlightedContent} 
+          />
 
           {/* محطة 12: فخاخ وأخطاء بيئة الإنتاج القاتلة (Production Pitfalls & Anti-Patterns) */}
           <div 
@@ -1087,35 +1024,35 @@ export default function LessonViewer({
               </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 space-y-1.5">
-                <div className="text-xs font-bold text-rose-400 flex items-center gap-1.5">
+              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
+                <div className="text-xs sm:text-sm font-bold text-rose-400 flex items-center gap-1.5">
                   <span>⚠️</span> فخ الإغلاق المتقادم (Stale Closures)
                 </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
                   الاعتماد على متغيرات قديمة داخل الدوال غير المحدثة أو الـ Event Listeners دون تمرير التبعيات في مصفوفة dependencies، مما يسبب قراءة بيانات قديمة وتصرفات عشوائية في الإنتاج.
                 </p>
               </div>
-              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 space-y-1.5">
-                <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
+                <div className="text-xs sm:text-sm font-bold text-amber-400 flex items-center gap-1.5">
                   <span>🔁</span> شلالات إعادة الرسم المتتالية (Cascading Re-renders)
                 </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
                   تعديل الـ State داخل تأثيرات معتمدة على الـ State نفسها مما ينشئ حلقة مفرغة تسحق أداء المتصفح وتجمد واجهة المستخدم.
                 </p>
               </div>
-              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 space-y-1.5">
-                <div className="text-xs font-bold text-rose-400 flex items-center gap-1.5">
+              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
+                <div className="text-xs sm:text-sm font-bold text-rose-400 flex items-center gap-1.5">
                   <span>❌</span> التعديل المباشر على الكائنات والمصفوفات (State Mutation)
                 </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
                   استخدام دوال التعديل الحتمي مثل push/splice مباشرة بدلاً من استنساخ الكائن بتنسيق جديد (...spread)، مما يكسر تحقق التساوي المرجعي في React.
                 </p>
               </div>
-              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 space-y-1.5">
-                <div className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
+                <div className="text-xs sm:text-sm font-bold text-sky-400 flex items-center gap-1.5">
                   <span>💧</span> تسريب الذاكرة (Memory Leaks in Subscriptions)
                 </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
                   عدم إرجاع دالة تنظيف (Cleanup Function) لإلغاء المؤقتات، واشتراكات الـ WebSockets، وطلبات AbortController عند تفكيك المكون (Unmount).
                 </p>
               </div>
@@ -1141,21 +1078,21 @@ export default function LessonViewer({
               </span>
             </div>
             <div className="space-y-3">
-              <div className="flex items-start gap-3 bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800">
+              <div className="flex items-start gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                 <span className="text-amber-400 font-bold font-mono">1.</span>
-                <div className="text-xs text-slate-200">
+                <div className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
                   <strong className="text-cyan-300">التحميل الكسول وتقسيم الحزم (Code Splitting):</strong> استخدم <code className="text-sky-300 bg-slate-900 px-1 py-0.5 rounded font-mono">React.lazy</code> و <code className="text-sky-300 bg-slate-900 px-1 py-0.5 rounded font-mono">&lt;Suspense&gt;</code> لتحميل الشاشات الثقيلة عند الحاجة فقط، لخفض حجم الـ Initial Bundle بأكثر من 40%.
                 </div>
               </div>
-              <div className="flex items-start gap-3 bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800">
+              <div className="flex items-start gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                 <span className="text-amber-400 font-bold font-mono">2.</span>
-                <div className="text-xs text-slate-200">
+                <div className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
                   <strong className="text-emerald-300">التزامن وانتقالات الأولوية (useTransition):</strong> ميز التحديثات غير الحرجة كبحث النصوص أو الفلاتر المعقدة عبر الانتقالات المتزامنة لتبقى الواجهة مستجيبة لنقرات المستخدم دون أي تأخير.
                 </div>
               </div>
-              <div className="flex items-start gap-3 bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800">
+              <div className="flex items-start gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                 <span className="text-amber-400 font-bold font-mono">3.</span>
-                <div className="text-xs text-slate-200">
+                <div className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
                   <strong className="text-indigo-300">التخزين المؤقت الذكي (useMemo & useCallback):</strong> احرص على استخدامها فقط عند تمرير مراجع دوال أو حسابات كثيفة لمكونات محاطة بـ <code className="text-sky-300 bg-slate-900 px-1 py-0.5 rounded font-mono">React.memo</code> لتفادي تكلفة المقارنة الزائدة.
                 </div>
               </div>
@@ -1181,19 +1118,19 @@ export default function LessonViewer({
               </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 space-y-1.5">
-                <div className="text-xs font-bold text-rose-400 flex items-center gap-1.5">
+              <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
+                <div className="text-xs sm:text-sm font-bold text-rose-400 flex items-center gap-1.5">
                   <span>⏮️</span> الأسلوب التقليدي السابق (The Legacy Way):
                 </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
                   {subtopic.headToHeadComparison?.oldWay || "تحديث يدوي لـ DOM، تشابك في مصادر الحقيقة، وصعوبة تتبع مسببات إعادة الرسم مما يسبب هبوطاً حاداً في الأداء مع تضخم المشروع."}
                 </p>
               </div>
-              <div className="bg-slate-950/80 border border-emerald-900/30 rounded-2xl p-4 space-y-1.5">
-                <div className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+              <div className="bg-slate-950/80 border border-emerald-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
+                <div className="text-xs sm:text-sm font-bold text-emerald-400 flex items-center gap-1.5">
                   <span>⚡</span> أسلوب React 19 العصري (The Modern Way):
                 </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
                   {subtopic.headToHeadComparison?.modernWay || "برمجة تصريحية معتمدة على مكونات نقية، جدولة أوتوماتيكية للأولويات، وحفظ مرجعي تلقائي عبر React Compiler."}
                 </p>
               </div>
@@ -1223,20 +1160,20 @@ export default function LessonViewer({
                 Interview Ready
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+            <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-sans font-medium">
               {subtopic.interviewPrep?.question 
                 ? subtopic.interviewPrep.question
                 : "سؤال المقابلات الشهير: 'كيف تؤثر هذه الجزئية على معمارية التطبيق ودورة تصيير المكونات؟ وما الفخ الذي يقع فيه المطور العادي؟'"}
             </p>
             <div className="bg-slate-950/80 border border-violet-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
-              <div className="text-[11px] font-bold text-violet-400 flex items-center gap-1.5">
+              <div className="text-xs sm:text-sm font-bold text-violet-400 flex items-center gap-1.5">
                 <span>💡</span> الإجابة النموذجية التي يبحث عنها المقابل التقني (Senior Answer):
               </div>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
                 {subtopic.interviewPrep?.answer || "يركز مهندس البرمجيات المحترف على سلامة التساوي المرجعي (Referential Equality)، وتجنب الآثار الجانبية غير المتوقعة، وفصل المنطق الحسابي الثقيل عن دورة التصيير لضمان استجابة الواجهة وسرعة التفاعل مع المستخدم."}
               </p>
               {subtopic.interviewPrep?.insiderTip && (
-                <div className="text-[11px] text-amber-300/90 pt-2 border-t border-slate-800/80 flex items-center gap-1.5">
+                <div className="text-xs sm:text-sm text-amber-300/90 pt-2 border-t border-slate-800/80 flex items-center gap-1.5">
                   <span>⭐ نصيحة المقابل:</span> {subtopic.interviewPrep.insiderTip}
                 </div>
               )}
@@ -1265,11 +1202,11 @@ export default function LessonViewer({
               <h5 className="text-xs sm:text-sm font-bold text-emerald-400 flex items-center gap-1.5">
                 <span>🏢</span> {subtopic.enterpriseCaseStudy?.company || "Meta & Netflix Scale Architecture"}
               </h5>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
                 {subtopic.enterpriseCaseStudy?.story || "في المنصات الضخمة التي تخدم ملايين المستخدمين يومياً، يؤدي الاستخدام غير المنضبط إلى تراكم استهلاك الذاكرة وبطء أجهزة المستخدمين الضعيفة. يتم استخدام هذا المفهوم لتقسيم عبء المعالجة، وتأخير المهام غير الحرجة، مما يضمن ثبات معدل الإطارات (60 FPS) حتى مع تضخم شجرة المكونات."}
               </p>
               {subtopic.enterpriseCaseStudy?.takeaway && (
-                <div className="text-[11px] text-emerald-300/90 pt-2 border-t border-slate-800/80">
+                <div className="text-xs sm:text-sm text-emerald-300/90 pt-2 border-t border-slate-800/80">
                   <strong>الدرس المستفاد:</strong> {subtopic.enterpriseCaseStudy.takeaway}
                 </div>
               )}
@@ -1290,7 +1227,7 @@ export default function LessonViewer({
                 <HelpCircle className="w-4 h-4 text-sky-400" />
                 <span>بنك الأسئلة الشائعة والحالات الاستثنائية (Deep-Dive FAQs & Edge Cases):</span>
               </h4>
-              <span className="text-[10px] font-mono text-sky-400 bg-sky-950/60 px-2 py-0.5 rounded-full border border-sky-800/50">
+              <span className="text-[10px] font-mono text-sky-400 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-sky-800/50">
                 Curious Minds
               </span>
             </div>
@@ -1305,7 +1242,7 @@ export default function LessonViewer({
                       </span>
                       <span className="text-slate-500 group-open:rotate-90 transition-transform">▸</span>
                     </summary>
-                    <div className="pt-3 mt-2 border-t border-slate-800/80 text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                    <div className="pt-3 mt-2 border-t border-slate-800/80 text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
                       {faq.a}
                     </div>
                   </details>
@@ -1320,7 +1257,7 @@ export default function LessonViewer({
                       </span>
                       <span className="text-slate-500 group-open:rotate-90 transition-transform">▸</span>
                     </summary>
-                    <div className="pt-3 mt-2 border-t border-slate-800/80 text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                    <div className="pt-3 mt-2 border-t border-slate-800/80 text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
                       يُستخدم المفهوم عند وجود حاجة فعلية لحفظ الحالة، تحسين استجابة الواجهة، أو مشاركة منطق معقد عبر عدة مكونات. تجنب التجريد المبكر (Premature Abstraction) إذا كان كودك يؤدي الغرض ببساطة وبدون مشاكل في الأداء.
                     </div>
                   </details>
@@ -1332,7 +1269,7 @@ export default function LessonViewer({
                       </span>
                       <span className="text-slate-500 group-open:rotate-90 transition-transform">▸</span>
                     </summary>
-                    <div className="pt-3 mt-2 border-t border-slate-800/80 text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                    <div className="pt-3 mt-2 border-t border-slate-800/80 text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
                       في بيئات React 19 المزودة بالـ Compiler، يتم تحليل مخطط تدفق المتغيرات وقت البناء وحقن كود الحفظ المرجعي التلقائي، مما يوفر على المطور عناء كتابة الميموزيشن اليدوي ويمنع أخطاء نسيان التبعيات.
                     </div>
                   </details>
@@ -1363,10 +1300,10 @@ export default function LessonViewer({
               <div className="text-xs sm:text-sm font-bold text-slate-200">
                 🎯 المهمة المطلوبة:
               </div>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
                 {subtopic.handsOnChallenge?.task || "قم ببناء مكون React تفاعلي يطبق مفاهيم هذا الدرس بدقة، مع مراعاة التعامل السليم مع الحالات الفارغة (Empty States)، وتوفير تغذية راجعة بصرية فورية عند تفاعل المستخدم."}
               </p>
-              <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-2xl text-xs font-mono text-amber-300/90 whitespace-pre-wrap" dir="ltr">
+              <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-2xl text-xs sm:text-sm font-mono text-amber-300/90 whitespace-pre-wrap" dir="ltr">
                 {subtopic.handsOnChallenge?.hint || "// تلميح للتحدي:\n// 1. تأكد من تهيئة الحالة بقيمة أولية سليمة.\n// 2. استخدم الأسماء المعبرة والممارسات الصحيحة.\n// 3. اختبر المكون على شاشات الهواتف أيضاً."}
               </div>
             </div>
