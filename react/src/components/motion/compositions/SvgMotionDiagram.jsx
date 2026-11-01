@@ -175,37 +175,40 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
         </text>
 
         {/* الجانب الأيمن / المفهوم الأول (Side A) */}
-        <g transform="translate(40, 80)">
+        <g transform="translate(40, 75)">
           <rect 
             width="320" 
-            height="270" 
+            height="275" 
             rx="20" 
             fill="#0b1329" 
             stroke={isSideA ? "#38bdf8" : "#1e293b"} 
             strokeWidth={isSideA ? "3.5" : "1.5"} 
             filter={isSideA ? "url(#compGlow)" : ""}
           />
-          <rect x="0" y="0" width="320" height="48" rx="20" fill="url(#compGradA)" />
-          <text x="160" y="30" fill="#fff" fontSize="15" fontWeight="900" textAnchor="middle" fontFamily="Cairo">
-            1. {termA}
+          <rect x="0" y="0" width="320" height="50" rx="20" fill="url(#compGradA)" />
+          {/* شارة رقم 1 مستقلة لمنع انقلاب الأرقام */}
+          <circle cx="30" cy="25" r="13" fill="#0b1329" />
+          <text x="30" y="30" fill="#38bdf8" fontSize="12" fontWeight="900" textAnchor="middle">1</text>
+          <text x="175" y="31" fill="#fff" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="Cairo" direction="ltr">
+            {termA.length > 24 ? termA.slice(0, 22) + '..' : termA}
           </text>
 
           {/* محتويات وخصائص الجانب الأول */}
-          <rect x="20" y="70" width="280" height="75" rx="12" fill="#0f172a" stroke="#0284c7" strokeWidth="1" />
-          <text x="160" y="100" fill="#38bdf8" fontSize="13" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
-            الدور والوظيفة الجوهرية:
+          <rect x="20" y="68" width="280" height="85" rx="12" fill="#0f172a" stroke="#0284c7" strokeWidth="1" />
+          <text x="160" y="94" fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+            📌 الدور والوظيفة الأساسية:
           </text>
-          <text x="160" y="125" fill="#e2e8f0" fontSize="11" textAnchor="middle" fontFamily="Cairo">
-            {descA.length > 34 ? descA.slice(0, 32) + '..' : descA}
+          <text x="160" y="122" fill="#e2e8f0" fontSize="11" textAnchor="middle" fontFamily="Cairo">
+            {descA.length > 32 ? descA.slice(0, 30) + '..' : descA}
           </text>
 
-          {/* كبسولة ميزات تفاعلية ديناميكية */}
-          <g transform="translate(20, 165)">
-            <rect width="280" height="75" rx="12" fill="#030712" stroke="#38bdf8" strokeWidth="1" strokeDasharray="4 3" />
-            <text x="140" y="28" fill="#7dd3fc" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
-              🎯 {step1Title}
+          {/* كبسولة ميزات تفاعلية متسعة بدون تكرار */}
+          <g transform="translate(20, 168)">
+            <rect width="280" height="85" rx="12" fill="#030712" stroke="#38bdf8" strokeWidth="1" strokeDasharray="4 3" />
+            <text x="140" y="32" fill="#7dd3fc" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+              🎯 {step1Title.length > 26 ? step1Title.slice(0, 24) + '..' : step1Title}
             </text>
-            <text x="140" y="52" fill="#94a3b8" fontSize="10" textAnchor="middle" fontFamily="Cairo">
+            <text x="140" y="60" fill="#94a3b8" fontSize="10.5" textAnchor="middle" fontFamily="Cairo">
               {step1Desc.length > 34 ? step1Desc.slice(0, 32) + '..' : step1Desc}
             </text>
           </g>
@@ -223,47 +226,56 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
         </g>
 
         {/* الجانب الأيسر / المفهوم الثاني (Side B) */}
-        <g transform="translate(440, 80)">
+        <g transform="translate(440, 75)">
           <rect 
             width="320" 
-            height="270" 
+            height="275" 
             rx="20" 
             fill="#120c24" 
             stroke={!isSideA ? "#c084fc" : "#1e293b"} 
             strokeWidth={!isSideA ? "3.5" : "1.5"} 
             filter={!isSideA ? "url(#compGlow)" : ""}
           />
-          <rect x="0" y="0" width="320" height="48" rx="20" fill="url(#compGradB)" />
-          <text x="160" y="30" fill="#fff" fontSize="15" fontWeight="900" textAnchor="middle" fontFamily="Cairo">
-            2. {termB}
+          <rect x="0" y="0" width="320" height="50" rx="20" fill="url(#compGradB)" />
+          {/* شارة رقم 2 مستقلة لمنع انقلاب الأرقام */}
+          <circle cx="30" cy="25" r="13" fill="#120c24" />
+          <text x="30" y="30" fill="#c084fc" fontSize="12" fontWeight="900" textAnchor="middle">2</text>
+          <text x="175" y="31" fill="#fff" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="Cairo" direction="ltr">
+            {termB.length > 24 ? termB.slice(0, 22) + '..' : termB}
           </text>
 
           {/* محتويات وخصائص الجانب الثاني */}
-          <rect x="20" y="70" width="280" height="75" rx="12" fill="#1e113a" stroke="#7e22ce" strokeWidth="1" />
-          <text x="160" y="100" fill="#c084fc" fontSize="13" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
-            الدور والوظيفة المكملة:
+          <rect x="20" y="68" width="280" height="85" rx="12" fill="#1e113a" stroke="#7e22ce" strokeWidth="1" />
+          <text x="160" y="94" fill="#c084fc" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+            📌 الدور والوظيفة المكملة:
           </text>
-          <text x="160" y="125" fill="#e2e8f0" fontSize="11" textAnchor="middle" fontFamily="Cairo">
-            {descB.length > 34 ? descB.slice(0, 32) + '..' : descB}
+          <text x="160" y="122" fill="#e2e8f0" fontSize="11" textAnchor="middle" fontFamily="Cairo">
+            {descB.length > 32 ? descB.slice(0, 30) + '..' : descB}
           </text>
 
-          {/* كبسولة ميزات تفاعلية ديناميكية */}
-          <g transform="translate(20, 165)">
-            <rect width="280" height="75" rx="12" fill="#030712" stroke="#c084fc" strokeWidth="1" strokeDasharray="4 3" />
-            <text x="140" y="28" fill="#e9d5ff" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
-              🚀 {step2Title}
+          {/* كبسولة ميزات تفاعلية متسعة بدون تكرار */}
+          <g transform="translate(20, 168)">
+            <rect width="280" height="85" rx="12" fill="#030712" stroke="#c084fc" strokeWidth="1" strokeDasharray="4 3" />
+            <text x="140" y="32" fill="#e9d5ff" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+              🚀 {step2Title.length > 26 ? step2Title.slice(0, 24) + '..' : step2Title}
             </text>
-            <text x="140" y="52" fill="#94a3b8" fontSize="10" textAnchor="middle" fontFamily="Cairo">
+            <text x="140" y="60" fill="#94a3b8" fontSize="10.5" textAnchor="middle" fontFamily="Cairo">
               {step2Desc.length > 34 ? step2Desc.slice(0, 32) + '..' : step2Desc}
             </text>
           </g>
         </g>
 
-        {/* الشريط السفلي: قاعدة التوافق والتكامل المعماري */}
-        <g transform="translate(60, 375)">
-          <rect width="680" height="45" rx="12" fill="#0f172a" stroke="#334155" strokeWidth="1.5" />
-          <text x="340" y="27" fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
-            💡 الخلاصة المعمارية: {subtopic?.infographic?.summary || subtopic?.why || 'تكامل متناغم لتحقيق أفضل تجربة وأعلى أداء'}
+        {/* الشريط السفلي: قاعدة التوافق والتكامل المعماري منضبطة الأبعاد 100% داخل الإطار */}
+        <g transform="translate(60, 365)">
+          <rect width="680" height="52" rx="14" fill="#0b1329" stroke="#0284c7" strokeWidth="1.5" />
+          <text x="340" y="23" fill="#38bdf8" fontSize="12" fontWeight="black" textAnchor="middle" fontFamily="Cairo">
+            💡 الخلاصة المعمارية للمقارنة
+          </text>
+          <text x="340" y="42" fill="#e2e8f0" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+            {(() => {
+              const fullText = subtopic?.infographic?.summary || subtopic?.why || 'تكامل متناغم بين المفهومين لضمان أعلى أداء وكفاءة';
+              return fullText.length > 76 ? fullText.slice(0, 74) + '...' : fullText;
+            })()}
           </text>
         </g>
       </svg>
@@ -360,11 +372,14 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           </text>
         </g>
 
-        {/* الشريط السفلي: المسار التنفيذي الشامل للدرس */}
+        {/* الشريط السفلي: المسار التنفيذي الشامل للدرس منضبط الأبعاد */}
         <g transform="translate(50, 360)">
-          <rect width="700" height="50" rx="12" fill="#020617" stroke="#1e293b" strokeWidth="1.5" />
+          <rect width="700" height="50" rx="14" fill="#0b1329" stroke="#0284c7" strokeWidth="1.5" />
           <text x="350" y="30" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
-            ⚡ {subtopic?.executionFlow || 'المتصفح ➔ تحليل الكود ➔ بناء الشجرة ➔ التصيير الفعلي والتفاعل السلس'}
+            ⚡ {(() => {
+              const flow = subtopic?.executionFlow || 'المتصفح ➔ تحليل الكود ➔ بناء الشجرة ➔ التصيير الفعلي والتفاعل السلس';
+              return flow.length > 78 ? flow.slice(0, 76) + '...' : flow;
+            })()}
           </text>
         </g>
       </svg>
@@ -526,10 +541,10 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           </text>
           
           <rect x="20" y="150" width="180" height="125" rx="10" fill="#1c1917" />
-          <text x="30" y="180" fill="#ea580c" fontSize="11" fontFamily="monospace">&lt;main role="app"&gt;</text>
-          <text x="40" y="205" fill="#fdba74" fontSize="11" fontFamily="monospace">&lt;h1&gt;{shortTitle}&lt;/h1&gt;</text>
-          <text x="40" y="230" fill="#fdba74" fontSize="11" fontFamily="monospace">&lt;section&gt;{step1Title}&lt;/section&gt;</text>
-          <text x="30" y="255" fill="#ea580c" fontSize="11" fontFamily="monospace">&lt;/main&gt;</text>
+          <text x="30" y="180" fill="#ea580c" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">&lt;main role="app"&gt;</text>
+          <text x="40" y="205" fill="#fdba74" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">&lt;h1&gt;{shortTitle.slice(0, 10)}&lt;/h1&gt;</text>
+          <text x="40" y="230" fill="#fdba74" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">&lt;section&gt;{step1Title.slice(0, 10)}&lt;/section&gt;</text>
+          <text x="30" y="255" fill="#ea580c" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">&lt;/main&gt;</text>
 
           <text x="110" y="310" fill="#fdba74" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
             {isHtml ? '★ محور تركيز الدرس الحالي' : 'بناء العناصر والمحتوى'}
@@ -562,10 +577,10 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           </text>
           
           <rect x="20" y="150" width="180" height="125" rx="10" fill="#0c2338" />
-          <text x="30" y="180" fill="#38bdf8" fontSize="11" fontFamily="monospace">.layout &#123;</text>
-          <text x="40" y="205" fill="#bae6fd" fontSize="11" fontFamily="monospace">display: flex;</text>
-          <text x="40" y="230" fill="#bae6fd" fontSize="11" fontFamily="monospace">gap: 16px; padding: 20px;</text>
-          <text x="30" y="255" fill="#38bdf8" fontSize="11" fontFamily="monospace">&#125;</text>
+          <text x="30" y="180" fill="#38bdf8" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">.layout &#123;</text>
+          <text x="40" y="205" fill="#bae6fd" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">display: flex;</text>
+          <text x="40" y="230" fill="#bae6fd" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">gap: 16px; padding: 20px;</text>
+          <text x="30" y="255" fill="#38bdf8" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">&#125;</text>
 
           <text x="110" y="310" fill="#7dd3fc" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
             {isCss ? '★ محور تركيز الدرس الحالي' : 'الألوان، المسافات، والتجاوب'}
@@ -598,10 +613,10 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           </text>
           
           <rect x="20" y="150" width="180" height="125" rx="10" fill="#291e0a" />
-          <text x="30" y="180" fill="#facc15" fontSize="11" fontFamily="monospace">const render = () =&gt; &#123;</text>
-          <text x="40" y="205" fill="#fef08a" fontSize="11" fontFamily="monospace">updateUI('{shortTitle}');</text>
-          <text x="40" y="230" fill="#fef08a" fontSize="11" fontFamily="monospace">listenEvents();</text>
-          <text x="30" y="255" fill="#facc15" fontSize="11" fontFamily="monospace">&#125;</text>
+          <text x="30" y="180" fill="#facc15" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">const render = () =&gt; &#123;</text>
+          <text x="40" y="205" fill="#fef08a" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">updateUI('{shortTitle.slice(0, 8)}');</text>
+          <text x="40" y="230" fill="#fef08a" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">listenEvents();</text>
+          <text x="30" y="255" fill="#facc15" fontSize="11" fontFamily="monospace" direction="ltr" unicodeBidi="embed">&#125;</text>
 
           <text x="110" y="310" fill="#fde047" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
             {isJs ? '★ محور تركيز الدرس الحالي' : 'المنطق والتفاعل الحي'}
@@ -647,31 +662,33 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
           {/* Root Component */}
           <circle cx="160" cy="100" r={26 * pulse} fill="url(#vdomGrad)" />
-          <text x="160" y="106" fill="#fff" fontSize="12" fontWeight="bold" textAnchor="middle">&lt;App /&gt;</text>
+          <text x="160" y="105" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle" direction="ltr">&lt;App /&gt;</text>
 
           {/* Child 1 */}
           <circle cx="100" cy="180" r="22" fill="#0284c7" />
-          <text x="100" y="185" fill="#fff" fontSize="10" fontWeight="bold" textAnchor="middle">&lt;Header&gt;</text>
+          <text x="100" y="184" fill="#fff" fontSize="10" fontWeight="bold" textAnchor="middle" direction="ltr">&lt;Header /&gt;</text>
 
-          {/* Child 2 (العقدة التي تتغير - Diff) */}
-          <circle 
-            cx="220" 
-            cy="180" 
-            r={diffHighlight ? 25 : 22} 
+          {/* Child 2 (العقدة التي تتغير - Diff) - كبسولة متسعة تحمي النص من الخروج */}
+          <rect 
+            x="165" 
+            y="162" 
+            width="100" 
+            height="36" 
+            rx="12" 
             fill={diffHighlight ? "#f43f5e" : "#0284c7"} 
             stroke="#fff" 
             strokeWidth={diffHighlight ? 3 : 1}
           />
-          <text x="220" y="185" fill="#fff" fontSize="10" fontWeight="bold" textAnchor="middle">
-            &lt;{shortTitle.slice(0, 8)} /&gt;
+          <text x="215" y="185" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle" direction="ltr">
+            &lt;Card /&gt;
           </text>
 
           {/* Leafs */}
           <circle cx="70" cy="270" r="18" fill="#1e293b" stroke="#38bdf8" strokeWidth="2" />
-          <text x="70" y="275" fill="#94a3b8" fontSize="10" textAnchor="middle">{step1Title.slice(0, 6)}</text>
+          <text x="70" y="275" fill="#94a3b8" fontSize="10" textAnchor="middle" direction="ltr">logo</text>
 
           <circle cx="130" cy="270" r="18" fill="#1e293b" stroke="#38bdf8" strokeWidth="2" />
-          <text x="130" y="275" fill="#94a3b8" fontSize="10" textAnchor="middle">{step2Title.slice(0, 6)}</text>
+          <text x="130" y="275" fill="#94a3b8" fontSize="10" textAnchor="middle" direction="ltr">nav</text>
         </g>
 
         {/* محرك المقارنة Diffing Engine */}
@@ -694,21 +711,25 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
 
           {/* Root */}
           <circle cx="160" cy="100" r="24" fill="#059669" />
-          <text x="160" y="105" fill="#fff" fontSize="12" fontWeight="bold" textAnchor="middle">&lt;div#root&gt;</text>
+          <text x="160" y="105" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle" direction="ltr">&lt;div#root&gt;</text>
 
           <circle cx="100" cy="180" r="20" fill="#1e293b" stroke="#10b981" strokeWidth="2" />
-          <text x="100" y="185" fill="#94a3b8" fontSize="10" textAnchor="middle">header</text>
+          <text x="100" y="184" fill="#94a3b8" fontSize="10" textAnchor="middle" direction="ltr">header</text>
 
           {/* Only this node gets updated in Real DOM! */}
-          <circle 
-            cx="220" 
-            cy="180" 
-            r={diffHighlight ? 26 : 22} 
+          <rect 
+            x="165" 
+            y="162" 
+            width="100" 
+            height="36" 
+            rx="12" 
             fill={diffHighlight ? "#10b981" : "#059669"} 
             stroke="#34d399" 
             strokeWidth={diffHighlight ? 4 : 1}
           />
-          <text x="220" y="185" fill="#fff" fontSize="10" fontWeight="bold" textAnchor="middle">span#val</text>
+          <text x="215" y="185" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle" direction="ltr">
+            span#val
+          </text>
 
           {/* التحديث الفعلي فقط */}
           <rect x="50" y="320" width="220" height="38" rx="10" fill="#064e3b" stroke="#34d399" strokeWidth="1" />
@@ -732,58 +753,63 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
         className="w-full h-full max-h-[380px] drop-shadow-2xl mx-auto block"
       >
         {/* Parent Component */}
-        <g transform="translate(250, 40)">
-          <rect width="300" height="110" rx="18" fill="#1e293b" stroke="#38bdf8" strokeWidth="3" />
-          <text x="150" y="38" fill="#38bdf8" fontSize="16" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+        <g transform="translate(240, 40)">
+          <rect width="320" height="110" rx="18" fill="#1e293b" stroke="#38bdf8" strokeWidth="3" />
+          <text x="160" y="38" fill="#38bdf8" fontSize="15" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
             المكون الأب: {shortTitle}
           </text>
           
-          <rect x="30" y="55" width="240" height="38" rx="8" fill="#0f172a" stroke="#0284c7" strokeWidth="1" />
-          <text x="150" y="78" fill="#f8fafc" fontSize="12" textAnchor="middle" fontFamily="JetBrains Mono">
+          <rect x="20" y="55" width="280" height="40" rx="8" fill="#0f172a" stroke="#0284c7" strokeWidth="1" />
+          <text x="160" y="79" fill="#f8fafc" fontSize="12" textAnchor="middle" fontFamily="JetBrains Mono" direction="ltr" unicodeBidi="embed">
             const [data, setData] = useState(...)
           </text>
         </g>
 
         {/* سهم تدفق الـ Props لأسفل */}
-        <g transform="translate(400, 160)">
-          <line x1="0" y1="0" x2="0" y2="120" stroke="#38bdf8" strokeWidth="5" strokeDasharray="8 6" />
+        <g transform="translate(400, 155)">
+          <line x1="0" y1="0" x2="0" y2="125" stroke="#38bdf8" strokeWidth="5" strokeDasharray="8 6" />
           <circle cx="0" cy={flowProgress} r="10" fill="#38bdf8" />
-          <rect x="-80" y="45" width="160" height="30" rx="8" fill="#0284c7" />
-          <text x="0" y="65" fill="#fff" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+          <rect x="-85" y="45" width="170" height="32" rx="8" fill="#0284c7" />
+          <text x="0" y="66" fill="#fff" fontSize="12" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
             Props تتدفق للأسفل ⬇️
           </text>
         </g>
 
         {/* Child Components */}
-        <g transform="translate(100, 290)">
-          <rect width="260" height="100" rx="16" fill="#1e293b" stroke="#a855f7" strokeWidth="2" />
-          <text x="130" y="38" fill="#c084fc" fontSize="15" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
-            {step1Title}
+        <g transform="translate(90, 285)">
+          <rect width="270" height="105" rx="16" fill="#1e293b" stroke="#a855f7" strokeWidth="2" />
+          <text x="135" y="38" fill="#c084fc" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+            {step1Title.length > 24 ? step1Title.slice(0, 22) + '..' : step1Title}
           </text>
-          <text x="130" y="72" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="JetBrains Mono">
+          <text x="135" y="74" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="JetBrains Mono" direction="ltr" unicodeBidi="embed">
             &lt;Child data={'{value}'} /&gt;
           </text>
         </g>
 
-        <g transform="translate(440, 290)">
-          <rect width="260" height="100" rx="16" fill="#1e293b" stroke="#10b981" strokeWidth="2" />
-          <text x="130" y="38" fill="#34d399" fontSize="15" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
-            {step2Title}
+        <g transform="translate(440, 285)">
+          <rect width="270" height="105" rx="16" fill="#1e293b" stroke="#10b981" strokeWidth="2" />
+          <text x="135" y="38" fill="#34d399" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+            {step2Title.length > 24 ? step2Title.slice(0, 22) + '..' : step2Title}
           </text>
-          <text x="130" y="72" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="JetBrains Mono">
+          <text x="135" y="74" fill="#cbd5e1" fontSize="11" textAnchor="middle" fontFamily="JetBrains Mono" direction="ltr" unicodeBidi="embed">
             &lt;Action onSave={'{handleSave}'} /&gt;
           </text>
         </g>
 
-        {/* سهم رفع الحدث Event Callback للأعلى */}
+        {/* مسار وشارة رفع الحدث Event Callback للأعلى */}
         <path 
-          d="M 570 290 C 650 220, 650 150, 560 120" 
+          d="M 575 285 C 655 215, 655 145, 565 115" 
           fill="none" 
           stroke="#f59e0b" 
           strokeWidth="3" 
           strokeDasharray="6 4" 
         />
-        <text x="640" y="210" fill="#fbbf24" fontSize="12" fontWeight="bold" fontFamily="Cairo">Events ⬆️</text>
+        <g transform="translate(615, 195)">
+          <rect width="80" height="26" rx="8" fill="#1e293b" stroke="#f59e0b" strokeWidth="1.5" />
+          <text x="40" y="17" fill="#fbbf24" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="Cairo">
+            Events ⬆️
+          </text>
+        </g>
       </svg>
     );
   }
@@ -819,7 +845,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           <text x="100" y="145" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">{step1Title}</text>
           <text x="100" y="175" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">رسم الـ JSX الأولي</text>
           <rect x="25" y="205" width="150" height="30" rx="8" fill="#0369a1" />
-          <text x="100" y="225" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">useEffect(..., [])</text>
+          <text x="100" y="225" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle" direction="ltr" unicodeBidi="embed">useEffect(..., [])</text>
         </g>
 
         {/* سهم انتقال 1 */}
@@ -841,7 +867,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           <text x="100" y="145" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">{step2Title}</text>
           <text x="100" y="175" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">إعادة تصيير Re-render</text>
           <rect x="25" y="205" width="150" height="30" rx="8" fill="#6b21a8" />
-          <text x="100" y="225" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">useEffect(..., [deps])</text>
+          <text x="100" y="225" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle" direction="ltr" unicodeBidi="embed">useEffect(..., [deps])</text>
         </g>
 
         {/* سهم انتقال 2 */}
@@ -863,7 +889,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
           <text x="85" y="145" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">{step3Title}</text>
           <text x="85" y="175" fill="#94a3b8" fontSize="11" textAnchor="middle" fontFamily="Cairo">تنظيف الاشتراكات والذاكرة</text>
           <rect x="20" y="205" width="130" height="30" rx="8" fill="#9f1239" />
-          <text x="85" y="225" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">return () =&gt; cleanup</text>
+          <text x="85" y="225" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle" direction="ltr" unicodeBidi="embed">return () =&gt; cleanup</text>
         </g>
       </svg>
     );
@@ -919,7 +945,7 @@ export default function SvgMotionDiagram({ type = 'universal-engine', subtopic, 
         <text x="100" y="78" fill="#fff" fontSize="13" fontWeight="900" textAnchor="middle" fontFamily="Cairo">
           {shortTitle}
         </text>
-        <text x="100" y="94" fill="#bae6fd" fontSize="9" fontWeight="bold" textAnchor="middle">
+        <text x="100" y="94" fill="#bae6fd" fontSize="9" fontWeight="bold" textAnchor="middle" direction="ltr">
           {engTitle.length > 20 ? engTitle.slice(0, 18) + '..' : engTitle}
         </text>
       </g>

@@ -107,17 +107,191 @@ function UserCardJS({ name, age }) {
 // function UserCardTS({ name, age }: UserProps) {
 //   return <div>{name} - {age} سنة</div>;
 // }`,
-      codeAdvanced: `// محاكاة لدور TypeScript في اصطياد أخطاء Props القاتلة قبل التشغيل
-// تخيل مكون ينتظر رقماً لحساب السعر
-function PriceCalculator({ price, discountPercent }) {
-  // في JavaScript: إذا مرر أحدهم نصاً مثل 'عشرة' بدلاً من 10، فستحدث كارثة حسابية NaN!
-  const finalPrice = price - (price * (discountPercent / 100));
-  return <span>السعر بعد الخصم: {finalPrice} ر.س</span>;
-}
+      codeAdvanced: `<!-- محاكاة تفاعلية حية للمقارنة بين JavaScript و TypeScript في اصطياد أخطاء الـ Props -->
+<div class="simulation-card" style="font-family: 'Cairo', 'Tajawal', system-ui, sans-serif; background: #0b1120; border: 1px solid #1e293b; border-radius: 14px; padding: 18px; color: #f8fafc; direction: rtl; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+  <!-- رأس المحاكي -->
+  <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1e293b; padding-bottom: 12px; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+        🛡️
+      </div>
+      <div>
+        <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: #38bdf8;">محاكي أمان الأنواع: JavaScript العادي vs TypeScript الصارم</h4>
+        <p style="margin: 2px 0 0 0; font-size: 11px; color: #94a3b8;">شاهد كيف يكتشف TypeScript الأخطاء القاتلة قبل أن تصل لمتصفح العميل</p>
+      </div>
+    </div>
+    <span id="badge-mode" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 11px; padding: 4px 10px; border-radius: 9999px; font-weight: bold;">
+      وضع: JavaScript (غير محمي)
+    </span>
+  </div>
 
-// في TypeScript: المحرر يضع خطاً أحمر فوراً ويمنع الحفظ:
-// <PriceCalculator price={100} discountPercent="عشرة" /> // ❌ Type 'string' is not assignable to type 'number'!
-console.log('TypeScript يحميك من تمرير نصوص لحقول الأرقام!');`,
+  <!-- التبديل بين القالبين -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;">
+    <button id="btn-mode-js" onclick="setSimMode('js')" style="padding: 10px; border-radius: 8px; border: 2px solid #ef4444; background: #1e1b2e; color: #fca5a5; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+      <span>⚠️ قالب JavaScript (.jsx)</span>
+    </button>
+    <button id="btn-mode-ts" onclick="setSimMode('ts')" style="padding: 10px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #94a3b8; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+      <span>🛡️ قالب TypeScript (.tsx)</span>
+    </button>
+  </div>
+
+  <!-- مدخلات المكون -->
+  <div style="background: #020617; border: 1px solid #1e293b; border-radius: 10px; padding: 12px; margin-bottom: 14px;">
+    <div style="font-size: 12px; font-weight: 700; color: #cbd5e1; margin-bottom: 8px;">
+      قيم خصائص المكون (Props Values):
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+      <div>
+        <label style="display: block; font-size: 11px; color: #94a3b8; margin-bottom: 4px;">السعر price (number)</label>
+        <input id="prop-price" type="text" value="100" style="width: 100%; box-sizing: border-box; background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 7px 10px; color: #f8fafc; font-size: 12px; font-family: monospace;" />
+      </div>
+      <div>
+        <label style="display: block; font-size: 11px; color: #94a3b8; margin-bottom: 4px;">نسبة الخصم discountPercent</label>
+        <input id="prop-discount" type="text" value="عشرة" style="width: 100%; box-sizing: border-box; background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 7px 10px; color: #f8fafc; font-size: 12px; font-family: monospace;" />
+      </div>
+    </div>
+
+    <!-- أزرار التجارب السريعة -->
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <button onclick="setTestVals('100', 'عشرة')" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer;">
+        🧪 تجربة الخطأ الشائع: تمرير نص 'عشرة'
+      </button>
+      <button onclick="setTestVals('100', '20')" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer;">
+        ✓ تجربة رقم سليم: 20%
+      </button>
+    </div>
+  </div>
+
+  <!-- زر التشغيل -->
+  <button id="sim-run-btn" onclick="runSimCalculation()" style="width: 100%; background: linear-gradient(135deg, #0284c7, #2563eb); color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; margin-bottom: 14px;">
+    ⚡ اختبار نتيجة التشغيل وتأثير نوع البيانات
+  </button>
+
+  <!-- صندوق النتيجة الحية -->
+  <div id="sim-result-box" style="padding: 12px 14px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.4);">
+    <!-- سيتم تعبئته ديناميكياً -->
+  </div>
+
+  <!-- صندوق الكود التوضيحي -->
+  <div style="margin-top: 12px; font-size: 11px; color: #94a3b8; font-family: monospace; direction: ltr; text-align: left; background: #030712; padding: 10px; border-radius: 6px; border: 1px solid #1e293b; white-space: pre-wrap;" id="sim-code-preview">
+  </div>
+</div>
+
+<script>
+  var simMode = 'js';
+
+  function setSimMode(mode) {
+    simMode = mode;
+    var btnJs = document.getElementById('btn-mode-js');
+    var btnTs = document.getElementById('btn-mode-ts');
+    var badge = document.getElementById('badge-mode');
+
+    if (mode === 'js') {
+      btnJs.style.borderColor = '#ef4444';
+      btnJs.style.background = '#1e1b2e';
+      btnJs.style.color = '#fca5a5';
+      btnTs.style.borderColor = '#334155';
+      btnTs.style.background = '#0f172a';
+      btnTs.style.color = '#94a3b8';
+      badge.style.background = 'rgba(239, 68, 68, 0.15)';
+      badge.style.color = '#f87171';
+      badge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+      badge.innerText = 'وضع: JavaScript (غير محمي)';
+    } else {
+      btnTs.style.borderColor = '#38bdf8';
+      btnTs.style.background = '#0c2340';
+      btnTs.style.color = '#7dd3fc';
+      btnJs.style.borderColor = '#334155';
+      btnJs.style.background = '#0f172a';
+      btnJs.style.color = '#94a3b8';
+      badge.style.background = 'rgba(56, 189, 248, 0.15)';
+      badge.style.color = '#38bdf8';
+      badge.style.borderColor = 'rgba(56, 189, 248, 0.3)';
+      badge.innerText = 'وضع: TypeScript (حماية صارمة)';
+    }
+    runSimCalculation();
+  }
+
+  function setTestVals(p, d) {
+    document.getElementById('prop-price').value = p;
+    document.getElementById('prop-discount').value = d;
+    runSimCalculation();
+  }
+
+  function runSimCalculation() {
+    var pVal = document.getElementById('prop-price').value.trim();
+    var dVal = document.getElementById('prop-discount').value.trim();
+    var resultBox = document.getElementById('sim-result-box');
+    var codePreview = document.getElementById('sim-code-preview');
+
+    var isNumeric = !isNaN(dVal) && dVal !== '';
+    var priceNum = Number(pVal);
+    var discountNum = Number(dVal);
+
+    if (simMode === 'js') {
+      codePreview.innerText = '// في قالب JavaScript (.jsx):\n// لا يوجد فحص للأنواع أثناء الكتابة!\nfunction PriceCalculator({ price, discountPercent }) {\n  const finalPrice = price - (price * (discountPercent / 100));\n  return <span>السعر: {finalPrice} ر.س</span>;\n}\n\n// الاستدعاء:\n<PriceCalculator price={' + pVal + '} discountPercent="' + dVal + '" />';
+
+      if (!isNumeric) {
+        resultBox.style.background = 'rgba(239, 68, 68, 0.12)';
+        resultBox.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+        resultBox.innerHTML = '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+          '<div style="font-size:22px;">❌</div>' +
+          '<div>' +
+            '<div style="font-weight:bold;color:#f87171;font-size:13px;margin-bottom:3px;">كارثة تشغيل (Runtime Error: NaN)!</div>' +
+            '<div style="font-size:12px;color:#fca5a5;margin-bottom:6px;">الواجهة المعروضة للمستخدم: <strong style="color:#ffffff;background:#7f1d1d;padding:2px 6px;border-radius:4px;">السعر بعد الخصم: NaN ر.س</strong></div>' +
+            '<div style="font-size:11px;color:#cbd5e1;background:#030712;padding:8px;border-radius:6px;line-height:1.5;">' +
+              '⚠️ في JavaScript النقي، لم يعترض المحرر على تمرير نص مكان رقم، فتم تدمير الحسابات الرياضية داخل متصفح المستخدم دون أي تنبيه مسبق!' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      } else {
+        var finalP = priceNum - (priceNum * (discountNum / 100));
+        resultBox.style.background = 'rgba(16, 185, 129, 0.12)';
+        resultBox.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        resultBox.innerHTML = '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+          '<div style="font-size:22px;">✓</div>' +
+          '<div>' +
+            '<div style="font-weight:bold;color:#34d399;font-size:13px;margin-bottom:3px;">العملية الحسابية نجحت (صدفةً لأنك أدخلت رقماً)</div>' +
+            '<div style="font-size:12px;color:#e2e8f0;">السعر بعد خصم ' + discountNum + '% هو: <strong style="color:#6ee7b7;font-size:13px;">' + finalP + ' ر.س</strong></div>' +
+          '</div>' +
+        '</div>';
+      }
+    } else {
+      codePreview.innerText = '// في قالب TypeScript (.tsx):\ninterface PriceProps {\n  price: number;\n  discountPercent: number; // إلزامي رقم\n}\n\n// الاستدعاء:\n<PriceCalculator price={' + pVal + '} discountPercent="' + dVal + '" />' + (!isNumeric ? ' // ❌ خطأ فوري في المحرر!' : ' // ✓ متوافق');
+
+      if (!isNumeric) {
+        resultBox.style.background = 'rgba(14, 165, 233, 0.12)';
+        resultBox.style.borderColor = 'rgba(14, 165, 233, 0.4)';
+        resultBox.innerHTML = '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+          '<div style="font-size:22px;">🛡️</div>' +
+          '<div>' +
+            '<div style="font-weight:bold;color:#38bdf8;font-size:13px;margin-bottom:3px;">حماية استباقية صارمة (Compile-Time Guard)!</div>' +
+            '<div style="font-size:12px;color:#7dd3fc;margin-bottom:6px;">منع TypeScript بناء أو تصدير الكود فوراً قبل تشغيله في المتصفح:</div>' +
+            '<div style="font-size:11px;color:#f87171;background:#030712;border:1px solid #1e293b;padding:8px;border-radius:6px;font-family:monospace;direction:ltr;text-align:left;">' +
+              'TS2322: Type \'string\' is not assignable to type \'number\'.<br/>The expected type comes from property \'discountPercent\' declared on type \'PriceProps\'.' +
+            '</div>' +
+            '<div style="font-size:11px;color:#94a3b8;margin-top:6px;">' +
+              '💡 الفائدة: لن يصل الخطأ إلى المتصفح أبداً، وتم تنبيهك بخط أحمر تحته في VS Code فور كتابته!' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      } else {
+        var finalP = priceNum - (priceNum * (discountNum / 100));
+        resultBox.style.background = 'rgba(16, 185, 129, 0.12)';
+        resultBox.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        resultBox.innerHTML = '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+          '<div style="font-size:22px;">🛡️</div>' +
+          '<div>' +
+            '<div style="font-weight:bold;color:#34d399;font-size:13px;margin-bottom:3px;">أمان كامل 100% (Type Safe Verified)</div>' +
+            '<div style="font-size:12px;color:#e2e8f0;">الأنواع متوافقة بنسبة 100%، السعر بعد الخصم: <strong style="color:#6ee7b7;font-size:13px;">' + finalP + ' ر.س</strong></div>' +
+          '</div>' +
+        '</div>';
+      }
+    }
+  }
+
+  runSimCalculation();
+</script>`,
       output: `TypeScript يحميك من تمرير نصوص لحقول الأرقام!`,
       mistakes: [
         {

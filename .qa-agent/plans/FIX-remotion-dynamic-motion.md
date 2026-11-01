@@ -20,3 +20,4 @@ BUG-REMOTION-STATIC-GRAPHICS
 - Unit test script checking diagram type distribution across lessons.
 - DevTools browser verification across consecutive lessons (`1.1.a`, `1.1.b`, `1.1.c`, `1.2.a`).
 - Full production build and Vercel deployment with HTTP 200 checks.
+

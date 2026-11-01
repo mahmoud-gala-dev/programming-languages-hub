@@ -9,6 +9,7 @@ import {
   Sequence 
 } from 'remotion';
 import SvgMotionDiagram, { detectDiagramType } from './SvgMotionDiagram.jsx';
+import { highlightCodeLine } from '../../../utils/codeHighlighter.jsx';
 
 export default function ReactLessonComposition({ 
   subtopic, 
@@ -71,15 +72,15 @@ export default function ReactLessonComposition({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+              <span dir="ltr" className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
                 {subtopic?.id || 'REACT'}
               </span>
               <span className="text-xs text-slate-400 font-medium">
                 {topicTitle}
               </span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-white mt-1">
-              {subtopic?.title || 'موشن جرافيك تعليمي متقدم'}
+            <h1 className="text-xl sm:text-2xl font-extrabold text-white mt-1 text-balance">
+              <bdi>{subtopic?.title || 'موشن جرافيك تعليمي متقدم'}</bdi>
             </h1>
           </div>
         </div>
@@ -135,48 +136,78 @@ export default function ReactLessonComposition({
         />
       </div>
 
-      {/* الشريط السفلي: الكود الذهبي + النتيجة أو الملاحظة الذهبية (ظهور هادئ بتوقيت مريح) */}
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-800/80 pt-3">
-        {/* صندوق كود تفاعلي متحرك */}
+      {/* الشريط السفلي: الكود الذهبي المتألق مع التلوين النحوي + الملاحظة الذهبية (ظهور هادئ بتوقيت مريح) */}
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 border-t border-slate-800/80 pt-3.5">
+        {/* صندوق كود تفاعلي متحرك مع التلوين النحوي الكامل Syntax Highlighting */}
         <div 
-          className="bg-slate-950/80 border border-slate-800 rounded-xl p-3 shadow-inner"
+          className="bg-slate-950/95 border border-slate-800/90 rounded-2xl p-3.5 shadow-2xl flex flex-col justify-between"
           style={{
             opacity: interpolate(frame, [50, 90], [0, 1], { extrapolateRight: 'clamp' }),
             transform: `translateY(${interpolate(frame, [50, 90], [20, 0], { extrapolateRight: 'clamp' })}px)`
           }}
         >
-          <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1 border-b border-slate-800/60 pb-1">
-            <span className="text-cyan-400 font-bold">💻 الشفرة النموذجية (Golden Code):</span>
-            <span className="font-mono text-[10px] text-slate-500">JSX / React 19</span>
+          {/* شريط أدوات IDE أنيق لملف الكود */}
+          <div className="flex items-center justify-between text-[11px] text-slate-400 mb-2 border-b border-slate-800/80 pb-2" dir="ltr">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80 shadow-sm" />
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 shadow-sm" />
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 shadow-sm" />
+              <span className="text-slate-300 font-mono text-[11px] font-bold ml-2">App.jsx</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span dir="rtl" className="text-cyan-400 font-bold font-sans text-[11px]"><bdi>الشفرة النموذجية (Golden Code)</bdi></span>
+              <span className="px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-mono text-[10px] font-bold">JSX</span>
+            </div>
           </div>
-          <pre 
-            className="text-[11px] text-slate-200 font-mono overflow-x-auto select-none"
+
+          {/* محتوى الشفرة الملونة نحوياً مع أرقام الأسطر */}
+          <div 
+            className="text-[11px] font-mono overflow-x-auto select-none space-y-1 py-1"
             dir="ltr"
-            style={{ direction: 'ltr' }}
+            style={{ direction: 'ltr', textAlign: 'left' }}
           >
-            <code>{sampleCode}</code>
-          </pre>
+            {sampleCode.split('\n').map((line, idx) => (
+              <div key={idx} className="flex items-start gap-3">
+                <span className="text-slate-600 select-none text-[10px] w-4 text-right tabular-nums pt-0.5">{idx + 1}</span>
+                <span className="flex-1 font-mono text-slate-200 leading-relaxed">{highlightCodeLine(line)}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between text-[10px] text-slate-500 border-t border-slate-800/60 pt-2 mt-2 font-mono" dir="ltr">
+            <span>React 19 Core</span>
+            <span dir="rtl" className="text-emerald-400 font-sans font-bold"><bdi>✓ كود تنفيذي أصيل ومختبر</bdi></span>
+          </div>
         </div>
 
-        {/* كبسولة الفهم العميق وخلف الكواليس */}
+        {/* كبسولة الفهم العميق والقاعدة المعمارية الذهبية */}
         <div 
-          className="bg-cyan-950/20 border border-cyan-500/30 rounded-xl p-3 flex flex-col justify-between"
+          className="bg-slate-900/90 border border-cyan-500/30 rounded-2xl p-3.5 flex flex-col justify-between shadow-2xl"
           style={{
             opacity: interpolate(frame, [80, 120], [0, 1], { extrapolateRight: 'clamp' }),
             transform: `translateY(${interpolate(frame, [80, 120], [20, 0], { extrapolateRight: 'clamp' })}px)`
           }}
         >
-          <div className="flex items-center gap-2 text-xs font-bold text-cyan-300">
-            <span>💡</span>
-            <span>القاعدة المعمارية الذهبية:</span>
+          <div className="flex items-center justify-between border-b border-cyan-500/20 pb-2">
+            <div className="flex items-center gap-2 text-xs font-black text-cyan-300 font-sans">
+              <span className="text-sm">💡</span>
+              <span>القاعدة المعمارية الذهبية (Architecture Rule):</span>
+            </div>
+            <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold font-mono">
+              BEST PRACTICE
+            </span>
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed font-medium mt-1 line-clamp-3">
+          
+          <p className="text-xs text-slate-200 leading-relaxed font-medium mt-2.5 line-clamp-4 text-pretty">
             {explanationText}
           </p>
-          <div className="flex items-center gap-2 mt-2 pt-1 border-t border-cyan-500/20 text-[10px] text-slate-400">
+
+          <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-800/80 text-[10px] text-slate-400 font-mono">
             <span className="text-emerald-400 font-bold">✓ Zero Overhead</span>
-            <span>•</span>
-            <span className="text-sky-400 font-bold">Concurrent Ready</span>
+            <span className="text-slate-600">•</span>
+            <span className="text-sky-400 font-bold">Concurrent React 19</span>
+            <span className="text-slate-600">•</span>
+            <span className="text-purple-400 font-bold">60FPS Motion</span>
           </div>
         </div>
       </div>

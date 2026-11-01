@@ -1,6 +1,6 @@
 // src/components/lesson/LiveCodePreview.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, RotateCcw, Eye, Monitor, Copy, Check, Sparkles } from 'lucide-react';
+import { Play, RotateCcw, Eye, Monitor, Copy, Check, Sparkles, Terminal } from 'lucide-react';
 import { useToast } from '../../context/UiFeedbackContext.jsx';
 
 // تنسيقات الـ iframe المعزول لضمان دعم كامل للوضع المظلم وتنعيم شريط التمرير بدقة
@@ -57,12 +57,157 @@ const IFRAME_DARK_STYLES = `
   }
 `;
 
+function generateSrcDoc(rawCode) {
+  if (!rawCode) {
+    return `<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><style>${IFRAME_DARK_STYLES}</style></head><body><div style="color: #64748b; text-align: center; padding: 20px;">لا يوجد كود للمعاينة</div></body></html>`;
+  }
+
+  const trimmed = rawCode.trim();
+
+  // فحص هل الكود يحتوي على عناصر HTML تفاعلية كاملة مثل div, button, form, input, table, p, h1-6, script, style
+  const hasInteractiveHtml = /<(div|button|form|input|section|main|article|header|table|canvas|svg|style|script)\b[^>]*>/i.test(trimmed);
+
+  if (hasInteractiveHtml) {
+    return `<!DOCTYPE html>
+<html dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>${IFRAME_DARK_STYLES}</style>
+</head>
+<body>
+  ${trimmed}
+</body>
+</html>`;
+  }
+
+  // إذا كان الكود بدون وسوم HTML (مثل JS / TS / JSX نقي)، نقوم بتغليفه في محاكي أنيق منسق
+  const escapedCode = trimmed
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+  return `<!DOCTYPE html>
+<html dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    ${IFRAME_DARK_STYLES}
+    pre code {
+      font-family: 'Fira Code', 'Cascadia Code', Consolas, Monaco, monospace;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+  <div style="background: #020617; border: 1px solid #1e293b; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #0f172a; border-bottom: 1px solid #1e293b;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; display: inline-block;"></span>
+        <span style="font-size: 12px; font-weight: bold; color: #38bdf8;">محاكي التشغيل البرمجي ومخرجات الكود</span>
+      </div>
+      <button onclick="runCode()" style="background: #2563eb; color: white; border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+        ▶ تشغيل الكود
+      </button>
+    </div>
+
+    <div style="padding: 14px; background: #030712; border-bottom: 1px solid #1e293b;">
+      <pre style="margin: 0; padding: 0; direction: ltr; text-align: left; overflow-x: auto; color: #e2e8f0; white-space: pre-wrap; word-break: break-word;"><code>${escapedCode}</code></pre>
+    </div>
+
+    <div style="padding: 12px; background: #020617;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 11px; color: #94a3b8;">
+        <span style="font-weight: bold;">مخرجات الكونسول (Console Output):</span>
+        <span id="run-status" style="color: #10b981;">جاهز</span>
+      </div>
+      <div id="console-output" style="background: #000000; border: 1px solid #0f172a; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 12px; color: #38bdf8; min-height: 48px; max-height: 180px; overflow-y: auto; direction: ltr; text-align: left;">
+        <span style="color: #64748b; font-style: italic;">// جاري تشغيل الكود وتتبع المخرجات...</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function printLog(msg, type) {
+      const out = document.getElementById('console-output');
+      if (!out) return;
+      const row = document.createElement('div');
+      row.style.marginBottom = '4px';
+      row.style.wordBreak = 'break-word';
+      if (type === 'error') {
+        row.style.color = '#f43f5e';
+        row.textContent = '❌ ' + msg;
+      } else if (type === 'warn') {
+        row.style.color = '#fbbf24';
+        row.textContent = '⚠️ ' + msg;
+      } else {
+        row.style.color = '#38bdf8';
+        row.textContent = '❯ ' + msg;
+      }
+      out.appendChild(row);
+      out.scrollTop = out.scrollHeight;
+    }
+
+    function runCode() {
+      const out = document.getElementById('console-output');
+      const status = document.getElementById('run-status');
+      if (out) out.innerHTML = '';
+      if (status) status.innerText = 'جاري التنفيذ...';
+
+      const oldLog = console.log;
+      const oldError = console.error;
+      const oldWarn = console.warn;
+
+      console.log = function(...args) {
+        oldLog.apply(console, args);
+        printLog(args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' '), 'log');
+      };
+      console.error = function(...args) {
+        oldError.apply(console, args);
+        printLog(args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' '), 'error');
+      };
+      console.warn = function(...args) {
+        oldWarn.apply(console, args);
+        printLog(args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' '), 'warn');
+      };
+
+      try {
+        const raw = ${JSON.stringify(trimmed)};
+        // تشغيل آمن
+        const fn = new Function(raw);
+        fn();
+        if (status) status.innerText = 'تم التنفيذ بنجاح ✓';
+      } catch (err) {
+        if (err.message && err.message.includes('Unexpected token')) {
+          printLog('💡 صياغة JSX أو TypeScript مخصصة لمرحلة البناء في Vite / React.', 'warn');
+        } else {
+          printLog(err.message, 'error');
+        }
+        if (status) status.innerText = 'اكتمل الفحص';
+      } finally {
+        console.log = oldLog;
+        console.error = oldError;
+        console.warn = oldWarn;
+      }
+    }
+
+    window.onload = function() {
+      setTimeout(runCode, 50);
+    };
+  </script>
+</body>
+</html>`;
+}
+
 export default function LiveCodePreview({ initialCode, title = "المعاينة التفاعلية المباشرة (Live Runner)" }) {
   const showToast = useToast();
   const [code, setCode] = useState(initialCode);
   const [key, setKey] = useState(0);
   const [copied, setCopied] = useState(false);
-  const [iframeHeight, setIframeHeight] = useState(240);
+  const [iframeHeight, setIframeHeight] = useState(260);
   const iframeRef = useRef(null);
 
   useEffect(() => {
@@ -78,14 +223,13 @@ export default function LiveCodePreview({ initialCode, title = "المعاينة
           const updateHeight = () => {
             const contentH = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
             if (contentH > 50) {
-              setIframeHeight(Math.min(contentH + 28, 650));
+              setIframeHeight(Math.min(contentH + 32, 680));
             }
           };
           updateHeight();
           setTimeout(updateHeight, 150);
           setTimeout(updateHeight, 400);
 
-          // مراقبة التغير في محتوى المعاينة التفاعلية ديناميكياً
           if (typeof ResizeObserver !== 'undefined' && doc.body) {
             const ro = new ResizeObserver(() => updateHeight());
             ro.observe(doc.body);
@@ -156,7 +300,7 @@ export default function LiveCodePreview({ initialCode, title = "المعاينة
             ref={iframeRef}
             key={key}
             onLoad={handleIframeLoad}
-            srcDoc={`<!DOCTYPE html><html dir="rtl" class="dark"><head><meta charset="UTF-8"><style>${IFRAME_DARK_STYLES}</style></head><body>${code}</body></html>`}
+            srcDoc={generateSrcDoc(code)}
             title="Live Preview"
             sandbox="allow-scripts allow-modals"
             style={{ height: `${iframeHeight}px` }}
@@ -167,7 +311,7 @@ export default function LiveCodePreview({ initialCode, title = "المعاينة
         <div className="flex items-center justify-between mt-2.5 text-[11px] text-slate-500">
           <p className="flex items-center gap-1.5">
             <Eye className="w-3.5 h-3.5 text-cyan-400" />
-            هذه المعاينة حقيقية تماماً وتعمل داخل محرك متصفحك مباشرة مع أشرطة تمرير معتمة وناعمة.
+            معاينة تفاعلية حية ومباشرة مدعومة بالوضع المظلم وأشرطة تمرير معتمة وناعمة.
           </p>
           <span className="font-mono text-[10px] text-slate-600 hidden sm:inline">HTML/CSS/JS Sandbox</span>
         </div>
@@ -175,4 +319,3 @@ export default function LiveCodePreview({ initialCode, title = "المعاينة
     </div>
   );
 }
-
