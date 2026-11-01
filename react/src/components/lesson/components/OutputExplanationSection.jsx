@@ -17,7 +17,8 @@ import {
 export default function OutputExplanationSection({ 
   subtopic, 
   readingFontSize = 17,
-  renderHighlightedContent 
+  renderHighlightedContent,
+  toolbar = null
 }) {
   const [activeTab, setActiveTab] = useState('visual'); // 'visual' | 'why' | 'interactive'
 
@@ -63,10 +64,13 @@ export default function OutputExplanationSection({
           </div>
         </div>
 
-        <span className="text-[11px] font-mono text-cyan-300 bg-cyan-950/80 px-3 py-1 rounded-full border border-cyan-800/50 flex items-center gap-1.5 shrink-0">
-          <Monitor className="size-3.5" />
-          <span>UX & Visual Feedback</span>
-        </span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[11px] font-mono text-cyan-300 bg-cyan-950/80 px-3 py-1 rounded-full border border-cyan-800/50 flex items-center gap-1.5 shrink-0">
+            <Monitor className="size-3.5" />
+            <span>UX & Visual Feedback</span>
+          </span>
+          {toolbar}
+        </div>
       </div>
 
       {/* إنفوجرافيك SVG التفاعلي: نافذة المتصفح ومسار تدفق المخرجات */}
@@ -346,3 +350,4 @@ export default function OutputExplanationSection({
     </div>
   );
 }
+

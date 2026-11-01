@@ -2,12 +2,16 @@
 // أداة فحص واختبار التوافق الهيكلي لدروس المنصة التعليمية
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 console.log("==================================================");
 console.log("🔍 فحص التوافق الهيكلي لدروس منصة React.js (20 قسماً توضيحياً)");
 console.log("==================================================");
 
-const sectionsDir = path.resolve('src/data/sections');
+const sectionsDir = path.resolve(__dirname, '../src/data/sections');
 let totalTopicFiles = 0;
 let totalSubtopics = 0;
 let fullyEnrichedSubtopics = 0;

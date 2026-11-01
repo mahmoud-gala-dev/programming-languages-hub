@@ -46,6 +46,7 @@ import CommonMistakesLab from './components/CommonMistakesLab.jsx';
 import ProBestPracticesSection from './components/ProBestPracticesSection.jsx';
 import OutputExplanationSection from './components/OutputExplanationSection.jsx';
 import MentalModelSection from './components/MentalModelSection.jsx';
+import BlockToolbar from './components/BlockToolbar.jsx';
 import { exportLessonToPptx } from '../../utils/exportPptx.js';
 import PresentationModeModal from '../presentation/PresentationModeModal.jsx';
 import AiLessonQuizModal from '../ai/AiLessonQuizModal.jsx';
@@ -111,6 +112,104 @@ export default function LessonViewer({
   });
 
   const [activeSectionId, setActiveSectionId] = useState('hero-visual');
+
+  // حالة البلوك الواقع تحت التركيز الفردي (Spotlight Focus)
+  const [focusedBlockId, setFocusedBlockId] = useState(null);
+
+  // تخصيص أحجام الخطوط لكل بلوك على حدة { [blockId]: number }
+  const [blockFontSizes, setBlockFontSizes] = useState({});
+
+  const getBlockFontSize = (blockId) => {
+    return blockFontSizes[blockId] || readingFontSize;
+  };
+
+  const handleToggleBlockFocus = (blockId) => {
+    setFocusedBlockId(prev => {
+      const next = prev === blockId ? null : blockId;
+      if (next) {
+        setTimeout(() => {
+          const el = document.getElementById(`lesson-section-${blockId}`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 50);
+      }
+      return next;
+    });
+  };
+
+  const handleExitBlockFocus = () => {
+    setFocusedBlockId(null);
+  };
+
+  const handleBlockZoomIn = (blockId) => {
+    setBlockFontSizes(prev => {
+      const current = prev[blockId] || readingFontSize;
+      const next = Math.min(current + 2, 32);
+      return { ...prev, [blockId]: next };
+    });
+  };
+
+  const handleBlockZoomOut = (blockId) => {
+    setBlockFontSizes(prev => {
+      const current = prev[blockId] || readingFontSize;
+      const next = Math.max(current - 2, 12);
+      return { ...prev, [blockId]: next };
+    });
+  };
+
+  const handleBlockReset = (blockId) => {
+    setBlockFontSizes(prev => {
+      const next = { ...prev };
+      delete next[blockId];
+      return next;
+    });
+    if (focusedBlockId === blockId) {
+      setFocusedBlockId(null);
+    }
+  };
+
+  // مستمع للوحة المفاتيح لإلغاء التركيز عبر ESC
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && focusedBlockId) {
+        setFocusedBlockId(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [focusedBlockId]);
+
+  // إلغاء التركيز تلقائياً عند الانتقال لدرس جديد
+  useEffect(() => {
+    setFocusedBlockId(null);
+  }, [subtopic?.id]);
+
+  const getBlockCardClasses = (blockId, baseClasses = '') => {
+    const isThisFocused = focusedBlockId === blockId;
+    const isAnyFocused = focusedBlockId !== null;
+    
+    if (isThisFocused) {
+      return `${baseClasses} relative z-40 ring-4 ring-cyan-400 shadow-2xl shadow-cyan-500/30 scale-[1.01] bg-slate-900/98 transition-all duration-300`;
+    }
+    if (isAnyFocused) {
+      return `${baseClasses} opacity-30 blur-[0.5px] pointer-events-none transition-all duration-300`;
+    }
+    return `${baseClasses} transition-all duration-300`;
+  };
+
+  const renderBlockToolbar = (blockId) => (
+    <BlockToolbar 
+      blockId={blockId}
+      isFocused={focusedBlockId === blockId}
+      fontSize={getBlockFontSize(blockId)}
+      defaultFontSize={readingFontSize}
+      onToggleFocus={handleToggleBlockFocus}
+      onZoomIn={handleBlockZoomIn}
+      onZoomOut={handleBlockZoomOut}
+      onReset={handleBlockReset}
+    />
+  );
 
   const handleToggleLessonMap = () => {
     setIsLessonMapVisible(prev => {
@@ -289,6 +388,30 @@ export default function LessonViewer({
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
+  }, [subtopic?.id]);
+
+    // تتبع موقع القراءة الفعلي وتحديث القسم النشط في خريطة الدرس
+  useEffect(() => {
+    const sectionElements = document.querySelectorAll('[data-lesson-section]');
+    if (!sectionElements || sectionElements.length === 0) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      const visibleEntries = entries.filter(e => e.isIntersecting);
+      if (visibleEntries.length > 0) {
+        visibleEntries.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        const targetId = visibleEntries[0].target.getAttribute('data-lesson-section');
+        if (targetId) {
+          setActiveSectionId(targetId);
+        }
+      }
+    }, {
+      rootMargin: '-10% 0px -55% 0px',
+      threshold: [0, 0.2, 0.5]
+    });
+
+    sectionElements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
   }, [subtopic?.id]);
 
   if (!subtopic) return null;
@@ -625,6 +748,15 @@ export default function LessonViewer({
 
       </div>
       
+      {/* خلفية التعتيم السينمائية عند تفعيل وضع التركيز الفردي (Spotlight Focus Backdrop) */}
+      {focusedBlockId && (
+        <div 
+          onClick={handleExitBlockFocus}
+          className="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-30 transition-all duration-300 animate-fadeIn cursor-pointer"
+          title="انقر في أي مكان فارغ أو اضغط ESC للخروج من وضع التركيز"
+        />
+      )}
+
       {/* تخطيط مساحة الدرس المزدوجة: محتوى الشرح الرحب + خريطة الدرس الجانبية */}
       <div className="flex flex-col xl:flex-row xl:items-start gap-8 relative">
         
@@ -679,9 +811,9 @@ export default function LessonViewer({
           <div 
             id="lesson-section-hero-visual" 
             data-lesson-section="hero-visual" 
-            className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-950/90 border rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 transition-all duration-300 ${
+            className={getBlockCardClasses('hero-visual', `scroll-mt-24 sm:scroll-mt-28 bg-slate-950/90 border rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 ${
               activeSectionId === 'hero-visual' ? 'border-sky-500/50 ring-1 ring-sky-500/20' : 'border-slate-800'
-            }`}
+            }`)}
           >
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
               <div className="flex items-center gap-2.5">
@@ -701,30 +833,33 @@ export default function LessonViewer({
                 </div>
               </div>
 
-              {/* أزرار التبديل الفوري بين الموشن جرافيك والإنفوجرافيك */}
-              <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1 text-xs shrink-0 self-start sm:self-auto">
-                <button
-                  onClick={() => setVisualMode('motion')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                    visualMode === 'motion'
-                      ? 'bg-gradient-to-r from-sky-600 to-blue-600 text-white shadow-md'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Film className="size-3.5" />
-                  <span>موشن جرافيك Remotion 🎬</span>
-                </button>
-                <button
-                  onClick={() => setVisualMode('infographic')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                    visualMode === 'infographic'
-                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Layers className="size-3.5" />
-                  <span>إنفوجرافيك تفصيلي 📊</span>
-                </button>
+              {/* أزرار التبديل الفوري بين الموشن جرافيك والإنفوجرافيك + شريط أدوات البلوك */}
+              <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+                <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1 text-xs shrink-0">
+                  <button
+                    onClick={() => setVisualMode('motion')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                      visualMode === 'motion'
+                        ? 'bg-gradient-to-r from-sky-600 to-blue-600 text-white shadow-md'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Film className="size-3.5" />
+                    <span>موشن جرافيك Remotion 🎬</span>
+                  </button>
+                  <button
+                    onClick={() => setVisualMode('infographic')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                      visualMode === 'infographic'
+                        ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Layers className="size-3.5" />
+                    <span>إنفوجرافيك تفصيلي 📊</span>
+                  </button>
+                </div>
+                {renderBlockToolbar('hero-visual')}
               </div>
             </div>
 
@@ -753,22 +888,25 @@ export default function LessonViewer({
             <div 
               id="lesson-section-definition" 
               data-lesson-section="definition" 
-              className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-3 transition-all duration-300 ${
+              className={getBlockCardClasses('definition', `scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-3 ${
                 activeSectionId === 'definition' ? 'border-cyan-500/50 ring-1 ring-cyan-500/20' : 'border-slate-800'
-              }`}
+              }`)}
             >
-              <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
                 <h4 className="text-xs sm:text-sm font-bold text-cyan-400 flex items-center gap-2 font-sans">
                   <span className="size-6 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 flex items-center justify-center text-xs font-mono">1</span>
                   <span>التعريف المبسط (Simplified Definition):</span>
                 </h4>
-                <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-800/40">
-                  Core Concept
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-800/40">
+                    Core Concept
+                  </span>
+                  {renderBlockToolbar('definition')}
+                </div>
               </div>
               <p 
                 className={`text-slate-200 font-sans font-medium text-pretty ${currentLeadingClass}`}
-                style={{ fontSize: `${readingFontSize}px` }}
+                style={{ fontSize: `${getBlockFontSize('definition')}px` }}
               >
                 {renderHighlightedContent(subtopic.definition || subtopic.description)}
               </p>
@@ -780,23 +918,26 @@ export default function LessonViewer({
             <div 
               id="lesson-section-analogy" 
               data-lesson-section="analogy" 
-              className={`scroll-mt-24 sm:scroll-mt-28 bg-amber-950/20 border-r-4 border-amber-500 border-y border-l border-amber-500/20 rounded-3xl p-6 sm:p-8 shadow-inner space-y-3 transition-all duration-300 ${
+              className={getBlockCardClasses('analogy', `scroll-mt-24 sm:scroll-mt-28 bg-amber-950/20 border-r-4 border-amber-500 border-y border-l border-amber-500/20 rounded-3xl p-6 sm:p-8 shadow-inner space-y-3 ${
                 activeSectionId === 'analogy' ? 'ring-1 ring-amber-500/30' : ''
-              }`}
+              }`)}
             >
-              <div className="flex items-center justify-between border-b border-amber-500/20 pb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-amber-500/20 pb-3">
                 <h4 className="text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-2">
                   <span className="size-6 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center justify-center text-xs font-mono">2</span>
                   <Sparkles className="size-4 text-amber-400" />
                   <span>مثال وتشبيه من الحياة اليومية (Everyday Analogy):</span>
                 </h4>
-                <span className="text-[10px] font-mono text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-800/40">
-                  Mental Model
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-800/40">
+                    Mental Model
+                  </span>
+                  {renderBlockToolbar('analogy')}
+                </div>
               </div>
               <p 
                 className={`text-amber-100/90 text-pretty ${currentLeadingClass}`}
-                style={{ fontSize: `${Math.max(readingFontSize - 1, 13)}px` }}
+                style={{ fontSize: `${getBlockFontSize('analogy')}px` }}
               >
                 {renderHighlightedContent(subtopic.analogy || subtopic.realLifeAnalogy)}
               </p>
@@ -808,23 +949,26 @@ export default function LessonViewer({
             <div 
               id="lesson-section-why" 
               data-lesson-section="why" 
-              className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-3 transition-all duration-300 ${
+              className={getBlockCardClasses('why', `scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-3 ${
                 activeSectionId === 'why' ? 'border-blue-500/50 ring-1 ring-blue-500/20' : 'border-slate-800'
-              }`}
+              }`)}
             >
-              <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
                 <h4 className="text-xs sm:text-sm font-bold text-blue-400 flex items-center gap-2">
                   <span className="size-6 rounded-lg bg-blue-500/10 text-blue-300 border border-blue-500/20 flex items-center justify-center text-xs font-mono">3</span>
                   <HelpCircle className="size-4 text-blue-400" />
                   <span>لماذا نحتاجه؟ وما المشكلة التي يحلها؟ (Why & Problem Solved):</span>
                 </h4>
-                <span className="text-[10px] font-mono text-blue-400 bg-blue-950/60 px-2 py-0.5 rounded-full border border-blue-800/40">
-                  Value Proposition
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-blue-400 bg-blue-950/60 px-2 py-0.5 rounded-full border border-blue-800/40">
+                    Value Proposition
+                  </span>
+                  {renderBlockToolbar('why')}
+                </div>
               </div>
               <p 
                 className={`text-slate-300 text-pretty ${currentLeadingClass}`}
-                style={{ fontSize: `${readingFontSize}px` }}
+                style={{ fontSize: `${getBlockFontSize('why')}px` }}
               >
                 {renderHighlightedContent(subtopic.why || subtopic.whyItMatters)}
               </p>
@@ -833,8 +977,17 @@ export default function LessonViewer({
 
           {/* محطة 4: قاموس المصطلحات الإنجليزية والنطق الصوتي التفاعلي */}
           {Array.isArray(subtopic.terms) && subtopic.terms.length > 0 && (
-            <div id="lesson-section-terms" data-lesson-section="terms" className="scroll-mt-24 sm:scroll-mt-28">
-              <TermsDictionarySection subtopic={subtopic} readingFontSize={readingFontSize} />
+            <div 
+              id="lesson-section-terms" 
+              data-lesson-section="terms" 
+              className={getBlockCardClasses('terms', 'scroll-mt-24 sm:scroll-mt-28 rounded-3xl')}
+            >
+              <TermsDictionarySection 
+                subtopic={subtopic} 
+                readingFontSize={getBlockFontSize('terms')} 
+                toolbar={renderBlockToolbar('terms')}
+                isFocused={focusedBlockId === 'terms'}
+              />
             </div>
           )}
 
@@ -843,25 +996,29 @@ export default function LessonViewer({
             <div 
               id="lesson-section-syntax" 
               data-lesson-section="syntax" 
-              className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 transition-all duration-300 ${
+              className={getBlockCardClasses('syntax', `scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 ${
                 activeSectionId === 'syntax' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'border-slate-800'
-              }`}
+              }`)}
             >
-              <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
                 <h4 className="text-xs sm:text-sm font-bold text-emerald-400 flex items-center gap-2">
                   <span className="size-6 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 flex items-center justify-center text-xs font-mono">5</span>
                   <FileCode className="size-4" />
                   <span>الصيغة العامة والهيكل القياسي (General Syntax):</span>
                 </h4>
-                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/40">
-                  Syntax Reference
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/40">
+                    Syntax Reference
+                  </span>
+                  {renderBlockToolbar('syntax')}
+                </div>
               </div>
               <div 
                 data-code-block="true" 
                 data-lesson-script="true" 
-                className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 font-mono text-xs text-emerald-300 whitespace-pre-wrap leading-relaxed overflow-x-auto select-text shadow-inner" 
+                className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 font-mono text-emerald-300 whitespace-pre-wrap leading-relaxed overflow-x-auto select-text shadow-inner" 
                 dir="ltr"
+                style={{ fontSize: `${getBlockFontSize('syntax')}px` }}
               >
                 {renderHighlightedContent(subtopic.syntax)}
               </div>
@@ -872,21 +1029,27 @@ export default function LessonViewer({
           <div 
             id="lesson-section-execution-flow" 
             data-lesson-section="execution-flow" 
-            className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900/90 border rounded-3xl p-6 sm:p-7 shadow-xl space-y-3 transition-all duration-300 ${
+            className={getBlockCardClasses('execution-flow', `scroll-mt-24 sm:scroll-mt-28 bg-slate-900/90 border rounded-3xl p-6 sm:p-7 shadow-xl space-y-3 ${
               activeSectionId === 'execution-flow' ? 'border-sky-500/50 ring-1 ring-sky-500/20' : 'border-slate-800'
-            }`}
+            }`)}
           >
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
               <h4 className="text-xs sm:text-sm font-bold text-sky-400 flex items-center gap-2">
                 <span className="size-6 rounded-lg bg-sky-500/10 text-sky-300 border border-sky-500/20 flex items-center justify-center text-xs font-mono">5.ب</span>
                 <Layers className="size-4" />
                 <span>المخطط التدفقي المنطقي وتتبع التنفيذ (Execution Flow Trace):</span>
               </h4>
-              <span className="text-[10px] font-mono text-sky-400 bg-sky-950/60 px-2 py-0.5 rounded-full border border-sky-800/40">
-                Logic Flow
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono text-sky-400 bg-sky-950/60 px-2 py-0.5 rounded-full border border-sky-800/40">
+                  Logic Flow
+                </span>
+                {renderBlockToolbar('execution-flow')}
+              </div>
             </div>
-            <div className="p-4 bg-slate-950/80 rounded-2xl border border-sky-900/30 text-xs sm:text-sm font-sans text-sky-200/90 leading-relaxed shadow-inner">
+            <div 
+              className="p-4 bg-slate-950/80 rounded-2xl border border-sky-900/30 font-sans text-sky-200/90 leading-relaxed shadow-inner"
+              style={{ fontSize: `${getBlockFontSize('execution-flow')}px` }}
+            >
               {subtopic.executionFlow || "المستخدم ينقر أو يحدث الإجراء ➔ إطلاق SyntheticEvent في React ➔ جدولة التحديث في Fiber Lane ➔ مقارنة الـ VDOM ➔ تطبيق التعديلات الصافية فقط في Commit Phase."}
             </div>
           </div>
@@ -896,19 +1059,22 @@ export default function LessonViewer({
             <div 
               id="lesson-section-simple-code" 
               data-lesson-section="simple-code" 
-              className={`scroll-mt-24 sm:scroll-mt-28 space-y-3 transition-all duration-300 ${
+              className={getBlockCardClasses('simple-code', `scroll-mt-24 sm:scroll-mt-28 space-y-3 ${
                 activeSectionId === 'simple-code' ? 'ring-1 ring-cyan-500/20 rounded-3xl' : ''
-              }`}
+              }`)}
             >
-              <div className="flex items-center justify-between px-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-2">
                 <h4 className="text-xs sm:text-sm font-bold text-slate-200 flex items-center gap-2">
                   <span className="size-6 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 flex items-center justify-center text-xs font-mono">6</span>
                   <Terminal className="size-4 text-cyan-400" />
                   <span>مثال عملي بسيط (مع تعليق عربي فوق كل سطر كود):</span>
                 </h4>
-                <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-800/40">
-                  Starter Code
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-800/40">
+                    Starter Code
+                  </span>
+                  {renderBlockToolbar('simple-code')}
+                </div>
               </div>
               <CodeBlock 
                 code={subtopic.simpleCode || subtopic.codeSimple || subtopic.simpleExample} 
@@ -917,6 +1083,7 @@ export default function LessonViewer({
                 subtopicId={subtopic.id}
                 highlights={lessonHighlights}
                 onHighlightClick={handleHighlightClick}
+                fontSize={getBlockFontSize('simple-code')}
               />
             </div>
           )}
@@ -926,19 +1093,22 @@ export default function LessonViewer({
             <div 
               id="lesson-section-advanced-code" 
               data-lesson-section="advanced-code" 
-              className={`scroll-mt-24 sm:scroll-mt-28 space-y-3 transition-all duration-300 ${
+              className={getBlockCardClasses('advanced-code', `scroll-mt-24 sm:scroll-mt-28 space-y-3 ${
                 activeSectionId === 'advanced-code' ? 'ring-1 ring-indigo-500/20 rounded-3xl' : ''
-              }`}
+              }`)}
             >
-              <div className="flex items-center justify-between px-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-2">
                 <h4 className="text-xs sm:text-sm font-bold text-slate-200 flex items-center gap-2">
                   <span className="size-6 rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 flex items-center justify-center text-xs font-mono">7</span>
                   <Code2 className="size-4 text-indigo-400" />
                   <span>مثال عملي متقدم وتطبيقي (مع تعليقات كاملة):</span>
                 </h4>
-                <span className="text-[10px] font-mono text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-800/40">
-                  Production Code
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-800/40">
+                    Production Code
+                  </span>
+                  {renderBlockToolbar('advanced-code')}
+                </div>
               </div>
               <CodeBlock 
                 code={subtopic.advancedCode || subtopic.codeAdvanced || subtopic.advancedExample} 
@@ -947,6 +1117,7 @@ export default function LessonViewer({
                 subtopicId={subtopic.id}
                 highlights={lessonHighlights}
                 onHighlightClick={handleHighlightClick}
+                fontSize={getBlockFontSize('advanced-code')}
               />
             </div>
           )}
@@ -956,10 +1127,13 @@ export default function LessonViewer({
             <div 
               id="lesson-section-live-preview" 
               data-lesson-section="live-preview" 
-              className={`scroll-mt-24 sm:scroll-mt-28 transition-all duration-300 ${
+              className={getBlockCardClasses('live-preview', `scroll-mt-24 sm:scroll-mt-28 ${
                 activeSectionId === 'live-preview' ? 'ring-1 ring-emerald-500/30 rounded-3xl' : ''
-              }`}
+              }`)}
             >
+              <div className="flex justify-end mb-2 px-2">
+                {renderBlockToolbar('live-preview')}
+              </div>
               <LiveCodePreview 
                 initialCode={subtopic.advancedCode || subtopic.codeAdvanced || subtopic.advancedExample} 
                 title={`المعاينة المباشرة لتطبيق: ${subtopic.title}`} 
@@ -969,90 +1143,107 @@ export default function LessonViewer({
 
           {/* محطة 8: شرح المخرجات: ماذا يرى المستخدم ولماذا؟ */}
           {(subtopic.outputExplanation || subtopic.output || subtopic.simpleCode || subtopic.codeSnippet) && (
-            <OutputExplanationSection 
-              subtopic={subtopic} 
-              readingFontSize={readingFontSize} 
-              renderHighlightedContent={renderHighlightedContent} 
-            />
+            <div className={getBlockCardClasses('output', 'rounded-3xl')}>
+              <OutputExplanationSection 
+                subtopic={subtopic} 
+                readingFontSize={getBlockFontSize('output')} 
+                renderHighlightedContent={renderHighlightedContent} 
+                toolbar={renderBlockToolbar('output')}
+              />
+            </div>
           )}
 
           {/* محطة 9: أخطاء شائعة يقع فيها المبتدئون وكيف تتجنبها هندسياً */}
           <div 
             id="lesson-section-mistakes" 
             data-lesson-section="mistakes" 
-            className={`scroll-mt-24 sm:scroll-mt-28 transition-all duration-300 ${
-              activeSectionId === 'mistakes' ? 'ring-1 ring-rose-500/30 rounded-3xl' : ''
-            }`}
+            className={getBlockCardClasses('mistakes', `scroll-mt-24 sm:scroll-mt-28 rounded-3xl ${
+              activeSectionId === 'mistakes' ? 'ring-1 ring-rose-500/30' : ''
+            }`)}
           >
-            <CommonMistakesLab commonMistakes={subtopic.commonMistakes || subtopic.mistakes || []} readingFontSize={readingFontSize} />
+            <CommonMistakesLab 
+              commonMistakes={subtopic.commonMistakes || subtopic.mistakes || []} 
+              readingFontSize={getBlockFontSize('mistakes')} 
+              toolbar={renderBlockToolbar('mistakes')}
+            />
           </div>
 
           {/* محطة 10: نصائح ذهبية وأفضل الممارسات للمحترفين */}
           <div 
             id="lesson-section-best-practices" 
             data-lesson-section="best-practices" 
-            className={`scroll-mt-24 sm:scroll-mt-28 transition-all duration-300 ${
-              activeSectionId === 'best-practices' ? 'ring-1 ring-amber-500/30 rounded-3xl' : ''
-            }`}
+            className={getBlockCardClasses('best-practices', `scroll-mt-24 sm:scroll-mt-28 rounded-3xl ${
+              activeSectionId === 'best-practices' ? 'ring-1 ring-amber-500/30' : ''
+            }`)}
           >
-            <ProBestPracticesSection bestPractices={subtopic.bestPractices || subtopic.tips || []} readingFontSize={readingFontSize} />
+            <ProBestPracticesSection 
+              bestPractices={subtopic.bestPractices || subtopic.tips || []} 
+              readingFontSize={getBlockFontSize('best-practices')} 
+              toolbar={renderBlockToolbar('best-practices')}
+            />
           </div>
 
           {/* محطة 11: النموذج الذهني المعماري وخلف كواليس المحرك (Mental Model & Under the Hood) */}
-          <MentalModelSection 
-            subtopic={subtopic} 
-            readingFontSize={readingFontSize} 
-            renderHighlightedContent={renderHighlightedContent} 
-          />
+          <div className={getBlockCardClasses('mental-model', 'rounded-3xl')}>
+            <MentalModelSection 
+              subtopic={subtopic} 
+              readingFontSize={getBlockFontSize('mental-model')} 
+              renderHighlightedContent={renderHighlightedContent} 
+              toolbar={renderBlockToolbar('mental-model')}
+            />
+          </div>
 
           {/* محطة 12: فخاخ وأخطاء بيئة الإنتاج القاتلة (Production Pitfalls & Anti-Patterns) */}
           <div 
             id="lesson-section-pitfalls" 
             data-lesson-section="pitfalls" 
-            className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 transition-all duration-300 ${
+            className={getBlockCardClasses('pitfalls', `scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 ${
               activeSectionId === 'pitfalls' ? 'border-rose-500/50 ring-1 ring-rose-500/20' : 'border-slate-800'
-            }`}
+            }`)}
           >
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
               <h4 className="text-xs sm:text-sm font-bold text-rose-300 flex items-center gap-2">
                 <span className="size-6 rounded-lg bg-rose-500/10 text-rose-300 border border-rose-500/20 flex items-center justify-center text-xs font-mono">12</span>
                 <ShieldAlert className="w-4 h-4 text-rose-400" />
                 <span>فخاخ وأخطاء الإنتاج القاتلة (Production Pitfalls & Anti-Patterns):</span>
               </h4>
-              <span className="text-[10px] font-mono text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded-full border border-rose-800/50">
-                Critical Safe Guard
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded-full border border-rose-800/50">
+                  Critical Safe Guard
+                </span>
+                {renderBlockToolbar('pitfalls')}
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
               <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
-                <div className="text-xs sm:text-sm font-bold text-rose-400 flex items-center gap-1.5">
+                <div className="font-bold text-rose-400 flex items-center gap-1.5" style={{ fontSize: `${Math.max(getBlockFontSize('pitfalls') - 2, 12)}px` }}>
                   <span>⚠️</span> فخ الإغلاق المتقادم (Stale Closures)
                 </div>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                <p className="text-slate-300 leading-relaxed font-sans" style={{ fontSize: `${Math.max(getBlockFontSize('pitfalls') - 2, 12)}px` }}>
                   الاعتماد على متغيرات قديمة داخل الدوال غير المحدثة أو الـ Event Listeners دون تمرير التبعيات في مصفوفة dependencies، مما يسبب قراءة بيانات قديمة وتصرفات عشوائية في الإنتاج.
                 </p>
               </div>
               <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
-                <div className="text-xs sm:text-sm font-bold text-amber-400 flex items-center gap-1.5">
+                <div className="font-bold text-amber-400 flex items-center gap-1.5" style={{ fontSize: `${Math.max(getBlockFontSize('pitfalls') - 2, 12)}px` }}>
                   <span>🔁</span> شلالات إعادة الرسم المتتالية (Cascading Re-renders)
                 </div>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                <p className="text-slate-300 leading-relaxed font-sans" style={{ fontSize: `${Math.max(getBlockFontSize('pitfalls') - 2, 12)}px` }}>
                   تعديل الـ State داخل تأثيرات معتمدة على الـ State نفسها مما ينشئ حلقة مفرغة تسحق أداء المتصفح وتجمد واجهة المستخدم.
                 </p>
               </div>
               <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
-                <div className="text-xs sm:text-sm font-bold text-rose-400 flex items-center gap-1.5">
+                <div className="font-bold text-rose-400 flex items-center gap-1.5" style={{ fontSize: `${Math.max(getBlockFontSize('pitfalls') - 2, 12)}px` }}>
                   <span>❌</span> التعديل المباشر على الكائنات والمصفوفات (State Mutation)
                 </div>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                <p className="text-slate-300 leading-relaxed font-sans" style={{ fontSize: `${Math.max(getBlockFontSize('pitfalls') - 2, 12)}px` }}>
                   استخدام دوال التعديل الحتمي مثل push/splice مباشرة بدلاً من استنساخ الكائن بتنسيق جديد (...spread)، مما يكسر تحقق التساوي المرجعي في React.
                 </p>
               </div>
               <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
-                <div className="text-xs sm:text-sm font-bold text-sky-400 flex items-center gap-1.5">
+                <div className="font-bold text-sky-400 flex items-center gap-1.5" style={{ fontSize: `${Math.max(getBlockFontSize('pitfalls') - 2, 12)}px` }}>
                   <span>💧</span> تسريب الذاكرة (Memory Leaks in Subscriptions)
                 </div>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                <p className="text-slate-300 leading-relaxed font-sans" style={{ fontSize: `${Math.max(getBlockFontSize('pitfalls') - 2, 12)}px` }}>
                   عدم إرجاع دالة تنظيف (Cleanup Function) لإلغاء المؤقتات، واشتراكات الـ WebSockets، وطلبات AbortController عند تفكيك المكون (Unmount).
                 </p>
               </div>
@@ -1063,36 +1254,39 @@ export default function LessonViewer({
           <div 
             id="lesson-section-performance" 
             data-lesson-section="performance" 
-            className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 transition-all duration-300 ${
+            className={getBlockCardClasses('performance', `scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 ${
               activeSectionId === 'performance' ? 'border-amber-500/50 ring-1 ring-amber-500/20' : 'border-slate-800'
-            }`}
+            }`)}
           >
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
               <h4 className="text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-2">
                 <span className="size-6 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/20 flex items-center justify-center text-xs font-mono">13</span>
                 <Zap className="w-4 h-4 text-amber-400" />
                 <span>أسرار الأداء العالي والتسريع (Performance & Optimization Rules):</span>
               </h4>
-              <span className="text-[10px] font-mono text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-800/50">
-                60 FPS Architecture
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-800/50">
+                  60 FPS Architecture
+                </span>
+                {renderBlockToolbar('performance')}
+              </div>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3" style={{ fontSize: `${getBlockFontSize('performance')}px` }}>
               <div className="flex items-start gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                 <span className="text-amber-400 font-bold font-mono">1.</span>
-                <div className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+                <div className="text-slate-200 leading-relaxed font-sans">
                   <strong className="text-cyan-300">التحميل الكسول وتقسيم الحزم (Code Splitting):</strong> استخدم <code className="text-sky-300 bg-slate-900 px-1 py-0.5 rounded font-mono">React.lazy</code> و <code className="text-sky-300 bg-slate-900 px-1 py-0.5 rounded font-mono">&lt;Suspense&gt;</code> لتحميل الشاشات الثقيلة عند الحاجة فقط، لخفض حجم الـ Initial Bundle بأكثر من 40%.
                 </div>
               </div>
               <div className="flex items-start gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                 <span className="text-amber-400 font-bold font-mono">2.</span>
-                <div className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+                <div className="text-slate-200 leading-relaxed font-sans">
                   <strong className="text-emerald-300">التزامن وانتقالات الأولوية (useTransition):</strong> ميز التحديثات غير الحرجة كبحث النصوص أو الفلاتر المعقدة عبر الانتقالات المتزامنة لتبقى الواجهة مستجيبة لنقرات المستخدم دون أي تأخير.
                 </div>
               </div>
               <div className="flex items-start gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                 <span className="text-amber-400 font-bold font-mono">3.</span>
-                <div className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+                <div className="text-slate-200 leading-relaxed font-sans">
                   <strong className="text-indigo-300">التخزين المؤقت الذكي (useMemo & useCallback):</strong> احرص على استخدامها فقط عند تمرير مراجع دوال أو حسابات كثيفة لمكونات محاطة بـ <code className="text-sky-300 bg-slate-900 px-1 py-0.5 rounded font-mono">React.memo</code> لتفادي تكلفة المقارنة الزائدة.
                 </div>
               </div>
@@ -1103,40 +1297,46 @@ export default function LessonViewer({
           <div 
             id="lesson-section-comparison" 
             data-lesson-section="comparison" 
-            className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 transition-all duration-300 ${
+            className={getBlockCardClasses('comparison', `scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 ${
               activeSectionId === 'comparison' ? 'border-indigo-500/50 ring-1 ring-indigo-500/20' : 'border-slate-800'
-            }`}
+            }`)}
           >
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
               <h4 className="text-xs sm:text-sm font-bold text-indigo-300 flex items-center gap-2">
                 <span className="size-6 rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 flex items-center justify-center text-xs font-mono">13.ب</span>
                 <Scale className="w-4 h-4 text-indigo-400" />
                 <span>المقارنة المعمارية المباشرة (Head-to-Head Comparison):</span>
               </h4>
-              <span className="text-[10px] font-mono text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-800/50">
-                Modern vs Legacy
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-800/50">
+                  Modern vs Legacy
+                </span>
+                {renderBlockToolbar('comparison')}
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
               <div className="bg-slate-950/80 border border-rose-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
-                <div className="text-xs sm:text-sm font-bold text-rose-400 flex items-center gap-1.5">
+                <div className="font-bold text-rose-400 flex items-center gap-1.5" style={{ fontSize: `${Math.max(getBlockFontSize('comparison') - 2, 12)}px` }}>
                   <span>⏮️</span> الأسلوب التقليدي السابق (The Legacy Way):
                 </div>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                <p className="text-slate-300 leading-relaxed font-sans" style={{ fontSize: `${Math.max(getBlockFontSize('comparison') - 2, 12)}px` }}>
                   {subtopic.headToHeadComparison?.oldWay || "تحديث يدوي لـ DOM، تشابك في مصادر الحقيقة، وصعوبة تتبع مسببات إعادة الرسم مما يسبب هبوطاً حاداً في الأداء مع تضخم المشروع."}
                 </p>
               </div>
               <div className="bg-slate-950/80 border border-emerald-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
-                <div className="text-xs sm:text-sm font-bold text-emerald-400 flex items-center gap-1.5">
+                <div className="font-bold text-emerald-400 flex items-center gap-1.5" style={{ fontSize: `${Math.max(getBlockFontSize('comparison') - 2, 12)}px` }}>
                   <span>⚡</span> أسلوب React 19 العصري (The Modern Way):
                 </div>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                <p className="text-slate-300 leading-relaxed font-sans" style={{ fontSize: `${Math.max(getBlockFontSize('comparison') - 2, 12)}px` }}>
                   {subtopic.headToHeadComparison?.modernWay || "برمجة تصريحية معتمدة على مكونات نقية، جدولة أوتوماتيكية للأولويات، وحفظ مرجعي تلقائي عبر React Compiler."}
                 </p>
               </div>
             </div>
             {subtopic.headToHeadComparison?.verdict && (
-              <div className="text-xs text-indigo-200/90 bg-indigo-950/40 p-3 rounded-2xl border border-indigo-800/40">
+              <div 
+                className="text-indigo-200/90 bg-indigo-950/40 p-3 rounded-2xl border border-indigo-800/40"
+                style={{ fontSize: `${getBlockFontSize('comparison')}px` }}
+              >
                 <strong>الحكم المعماري:</strong> {subtopic.headToHeadComparison.verdict}
               </div>
             )}
@@ -1146,34 +1346,46 @@ export default function LessonViewer({
           <div 
             id="lesson-section-interview-prep" 
             data-lesson-section="interview-prep" 
-            className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 transition-all duration-300 ${
+            className={getBlockCardClasses('interview-prep', `scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 ${
               activeSectionId === 'interview-prep' ? 'border-violet-500/50 ring-1 ring-violet-500/20' : 'border-slate-800'
-            }`}
+            }`)}
           >
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
               <h4 className="text-xs sm:text-sm font-bold text-violet-300 flex items-center gap-2">
                 <span className="size-6 rounded-lg bg-violet-500/10 text-violet-300 border border-violet-500/20 flex items-center justify-center text-xs font-mono">14</span>
                 <Briefcase className="w-4 h-4 text-violet-400" />
                 <span>كبسولة المقابلات التقنية لشركات التكنولوجيا الكبرى (FAANG & Senior Interview Gotchas):</span>
               </h4>
-              <span className="text-[10px] font-mono text-violet-400 bg-violet-950/60 px-2 py-0.5 rounded-full border border-violet-800/50">
-                Interview Ready
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono text-violet-400 bg-violet-950/60 px-2 py-0.5 rounded-full border border-violet-800/50">
+                  Interview Ready
+                </span>
+                {renderBlockToolbar('interview-prep')}
+              </div>
             </div>
-            <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-sans font-medium">
+            <p 
+              className="text-slate-200 leading-relaxed font-sans font-medium"
+              style={{ fontSize: `${getBlockFontSize('interview-prep')}px` }}
+            >
               {subtopic.interviewPrep?.question 
                 ? subtopic.interviewPrep.question
                 : "سؤال المقابلات الشهير: 'كيف تؤثر هذه الجزئية على معمارية التطبيق ودورة تصيير المكونات؟ وما الفخ الذي يقع فيه المطور العادي؟'"}
             </p>
             <div className="bg-slate-950/80 border border-violet-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
-              <div className="text-xs sm:text-sm font-bold text-violet-400 flex items-center gap-1.5">
+              <div className="font-bold text-violet-400 flex items-center gap-1.5" style={{ fontSize: `${Math.max(getBlockFontSize('interview-prep') - 2, 12)}px` }}>
                 <span>💡</span> الإجابة النموذجية التي يبحث عنها المقابل التقني (Senior Answer):
               </div>
-              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
+              <p 
+                className="text-slate-200 leading-relaxed font-sans"
+                style={{ fontSize: `${getBlockFontSize('interview-prep')}px` }}
+              >
                 {subtopic.interviewPrep?.answer || "يركز مهندس البرمجيات المحترف على سلامة التساوي المرجعي (Referential Equality)، وتجنب الآثار الجانبية غير المتوقعة، وفصل المنطق الحسابي الثقيل عن دورة التصيير لضمان استجابة الواجهة وسرعة التفاعل مع المستخدم."}
               </p>
               {subtopic.interviewPrep?.insiderTip && (
-                <div className="text-xs sm:text-sm text-amber-300/90 pt-2 border-t border-slate-800/80 flex items-center gap-1.5">
+                <div 
+                  className="text-amber-300/90 pt-2 border-t border-slate-800/80 flex items-center gap-1.5"
+                  style={{ fontSize: `${Math.max(getBlockFontSize('interview-prep') - 2, 12)}px` }}
+                >
                   <span>⭐ نصيحة المقابل:</span> {subtopic.interviewPrep.insiderTip}
                 </div>
               )}
@@ -1184,29 +1396,38 @@ export default function LessonViewer({
           <div 
             id="lesson-section-enterprise-case" 
             data-lesson-section="enterprise-case" 
-            className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 transition-all duration-300 ${
+            className={getBlockCardClasses('enterprise-case', `scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 ${
               activeSectionId === 'enterprise-case' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'border-slate-800'
-            }`}
+            }`)}
           >
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
               <h4 className="text-xs sm:text-sm font-bold text-emerald-300 flex items-center gap-2">
                 <span className="size-6 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 flex items-center justify-center text-xs font-mono">15</span>
                 <Building2 className="w-4 h-4 text-emerald-400" />
                 <span>سيناريو من واقع مشاريع المليون مستخدم (1M+ Users Enterprise Case Study):</span>
               </h4>
-              <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/50">
-                Enterprise Scale
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/50">
+                  Enterprise Scale
+                </span>
+                {renderBlockToolbar('enterprise-case')}
+              </div>
             </div>
             <div className="bg-slate-950/70 border border-emerald-900/30 rounded-2xl p-4 sm:p-5 space-y-2">
-              <h5 className="text-xs sm:text-sm font-bold text-emerald-400 flex items-center gap-1.5">
+              <h5 className="font-bold text-emerald-400 flex items-center gap-1.5" style={{ fontSize: `${Math.max(getBlockFontSize('enterprise-case') - 2, 12)}px` }}>
                 <span>🏢</span> {subtopic.enterpriseCaseStudy?.company || "Meta & Netflix Scale Architecture"}
               </h5>
-              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
+              <p 
+                className="text-slate-200 leading-relaxed font-sans"
+                style={{ fontSize: `${getBlockFontSize('enterprise-case')}px` }}
+              >
                 {subtopic.enterpriseCaseStudy?.story || "في المنصات الضخمة التي تخدم ملايين المستخدمين يومياً، يؤدي الاستخدام غير المنضبط إلى تراكم استهلاك الذاكرة وبطء أجهزة المستخدمين الضعيفة. يتم استخدام هذا المفهوم لتقسيم عبء المعالجة، وتأخير المهام غير الحرجة، مما يضمن ثبات معدل الإطارات (60 FPS) حتى مع تضخم شجرة المكونات."}
               </p>
               {subtopic.enterpriseCaseStudy?.takeaway && (
-                <div className="text-xs sm:text-sm text-emerald-300/90 pt-2 border-t border-slate-800/80">
+                <div 
+                  className="text-emerald-300/90 pt-2 border-t border-slate-800/80"
+                  style={{ fontSize: `${Math.max(getBlockFontSize('enterprise-case') - 2, 12)}px` }}
+                >
                   <strong>الدرس المستفاد:</strong> {subtopic.enterpriseCaseStudy.takeaway}
                 </div>
               )}
@@ -1217,32 +1438,38 @@ export default function LessonViewer({
           <div 
             id="lesson-section-faqs" 
             data-lesson-section="faqs" 
-            className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 transition-all duration-300 ${
+            className={getBlockCardClasses('faqs', `scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 ${
               activeSectionId === 'faqs' ? 'border-sky-500/50 ring-1 ring-sky-500/20' : 'border-slate-800'
-            }`}
+            }`)}
           >
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
               <h4 className="text-xs sm:text-sm font-bold text-sky-300 flex items-center gap-2">
                 <span className="size-6 rounded-lg bg-sky-500/10 text-sky-300 border border-sky-500/20 flex items-center justify-center text-xs font-mono">16</span>
                 <HelpCircle className="w-4 h-4 text-sky-400" />
                 <span>بنك الأسئلة الشائعة والحالات الاستثنائية (Deep-Dive FAQs & Edge Cases):</span>
               </h4>
-              <span className="text-[10px] font-mono text-sky-400 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-sky-800/50">
-                Curious Minds
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono text-sky-400 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-sky-800/50">
+                  Curious Minds
+                </span>
+                {renderBlockToolbar('faqs')}
+              </div>
             </div>
             <div className="space-y-3">
               {(subtopic.deepDiveFaqs && subtopic.deepDiveFaqs.length > 0) ? (
                 subtopic.deepDiveFaqs.map((faq, idx) => (
                   <details key={idx} className="group bg-slate-950/80 border border-slate-800 rounded-2xl p-4 transition-all">
-                    <summary className="text-xs sm:text-sm font-bold text-slate-200 cursor-pointer flex items-center justify-between select-none">
+                    <summary className="font-bold text-slate-200 cursor-pointer flex items-center justify-between select-none" style={{ fontSize: `${Math.max(getBlockFontSize('faqs') - 2, 12)}px` }}>
                       <span className="flex items-center gap-2">
                         <span className="text-sky-400 font-mono">Q{idx + 1}:</span>
                         <span>{faq.q}</span>
                       </span>
                       <span className="text-slate-500 group-open:rotate-90 transition-transform">▸</span>
                     </summary>
-                    <div className="pt-3 mt-2 border-t border-slate-800/80 text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
+                    <div 
+                      className="pt-3 mt-2 border-t border-slate-800/80 text-slate-200 leading-relaxed font-sans"
+                      style={{ fontSize: `${getBlockFontSize('faqs')}px` }}
+                    >
                       {faq.a}
                     </div>
                   </details>
@@ -1250,26 +1477,32 @@ export default function LessonViewer({
               ) : (
                 <>
                   <details className="group bg-slate-950/80 border border-slate-800 rounded-2xl p-4 transition-all" open>
-                    <summary className="text-xs sm:text-sm font-bold text-slate-200 cursor-pointer flex items-center justify-between select-none">
+                    <summary className="font-bold text-slate-200 cursor-pointer flex items-center justify-between select-none" style={{ fontSize: `${Math.max(getBlockFontSize('faqs') - 2, 12)}px` }}>
                       <span className="flex items-center gap-2">
                         <span className="text-sky-400 font-mono">س1:</span>
                         <span>متى يكون استخدام هذا المفهوم حتمياً ومتى يعتبر زيادة تعقيد لا داعي لها؟</span>
                       </span>
                       <span className="text-slate-500 group-open:rotate-90 transition-transform">▸</span>
                     </summary>
-                    <div className="pt-3 mt-2 border-t border-slate-800/80 text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
+                    <div 
+                      className="pt-3 mt-2 border-t border-slate-800/80 text-slate-200 leading-relaxed font-sans"
+                      style={{ fontSize: `${getBlockFontSize('faqs')}px` }}
+                    >
                       يُستخدم المفهوم عند وجود حاجة فعلية لحفظ الحالة، تحسين استجابة الواجهة، أو مشاركة منطق معقد عبر عدة مكونات. تجنب التجريد المبكر (Premature Abstraction) إذا كان كودك يؤدي الغرض ببساطة وبدون مشاكل في الأداء.
                     </div>
                   </details>
                   <details className="group bg-slate-950/80 border border-slate-800 rounded-2xl p-4 transition-all">
-                    <summary className="text-xs sm:text-sm font-bold text-slate-200 cursor-pointer flex items-center justify-between select-none">
+                    <summary className="font-bold text-slate-200 cursor-pointer flex items-center justify-between select-none" style={{ fontSize: `${Math.max(getBlockFontSize('faqs') - 2, 12)}px` }}>
                       <span className="flex items-center gap-2">
                         <span className="text-sky-400 font-mono">س2:</span>
                         <span>كيف يتعامل React 19 والـ React Compiler مع هذا الجزء تلقائياً؟</span>
                       </span>
                       <span className="text-slate-500 group-open:rotate-90 transition-transform">▸</span>
                     </summary>
-                    <div className="pt-3 mt-2 border-t border-slate-800/80 text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
+                    <div 
+                      className="pt-3 mt-2 border-t border-slate-800/80 text-slate-200 leading-relaxed font-sans"
+                      style={{ fontSize: `${getBlockFontSize('faqs')}px` }}
+                    >
                       في بيئات React 19 المزودة بالـ Compiler، يتم تحليل مخطط تدفق المتغيرات وقت البناء وحقن كود الحفظ المرجعي التلقائي، مما يوفر على المطور عناء كتابة الميموزيشن اليدوي ويمنع أخطاء نسيان التبعيات.
                     </div>
                   </details>
@@ -1282,28 +1515,38 @@ export default function LessonViewer({
           <div 
             id="lesson-section-challenge" 
             data-lesson-section="challenge" 
-            className={`scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 transition-all duration-300 ${
+            className={getBlockCardClasses('challenge', `scroll-mt-24 sm:scroll-mt-28 bg-slate-900 border rounded-3xl p-6 sm:p-8 shadow-xl space-y-4 ${
               activeSectionId === 'challenge' ? 'border-amber-500/50 ring-1 ring-amber-500/20' : 'border-slate-800'
-            }`}
+            }`)}
           >
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
               <h4 className="text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-2">
                 <span className="size-6 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/20 flex items-center justify-center text-xs font-mono">17</span>
                 <Trophy className="w-4 h-4 text-amber-400" />
                 <span>التحدي البرمجي العملي ومختبر التطبيق الذاتي (Hands-on Challenge):</span>
               </h4>
-              <span className="text-[10px] font-mono text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-800/50">
-                Build It Yourself
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-800/50">
+                  Build It Yourself
+                </span>
+                {renderBlockToolbar('challenge')}
+              </div>
             </div>
             <div className="bg-slate-950/80 border border-amber-900/30 rounded-2xl p-4 sm:p-5 space-y-3">
-              <div className="text-xs sm:text-sm font-bold text-slate-200">
+              <div className="font-bold text-slate-200" style={{ fontSize: `${Math.max(getBlockFontSize('challenge') - 2, 12)}px` }}>
                 🎯 المهمة المطلوبة:
               </div>
-              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
+              <p 
+                className="text-slate-200 leading-relaxed font-sans"
+                style={{ fontSize: `${getBlockFontSize('challenge')}px` }}
+              >
                 {subtopic.handsOnChallenge?.task || "قم ببناء مكون React تفاعلي يطبق مفاهيم هذا الدرس بدقة، مع مراعاة التعامل السليم مع الحالات الفارغة (Empty States)، وتوفير تغذية راجعة بصرية فورية عند تفاعل المستخدم."}
               </p>
-              <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-2xl text-xs sm:text-sm font-mono text-amber-300/90 whitespace-pre-wrap" dir="ltr">
+              <div 
+                className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-2xl font-mono text-amber-300/90 whitespace-pre-wrap" 
+                dir="ltr"
+                style={{ fontSize: `${Math.max(getBlockFontSize('challenge') - 2, 11)}px` }}
+              >
                 {subtopic.handsOnChallenge?.hint || "// تلميح للتحدي:\n// 1. تأكد من تهيئة الحالة بقيمة أولية سليمة.\n// 2. استخدم الأسماء المعبرة والممارسات الصحيحة.\n// 3. اختبر المكون على شاشات الهواتف أيضاً."}
               </div>
             </div>

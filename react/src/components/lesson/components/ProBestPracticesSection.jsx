@@ -3,7 +3,7 @@
 import React from 'react';
 import { Award, Star, Zap, Shield, Sparkles, CheckCircle2 } from 'lucide-react';
 
-export default function ProBestPracticesSection({ bestPractices = [], readingFontSize = 15 }) {
+export default function ProBestPracticesSection({ bestPractices = [], readingFontSize = 15, toolbar = null }) {
   if (!bestPractices || bestPractices.length === 0) return null;
 
   // فئات تقريبية لتنظيم النصائح
@@ -39,15 +39,18 @@ export default function ProBestPracticesSection({ bestPractices = [], readingFon
           </div>
         </div>
 
-        {/* ختم الجودة الهندسي SVG */}
-        <div className="flex items-center gap-2 bg-slate-950/80 border border-amber-500/30 px-3.5 py-1.5 rounded-2xl self-start md:self-auto shadow-inner">
-          <svg className="size-5 text-amber-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
-              fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <span className="text-xs font-mono text-amber-300 font-bold tabular-nums">
-            {bestPractices.length} معايير ذهبية
-          </span>
+        {/* ختم الجودة الهندسي SVG + شريط أدوات البلوك */}
+        <div className="flex items-center gap-2 flex-wrap self-start md:self-auto">
+          <div className="flex items-center gap-2 bg-slate-950/80 border border-amber-500/30 px-3.5 py-1.5 rounded-2xl shadow-inner">
+            <svg className="size-5 text-amber-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
+                fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className="text-xs font-mono text-amber-300 font-bold tabular-nums">
+              {bestPractices.length} معايير ذهبية
+            </span>
+          </div>
+          {toolbar}
         </div>
       </div>
 

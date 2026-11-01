@@ -3,7 +3,7 @@
 import React from 'react';
 import { AlertTriangle, ShieldCheck, ArrowLeft, ArrowDown, Lightbulb, Bug, CheckCircle2 } from 'lucide-react';
 
-export default function CommonMistakesLab({ commonMistakes = [], readingFontSize = 15 }) {
+export default function CommonMistakesLab({ commonMistakes = [], readingFontSize = 15, toolbar = null }) {
   if (!commonMistakes || commonMistakes.length === 0) return null;
 
   return (
@@ -32,12 +32,15 @@ export default function CommonMistakesLab({ commonMistakes = [], readingFontSize
           </div>
         </div>
 
-        {/* شارة عدد الحالات في المعمل */}
-        <div className="flex items-center gap-2 bg-slate-950/80 border border-slate-800 px-3.5 py-1.5 rounded-2xl self-start md:self-auto shadow-inner">
-          <Bug className="size-4 text-rose-400" />
-          <span className="text-xs font-mono text-rose-300 font-bold tabular-nums">
-            {commonMistakes.length} فخاخ برمجية مصنفة
-          </span>
+        {/* شارة عدد الحالات في المعمل + شريط أدوات البلوك */}
+        <div className="flex items-center gap-2 flex-wrap self-start md:self-auto">
+          <div className="flex items-center gap-2 bg-slate-950/80 border border-slate-800 px-3.5 py-1.5 rounded-2xl shadow-inner">
+            <Bug className="size-4 text-rose-400" />
+            <span className="text-xs font-mono text-rose-300 font-bold tabular-nums">
+              {commonMistakes.length} فخاخ برمجية مصنفة
+            </span>
+          </div>
+          {toolbar}
         </div>
       </div>
 

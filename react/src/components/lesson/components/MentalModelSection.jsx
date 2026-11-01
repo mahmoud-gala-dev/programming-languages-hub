@@ -17,7 +17,8 @@ import {
 export default function MentalModelSection({ 
   subtopic, 
   readingFontSize = 17,
-  renderHighlightedContent 
+  renderHighlightedContent,
+  toolbar = null
 }) {
   const [selectedPhase, setSelectedPhase] = useState(null); // null | 'trigger' | 'render' | 'diff' | 'commit' | 'paint'
 
@@ -62,10 +63,13 @@ export default function MentalModelSection({
           </div>
         </div>
 
-        <span className="text-[11px] font-mono text-indigo-300 bg-indigo-950/80 px-3 py-1 rounded-full border border-indigo-800/50 flex items-center gap-1.5 shrink-0">
-          <Activity className="size-3.5" />
-          <span>React Engine Internals</span>
-        </span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[11px] font-mono text-indigo-300 bg-indigo-950/80 px-3 py-1 rounded-full border border-indigo-800/50 flex items-center gap-1.5 shrink-0">
+            <Activity className="size-3.5" />
+            <span>React Engine Internals</span>
+          </span>
+          {toolbar}
+        </div>
       </div>
 
       {/* كبسولة المعادلة الذهبية: UI = f(State) */}
@@ -270,3 +274,4 @@ export default function MentalModelSection({
     </div>
   );
 }
+

@@ -48,11 +48,19 @@ export default function CodeBlock({
   language = "javascript",
   subtopicId = "general",
   highlights = [],
-  onHighlightClick = null
+  onHighlightClick = null,
+  fontSize: externalFontSize = null
 }) {
   const showToast = useToast();
   const [copied, setCopied] = useState(false);
-  const [fontSize, setFontSize] = useState(13); // حجم خط الكود بالبكسل
+  const [fontSize, setFontSize] = useState(externalFontSize || 13); // حجم خط الكود بالبكسل
+
+  // مزامنة حجم الخط الخارجي إذا تم تمريره من شريط أدوات البلوك
+  useEffect(() => {
+    if (externalFontSize) {
+      setFontSize(externalFontSize);
+    }
+  }, [externalFontSize]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isNativeFullscreen, setIsNativeFullscreen] = useState(false);
   const [isLineWrap, setIsLineWrap] = useState(false);

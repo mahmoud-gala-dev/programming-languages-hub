@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Volume2, VolumeX, Sparkles, Languages, Check, Copy } from 'lucide-react';
 import { useToast } from '../../../context/UiFeedbackContext.jsx';
 
-export default function TermsDictionarySection({ subtopic, readingFontSize = 15 }) {
+export default function TermsDictionarySection({ subtopic, readingFontSize = 15, toolbar = null, isFocused = false }) {
   const showToast = useToast();
   const [playingTerm, setPlayingTerm] = useState(null);
   const [copiedTerm, setCopiedTerm] = useState(null);
@@ -99,15 +99,18 @@ export default function TermsDictionarySection({ subtopic, readingFontSize = 15 
           </div>
         </div>
 
-        {/* رسم SVG تفاعلي للموجات الصوتية (Sound Waves SVG) */}
-        <div className="flex items-center gap-2 bg-slate-950/80 border border-slate-800 px-3 py-1.5 rounded-2xl self-start md:self-auto shadow-inner">
-          <svg className="w-24 h-6 text-cyan-400" viewBox="0 0 100 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4 12C8 6 12 18 16 12C20 6 24 18 28 12C32 4 36 20 40 12C44 4 48 20 52 12C56 7 60 17 64 12C68 7 72 17 76 12C80 9 84 15 88 12C92 9 96 15 100 12" 
-              stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <span className="text-[11px] font-mono text-cyan-300 font-bold tabular-nums">
-            {termsList.length} مصطلحات
-          </span>
+        {/* رسم SVG تفاعلي للموجات الصوتية + شريط أدوات البلوك */}
+        <div className="flex items-center gap-2 flex-wrap self-start md:self-auto">
+          <div className="flex items-center gap-2 bg-slate-950/80 border border-slate-800 px-3 py-1.5 rounded-2xl shadow-inner">
+            <svg className="w-20 h-5 text-cyan-400" viewBox="0 0 100 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 12C8 6 12 18 16 12C20 6 24 18 28 12C32 4 36 20 40 12C44 4 48 20 52 12C56 7 60 17 64 12C68 7 72 17 76 12C80 9 84 15 88 12C92 9 96 15 100 12" 
+                stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className="text-[11px] font-mono text-cyan-300 font-bold tabular-nums">
+              {termsList.length} مصطلحات
+            </span>
+          </div>
+          {toolbar}
         </div>
       </div>
 
