@@ -332,35 +332,72 @@ function MembersDirectory() {
   );
 }`,
       codeAdvanced: `// نموذج حقيقي لتقسيم صفحة متجر إلكتروني كاملة إلى مكونات ذرية
-// 1. مكون سعري نقي
+// 1. مكون سعري نقي (Atomic Component)
 function PriceTag({ amount, currency = 'ر.س' }) {
-  return <span className="price-tag">{amount} {currency}</span>;
+  return (
+    <span className="price-tag bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-lg text-xs font-mono font-bold">
+      {amount} {currency}
+    </span>
+  );
 }
 
-// 2. مكون بطاقة منتج يركب المكون السعري بداخله
+// 2. مكون بطاقة منتج يركب المكون السعري بداخله (Molecule Component)
 function ProductCard({ title, price, inStock }) {
+  const [added, setAdded] = React.useState(false);
+
   return (
-    <div className="product-item">
-      <h4>{title}</h4>
-      <PriceTag amount={price} />
-      <span className={inStock ? 'in' : 'out'}>
-        {inStock ? 'متوفر' : 'نفد من المخزن'}
-      </span>
+    <div className="product-item bg-slate-800/90 border border-slate-700/80 hover:border-cyan-500/50 rounded-2xl p-4 flex flex-col justify-between gap-3 shadow-lg transition-all">
+      <div>
+        <h4 className="text-sm font-bold text-white mb-2">{title}</h4>
+        <div className="flex items-center gap-2">
+          <PriceTag amount={price} />
+          <span className={\`text-[11px] font-bold px-2 py-0.5 rounded-md \${
+            inStock 
+              ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30' 
+              : 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
+          }\`}>
+            {inStock ? 'متوفر ✓' : 'نفد من المخزن ✕'}
+          </span>
+        </div>
+      </div>
+
+      <button
+        disabled={!inStock}
+        onClick={() => setAdded(!added)}
+        className={\`w-full py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer \${
+          !inStock 
+            ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+            : added 
+              ? 'bg-emerald-600 text-white' 
+              : 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-md shadow-cyan-600/20'
+        }\`}
+      >
+        {!inStock ? 'غير متاح حالياً' : added ? 'تمت الإضافة للسلة ✓' : 'أضف للسلة 🛒'}
+      </button>
     </div>
   );
 }
 
-// 3. مكون الصفحة الذي يجمع كل المكونات في لوحة واحدة
+// 3. مكون الصفحة الذي يجمع كل المكونات في لوحة واحدة (Organism Component)
 function StoreCatalog() {
   const catalog = [
-    { id: 1, title: 'شاشة حاسوب 27 بوصة', price: 1100, inStock: true },
-    { id: 2, title: 'ماوس لاسلكي مريح', price: 150, inStock: false }
+    { id: 1, title: 'شاشة حاسوب 27 بوصة IPS 165Hz', price: 1100, inStock: true },
+    { id: 2, title: 'ماوس لاسلكي مريح لليد', price: 150, inStock: false },
+    { id: 3, title: 'لوحة مفاتيح ميكانيكية RGB', price: 340, inStock: true }
   ];
 
   return (
-    <section className="catalog-container">
-      <h2>كتالوج المنتجات المتاحة 🛒</h2>
-      <div className="items-list">
+    <section className="catalog-container bg-slate-900/95 border border-slate-800 rounded-3xl p-5 shadow-2xl max-w-xl mx-auto space-y-4">
+      <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <h2 className="text-base font-bold text-white flex items-center gap-2 m-0">
+          <span>متجر التقنية الذكي 🛒</span>
+        </h2>
+        <span className="text-xs bg-cyan-950 text-cyan-300 border border-cyan-500/30 px-2.5 py-0.5 rounded-full font-mono">
+          معمارية المكونات
+        </span>
+      </div>
+
+      <div className="items-list grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         {catalog.map(prod => (
           <ProductCard key={prod.id} {...prod} />
         ))}
