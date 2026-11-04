@@ -169,9 +169,7 @@ export default function MentalModelSection({
 
   return (
     <div 
-      id="lesson-section-mental-model" 
-      data-lesson-section="mental-model" 
-      className="scroll-mt-24 sm:scroll-mt-28 bg-slate-900/95 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden transition-all duration-300"
+      className="bg-slate-900/95 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden transition-all duration-300"
     >
       {/* توهج بنفسجي/أزرق ناعم في الخلفية */}
       <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />

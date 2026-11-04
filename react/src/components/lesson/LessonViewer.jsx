@@ -792,44 +792,123 @@ export default function LessonViewer({
   }, [readingFontSize, lineSpacing]);
 
   // حساب نسبة التمرير التفاعلية للدرس (Scroll Progress Engine)
+  // قائمة أقسام الدرس المتوفرة ديناميكياً
+  const detectedSections = [
+    { id: 'hero-visual', title: 'المحاكاة البصرية الحركية', shortTitle: 'المحاكاة البصرية' },
+    ...((subtopic?.definition || subtopic?.description) ? [{ id: 'definition', title: '1. التعريف المبسط', shortTitle: 'التعريف' }] : []),
+    ...((subtopic?.analogy || subtopic?.realLifeAnalogy) ? [{ id: 'analogy', title: '2. تشبيه من الحياة اليومية', shortTitle: 'التشبيه' }] : []),
+    ...((subtopic?.why || subtopic?.whyItMatters) ? [{ id: 'why', title: '3. لماذا نحتاجه والمشكلة التي يحلها', shortTitle: 'لماذا نحتاجه؟' }] : []),
+    ...(Array.isArray(subtopic?.terms) && subtopic.terms.length > 0 ? [{ id: 'terms', title: '4. قاموس المصطلحات الإنجليزية', shortTitle: 'المصطلحات' }] : []),
+    ...(subtopic?.syntax ? [{ id: 'syntax', title: '5. الصيغة العامة والهيكل القياسي', shortTitle: 'الصيغة العامة' }] : []),
+    { id: 'execution-flow', title: '5.ب. المخطط التدفقي وتتبع التنفيذ', shortTitle: 'مخطط التدفق' },
+    ...((subtopic?.simpleCode || subtopic?.codeSimple || subtopic?.simpleExample) ? [{ id: 'simple-code', title: '6. مثال عملي بسيط', shortTitle: 'كود مبسط' }] : []),
+    ...((subtopic?.advancedCode || subtopic?.codeAdvanced || subtopic?.advancedExample) ? [
+      { id: 'advanced-code', title: '7. تطبيق عملي متقدم', shortTitle: 'تطبيق متقدم' },
+      { id: 'live-preview', title: 'المعاينة التفاعلية المباشرة', shortTitle: 'المعاينة الحية' }
+    ] : []),
+    ...((subtopic?.outputExplanation || subtopic?.output || subtopic?.simpleCode || subtopic?.codeSnippet) ? [{ id: 'output', title: '8. شرح المخرجات: ماذا يرى المستخدم ولماذا؟', shortTitle: 'شرح المخرجات' }] : []),
+    { id: 'mistakes', title: '9. أخطاء شائعة وكيف تتجنبها', shortTitle: 'أخطاء وحلولها' },
+    { id: 'best-practices', title: '10. نصائح وأفضل الممارسات', shortTitle: 'أفضل الممارسات' },
+    { id: 'mental-model', title: '11. النموذج الذهني وخلف الكواليس', shortTitle: 'النموذج الذهني' },
+    { id: 'pitfalls', title: '12. فخاخ بيئة الإنتاج القاتلة', shortTitle: 'فخاخ الإنتاج' },
+    { id: 'performance', title: '13. أسرار الأداء العالي والتسريع', shortTitle: 'أسرار الأداء' },
+    { id: 'comparison', title: '13.ب. المقارنة المعمارية المباشرة', shortTitle: 'مقارنة مباشرة' },
+    { id: 'interview-prep', title: '14. كبسولة مقابلات FAANG', shortTitle: 'أسئلة المقابلات' },
+    { id: 'enterprise-case', title: '15. سيناريو مشاريع المليون مستخدم', shortTitle: 'دراسة حالة' },
+    { id: 'faqs', title: '16. بنك الأسئلة الشائعة والحالات', shortTitle: 'أسئلة شائعة' },
+    { id: 'challenge', title: '17. التحدي البرمجي العملي', shortTitle: 'التحدي العملي' }
+  ];
+
+  // تتبع نسبة التقدم وموقع القراءة الفعلي لتحديد المحطة النشطة في خريطة الدرس (High-Performance Precision Scroll Spy)
   useEffect(() => {
     setScrollProgress(0);
+    let ticking = false;
 
-    const handleScroll = () => {
+    const updateActiveSectionAndProgress = () => {
+      // 1. حساب نسبة التمرير العامة
       const scrollable = document.documentElement.scrollHeight - window.innerHeight;
       if (scrollable > 0) {
         const current = Math.min(Math.max((window.scrollY / scrollable) * 100, 0), 100);
-        const rounded = Math.round(current);
-        setScrollProgress(rounded);
+        setScrollProgress(Math.round(current));
+      }
+
+      // 2. فحص الأقسام المرصودة في صفحة الدرس
+      const sectionElements = Array.from(document.querySelectorAll('[data-lesson-section]'));
+      if (sectionElements.length === 0) return;
+
+      // عند بداية الصفحة العلوية تماماً
+      if (window.scrollY < 120) {
+        const firstId = sectionElements[0]?.getAttribute('data-lesson-section');
+        if (firstId) {
+          setActiveSectionId(firstId);
+          return;
+        }
+      }
+
+      // عند الوصول لقاع الصفحة
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 60) {
+        const lastId = sectionElements[sectionElements.length - 1]?.getAttribute('data-lesson-section');
+        if (lastId) {
+          setActiveSectionId(lastId);
+          return;
+        }
+      }
+
+      // خط أفق القراءة (190px تحت الحافة العلوية أسفل الترويسة الثابتة مباشرة)
+      const readingLine = 190;
+      let currentActiveId = null;
+
+      // فحص القسم الذي يحتوي على خط أفق القراءة
+      for (let i = 0; i < sectionElements.length; i++) {
+        const el = sectionElements[i];
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= readingLine && rect.bottom > readingLine) {
+          currentActiveId = el.getAttribute('data-lesson-section');
+          break;
+        }
+      }
+
+      // إذا كان خط القراءة في فجوة بين قسمين، اختر القسم الأقرب لخط القراءة
+      if (!currentActiveId) {
+        let minDistance = Infinity;
+        sectionElements.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          const dist = Math.abs(rect.top - readingLine);
+          if (dist < minDistance) {
+            minDistance = dist;
+            currentActiveId = el.getAttribute('data-lesson-section');
+          }
+        });
+      }
+
+      if (currentActiveId) {
+        setActiveSectionId(currentActiveId);
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [subtopic?.id]);
-
-    // تتبع موقع القراءة الفعلي وتحديث القسم النشط في خريطة الدرس
-  useEffect(() => {
-    const sectionElements = document.querySelectorAll('[data-lesson-section]');
-    if (!sectionElements || sectionElements.length === 0) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      const visibleEntries = entries.filter(e => e.isIntersecting);
-      if (visibleEntries.length > 0) {
-        visibleEntries.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        const targetId = visibleEntries[0].target.getAttribute('data-lesson-section');
-        if (targetId) {
-          setActiveSectionId(targetId);
-        }
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateActiveSectionAndProgress();
+          ticking = false;
+        });
+        ticking = true;
       }
-    }, {
-      rootMargin: '-10% 0px -55% 0px',
-      threshold: [0, 0.2, 0.5]
-    });
+    };
 
-    sectionElements.forEach(el => observer.observe(el));
+    // تشغيل مبدئي بعد رسم عناصر الصفحة
+    const timer = setTimeout(() => {
+      updateActiveSectionAndProgress();
+    }, 100);
 
-    return () => observer.disconnect();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
   }, [subtopic?.id]);
 
   if (!subtopic) return null;
@@ -851,58 +930,6 @@ export default function LessonViewer({
     focus: "w-full max-w-6xl mx-auto px-2 sm:px-6"
   };
   const currentContainerClass = containerClasses[layoutMode] || containerClasses.default;
-
-  
-  // قائمة أقسام الدرس المتوفرة ديناميكياً
-  const detectedSections = [
-    { id: 'hero-visual', title: 'المحاكاة البصرية الحركية', shortTitle: 'المحاكاة البصرية' },
-    ...((subtopic.definition || subtopic.description) ? [{ id: 'definition', title: '1. التعريف المبسط', shortTitle: 'التعريف' }] : []),
-    ...((subtopic.analogy || subtopic.realLifeAnalogy) ? [{ id: 'analogy', title: '2. تشبيه من الحياة اليومية', shortTitle: 'التشبيه' }] : []),
-    ...((subtopic.why || subtopic.whyItMatters) ? [{ id: 'why', title: '3. لماذا نحتاجه والمشكلة التي يحلها', shortTitle: 'لماذا نحتاجه؟' }] : []),
-    ...(Array.isArray(subtopic.terms) && subtopic.terms.length > 0 ? [{ id: 'terms', title: '4. قاموس المصطلحات الإنجليزية', shortTitle: 'المصطلحات' }] : []),
-    ...(subtopic.syntax ? [{ id: 'syntax', title: '5. الصيغة العامة والهيكل القياسي', shortTitle: 'الصيغة العامة' }] : []),
-    { id: 'execution-flow', title: '5.ب. المخطط التدفقي وتتبع التنفيذ', shortTitle: 'مخطط التدفق' },
-    ...((subtopic.simpleCode || subtopic.codeSimple || subtopic.simpleExample) ? [{ id: 'simple-code', title: '6. مثال عملي بسيط', shortTitle: 'كود مبسط' }] : []),
-    ...((subtopic.advancedCode || subtopic.codeAdvanced || subtopic.advancedExample) ? [
-      { id: 'advanced-code', title: '7. تطبيق عملي متقدم', shortTitle: 'تطبيق متقدم' },
-      { id: 'live-preview', title: 'المعاينة التفاعلية المباشرة', shortTitle: 'المعاينة الحية' }
-    ] : []),
-    ...((subtopic.outputExplanation || subtopic.output || subtopic.simpleCode || subtopic.codeSnippet) ? [{ id: 'output', title: '8. شرح المخرجات: ماذا يرى المستخدم ولماذا؟', shortTitle: 'شرح المخرجات' }] : []),
-    { id: 'mistakes', title: '9. أخطاء شائعة وكيف تتجنبها', shortTitle: 'أخطاء وحلولها' },
-    { id: 'best-practices', title: '10. نصائح وأفضل الممارسات', shortTitle: 'أفضل الممارسات' },
-    { id: 'mental-model', title: '11. النموذج الذهني وخلف الكواليس', shortTitle: 'النموذج الذهني' },
-    { id: 'pitfalls', title: '12. فخاخ بيئة الإنتاج القاتلة', shortTitle: 'فخاخ الإنتاج' },
-    { id: 'performance', title: '13. أسرار الأداء العالي والتسريع', shortTitle: 'أسرار الأداء' },
-    { id: 'comparison', title: '13.ب. المقارنة المعمارية المباشرة', shortTitle: 'مقارنة مباشرة' },
-    { id: 'interview-prep', title: '14. كبسولة مقابلات FAANG', shortTitle: 'أسئلة المقابلات' },
-    { id: 'enterprise-case', title: '15. سيناريو مشاريع المليون مستخدم', shortTitle: 'دراسة حالة' },
-    { id: 'faqs', title: '16. بنك الأسئلة الشائعة والحالات', shortTitle: 'أسئلة شائعة' },
-    { id: 'challenge', title: '17. التحدي البرمجي العملي', shortTitle: 'التحدي العملي' }
-  ];
-
-  // تتبع موقع القراءة الفعلي وتحديث القسم النشط في خريطة الدرس
-  useEffect(() => {
-    const sectionElements = document.querySelectorAll('[data-lesson-section]');
-    if (!sectionElements || sectionElements.length === 0) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      const visibleEntries = entries.filter(e => e.isIntersecting);
-      if (visibleEntries.length > 0) {
-        visibleEntries.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        const targetId = visibleEntries[0].target.getAttribute('data-lesson-section');
-        if (targetId) {
-          setActiveSectionId(targetId);
-        }
-      }
-    }, {
-      rootMargin: '-10% 0px -55% 0px',
-      threshold: [0, 0.2, 0.5]
-    });
-
-    sectionElements.forEach(el => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, [subtopic.id]);
 
   const handleOpenChatGpt = () => {
     copyAndOpenChatGPT(subtopic, "خريطة طريق React.js الاحترافية", showToast);
@@ -1570,7 +1597,13 @@ export default function LessonViewer({
 
           {/* محطة 8: شرح المخرجات: ماذا يرى المستخدم ولماذا؟ */}
           {(subtopic.outputExplanation || subtopic.output || subtopic.simpleCode || subtopic.codeSnippet) && (
-            <div className={getBlockCardClasses('output', 'rounded-3xl')}>
+            <div 
+              id="lesson-section-output"
+              data-lesson-section="output"
+              className={getBlockCardClasses('output', `scroll-mt-24 sm:scroll-mt-28 rounded-3xl ${
+                activeSectionId === 'output' ? 'ring-1 ring-emerald-500/30' : ''
+              }`)}
+            >
               <OutputExplanationSection 
                 subtopic={subtopic} 
                 readingFontSize={getBlockFontSize('output')} 
@@ -1611,7 +1644,13 @@ export default function LessonViewer({
           </div>
 
           {/* محطة 11: النموذج الذهني المعماري وخلف كواليس المحرك (Mental Model & Under the Hood) */}
-          <div className={getBlockCardClasses('mental-model', 'rounded-3xl')}>
+          <div 
+            id="lesson-section-mental-model"
+            data-lesson-section="mental-model"
+            className={getBlockCardClasses('mental-model', `scroll-mt-24 sm:scroll-mt-28 rounded-3xl ${
+              activeSectionId === 'mental-model' ? 'ring-1 ring-cyan-500/30' : ''
+            }`)}
+          >
             <MentalModelSection 
               subtopic={subtopic} 
               readingFontSize={getBlockFontSize('mental-model')} 

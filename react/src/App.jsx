@@ -365,8 +365,8 @@ export default function App() {
             />
           )}
 
-          {/* مساحة العرض الرئيسية للدرس أو الإطلالة الخاصة المتسعة بأقصى أريحية */}
-          <main className="flex-1 p-2 sm:p-3 lg:p-5 min-w-0 max-w-full overflow-x-hidden">
+          {/* مساحة العرض الرئيسية للدرس أو الإطلالة الخاصة المتسعة بأقصى أريحية (overflow-x-clip لدعم position: sticky دون إفساد التمرير) */}
+          <main className="flex-1 p-2 sm:p-3 lg:p-5 min-w-0 max-w-full overflow-x-clip">
             
             {/* عرض السكيلتون المتحرك أثناء التنقل */}
             {isLoadingTransition ? (

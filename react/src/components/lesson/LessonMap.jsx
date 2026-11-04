@@ -1,7 +1,7 @@
 // src/components/lesson/LessonMap.jsx
 // خريطة محتويات الدرس التفاعلية (Lesson Map & Table of Contents)
 // تتيح للمتعلم معرفة هيكل الدرس بالكامل، وتحديد موقعه الحالي بدقة، والتنقل السلس بنقرة واحدة
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Compass, 
   Film, 
@@ -65,12 +65,25 @@ export default function LessonMap({
   onToggleVisibility 
 }) {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const activeItemRef = useRef(null);
 
-  // حساب مؤشر التقدم بناءً على موقع القسم النشط
+  // حساب مؤشر التقدم وتحديد المحطة النشطة
   const activeIndex = sections.findIndex(s => s.id === activeSectionId);
+  const activeSection = sections.find(s => s.id === activeSectionId) || sections[0];
   const progressPercent = sections.length > 0 
     ? Math.round(((Math.max(0, activeIndex) + 1) / sections.length) * 100) 
     : 0;
+
+  // التمرير التلقائي الذكي داخل شريط الخريطة لإظهار المحطة النشطة دائماً في مجال الرؤية
+  useEffect(() => {
+    if (activeItemRef.current) {
+      activeItemRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'nearest'
+      });
+    }
+  }, [activeSectionId]);
 
   const handleItemClick = (sectionId) => {
     if (onSelectSection) {
@@ -91,17 +104,17 @@ export default function LessonMap({
 
   return (
     <>
-      {/* 1. خريطة الدرس للشاشات الكبيرة (Desktop Sticky Rail) */}
+      {/* 1. خريطة الدرس للشاشات الكبيرة (Desktop Sticky Rail - ثابتة بمحاذاة التمرير) */}
       {isVisible ? (
         <aside 
           aria-label="خريطة محتويات الدرس"
-          className="hidden xl:block w-[230px] xl:w-[240px] shrink-0 sticky top-20 self-start transition-all duration-200 z-20"
+          className="hidden xl:block w-[245px] xl:w-[265px] shrink-0 sticky top-20 self-start transition-all duration-200 z-20"
           dir="rtl"
         >
-          <div className="bg-slate-900/95 border border-slate-800/90 rounded-2xl shadow-2xl backdrop-blur-md overflow-hidden flex flex-col max-h-[calc(100dvh-100px)]">
+          <div className="bg-slate-900/95 border border-slate-800/90 rounded-2xl shadow-2xl backdrop-blur-md overflow-hidden flex flex-col max-h-[calc(100dvh-95px)]">
             
             {/* ترويسة الخريطة مع زر الإخفاء */}
-            <div className="p-3.5 bg-slate-950/90 border-b border-slate-800/80 flex items-center justify-between gap-2">
+            <div className="p-3 bg-slate-950/90 border-b border-slate-800/80 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
                 <div className="size-7 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
                   <Compass className="size-4 animate-spin-slow" />
@@ -129,17 +142,46 @@ export default function LessonMap({
               </div>
             </div>
 
-            {/* شريط نسبة الاستيعاب والتقدم في أقسام الدرس */}
-            <div className="px-3.5 py-2 bg-slate-950/40 border-b border-slate-800/50">
-              <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1 font-mono">
-                <span>المحطة الحالية:</span>
-                <span className="text-cyan-400 font-bold tabular-nums">
-                  {activeIndex >= 0 ? `${activeIndex + 1} من ${sections.length}` : 'البداية'} ({progressPercent}%)
+            {/* بطاقة توضيح وإبراز المحطة الحالية النشطة (Active Station Spotlight Banner) */}
+            <div className="p-3 bg-gradient-to-b from-cyan-950/40 to-slate-950/80 border-b border-cyan-500/20 space-y-2">
+              <div className="flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5 text-cyan-300 font-bold">
+                  <span className="relative flex size-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full size-2 bg-cyan-400"></span>
+                  </span>
+                  <span>المحطة النشطة:</span>
+                </div>
+                <span className="text-[10px] font-mono tabular-nums bg-cyan-950/80 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-bold">
+                  {activeIndex >= 0 ? `${activeIndex + 1} / ${sections.length}` : 'البداية'} ({progressPercent}%)
                 </span>
               </div>
-              <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+
+              {activeSection && (
+                <div className="flex items-center gap-2 bg-slate-900/90 border border-cyan-500/30 p-2 rounded-xl">
+                  {(() => {
+                    const ActiveIcon = ICON_MAP[activeSection.id] || ListTree;
+                    return (
+                      <div className="size-7 rounded-lg bg-cyan-500 text-slate-950 flex items-center justify-center shrink-0 font-bold shadow-md shadow-cyan-500/20">
+                        <ActiveIcon className="size-4" />
+                      </div>
+                    );
+                  })()}
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs font-bold text-white truncate font-sans">
+                      {activeSection.shortTitle || activeSection.title}
+                    </div>
+                    <div className="text-[10px] text-cyan-400/80 truncate">
+                      تتحدث وتتحرك تلقائياً مع التمرير
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* شريط نسبة الاستيعاب والتقدم الدقيق */}
+              <div className="w-full h-1.5 bg-slate-800/90 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-gradient-to-l from-cyan-400 to-blue-500 rounded-full transition-all duration-300"
+                  className="h-full bg-gradient-to-l from-cyan-400 via-sky-400 to-blue-500 rounded-full transition-all duration-300"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -158,11 +200,12 @@ export default function LessonMap({
                 return (
                   <button
                     key={sec.id}
+                    ref={isActive ? activeItemRef : null}
                     onClick={() => handleItemClick(sec.id)}
-                    aria-current={isActive ? 'true' : undefined}
+                    aria-current={isActive ? 'location' : undefined}
                     className={`w-full text-right flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl text-xs transition-all relative z-10 cursor-pointer group ${
                       isActive
-                        ? 'bg-cyan-500/15 text-cyan-200 font-bold border border-cyan-500/30 shadow-sm'
+                        ? 'bg-cyan-500/15 text-cyan-200 font-bold border border-cyan-500/40 shadow-sm shadow-cyan-500/10'
                         : isPassed
                           ? 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
                           : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
@@ -190,14 +233,22 @@ export default function LessonMap({
                       </div>
                     </div>
 
-                    {/* شارة الترقيم */}
-                    <span className={`text-[10px] font-mono tabular-nums px-1.5 py-0.2 rounded shrink-0 ${
-                      isActive
-                        ? 'bg-cyan-950/80 text-cyan-300 border border-cyan-500/40'
-                        : 'text-slate-500'
-                    }`}>
-                      #{idx + 1}
-                    </span>
+                    {/* مؤشر النبض والسهم للقسم النشط أو شارة الترقيم */}
+                    {isActive ? (
+                      <div className="flex items-center gap-1 shrink-0">
+                        <span className="relative flex size-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full size-2 bg-cyan-500"></span>
+                        </span>
+                        <ChevronLeft className="size-3 text-cyan-400" />
+                      </div>
+                    ) : (
+                      <span className={`text-[10px] font-mono tabular-nums px-1.5 py-0.2 rounded shrink-0 ${
+                        isPassed ? 'text-emerald-400/80' : 'text-slate-500'
+                      }`}>
+                        #{idx + 1}
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -289,6 +340,7 @@ export default function LessonMap({
                 {sections.map((sec, idx) => {
                   const IconComponent = ICON_MAP[sec.id] || ListTree;
                   const isActive = activeSectionId === sec.id;
+                  const isPassed = activeIndex > idx;
 
                   return (
                     <button
@@ -297,20 +349,42 @@ export default function LessonMap({
                       className={`w-full text-right flex items-center gap-3 p-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
                         isActive
                           ? 'bg-cyan-500/20 text-cyan-200 font-bold border border-cyan-500/40'
-                          : 'text-slate-300 hover:bg-slate-800/60'
+                          : isPassed
+                            ? 'text-slate-300 hover:bg-slate-800/60'
+                            : 'text-slate-400 hover:bg-slate-800/40'
                       }`}
                     >
                       <div className={`size-7 rounded-lg flex items-center justify-center shrink-0 ${
-                        isActive ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-950 border border-slate-800 text-slate-400'
+                        isActive 
+                          ? 'bg-cyan-500 text-slate-950 font-bold' 
+                          : isPassed
+                            ? 'bg-slate-800 text-emerald-400 border border-emerald-500/30'
+                            : 'bg-slate-950 border border-slate-800 text-slate-400'
                       }`}>
-                        <IconComponent className="size-3.5" />
+                        {isPassed && !isActive ? (
+                          <CheckCircle2 className="size-3.5 text-emerald-400" />
+                        ) : (
+                          <IconComponent className="size-3.5" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-sans font-medium text-xs">{sec.title}</div>
                       </div>
-                      <span className="text-[10px] font-mono text-slate-500 tabular-nums">
-                        #{idx + 1}
-                      </span>
+                      {isActive ? (
+                        <div className="flex items-center gap-1 shrink-0">
+                          <span className="relative flex size-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full size-2 bg-cyan-400"></span>
+                          </span>
+                          <ChevronLeft className="size-3.5 text-cyan-400" />
+                        </div>
+                      ) : (
+                        <span className={`text-[10px] font-mono tabular-nums px-1.5 py-0.2 rounded shrink-0 ${
+                          isPassed ? 'text-emerald-400/80' : 'text-slate-500'
+                        }`}>
+                          #{idx + 1}
+                        </span>
+                      )}
                     </button>
                   );
                 })}

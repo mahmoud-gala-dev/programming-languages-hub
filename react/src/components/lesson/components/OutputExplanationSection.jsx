@@ -207,9 +207,7 @@ export default function OutputExplanationSection({
 
   return (
     <div 
-      id="lesson-section-output" 
-      data-lesson-section="output" 
-      className="scroll-mt-24 sm:scroll-mt-28 bg-slate-900/95 border border-cyan-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden transition-all duration-300"
+      className="bg-slate-900/95 border border-cyan-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden transition-all duration-300"
     >
       {/* توهج خلفي ناعم */}
       <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
